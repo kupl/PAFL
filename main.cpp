@@ -1,20 +1,23 @@
 #include "index.h"
 #include <array>
 #include <iostream>
+#include "stopwatch.h"
 
 int main(int argc, char *argv[])
 {
+    std::ofstream time_log[] = { std::ofstream("_time_cppcheck.txt"), std::ofstream("_time_proj.txt") };
+
     const std::filesystem::path global_path = "/Users/user/defects4cpp";
     //std::array<std::string, 17> proj{ "coreutils", "cpp_peglib", "cppcheck", "dlt_daemon", "exiv2", "jerryscript", "libchewing", "libssh", "libtiff", "libucl", "libxml2", "ndpi", "proj", "wget2", "wireshark", "xbps", "zsh" };
     //std::array<int, 17> tax{ 2, 10, 30, 1, 20, 11, 8, 1, 5, 6, 7, 3, 28, 3, 6, 5, 5 };
     std::array<std::string, 2> proj{ "cppcheck", "proj" };
     std::array<int, 2> tax{ 30, 28 };
     
-    for (size_t i = 0; i != 2/*proj.size()*/; ++i) {
+    for (size_t i = 0; i != proj.size(); ++i) {
  
         // Initialize coverage
         std::vector<PAFL::TestSuite> suite(tax[i]);
-
+/*
         // Collect coverage of every tax
         for (auto t = 0; t != tax[i]; ++t) {
             
@@ -44,7 +47,7 @@ int main(int argc, char *argv[])
                 }
             }
         }
-/*
+
         // Save data
         {
             std::cout << "Saving...\n";
@@ -59,7 +62,7 @@ int main(int argc, char *argv[])
             std::cout << "Done\n";
         }
 
-
+*/
         // Load data
         {
             std::cout << "Loading...\n";
@@ -75,7 +78,7 @@ int main(int argc, char *argv[])
             }
             std::cout << "Done\n";
         }
-*/
+
         // Buggy line
         auto bug_info(PAFL::ReadBugList("_buggy_line/" + proj[i] + ".json"));
 
@@ -90,6 +93,9 @@ int main(int argc, char *argv[])
         flmodel.setLogger("_log", proj[i]);
 
 
+        StopWatch<std::chrono::seconds> watch;
+
+
         for (auto t = 0; t != tax[i]; ++t) {
 /*
             // Save as json
@@ -101,6 +107,7 @@ int main(int argc, char *argv[])
             ofs.close();
             std::cout << "Done\n";
 */
+            watch.start();
             std::cout << "tax " << t + 1 << '\n';
             PAFL::TokenTree::Vector tkt_container;
             tkt_container.reserve(suite[t].MaxIndex());
@@ -115,12 +122,14 @@ int main(int argc, char *argv[])
             flmodel.Localize(tkt_container, suite[t]);
             std::cout << "Done\n";
 
+            watch.stop();
             // Save as json
             std::cout << "Saving...\n";
             std::ofstream ofs(prefix + std::to_string(t + 1) + ".json");
             suite[t].Save(ofs);
             ofs.close();
             std::cout << "Done\n";
+            watch.start();
             
             // Learning
             if (t + 1 != tax[i]) {
@@ -129,6 +138,10 @@ int main(int argc, char *argv[])
                 flmodel.Step(tkt_container, suite[t], suite[t].GetIndexFromFile(bug_info[t].first), bug_info[t].second);
                 std::cout << "Done\n";
             }
+            auto time = watch.stop();
+            watch.reset();
+
+            time_log[i] << t + 1 << " : " << time << " sec\n";
 
 
             /*if (t == 1) {

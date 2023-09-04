@@ -14,7 +14,7 @@ private:
     int a2;
     int a3;
 };
-
+}
 
 int main()
 {
@@ -70,5 +70,4 @@ int main()
     }
 
     return 0;
-}
 }

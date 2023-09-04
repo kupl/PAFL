@@ -2,6 +2,7 @@
 #define __LOCALIZER_H__
 
 #include <algorithm>
+#include <queue>
 #include "tokentree.h"
 #include "testsuite.h"
 #include "logger.h"
@@ -25,7 +26,7 @@ private:
     std::unordered_map<std::string, std::unique_ptr<Lang>> _language;
     std::shared_ptr<BaseLogger> _logger;
 };
-void standardizeOchiai(TestSuite& suite);
+void normalizeOchiai(TestSuite& suite);
 }
 #include "localizer_lang.hpp"
 
@@ -38,7 +39,7 @@ namespace PAFL
 {
 void Localizer::Localize(TokenTree::Vector& tkt_vec, TestSuite& suite)
 {
-    standardizeOchiai(suite);
+    normalizeOchiai(suite);
     
     index_t idx = 0;
     for (auto& file : suite) {
@@ -49,7 +50,7 @@ void Localizer::Localize(TokenTree::Vector& tkt_vec, TestSuite& suite)
             for (auto& tok : *tkt_vec[idx].getTokens(idx))
                 if (_language.contains(tok.name)) {
                     
-                    float similarity = _language.at(tok.name)->getSimilarity(tok);
+                    float similarity = _language.at(tok.name)->similarity(tok);
                     max_sim = similarity > max_sim ? similarity : max_sim;
                 }
 
@@ -73,7 +74,7 @@ void Localizer::Step(TokenTree::Vector& tkt_vec, TestSuite& suite, index_t index
 {
 }
 
-void standardizeOchiai(TestSuite& suite)
+void normalizeOchiai(TestSuite& suite)
 {
     suite.CalculateSus();
     auto highest = suite.GetHighestOchiaiSus();

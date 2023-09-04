@@ -174,7 +174,7 @@ Predictor::step_info Predictor::Step(TokenTree::Vector& tkt_vec, const TestSuite
         ptr_failing_vec->emplace(item.first, 10.0f * (item.second / (float)max_cnt));
 
     // Feature distance
-    float min_dist = _GetDistance(*ptr_failing_vec, _passing_feature);
+    float min_dist = 0.75f * _GetDistance(*ptr_failing_vec, _passing_feature);
     pattern nearest = -1;
     for (pattern iter = 0; iter != _feature_vectors.size(); iter++)
         if (_feature_vectors[iter].first) {
@@ -237,8 +237,8 @@ Predictor::step_info Predictor::Step(TokenTree::Vector& tkt_vec, const TestSuite
 
         if (_passing_feature.contains(item.first)) {
 
-            float lhsqrt = std::sqrtf(_passing_size);
-            float rhsqrt = std::sqrtf(passing_tc);
+            float lhsqrt = std::sqrt(_passing_size);
+            float rhsqrt = std::sqrt(passing_tc);
             float denom = lhsqrt + rhsqrt;
 
             auto& ref = _passing_feature.at(item.first);
@@ -287,7 +287,7 @@ Predictor::pattern Predictor::Predict(TokenTree::Vector& tkt_vec, const TestSuit
         failing_vec.emplace(item.first, 10.0f * (item.second / (float)max_cnt));
     
     // Feature distance
-    float min_dist = _GetDistance(failing_vec, _passing_feature);
+    float min_dist = 0.75f * _GetDistance(failing_vec, _passing_feature);
     pattern nearest = -1;
     for (pattern iter = 0; iter != _feature_vectors.size(); iter++)
         if (_feature_vectors[iter].first) {

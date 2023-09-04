@@ -1,10 +1,13 @@
 #include "index.h"
 #include <array>
 #include <iostream>
+#include "tokentree_cpp.h"
 
 int main(int argc, char *argv[])
 {
-    PAFL::TokenTree sample("sample/temp.cpp", std::make_shared<PAFL::TokenTree::Matcher>());
+    PAFL::CppTokenTree sample("sample/temp.cpp", std::make_shared<PAFL::CppTokenTree::Matcher>());
+    std::ofstream ofs("token.txt");
+    sample.log(ofs);
     return 0;
 
 
@@ -92,7 +95,7 @@ int main(int argc, char *argv[])
         // Model
         PAFL::FLModel flmodel;
         flmodel.setLogger("_log", proj[i]);
-        auto matcher = std::make_shared<PAFL::TokenTree::Matcher>();
+        auto matcher = std::make_shared<PAFL::CppTokenTree::Matcher>();
 
 
         for (auto t = 0; t != tax[i]; ++t) {
@@ -106,7 +109,7 @@ int main(int argc, char *argv[])
             ofs.close();
             std::cout << "Done\n";
 */
-            std::cout << "tax " << t + 1 << '\n';
+            /*std::cout << "tax " << t + 1 << '\n';
             PAFL::TokenTree::Vector tkt_container;
             tkt_container.reserve(suite[t].MaxIndex());
 
@@ -133,7 +136,7 @@ int main(int argc, char *argv[])
                 std::cout << "Learning...\n";
                 flmodel.Step(tkt_container, suite[t], suite[t].GetIndexFromFile(bug_info[t].first), bug_info[t].second);
                 std::cout << "Done\n";
-            }
+            }*/
 
 
             /*if (t == 1) {

@@ -237,8 +237,8 @@ Predictor::step_info Predictor::Step(TokenTree::Vector& tkt_vec, const TestSuite
 
         if (_passing_feature.contains(item.first)) {
 
-            float lhsqrt = std::sqrtf(_passing_size);
-            float rhsqrt = std::sqrtf(passing_tc);
+            float lhsqrt = std::sqrt(_passing_size);
+            float rhsqrt = std::sqrt(passing_tc);
             float denom = lhsqrt + rhsqrt;
 
             auto& ref = _passing_feature.at(item.first);
