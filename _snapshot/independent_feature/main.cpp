@@ -1,7 +1,6 @@
 #include "index.h"
 #include <array>
 #include <iostream>
-#include "stopwatch.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,7 +16,7 @@ int main(int argc, char *argv[])
  
         // Initialize coverage
         std::vector<PAFL::TestSuite> suite(tax[i]);
-/*
+
         // Collect coverage of every tax
         for (auto t = 0; t != tax[i]; ++t) {
             
@@ -62,7 +61,7 @@ int main(int argc, char *argv[])
             std::cout << "Done\n";
         }
 
-*/
+/*
         // Load data
         {
             std::cout << "Loading...\n";
@@ -78,7 +77,7 @@ int main(int argc, char *argv[])
             }
             std::cout << "Done\n";
         }
-
+*/
         // Buggy line
         auto bug_info(PAFL::ReadBugList("_buggy_line/" + proj[i] + ".json"));
 
@@ -93,9 +92,6 @@ int main(int argc, char *argv[])
         flmodel.setLogger("_log", proj[i]);
 
 
-        StopWatch<std::chrono::seconds> watch;
-
-
         for (auto t = 0; t != tax[i]; ++t) {
 /*
             // Save as json
@@ -107,7 +103,6 @@ int main(int argc, char *argv[])
             ofs.close();
             std::cout << "Done\n";
 */
-            watch.start();
             std::cout << "tax " << t + 1 << '\n';
             PAFL::TokenTree::Vector tkt_container;
             tkt_container.reserve(suite[t].MaxIndex());
@@ -122,14 +117,12 @@ int main(int argc, char *argv[])
             flmodel.Localize(tkt_container, suite[t]);
             std::cout << "Done\n";
 
-            watch.stop();
             // Save as json
             std::cout << "Saving...\n";
             std::ofstream ofs(prefix + std::to_string(t + 1) + ".json");
             suite[t].Save(ofs);
             ofs.close();
             std::cout << "Done\n";
-            watch.start();
             
             // Learning
             if (t + 1 != tax[i]) {
@@ -138,37 +131,6 @@ int main(int argc, char *argv[])
                 flmodel.Step(tkt_container, suite[t], suite[t].GetIndexFromFile(bug_info[t].first), bug_info[t].second);
                 std::cout << "Done\n";
             }
-            auto time = watch.stop();
-            watch.reset();
-
-            time_log[i] << t + 1 << " : " << time << " sec\n";
-
-
-            /*if (t == 1) {
-
-                std::ofstream ofs("log.txt");
-                for(line_t i = 1; i != tks_container[model.GetIndexFromFile("lib/checkother.cpp")].GetLastLine(); i++) {
-
-                    auto ptr = tks_container[model.GetIndexFromFile("lib/checkother.cpp")].GetTokens(i);
-                    if (ptr) {
-                        
-                        for (auto& tok : *ptr) {
-
-                            ofs << i << " | name: " << tok._name << " | parent: ";
-                            if (tok._parent)
-                                ofs << tok._parent->_name;
-                            ofs << "\n\tcond : ";
-                            for (auto& cond : tok._cond_children)
-                                ofs << cond->_name << ", ";
-                            ofs << "\n\tstm: ";
-                            for (auto& stm : tok._stm_children)
-                                ofs << stm->_name << ", ";
-                            ofs << '\n';
-                        }
-                    }
-                }
-                ofs.close();
-            }*/
         }
         /*
         std::cout << "similarity test";
