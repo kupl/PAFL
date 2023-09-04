@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <limits>
 #include <charconv>
+#include <cmath>
 
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
