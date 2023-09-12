@@ -13,77 +13,70 @@ class FLModel
 public:
     class Logger;
 
-    FLModel() : _localizers(std::numeric_limits<char>::max()) {}
+    FLModel()
+        { _localizers.reserve(256); }
 
-    void Localize(TokenTree::Vector& tkt_vec, TestSuite& cov);
-    void Step(TokenTree::Vector& tkt_vec, TestSuite& cov, index_t index, const std::list<line_t>& buggy_lines);
-
-    void setLogger(const std::string& log_path, const std::string& project);
+    void localize(TestSuite& suite, const TokenTree::Vector& tkt_vec);
+    void step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults);
 
 
 private:
     Predictor _predictor;
     std::vector<Localizer> _localizers;
-    std::unique_ptr<BaseLogger> _logger;
 };
+
+template <class Func>
+void normalizeSbfl(TestSuite& suite, Func func);
 }
 
 
 
 namespace PAFL
 {
-class FLModel::Logger : public BaseLogger
+void FLModel::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec)
 {
-    // obj : Predictor::step_info
-    void log(const void* obj) override
-    {
-        auto* ptr_info = static_cast<const Predictor::step_info*>(obj);
-        std::ofstream os(_path + '_' + std::to_string(++_counter) + ".txt");
-        os << "Predcit '" << (int)ptr_info->updated_pattern << "'\n";
+    auto info(_predictor.predict(suite.getTestSuite(), tkt_vec));
+
+    if (info.targets.empty()) {
+
+        suite.assignSbfl();
+        suite.rank();
     }
-public:
-    Logger(const std::string& log_path, const std::string& name)
-        { BaseLogger::init(log_path, name); }
-};
+    else
+        for (auto& item : info.targets)
+            _localizers[item.first].localize(suite, tkt_vec, item.second);
 }
 
 
 
-namespace PAFL
+void FLModel::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
 {
-void FLModel::Localize(TokenTree::Vector& tkt_vec, TestSuite& cov)
-{
-    auto pattern = _predictor.Predict(tkt_vec, cov.GetTestSuite());
+    auto info(_predictor.step(suite.getTestSuite(), tkt_vec));
+    auto targets(toTokenFromFault(suite, tkt_vec, faults));
 
-    if (pattern < 0) {
+    for (auto& item : info.targets) {
 
-        cov.CalculateSus();
-        cov.Rank();
-    }
-    else {
-        
-        _localizers[pattern].Localize(tkt_vec, cov);
-        cov.Rank();
+        // New localizer
+        if (item.first == _localizers.size())
+            _localizers.emplace_back();
+        // Update target localizers
+        _localizers[item.first].step(suite, tkt_vec, faults, targets, item.second);
     }
 }
 
 
-void FLModel::Step(TokenTree::Vector& tkt_vec, TestSuite& cov, index_t index, const std::list<line_t>& buggy_lines)
-{
-    auto step_info {_predictor.Step(tkt_vec, cov.GetTestSuite(), buggy_lines)};
-    _localizers[step_info.updated_pattern].Step(tkt_vec, cov, index, buggy_lines);
 
-    // Log
-    if (_logger)
-        _logger->log(&step_info);
-    _predictor.log();
-}
-
-void FLModel::setLogger(const std::string& log_path, const std::string& project)
+template <class Func>
+void normalizeSbfl(TestSuite& suite, Func func)
 {
-    _logger = std::make_unique<FLModel::Logger>(log_path, project);
-    _predictor.setLogger(std::make_unique<Predictor::Logger>(log_path + "/_predictor", project));
-    _predictor.setActionLogger(std::make_unique<Predictor::ActionLogger>(log_path + "/_predictor", project + "_action"));
+    auto highest = suite.getHighestSbflSus();
+
+    for (auto& file : suite)
+        for (auto& line_param : file) {
+
+            auto& ref = line_param.second.ptr_ranking->sbfl_sus;
+            ref = func(ref, highest);
+        }
 }
 }
 #endif

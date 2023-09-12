@@ -2,43 +2,35 @@
 #define __LOCALIZER_H__
 
 #include <algorithm>
-#include "tokentree.h"
+#include "tokentree_cpp.h"
 #include "testsuite.h"
-#include "logger.h"
+#
 
 
 
 namespace PAFL
 {
+using target_tokens = std::list<Token*>;
+target_tokens toTokenFromFault(const TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults);
+
+
+
 class Localizer
 {
 public:
-    enum class Option
-        { constant_coverage, assign_to_coverage, maximize_coverage };
+    class Lang;
 
     Localizer() :
-        _weight(std::make_unique<TokenWeight>()), _lang(std::make_unique<Lang>()) {}
-
-    void Localize(TokenTree::Vector& tkt_vec, TestSuite& suite);
-    void Step(TokenTree::Vector& tkt_vec, TestSuite& suite, index_t index, const std::list<line_t>& buggy_lines);
-    
+        _language(std::make_unique<Lang>()) {}
+     
+    void localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef);
+    void step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef);
 
 private:
-    class Lang;
-    
-    std::unique_ptr<Lang> _lang;
-
-
-
-
-    class TokenWeight;
-    std::unique_ptr<TokenWeight> _weight;
+    std::unique_ptr<Lang> _language;
 };
-//void standardizeOchiai(TestSuite& suite);
-void initTreeVecWithCoverage(TokenTree::Vector& tkt_vec, const TestSuite& suite);
 }
-#include "feature_lang.hpp"
-#include "feature_weight.hpp"
+#include "localizer_lang.hpp"
 
 
 
@@ -47,50 +39,122 @@ void initTreeVecWithCoverage(TokenTree::Vector& tkt_vec, const TestSuite& suite)
 
 namespace PAFL
 {
-
-void Localizer::Step(TokenTree::Vector& tkt_vec, TestSuite& suite, index_t index, const std::list<line_t>& buggy_lines)
+target_tokens toTokenFromFault(const TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
 {
-    size_t lang_step = 2;
+    target_tokens ret;
+    for (auto& item : faults) {
 
-    suite.CalculateSus();
+        std::unordered_set<Token::string_set*> marking;
+        index_t index = suite.getIndexFromFile(item.first);
 
-    // Localizer::Lang
-    for (size_t i = 0; i != lang_step; i++) 
-        if (!_lang->Step(tkt_vec, suite, index, buggy_lines))
-            break;
+        for (auto line : item.second) {
 
-    // Localizer::TokenWeight
-    _weight->Step(tkt_vec, suite, index, buggy_lines, 3, 0.1f, 0.25f, 0.25f);
-}
+            auto list_ptr = tkt_vec[index].getTokens(line);
+            if (list_ptr)
+                for (auto& token : *list_ptr)
+                    if (!marking.contains(&*token.neighbors)) {
 
-void Localizer::Localize(TokenTree::Vector& tkt_vec, TestSuite& suite)
-{   
-    for (index_t idx = 0; idx != suite.MaxIndex(); idx++) {
-
-        _lang->CalculateSus(tkt_vec[idx], suite, idx, Option::maximize_coverage);
-         _weight->CalculateSus(tkt_vec[idx], suite, idx, Option::maximize_coverage);
-    }
-}
-
-void initTreeVecWithCoverage(TokenTree::Vector& tkt_vec, const TestSuite& suite)
-{
-    for (index_t idx = 0; idx != suite.MaxIndex(); idx++)
-        for (auto& tok_list : tkt_vec[idx]) {
-
-            float sus = suite.GetOchiaiSus(idx, tok_list.begin()->loc);
-            for (auto& tok : tok_list)
-                tok.ochiai_sus = sus;
+                        ret.emplace_back(&token);
+                        marking.insert(&*token.neighbors);
+                    }
         }
-}
-/*void standardizeOchiai(TestSuite& suite)
-{
-    suite.CalculateSus();
-    auto highest = suite.GetHighestOchiaiSus();
+    }
 
-    for (index_t idx = 0; idx != suite.MaxIndex(); idx++)
-        for (auto iter = suite.begin(idx); iter != suite.end(idx); iter++)
-            if (iter->second.ptr_ranking->ochiai_sus > 0)
-                iter->second.ptr_ranking->ochiai_sus = std::cbrtf(iter->second.ptr_ranking->ochiai_sus / highest);
-}*/
+    return ret;
+}
+
+
+
+void Localizer::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef)
+{
+    index_t idx = 0;
+    for (auto& file : suite) {
+        
+        std::unordered_map<Token::string_set*, float> last;
+        for (auto& line_param : file) {
+
+            std::unordered_map<Token::string_set*, float> archive;
+            float max_sim = 0.0f;
+
+            auto list_ptr = tkt_vec[idx].getTokens(line_param.first);
+            if (list_ptr)
+                for (auto& token : *list_ptr) {
+                    
+                    auto key = &*token.neighbors;
+                    float similarity;
+
+                    if (archive.contains(key))
+                        similarity = archive.at(key);
+                    
+                    else if (last.contains(key)) {
+
+                        similarity = last.at(key);
+                        archive.emplace(key, similarity);
+                    }
+                    else {
+
+                        similarity = _language->similarity(token);
+                        archive.emplace(key, similarity);
+                    }
+
+                    max_sim = similarity > max_sim ? similarity : max_sim;
+                }
+
+            last = std::move(archive);
+            line_param.second.ptr_ranking->sus += coef * max_sim;
+        }
+        idx++;
+    }
+
+    suite.rank();
+}
+
+
+
+void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef)
+{
+    suite.assignSbfl();
+    auto sbfl_rankingsum = suite.getRankingSum(faults);
+    
+    // New tokens from fault
+    for (auto token : targets)
+        _language->insertToken(*token, 0.1f);
+
+    // Reserve future weight
+    auto end(_language->end());
+    for (auto iter = _language->begin(); iter != end; ++iter) {
+        
+        auto& ref = iter->second;
+        ref.weight = 1.0f;
+        localize(suite, tkt_vec, 1.0f);
+        auto rankingsum = suite.getRankingSum(faults);
+
+        // Positive update
+        if (rankingsum < sbfl_rankingsum) {
+
+            float gradient = (sbfl_rankingsum - rankingsum) / (float)sbfl_rankingsum;
+            ref.future += (1.0f - ref.future) * coef * gradient;
+        }
+        else { // Nonpositive
+
+            ref.weight = 0.0f;
+            suite.assignSbfl();
+            localize(suite, tkt_vec, 1.0f);
+            auto rankingsum = suite.getRankingSum(faults);
+            
+            // Negative update
+            if (rankingsum < sbfl_rankingsum) {
+
+                float gradient = (sbfl_rankingsum - rankingsum) / (float)sbfl_rankingsum;
+                ref.future *= (ref.future * coef * gradient + (1.0f - coef * gradient));
+            }
+        }
+    }
+
+    // future to weight
+    _language->assignFuture();
+    // Delete weight under threshold
+    _language->eraseIf(0.1f);
+}
 }
 #endif

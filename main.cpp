@@ -1,160 +1,71 @@
 #include "index.h"
-#include <array>
-#include <iostream>
+
+
 
 int main(int argc, char *argv[])
 {
-    std::ofstream time_log[] = { std::ofstream("_time_cppcheck.txt"), std::ofstream("_time_proj.txt") };
+    /*PAFL::CppTokenTree tree(fs::path("sample/temp.cpp"), std::make_shared<PAFL::TokenTree::Matcher>());
+    std::ofstream ofs("token.txt");
+    tree.log(ofs);
+    return 0;*/
 
-    const std::filesystem::path global_path = "/Users/user/defects4cpp";
-    //std::array<std::string, 17> proj{ "coreutils", "cpp_peglib", "cppcheck", "dlt_daemon", "exiv2", "jerryscript", "libchewing", "libssh", "libtiff", "libucl", "libxml2", "ndpi", "proj", "wget2", "wireshark", "xbps", "zsh" };
-    //std::array<int, 17> tax{ 2, 10, 30, 1, 20, 11, 8, 1, 5, 6, 7, 3, 28, 3, 6, 5, 5 };
-    std::array<std::string, 2> proj{ "cppcheck", "proj" };
-    std::array<int, 2> tax{ 30, 28 };
+    // Test
+    /*char *_argv[] = {
+        "", "cppcheck:cpp", "30", "pafl,ochiai", "-P/Users/user/defects4cpp/cppcheck", 
+        "-T/Users/user/defects4cpp", "-B/Users/user/Documents/C++/PAFL/_bug_info"
+    };
+    int _argc = 7;
+    PAFL::UI ui(_argc, _argv);*/
+
+    PAFL::UI ui(argc, argv);
     
-    for (size_t i = 0; i != proj.size(); ++i) {
- 
-        // Initialize coverage
-        std::vector<PAFL::TestSuite> suite(tax[i]);
+    // Collect coverage of every version
+    std::vector<PAFL::TestSuite> suite(ui.numVersion());
+    for (size_t v = 0; v != ui.numVersion(); v++) {
 
-        // Collect coverage of every tax
-        for (auto t = 0; t != tax[i]; ++t) {
-            
-            std::string tax(std::to_string(t + 1));
-            std::cout << proj[i] << " # " << tax << '\n';
-            
-            // folder name of buggy project
-            auto buggy_proj(proj[i] + "-buggy-" + tax + '-');
-            // test case list of target project
-            std::list<std::filesystem::path> test_case_path;
-            std::list<unsigned short> test_case_num;
-            
-            // Add every test case to test suite
-            for (auto const& dir_entry : std::filesystem::directory_iterator(global_path)) {
-                
-                auto& path = dir_entry.path();
-                auto folder(path.filename().string());
-                if (folder.find(buggy_proj) != std::string::npos) {
-                    
-                    folder.erase(0, buggy_proj.length());
-                    std::cout << "case " << folder << '\n';
+        for (auto& item : ui.getCoverageList(v+1))
+            suite[v].addTestCase(item.first, item.second);
+        suite[v].setSbflSus(PAFL::Coef::Ochiai);
+        PAFL::normalizeSbfl(suite[v], PAFL::Normalizer::CbrtOchiai);
+    }
+    
+    // Project Aware FL
+    // Model
+    PAFL::FLModel flmodel;
+    //flmodel.setLogger("log", ui.getProject());
+    auto matcher = std::make_shared<PAFL::TokenTree::Matcher>(); // Tokenize files
 
-                    Document doc;
-                    PAFL::Parse(doc, path / "summary.json");
-                    suite[t].AddTestCase(doc, PAFL::IsTestPassed(path, folder));
-                    std::cout << suite[t].GetTestSuite().size() << '\n';
-                }
-            }
-        }
+    std::string prefix(std::string("coverage/PAFL-") + ui.getProject() + '#');
+    for (size_t v = 0; v != ui.numVersion(); v++) {
 
-        // Save data
-        {
-            std::cout << "Saving...\n";
-            std::string prefix = std::string("_line_param/") + proj[i] + '#';
-            
-            for (auto t = 0; t != tax[i]; t++) {
-                
-                std::ofstream ofs(prefix + std::to_string(t + 1) + ".txt");
-                suite[t]._write(ofs);
-                ofs.close();
-            }
-            std::cout << "Done\n";
-        }
+        std::cout << "ver " << v+1 << '\n';
+        PAFL::TokenTree::Vector tkt_vector;
+        tkt_vector.reserve(suite[v].MaxIndex());
 
-/*
-        // Load data
-        {
-            std::cout << "Loading...\n";
-            std::string prefix = std::string("_line_param/") + proj[i] + '#';
-            
-            for (auto t = 0; t != tax[i]; t++) {
+        std::cout << "Tokenizing...\n";
+        for (PAFL::index_t idx = 0;  idx != suite[v].MaxIndex(); idx++)
+            tkt_vector.push_back(PAFL::CppTokenTree(ui.getProjectPath(v) / suite[v].getFileFromIndex(idx), matcher));
+        std::cout << "Done\n";
+    
+        // new sus of FL Model
+        std::cout << "Evaluating...\n";
+        flmodel.localize(suite[v], tkt_vector);
+        std::cout << "Done\n";
 
-                std::cout << t << '\n';
-                std::ifstream ifs(prefix + std::to_string(t + 1) + ".txt");
-                suite[t]._read(ifs);
-                ifs.close();
-                suite[t].CalculateSus();
-            }
-            std::cout << "Done\n";
-        }
-*/
-        // Buggy line
-        auto bug_info(PAFL::ReadBugList("_buggy_line/" + proj[i] + ".json"));
-
-        // Project Aware FL
-        // Tokenize files
-        auto proj_path(global_path / proj[i]);
-        std::string buggy("buggy#");
-        /*std::string prefix = std::string("_coverage/Ochiai-") + proj[i] + '#';*/
-        std::string prefix = std::string("_coverage/PAFL-") + proj[i] + '#';
-        // Model
-        PAFL::FLModel flmodel;
-        flmodel.setLogger("_log", proj[i]);
-
-
-        for (auto t = 0; t != tax[i]; ++t) {
-/*
-            // Save as json
-            std::cout << "Saving...\n";
-            suite[t].CalculateSus();
-            suite[t].Rank();
-            std::ofstream ofs(prefix + std::to_string(t + 1) + ".json");
-            suite[t].Save(ofs);
-            ofs.close();
-            std::cout << "Done\n";
-*/
-            std::cout << "tax " << t + 1 << '\n';
-            PAFL::TokenTree::Vector tkt_container;
-            tkt_container.reserve(suite[t].MaxIndex());
-
-            std::cout.write("Tokenizing...\n", 15);
-            for (PAFL::index_t idx = 0;  idx != suite[t].MaxIndex(); ++idx)
-                tkt_container.emplace_back(proj_path / (buggy + std::to_string(t + 1)) / suite[t].GetFileFromIndex(idx));
-            std::cout.write("Done\n", 6);
+        // Save as json
+        std::cout << "Saving...\n";
+        std::ofstream ofs(prefix + std::to_string(v+1) + ".json");
+        suite[v].save(ofs);
+        ofs.close();
+        std::cout << "Done\n";
         
-            // new sus of FL Model
-            std::cout << "Evaluating...\n";
-            flmodel.Localize(tkt_container, suite[t]);
-            std::cout << "Done\n";
+        // Learning
+        if (v + 1 != ui.numVersion()) {
 
-            // Save as json
-            std::cout << "Saving...\n";
-            std::ofstream ofs(prefix + std::to_string(t + 1) + ".json");
-            suite[t].Save(ofs);
-            ofs.close();
+            std::cout << "Learning...\n";
+            flmodel.step(suite[v], tkt_vector, ui.getFaultLocation(v));
             std::cout << "Done\n";
-            
-            // Learning
-            if (t + 1 != tax[i]) {
-
-                std::cout << "Learning...\n";
-                flmodel.Step(tkt_container, suite[t], suite[t].GetIndexFromFile(bug_info[t].first), bug_info[t].second);
-                std::cout << "Done\n";
-            }
         }
-        /*
-        std::cout << "similarity test";
-        std::ofstream similarity("distance.txt");
-        for (size_t t1 = 0; t1 != tax[i]; t1++)
-            for (size_t t2 = 0; t2 != tax[i]; t2++) {
-                
-                if (t1 == t2)
-                    continue;
-
-                float dist = 0.0f;
-                for (auto& item : feat_vecs[t1]) {
-                    
-                    if (!feat_vecs[t2].contains(item.first))
-                        dist += feat_vecs[t1].at(item.first) * feat_vecs[t1].at(item.first);
-                    else
-                        dist += (feat_vecs[t1].at(item.first) - feat_vecs[t2].at(item.first)) * (feat_vecs[t1].at(item.first) - feat_vecs[t2].at(item.first));
-                }
-                for (auto& item : feat_vecs[t2])
-                    if (!feat_vecs[t1].contains(item.first))
-                        dist += feat_vecs[t2].at(item.first) * feat_vecs[t2].at(item.first);
-
-                similarity << '(' << t1+1 << ' ' << t2+1 << ")\t: " << dist << '\n';
-            }*/
     }
 
     return 0;

@@ -1,22 +1,15 @@
 #ifndef __TESTSUITE_H__
 #define __TESTSUITE_H__
 
-#include <filesystem>
 #include <fstream>
-#include <string>
 #include <vector>
-#include <list>
-#include <unordered_map>
 #include <algorithm>
-#include <limits>
 #include <charconv>
-#include <cmath>
+#include <map>
 
+#include "type.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
-#include "type.h"
-
-using namespace rapidjson;
 
 
 
@@ -25,71 +18,71 @@ namespace PAFL
 class TestSuite
 {
 public:
-    using count_type = unsigned short;
-    struct ranking_info { index_t index; line_t line; float ochiai_sus, sus; line_t ranking; };
-    struct param { count_type Ncf, Ncs; ranking_info* ptr_ranking; };
-    using dict = std::unordered_map<line_t, param>;
-    using file2index_t = std::unordered_map<std::string, index_t>;
+    typedef struct { index_t index; line_t line; float sbfl_sus, sus; line_t ranking; } ranking_info;
+    typedef struct { size_t Ncs, Ncf; ranking_info* ptr_ranking; } param;
 
-    struct test_case { std::list<std::pair<index_t, line_t>> lines; bool is_passed; };
+    typedef struct { std::list<std::pair<index_t, line_t>> lines; bool is_passed; } test_case;
     using test_suite = std::list<test_case>;
 
 
-    TestSuite() : _is_initialized(false), _fail(0), _highest_ochiai(0.0f) {}
-    TestSuite(const TestSuite& rhs);
-    void AddTestCase(const Document& d, bool is_successed);
-    void CalculateSus();
-    void SusToOchiai()
-        { for (auto& info : _ranking) info.sus = info.ochiai_sus; }
-    const std::list<ranking_info>& Rank();
-    void Save(std::ofstream& ofs) const;
+    TestSuite() : _is_initialized(false), _fail(0), _highest_sbfl(0.0f) {}
+    void addTestCase(const rapidjson::Document& d, bool is_successed);
 
-    index_t GetIndexFromFile(const std::string& file) const
+    template<class Func>
+    void setSbflSus(Func func);
+    void assignSbfl()
+        { for (auto& info : _ranking) info.sus = info.sbfl_sus; }
+    const std::list<ranking_info>& rank();
+
+
+    index_t getIndexFromFile(const std::string& file) const
         { return _file2index.contains(file) ? _file2index.at(file) : throw std::out_of_range(file + " is out of range"); }
     index_t MaxIndex() const
         { return _index2file.size(); }
-    std::string GetFileFromIndex(index_t idx) const
+    std::string getFileFromIndex(index_t idx) const
         { return _index2file[idx]; }
-    ranking_info* GetRankingInfo(index_t idx, line_t line)
+    ranking_info* getRankingInfo(index_t idx, line_t line)
         { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking : nullptr; }
-    line_t GetRankingSum(index_t idx, const std::list<line_t>& target_lines) const;
+    line_t getRankingSum(const fault_loc& faults) const;
 
-    float GetOchiaiSus(index_t idx, line_t line) const
-        { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->ochiai_sus : 0.0f; }
-    float GetSus(index_t idx, line_t line) const
+    float getSbflSus(index_t idx, line_t line) const
+        { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->sbfl_sus : 0.0f; }
+    float getSus(index_t idx, line_t line) const
         { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->sus : 0.0f; }
-    float GetHighestOchiaiSus() const
-        { return _highest_ochiai; }
-    const test_suite& GetTestSuite() const
+    float getHighestSbflSus() const
+        { return _highest_sbfl; }
+    const test_suite& getTestSuite() const
         { return _test_suite; }
 
+
+    void save(std::ofstream& ofs) const;
     void _write(std::ofstream& ofs);
     void _read(std::ifstream& ifs);
 
 
-    decltype(auto) begin(index_t idx)
-        { return _line_param[idx].begin(); }
-    decltype(auto) end(index_t idx)
-        { return _line_param[idx].end(); }
-    decltype(auto) cbegin(index_t idx) const
-        { return _line_param[idx].cbegin(); }
-    decltype(auto) cend(index_t idx)  const
-        { return _line_param[idx].cend(); }
+    decltype(auto) begin()
+        { return _line_param.begin(); }
+    decltype(auto) end()
+        { return _line_param.end(); }
+    decltype(auto) cbegin() const
+        { return _line_param.cbegin(); }
+    decltype(auto) cend() const
+        { return _line_param.cend(); }
 
 
 private:
     bool _is_initialized;
-    count_type _fail;
-    count_type _success;
+    size_t _fail;
+    size_t _succ;
 
     std::vector<std::string> _index2file;
-    file2index_t _file2index;
+    std::unordered_map<std::string, index_t> _file2index;
 
-    std::vector<dict> _line_param;
+    std::vector<std::map<line_t, param>> _line_param;
     std::list<ranking_info> _ranking;
-    test_suite _test_suite;
+    float _highest_sbfl;
 
-    float _highest_ochiai;
+    test_suite _test_suite;
 };
 }
 
@@ -100,17 +93,7 @@ private:
 
 namespace PAFL
 {
-TestSuite::TestSuite(const TestSuite& rhs) :
-    _line_param(rhs._line_param), _ranking(rhs._ranking), _is_initialized(rhs._is_initialized), _fail(rhs._fail),
-    _index2file(rhs._index2file), _file2index(rhs._file2index), _highest_ochiai(0.0f)
-{
-    for (auto& iter : _ranking)
-        _line_param[iter.index].at(iter.line).ptr_ranking = &iter;
-}
-
-
-
-void TestSuite::AddTestCase(const Document& d, bool is_successed)
+void TestSuite::addTestCase(const rapidjson::Document& d, bool is_successed)
 {
     const auto& json_files = d["files"].GetArray();
     const auto sizeof_files = json_files.Size();
@@ -118,18 +101,19 @@ void TestSuite::AddTestCase(const Document& d, bool is_successed)
     // Reserve containers' capacity
     if (!_is_initialized) {
         
-        _file2index.reserve(sizeof_files + 8);
-        _index2file.reserve(sizeof_files + 8);
-        _line_param.reserve(sizeof_files + 8);
+        _file2index.reserve(sizeof_files + 32);
+        _index2file.reserve(sizeof_files + 32);
+        _line_param.reserve(sizeof_files + 32);
         _is_initialized = true;
     }
-    is_successed ? _success++ : _fail++;
+    is_successed ? _succ++ : _fail++;
+
 
     // Add test case
     auto& tc_lines = _test_suite.emplace_back(test_case{std::list<std::pair<index_t, line_t>>(), is_successed}).lines;
     
 
-    for (SizeType i = 0; i != sizeof_files; ++i) {
+    for (rapidjson::SizeType i = 0; i != sizeof_files; ++i) {
         
         const auto& json_file = json_files[i].GetObject();
         const auto& json_lines = json_file["lines"].GetArray();
@@ -140,14 +124,14 @@ void TestSuite::AddTestCase(const Document& d, bool is_successed)
             continue;
         
         // "file" is not in filelist --> initialize
-        if (std::find(_index2file.begin(), _index2file.end(), key) == _index2file.end()) {
+        if (!_file2index.contains(key)) {
             
             auto index_now = static_cast<index_t>(_index2file.size());
             _file2index.emplace(key, index_now);
             _index2file.emplace_back(key);
             _line_param.emplace_back();
             
-            for (SizeType j = 0; j != json_lines.Size(); j++) {
+            for (rapidjson::SizeType j = 0; j != json_lines.Size(); j++) {
                 
                 const auto& json_line = json_lines[j].GetObject();
                 if (json_line["count"].GetUint64()) {
@@ -156,7 +140,7 @@ void TestSuite::AddTestCase(const Document& d, bool is_successed)
                     tc_lines.emplace_back(index_now, line_now);
                     _ranking.push_back(ranking_info{ index_now, line_now, 0.0f, 0.0f, 0 });
 
-                    auto val = is_successed ? param{ 0, 1, &*_ranking.rbegin() } : param{ 1, 0, &*_ranking.rbegin() };
+                    auto val = is_successed ? param{ 1, 0, &*_ranking.rbegin() } : param{ 0, 1, &*_ranking.rbegin() };
                     _line_param[index_now].emplace(line_now, val);
                 }
             }
@@ -165,7 +149,7 @@ void TestSuite::AddTestCase(const Document& d, bool is_successed)
         
         // "file" is in filelist
         else
-            for (SizeType j = 0; j != json_lines.Size(); j++) {
+            for (rapidjson::SizeType j = 0; j != json_lines.Size(); j++) {
                 
                 const auto& json_line = json_lines[j].GetObject();
                 if (json_line["count"].GetUint64()) {
@@ -178,7 +162,7 @@ void TestSuite::AddTestCase(const Document& d, bool is_successed)
                     if (!_line_param[index_now].contains(line_now)) {
                         
                         auto& ptr = _ranking.emplace_back(ranking_info{ index_now, line_now, 0.0f, 0.0f, 0 });
-                        auto val = is_successed ? param{ 0, 1, &*_ranking.rbegin() } : param{ 1, 0, &*_ranking.rbegin() };
+                        auto val = is_successed ? param{ 1, 0, &*_ranking.rbegin() } : param{ 0, 1, &*_ranking.rbegin() };
                         _line_param[index_now].emplace(line_now, val);
                     }
 
@@ -193,21 +177,20 @@ void TestSuite::AddTestCase(const Document& d, bool is_successed)
     }
 }
 
-void TestSuite::CalculateSus()
+template<class Func>
+void TestSuite::setSbflSus(Func func)
 {
-    for (auto& dict_iter : _line_param)
-        for (auto& param_iter : dict_iter) {
+    for (auto& map : _line_param)
+        for (auto& item : map) {
 
-            auto& p = param_iter.second;
-            int denom = _fail * (p.Ncf + p.Ncs);
-            p.ptr_ranking->sus = p.ptr_ranking->ochiai_sus = denom ? p.Ncf / std::sqrt(denom) : 0.0f;
-            if (_highest_ochiai < p.ptr_ranking->ochiai_sus)
-                _highest_ochiai = p.ptr_ranking->ochiai_sus;
+            item.second.ptr_ranking->sus = item.second.ptr_ranking->sbfl_sus
+            = func(_succ, _fail, item.second.Ncs, item.second.Ncf);
+            if (_highest_sbfl < item.second.ptr_ranking->sbfl_sus)
+                _highest_sbfl = item.second.ptr_ranking->sbfl_sus;
         }
-    
 }
 
-const std::list<TestSuite::ranking_info>& TestSuite::Rank()
+const std::list<TestSuite::ranking_info>& TestSuite::rank()
 {
     // Sort
     _ranking.sort([](const ranking_info& lhs, const ranking_info& rhs){ return lhs.sus > rhs.sus; });
@@ -231,7 +214,32 @@ const std::list<TestSuite::ranking_info>& TestSuite::Rank()
     return _ranking;
 }
 
-void TestSuite::Save(std::ofstream& ofs) const
+
+
+line_t TestSuite::getRankingSum(const fault_loc& faults) const
+{
+
+    for (auto iter = _ranking.cbegin(); ; iter++)
+        if (faults.contains(_index2file[iter->index])) {
+            
+            auto& line_set = faults.at(_index2file[iter->index]);
+            if (line_set.contains(iter->line)) {
+
+                auto ranking = iter->ranking;
+                for (; iter != _ranking.cend(); iter++)
+                    if (iter->ranking != ranking)
+                        break;
+                return ranking + ((iter == _ranking.cend()) ? _ranking.size() : iter->ranking - 1);
+            }
+        }
+}
+
+
+
+
+
+
+void TestSuite::save(std::ofstream& ofs) const
 {
     char buf[10];
 
@@ -277,22 +285,6 @@ void TestSuite::Save(std::ofstream& ofs) const
     ofs.put(' ');
 }
 
-line_t TestSuite::GetRankingSum(index_t idx, const std::list<line_t>& target_lines) const
-{
-    for (auto iter = _ranking.cbegin(); ; iter++)
-        if (iter->index == idx && std::find(target_lines.begin(), target_lines.end(), iter->line) != std::end(target_lines)) {
-
-            auto ranking = iter->ranking;
-            for (; iter != _ranking.cend(); iter++)
-                if (iter->ranking != ranking)
-                    break;
-            return ranking + ((iter == _ranking.cend()) ? _ranking.size() : iter->ranking - 1);
-        }
-}
-
-
-
-
 
 
 void TestSuite::_write(std::ofstream& ofs)
@@ -310,7 +302,7 @@ void TestSuite::_write(std::ofstream& ofs)
 
         ofs << file.size() << '\n';
         for (auto& iter : file)
-            ofs << iter.first << '\n' << iter.second.Ncf << '\n' << iter.second.Ncs << '\n';
+            ofs << iter.first << '\n' << iter.second.Ncs << '\n' << iter.second.Ncf << '\n';
     }
 
     // Test suite
@@ -349,12 +341,11 @@ void TestSuite::_read(std::ifstream& ifs)
         line_t file_size;
         ifs >> file_size;
         _line_param.emplace_back();
-        _line_param[idx].reserve(file_size);
 
         for (line_t j = 0; j != file_size; j++) {
 
             line_t line;
-            count_type Ncf, Ncs;
+            size_t Ncf, Ncs;
             ifs >> line >> Ncf >> Ncs;
 
             auto& ptr = _ranking.emplace_back(ranking_info{ idx, line, 0.0f, 0.0f, 0 });
