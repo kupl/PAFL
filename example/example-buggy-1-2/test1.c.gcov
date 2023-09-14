@@ -1,0 +1,22 @@
+        -:    0:Source:test1.c
+        -:    0:Graph:./test1.gcno
+        -:    0:Data:./test1.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <stdlib.h>
+        -:    2:#include "example.h"
+        -:    3:
+        -:    4:int test_data[5][2] = {
+        -:    5:  {1, 1},
+        -:    6:  {99, 99},
+        -:    7:  {100, 100},
+        -:    8:  {101, -101},
+        -:    9:  {200, -200}
+        -:   10:};
+        -:   11:
+        1:   12:int main(int argc, char *argv[]) {
+        1:   13:    int test_index = atoi(argv[1]);
+        1:   14:    int output = func1(test_data[test_index][0]);
+        1:   15:    int expected_output = test_data[test_index][1];
+        1:   16:    return output == expected_output ? 0 : 1;
+        -:   17:}
