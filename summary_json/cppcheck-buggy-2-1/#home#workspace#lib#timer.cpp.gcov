@@ -1,0 +1,239 @@
+        -:    0:Source:/home/workspace/lib/timer.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/timer.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/timer.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#include "timer.h"
+        -:   20:
+        -:   21:#include <algorithm>
+        -:   22:#include <iostream>
+        -:   23:#include <utility>
+        -:   24:#include <vector>
+        -:   25:/*
+        -:   26:    TODO:
+        -:   27:    - rename "file" to "single"
+        -:   28:    - synchronise map access in multithreaded mode or disable timing
+        -:   29:    - add unit tests
+        -:   30:        - for --showtime (needs input file)
+        -:   31:        - for Timer* classes
+        -:   32:*/
+        -:   33:
+        -:   34:namespace {
+        -:   35:    typedef std::pair<std::string, struct TimerResultsData> dataElementType;
+function _ZN12_GLOBAL__N_115more_second_secERKSt4pairINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE16TimerResultsDataESA_ called 0 returned 0% blocks executed 0%
+    #####:   36:    bool more_second_sec(const dataElementType& lhs, const dataElementType& rhs)
+        -:   37:    {
+    #####:   38:        return lhs.second.seconds() > rhs.second.seconds();
+call    0 never executed
+call    1 never executed
+        -:   39:    }
+        -:   40:}
+        -:   41:
+function _ZNK12TimerResults11ShowResultsE14SHOWTIME_MODES called 0 returned 0% blocks executed 0%
+    #####:   42:void TimerResults::ShowResults(SHOWTIME_MODES mode) const
+        -:   43:{
+    #####:   44:    if (mode == SHOWTIME_MODES::SHOWTIME_NONE)
+branch  0 never executed
+branch  1 never executed
+    #####:   45:        return;
+        -:   46:
+    #####:   47:    std::cout << std::endl;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   48:    TimerResultsData overallData;
+call    0 never executed
+        -:   49:
+    #####:   50:    std::vector<dataElementType> data(mResults.begin(), mResults.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:   51:    std::sort(data.begin(), data.end(), more_second_sec);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+        -:   52:
+    #####:   53:    size_t ordinal = 1; // maybe it would be nice to have an ordinal in output later!
+    #####:   54:    for (std::vector<dataElementType>::const_iterator iter=data.begin() ; iter!=data.end(); ++iter) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   55:        const double sec = iter->second.seconds();
+call    0 never executed
+call    1 never executed
+    #####:   56:        const double secAverage = sec / (double)(iter->second.mNumberOfResults);
+call    0 never executed
+    #####:   57:        overallData.mClocks += iter->second.mClocks;
+call    0 never executed
+    #####:   58:        if ((mode != SHOWTIME_MODES::SHOWTIME_TOP5) || (ordinal<=5)) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   59:            std::cout << iter->first << ": " << sec << "s (avg. " << secAverage << "s - " << iter->second.mNumberOfResults  << " result(s))" << std::endl;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+call   26 never executed
+branch 27 never executed
+branch 28 never executed
+        -:   60:        }
+    #####:   61:        ++ordinal;
+        -:   62:    }
+        -:   63:
+    #####:   64:    const double secOverall = overallData.seconds();
+call    0 never executed
+    #####:   65:    std::cout << "Overall time: " << secOverall << "s" << std::endl;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+        -:   66:}
+        -:   67:
+function _ZN12TimerResults10AddResultsERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEl called 0 returned 0% blocks executed 0%
+    #####:   68:void TimerResults::AddResults(const std::string& str, std::clock_t clocks)
+        -:   69:{
+    #####:   70:    mResults[str].mClocks += clocks;
+call    0 never executed
+    #####:   71:    mResults[str].mNumberOfResults++;
+call    0 never executed
+    #####:   72:}
+        -:   73:
+function _ZN5TimerC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE14SHOWTIME_MODESP16TimerResultsIntf called 0 returned 0% blocks executed 0%
+    #####:   74:Timer::Timer(const std::string& str, SHOWTIME_MODES showtimeMode, TimerResultsIntf* timerResults)
+        -:   75:    : mStr(str)
+        -:   76:    , mTimerResults(timerResults)
+        -:   77:    , mStart(0)
+        -:   78:    , mShowTimeMode(showtimeMode)
+    #####:   79:    , mStopped(false)
+call    0 never executed
+        -:   80:{
+    #####:   81:    if (showtimeMode != SHOWTIME_MODES::SHOWTIME_NONE)
+branch  0 never executed
+branch  1 never executed
+    #####:   82:        mStart = std::clock();
+call    0 never executed
+    #####:   83:}
+        -:   84:
+function _ZN5TimerD2Ev called 0 returned 0% blocks executed 0%
+    #####:   85:Timer::~Timer()
+call    0 never executed
+        -:   86:{
+    #####:   87:    Stop();
+call    0 never executed
+    #####:   88:}
+        -:   89:
+function _ZN5Timer4StopEv called 0 returned 0% blocks executed 0%
+    #####:   90:void Timer::Stop()
+        -:   91:{
+    #####:   92:    if ((mShowTimeMode != SHOWTIME_MODES::SHOWTIME_NONE) && !mStopped) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   93:        const std::clock_t end = std::clock();
+call    0 never executed
+    #####:   94:        const std::clock_t diff = end - mStart;
+        -:   95:
+    #####:   96:        if (mShowTimeMode == SHOWTIME_MODES::SHOWTIME_FILE) {
+branch  0 never executed
+branch  1 never executed
+    #####:   97:            const double sec = (double)diff / CLOCKS_PER_SEC;
+    #####:   98:            std::cout << mStr << ": " << sec << "s" << std::endl;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+        -:   99:        } else {
+    #####:  100:            if (mTimerResults)
+branch  0 never executed
+branch  1 never executed
+    #####:  101:                mTimerResults->AddResults(mStr, diff);
+call    0 never executed
+        -:  102:        }
+        -:  103:    }
+        -:  104:
+    #####:  105:    mStopped = true;
+function _GLOBAL__sub_I__ZNK12TimerResults11ShowResultsE14SHOWTIME_MODES called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  106:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

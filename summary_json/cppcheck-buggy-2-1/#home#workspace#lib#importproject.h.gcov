@@ -1,0 +1,195 @@
+        -:    0:Source:/home/workspace/lib/importproject.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/settings.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/settings.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef importprojectH
+        -:   21:#define importprojectH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "config.h"
+        -:   25:#include "platform.h"
+        -:   26:#include "utils.h"
+        -:   27:
+        -:   28:#include <list>
+        -:   29:#include <map>
+        -:   30:#include <set>
+        -:   31:#include <string>
+        -:   32:#include <vector>
+        -:   33:
+        -:   34:/// @addtogroup Core
+        -:   35:/// @{
+        -:   36:
+        -:   37:namespace cppcheck {
+        -:   38:    struct stricmp {
+        -:   39:        bool operator()(const std::string &lhs, const std::string &rhs) const {
+        -:   40:            return caseInsensitiveStringCompare(lhs,rhs) < 0;
+        -:   41:        }
+        -:   42:    };
+        -:   43:}
+        -:   44:
+        -:   45:class Settings;
+        -:   46:
+        -:   47:/**
+        -:   48: * @brief Importing project settings.
+        -:   49: */
+function _ZN13ImportProjectD2Ev called 0 returned 0% blocks executed 0%
+function _ZN13ImportProjectC2Ev called 0 returned 0% blocks executed 0%
+    #####:   50:class CPPCHECKLIB ImportProject {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:   51:public:
+        -:   52:    enum class Type {
+        -:   53:        UNKNOWN,
+        -:   54:        MISSING,
+        -:   55:        COMPILE_DB,
+        -:   56:        VS_SLN,
+        -:   57:        VS_VCXPROJ,
+        -:   58:        BORLAND,
+        -:   59:        CPPCHECK_GUI
+        -:   60:    };
+        -:   61:
+        -:   62:    /** File settings. Multiple configurations for a file is allowed. */
+function _ZN13ImportProject12FileSettingsD2Ev called 0 returned 0% blocks executed 0%
+    #####:   63:    struct CPPCHECKLIB FileSettings {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -:   64:        FileSettings() : platformType(cppcheck::Platform::Unspecified), msc(false), useMfc(false) {}
+        -:   65:        std::string cfg;
+        -:   66:        std::string filename;
+        -:   67:        std::string defines;
+        -:   68:        std::string cppcheckDefines() const {
+        -:   69:            return defines + (msc ? ";_MSC_VER=1900" : "") + (useMfc ? ";__AFXWIN_H__=1" : "");
+        -:   70:        }
+        -:   71:        std::set<std::string> undefs;
+        -:   72:        std::list<std::string> includePaths;
+        -:   73:        std::list<std::string> systemIncludePaths;
+        -:   74:        std::string standard;
+        -:   75:        cppcheck::Platform::PlatformType platformType;
+        -:   76:        bool msc;
+        -:   77:        bool useMfc;
+        -:   78:
+        -:   79:        void parseCommand(const std::string &command);
+        -:   80:        void setDefines(std::string defs);
+        -:   81:        void setIncludePaths(const std::string &basepath, const std::list<std::string> &in, std::map<std::string, std::string, cppcheck::stricmp> &variables);
+        -:   82:    };
+        -:   83:    std::list<FileSettings> fileSettings;
+        -:   84:
+        -:   85:    void selectOneVsConfig(cppcheck::Platform::PlatformType platform);
+        -:   86:
+        -:   87:    // Cppcheck GUI output
+function _ZN13ImportProjectUt_D2Ev called 0 returned 0% blocks executed 0%
+function _ZN13ImportProjectUt_C2Ev called 0 returned 0% blocks executed 0%
+    #####:   88:    struct {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:   89:        std::string analyzeAllVsConfigs;
+        -:   90:        std::vector<std::string> pathNames;
+        -:   91:        std::list<std::string> libraries;
+        -:   92:        std::list<std::string> excludedPaths;
+        -:   93:        std::string projectFile;
+        -:   94:        std::string platform;
+        -:   95:    } guiProject;
+        -:   96:
+        -:   97:    void ignorePaths(const std::vector<std::string> &ipaths);
+        -:   98:    void ignoreOtherConfigs(const std::string &cfg);
+        -:   99:    void ignoreOtherPlatforms(cppcheck::Platform::PlatformType platformType);
+        -:  100:
+        -:  101:    Type import(const std::string &filename, Settings *settings=nullptr);
+        -:  102:protected:
+        -:  103:    void importCompileCommands(std::istream &istr);
+        -:  104:    bool importCppcheckGuiProject(std::istream &istr, Settings *settings);
+        -:  105:private:
+        -:  106:    void importSln(std::istream &istr, const std::string &path);
+        -:  107:    void importVcxproj(const std::string &filename, std::map<std::string, std::string, cppcheck::stricmp> &variables, const std::string &additionalIncludeDirectories);
+        -:  108:    void importBcb6Prj(const std::string &projectFilename);
+        -:  109:
+        -:  110:    std::string mPath;
+        -:  111:};
+        -:  112:
+        -:  113:
+        -:  114:namespace CppcheckXml {
+        -:  115:    const char ProjectElementName[] = "project";
+        -:  116:    const char ProjectVersionAttrib[] = "version";
+        -:  117:    const char ProjectFileVersion[] = "1";
+        -:  118:    const char BuildDirElementName[] = "builddir";
+        -:  119:    const char ImportProjectElementName[] = "importproject";
+        -:  120:    const char AnalyzeAllVsConfigsElementName[] = "analyze-all-vs-configs";
+        -:  121:    const char IncludeDirElementName[] = "includedir";
+        -:  122:    const char DirElementName[] = "dir";
+        -:  123:    const char DirNameAttrib[] = "name";
+        -:  124:    const char DefinesElementName[] = "defines";
+        -:  125:    const char DefineName[] = "define";
+        -:  126:    const char DefineNameAttrib[] = "name";
+        -:  127:    const char UndefinesElementName[] = "undefines";
+        -:  128:    const char UndefineName[] = "undefine";
+        -:  129:    const char PathsElementName[] = "paths";
+        -:  130:    const char PathName[] = "dir";
+        -:  131:    const char PathNameAttrib[] = "name";
+        -:  132:    const char RootPathName[] = "root";
+        -:  133:    const char RootPathNameAttrib[] = "name";
+        -:  134:    const char IgnoreElementName[] = "ignore";
+        -:  135:    const char IgnorePathName[] = "path";
+        -:  136:    const char IgnorePathNameAttrib[] = "name";
+        -:  137:    const char ExcludeElementName[] = "exclude";
+        -:  138:    const char ExcludePathName[] = "path";
+        -:  139:    const char ExcludePathNameAttrib[] = "name";
+        -:  140:    const char LibrariesElementName[] = "libraries";
+        -:  141:    const char LibraryElementName[] = "library";
+        -:  142:    const char PlatformElementName[] = "platform";
+        -:  143:    const char SuppressionsElementName[] = "suppressions";
+        -:  144:    const char SuppressionElementName[] = "suppression";
+        -:  145:    const char AddonElementName[] = "addon";
+        -:  146:    const char AddonsElementName[] = "addons";
+        -:  147:    const char ToolElementName[] = "tool";
+        -:  148:    const char ToolsElementName[] = "tools";
+        -:  149:    const char TagsElementName[] = "tags";
+        -:  150:    const char TagElementName[] = "tag";
+        -:  151:    const char CheckHeadersElementName[] = "check-headers";
+        -:  152:    const char CheckUnusedTemplatesElementName[] = "check-unused-templates";
+        -:  153:    const char MaxCtuDepthElementName[] = "max-ctu-depth";
+        -:  154:    const char CheckUnknownFunctionReturn[] = "check-unknown-function-return-values";
+        -:  155:    const char Name[] = "name";
+        -:  156:}
+        -:  157:
+        -:  158:/// @}
+        -:  159://---------------------------------------------------------------------------
+        -:  160:#endif // importprojectH

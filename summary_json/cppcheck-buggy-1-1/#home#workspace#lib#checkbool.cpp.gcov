@@ -1,0 +1,1407 @@
+        -:    0:Source:/home/workspace/lib/checkbool.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkbool.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkbool.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#include "checkbool.h"
+        -:   22:
+        -:   23:#include "astutils.h"
+        -:   24:#include "errorlogger.h"
+        -:   25:#include "mathlib.h"
+        -:   26:#include "settings.h"
+        -:   27:#include "symboldatabase.h"
+        -:   28:#include "token.h"
+        -:   29:#include "tokenize.h"
+        -:   30:#include "valueflow.h"
+        -:   31:
+        -:   32:#include <cstddef>
+        -:   33:#include <list>
+        -:   34://---------------------------------------------------------------------------
+        -:   35:
+        -:   36:// Register this check class (by creating a static instance of it)
+        -:   37:namespace {
+        1:   38:    CheckBool instance;
+call    0 returned 100%
+call    1 returned 100%
+        -:   39:}
+        -:   40:
+        1:   41:static const CWE CWE398(398U);  // Indicator of Poor Code Quality
+call    0 returned 100%
+        1:   42:static const CWE CWE571(571U);  // Expression is Always True
+call    0 returned 100%
+        1:   43:static const CWE CWE587(587U);  // Assignment of a Fixed Address to a Pointer
+call    0 returned 100%
+        1:   44:static const CWE CWE704(704U);  // Incorrect Type Conversion or Cast
+call    0 returned 100%
+        -:   45:
+function _ZL6isBoolPK8Variable called 0 returned 0% blocks executed 0%
+    #####:   46:static bool isBool(const Variable* var)
+        -:   47:{
+    #####:   48:    return (var && Token::Match(var->typeEndToken(), "bool|_Bool"));
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:   49:}
+        -:   50:
+        -:   51://---------------------------------------------------------------------------
+function _ZN9CheckBool21checkIncrementBooleanEv called 0 returned 0% blocks executed 0%
+    #####:   52:void CheckBool::checkIncrementBoolean()
+        -:   53:{
+    #####:   54:    if (!mSettings->isEnabled(Settings::STYLE))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   55:        return;
+        -:   56:
+    #####:   57:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:   58:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   59:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:   60:            if (Token::Match(tok, "%var% ++")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   61:                const Variable *var = tok->variable();
+call    0 never executed
+    #####:   62:                if (isBool(var))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   63:                    incrementBooleanError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   64:            }
+        -:   65:        }
+        -:   66:    }
+        -:   67:}
+        -:   68:
+function _ZN9CheckBool21incrementBooleanErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:   69:void CheckBool::incrementBooleanError(const Token *tok)
+        -:   70:{
+    #####:   71:    reportError(
+call    0 never executed
+        -:   72:        tok,
+        -:   73:        Severity::style,
+        -:   74:        "incrementboolean",
+        -:   75:        "Incrementing a variable of type 'bool' with postfix operator++ is deprecated by the C++ Standard. You should assign it the value 'true' instead.\n"
+        -:   76:        "The operand of a postfix increment operator may be of type bool but it is deprecated by C++ Standard (Annex D-1) and the operand is always set to true. You should assign it the value 'true' instead.",
+        -:   77:        CWE398, false
+        -:   78:    );
+    #####:   79:}
+        -:   80:
+        -:   81://---------------------------------------------------------------------------
+        -:   82:// if (bool & bool) -> if (bool && bool)
+        -:   83:// if (bool | bool) -> if (bool || bool)
+        -:   84://---------------------------------------------------------------------------
+function _ZN9CheckBool21checkBitwiseOnBooleanEv called 0 returned 0% blocks executed 0%
+    #####:   85:void CheckBool::checkBitwiseOnBoolean()
+        -:   86:{
+    #####:   87:    if (!mSettings->isEnabled(Settings::STYLE))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   88:        return;
+        -:   89:
+        -:   90:    // danmar: this is inconclusive because I don't like that there are
+        -:   91:    //         warnings for calculations. Example: set_flag(a & b);
+    #####:   92:    if (!mSettings->inconclusive)
+branch  0 never executed
+branch  1 never executed
+    #####:   93:        return;
+        -:   94:
+    #####:   95:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:   96:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   97:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:   98:            if (Token::Match(tok, "(|.|return|&&|%oror%|throw|, %var% [&|]")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   99:                const Variable *var = tok->next()->variable();
+call    0 never executed
+call    1 never executed
+    #####:  100:                if (isBool(var)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  101:                    bitwiseOnBooleanError(tok->next(), var->name(), tok->strAt(2) == "&" ? "&&" : "||");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  102:                    tok = tok->tokAt(2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  103:                }
+    #####:  104:            } else if (Token::Match(tok, "[&|] %var% )|.|return|&&|%oror%|throw|,") && (!tok->previous() || !tok->previous()->isExtendedOp() || tok->strAt(-1) == ")" || tok->strAt(-1) == "]")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+branch 26 never executed
+branch 27 never executed
+    #####:  105:                const Variable *var = tok->next()->variable();
+call    0 never executed
+call    1 never executed
+    #####:  106:                if (isBool(var)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  107:                    bitwiseOnBooleanError(tok->next(), var->name(), tok->str() == "&" ? "&&" : "||");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+    #####:  108:                    tok = tok->tokAt(2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  109:                }
+        -:  110:            }
+        -:  111:        }
+        -:  112:    }
+        -:  113:}
+        -:  114:
+function _ZN9CheckBool21bitwiseOnBooleanErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####:  115:void CheckBool::bitwiseOnBooleanError(const Token *tok, const std::string &varname, const std::string &op)
+        -:  116:{
+    #####:  117:    reportError(tok, Severity::style, "bitwiseOnBoolean",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  118:                "Boolean variable '" + varname + "' is used in bitwise operation. Did you mean '" + op + "'?",
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -:  119:                CWE398,
+        -:  120:                true);
+    #####:  121:}
+        -:  122:
+        -:  123://---------------------------------------------------------------------------
+        -:  124://    if (!x==3) <- Probably meant to be "x!=3"
+        -:  125://---------------------------------------------------------------------------
+        -:  126:
+function _ZN9CheckBool28checkComparisonOfBoolWithIntEv called 0 returned 0% blocks executed 0%
+    #####:  127:void CheckBool::checkComparisonOfBoolWithInt()
+        -:  128:{
+    #####:  129:    if (!mSettings->isEnabled(Settings::WARNING) || !mTokenizer->isCPP())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  130:        return;
+        -:  131:
+    #####:  132:    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  133:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  134:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  135:            if (!tok->isComparisonOp() || !tok->isBinaryOp())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  136:                continue;
+    #####:  137:            const Token* const left = tok->astOperand1();
+call    0 never executed
+    #####:  138:            const Token* const right = tok->astOperand2();
+call    0 never executed
+    #####:  139:            if (left->isBoolean() && right->varId()) { // Comparing boolean constant with variable
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  140:                if (tok->str() != "==" && tok->str() != "!=") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  141:                    comparisonOfBoolWithInvalidComparator(right, left->str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  142:                }
+    #####:  143:            } else if (left->varId() && right->isBoolean()) { // Comparing variable with boolean constant
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  144:                if (tok->str() != "==" && tok->str() != "!=") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  145:                    comparisonOfBoolWithInvalidComparator(right, left->str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  146:                }
+        -:  147:            }
+        -:  148:        }
+        -:  149:    }
+        -:  150:}
+        -:  151:
+function _ZN9CheckBool37comparisonOfBoolWithInvalidComparatorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  152:void CheckBool::comparisonOfBoolWithInvalidComparator(const Token *tok, const std::string &expression)
+        -:  153:{
+    #####:  154:    reportError(tok, Severity::warning, "comparisonOfBoolWithInvalidComparator",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  155:                "Comparison of a boolean value using relational operator (<, >, <= or >=).\n"
+    #####:  156:                "The result of the expression '" + expression + "' is of type 'bool'. "
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:  157:                "Comparing 'bool' value using relational (<, >, <= or >=)"
+        -:  158:                " operator could cause unexpected results.");
+    #####:  159:}
+        -:  160:
+        -:  161://-------------------------------------------------------------------------------
+        -:  162:// Comparing functions which are returning value of type bool
+        -:  163://-------------------------------------------------------------------------------
+        -:  164:
+function _ZL28tokenIsFunctionReturningBoolPK5Token called 0 returned 0% blocks executed 0%
+    #####:  165:static bool tokenIsFunctionReturningBool(const Token* tok)
+        -:  166:{
+    #####:  167:    const Function* func = tok->function();
+call    0 never executed
+    #####:  168:    if (func && Token::Match(tok, "%name% (")) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  169:        if (func->tokenDef && Token::Match(func->tokenDef->previous(), "bool|_Bool")) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  170:            return true;
+        -:  171:        }
+        -:  172:    }
+    #####:  173:    return false;
+        -:  174:}
+        -:  175:
+function _ZN9CheckBool34checkComparisonOfFuncReturningBoolEv called 0 returned 0% blocks executed 0%
+    #####:  176:void CheckBool::checkComparisonOfFuncReturningBool()
+        -:  177:{
+    #####:  178:    if (!mSettings->isEnabled(Settings::STYLE))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  179:        return;
+        -:  180:
+    #####:  181:    if (!mTokenizer->isCPP())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  182:        return;
+        -:  183:
+    #####:  184:    const SymbolDatabase * const symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+        -:  185:
+    #####:  186:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  187:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  188:            if (!tok->isComparisonOp() || tok->str() == "==" || tok->str() == "!=")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  189:                continue;
+    #####:  190:            const Token *firstToken = tok->previous();
+call    0 never executed
+    #####:  191:            if (tok->strAt(-1) == ")") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  192:                firstToken = firstToken->link()->previous();
+call    0 never executed
+call    1 never executed
+        -:  193:            }
+    #####:  194:            const Token *secondToken = tok->next();
+call    0 never executed
+    #####:  195:            while (secondToken->str() == "!") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  196:                secondToken = secondToken->next();
+call    0 never executed
+        -:  197:            }
+    #####:  198:            const bool firstIsFunctionReturningBool = tokenIsFunctionReturningBool(firstToken);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  199:            const bool secondIsFunctionReturningBool = tokenIsFunctionReturningBool(secondToken);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  200:            if (firstIsFunctionReturningBool && secondIsFunctionReturningBool) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  201:                comparisonOfTwoFuncsReturningBoolError(firstToken->next(), firstToken->str(), secondToken->str());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  202:            } else if (firstIsFunctionReturningBool) {
+branch  0 never executed
+branch  1 never executed
+    #####:  203:                comparisonOfFuncReturningBoolError(firstToken->next(), firstToken->str());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  204:            } else if (secondIsFunctionReturningBool) {
+branch  0 never executed
+branch  1 never executed
+    #####:  205:                comparisonOfFuncReturningBoolError(secondToken->previous(), secondToken->str());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  206:            }
+        -:  207:        }
+        -:  208:    }
+        -:  209:}
+        -:  210:
+function _ZN9CheckBool34comparisonOfFuncReturningBoolErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  211:void CheckBool::comparisonOfFuncReturningBoolError(const Token *tok, const std::string &expression)
+        -:  212:{
+    #####:  213:    reportError(tok, Severity::style, "comparisonOfFuncReturningBoolError",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  214:                "Comparison of a function returning boolean value using relational (<, >, <= or >=) operator.\n"
+    #####:  215:                "The return type of function '" + expression + "' is 'bool' "
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:  216:                "and result is of type 'bool'. Comparing 'bool' value using relational (<, >, <= or >=)"
+        -:  217:                " operator could cause unexpected results.", CWE398, false);
+    #####:  218:}
+        -:  219:
+function _ZN9CheckBool38comparisonOfTwoFuncsReturningBoolErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####:  220:void CheckBool::comparisonOfTwoFuncsReturningBoolError(const Token *tok, const std::string &expression1, const std::string &expression2)
+        -:  221:{
+    #####:  222:    reportError(tok, Severity::style, "comparisonOfTwoFuncsReturningBoolError",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  223:                "Comparison of two functions returning boolean value using relational (<, >, <= or >=) operator.\n"
+    #####:  224:                "The return type of function '" + expression1 + "' and function '" + expression2 + "' is 'bool' "
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -:  225:                "and result is of type 'bool'. Comparing 'bool' value using relational (<, >, <= or >=)"
+        -:  226:                " operator could cause unexpected results.", CWE398, false);
+    #####:  227:}
+        -:  228:
+        -:  229://-------------------------------------------------------------------------------
+        -:  230:// Comparison of bool with bool
+        -:  231://-------------------------------------------------------------------------------
+        -:  232:
+function _ZN9CheckBool29checkComparisonOfBoolWithBoolEv called 0 returned 0% blocks executed 0%
+    #####:  233:void CheckBool::checkComparisonOfBoolWithBool()
+        -:  234:{
+        -:  235:    // FIXME: This checking is "experimental" because of the false positives
+        -:  236:    //        when self checking lib/tokenize.cpp (#2617)
+    #####:  237:    if (!mSettings->experimental)
+branch  0 never executed
+branch  1 never executed
+    #####:  238:        return;
+        -:  239:
+    #####:  240:    if (!mSettings->isEnabled(Settings::STYLE))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  241:        return;
+        -:  242:
+    #####:  243:    if (!mTokenizer->isCPP())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  244:        return;
+        -:  245:
+    #####:  246:    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+        -:  247:
+    #####:  248:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  249:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  250:            if (!tok->isComparisonOp() || tok->str() == "==" || tok->str() == "!=")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  251:                continue;
+    #####:  252:            bool firstTokenBool = false;
+        -:  253:
+    #####:  254:            const Token *firstToken = tok->previous();
+call    0 never executed
+    #####:  255:            if (firstToken->varId()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  256:                if (isBool(firstToken->variable())) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  257:                    firstTokenBool = true;
+        -:  258:                }
+        -:  259:            }
+    #####:  260:            if (!firstTokenBool)
+branch  0 never executed
+branch  1 never executed
+    #####:  261:                continue;
+        -:  262:
+    #####:  263:            bool secondTokenBool = false;
+    #####:  264:            const Token *secondToken = tok->next();
+call    0 never executed
+    #####:  265:            if (secondToken->varId()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  266:                if (isBool(secondToken->variable())) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  267:                    secondTokenBool = true;
+        -:  268:                }
+        -:  269:            }
+    #####:  270:            if (secondTokenBool) {
+branch  0 never executed
+branch  1 never executed
+    #####:  271:                comparisonOfBoolWithBoolError(firstToken->next(), secondToken->str());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  272:            }
+        -:  273:        }
+        -:  274:    }
+        -:  275:}
+        -:  276:
+function _ZN9CheckBool29comparisonOfBoolWithBoolErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  277:void CheckBool::comparisonOfBoolWithBoolError(const Token *tok, const std::string &expression)
+        -:  278:{
+    #####:  279:    reportError(tok, Severity::style, "comparisonOfBoolWithBoolError",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  280:                "Comparison of a variable having boolean value using relational (<, >, <= or >=) operator.\n"
+    #####:  281:                "The variable '" + expression + "' is of type 'bool' "
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:  282:                "and comparing 'bool' value using relational (<, >, <= or >=)"
+        -:  283:                " operator could cause unexpected results.", CWE398, false);
+    #####:  284:}
+        -:  285:
+        -:  286://-----------------------------------------------------------------------------
+function _ZN9CheckBool24checkAssignBoolToPointerEv called 0 returned 0% blocks executed 0%
+    #####:  287:void CheckBool::checkAssignBoolToPointer()
+        -:  288:{
+    #####:  289:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  290:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  291:        for (const Token* tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  292:            if (tok->str() != "=")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  293:                continue;
+    #####:  294:            const ValueType *lhsType = tok->astOperand1() ? tok->astOperand1()->valueType() : nullptr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  295:            if (!lhsType || lhsType->pointer == 0)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  296:                continue;
+    #####:  297:            const ValueType *rhsType = tok->astOperand2() ? tok->astOperand2()->valueType() : nullptr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  298:            if (!rhsType || rhsType->pointer > 0 || rhsType->type != ValueType::Type::BOOL)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  299:                continue;
+        -:  300:
+    #####:  301:            assignBoolToPointerError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  302:        }
+        -:  303:    }
+    #####:  304:}
+        -:  305:
+function _ZN9CheckBool24assignBoolToPointerErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  306:void CheckBool::assignBoolToPointerError(const Token *tok)
+        -:  307:{
+    #####:  308:    reportError(tok, Severity::error, "assignBoolToPointer",
+call    0 never executed
+        -:  309:                "Boolean value assigned to pointer.", CWE587, false);
+    #####:  310:}
+        -:  311:
+        -:  312://-----------------------------------------------------------------------------
+        -:  313://-----------------------------------------------------------------------------
+function _ZN9CheckBool38checkComparisonOfBoolExpressionWithIntEv called 0 returned 0% blocks executed 0%
+    #####:  314:void CheckBool::checkComparisonOfBoolExpressionWithInt()
+        -:  315:{
+    #####:  316:    if (!mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  317:        return;
+        -:  318:
+    #####:  319:    const SymbolDatabase* symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+        -:  320:
+    #####:  321:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  322:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  323:            if (!tok->isComparisonOp())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  324:                continue;
+        -:  325:
+    #####:  326:            const Token* numTok = nullptr;
+    #####:  327:            const Token* boolExpr = nullptr;
+        -:  328:            bool numInRhs;
+    #####:  329:            if (astIsBool(tok->astOperand1())) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  330:                boolExpr = tok->astOperand1();
+call    0 never executed
+    #####:  331:                numTok = tok->astOperand2();
+call    0 never executed
+    #####:  332:                numInRhs = true;
+    #####:  333:            } else if (astIsBool(tok->astOperand2())) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  334:                boolExpr = tok->astOperand2();
+call    0 never executed
+    #####:  335:                numTok = tok->astOperand1();
+call    0 never executed
+    #####:  336:                numInRhs = false;
+        -:  337:            } else {
+    #####:  338:                continue;
+        -:  339:            }
+        -:  340:
+    #####:  341:            if (!numTok || !boolExpr)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  342:                continue;
+        -:  343:
+    #####:  344:            if (boolExpr->isOp() && numTok->isName() && Token::Match(tok, "==|!="))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+        -:  345:                // there is weird code such as:  ((a<b)==c)
+        -:  346:                // but it is probably written this way by design.
+    #####:  347:                continue;
+        -:  348:
+    #####:  349:            if (astIsBool(numTok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  350:                continue;
+        -:  351:
+    #####:  352:            if (numTok->isNumber()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  353:                const MathLib::bigint num = MathLib::toLongNumber(numTok->str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  354:                if (num==0 &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  355:                    (numInRhs ? Token::Match(tok, ">|==|!=")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  356:                     : Token::Match(tok, "<|==|!=")))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  357:                    continue;
+    #####:  358:                if (num==1 &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  359:                    (numInRhs ? Token::Match(tok, "<|==|!=")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  360:                     : Token::Match(tok, ">|==|!=")))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  361:                    continue;
+    #####:  362:                comparisonOfBoolExpressionWithIntError(tok, true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  363:            } else if (astIsIntegral(numTok, false) && mTokenizer->isCPP())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  364:                comparisonOfBoolExpressionWithIntError(tok, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  365:        }
+        -:  366:    }
+        -:  367:}
+        -:  368:
+function _ZN9CheckBool38comparisonOfBoolExpressionWithIntErrorEPK5Tokenb called 0 returned 0% blocks executed 0%
+    #####:  369:void CheckBool::comparisonOfBoolExpressionWithIntError(const Token *tok, bool n0o1)
+        -:  370:{
+    #####:  371:    if (n0o1)
+branch  0 never executed
+branch  1 never executed
+    #####:  372:        reportError(tok, Severity::warning, "compareBoolExpressionWithInt",
+call    0 never executed
+        -:  373:                    "Comparison of a boolean expression with an integer other than 0 or 1.", CWE398, false);
+        -:  374:    else
+    #####:  375:        reportError(tok, Severity::warning, "compareBoolExpressionWithInt",
+call    0 never executed
+        -:  376:                    "Comparison of a boolean expression with an integer.", CWE398, false);
+    #####:  377:}
+        -:  378:
+        -:  379:
+function _ZN9CheckBool16pointerArithBoolEv called 0 returned 0% blocks executed 0%
+    #####:  380:void CheckBool::pointerArithBool()
+        -:  381:{
+    #####:  382:    const SymbolDatabase* symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+        -:  383:
+    #####:  384:    for (const Scope &scope : symbolDatabase->scopeList) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  385:        if (scope.type != Scope::eIf && scope.type != Scope::eWhile && scope.type != Scope::eDo && scope.type != Scope::eFor)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  386:            continue;
+    #####:  387:        const Token* tok = scope.classDef->next()->astOperand2();
+call    0 never executed
+call    1 never executed
+    #####:  388:        if (scope.type == Scope::eFor) {
+branch  0 never executed
+branch  1 never executed
+    #####:  389:            tok = Token::findsimplematch(scope.classDef->tokAt(2), ";");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  390:            if (tok)
+branch  0 never executed
+branch  1 never executed
+    #####:  391:                tok = tok->astOperand2();
+call    0 never executed
+    #####:  392:            if (tok)
+branch  0 never executed
+branch  1 never executed
+    #####:  393:                tok = tok->astOperand1();
+call    0 never executed
+    #####:  394:        } else if (scope.type == Scope::eDo)
+branch  0 never executed
+branch  1 never executed
+    #####:  395:            tok = (scope.bodyEnd->tokAt(2)) ? scope.bodyEnd->tokAt(2)->astOperand2() : nullptr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+        -:  396:
+    #####:  397:        pointerArithBoolCond(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  398:    }
+    #####:  399:}
+        -:  400:
+function _ZN9CheckBool20pointerArithBoolCondEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  401:void CheckBool::pointerArithBoolCond(const Token *tok)
+        -:  402:{
+    #####:  403:    if (!tok)
+branch  0 never executed
+branch  1 never executed
+    #####:  404:        return;
+    #####:  405:    if (Token::Match(tok, "&&|%oror%")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  406:        pointerArithBoolCond(tok->astOperand1());
+call    0 never executed
+call    1 never executed
+    #####:  407:        pointerArithBoolCond(tok->astOperand2());
+call    0 never executed
+call    1 never executed
+    #####:  408:        return;
+        -:  409:    }
+    #####:  410:    if (tok->str() != "+" && tok->str() != "-")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  411:        return;
+        -:  412:
+    #####:  413:    if (tok->isBinaryOp() &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  414:        tok->astOperand1()->isName() &&
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  415:        tok->astOperand1()->variable() &&
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  416:        tok->astOperand1()->variable()->isPointer() &&
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  417:        tok->astOperand2()->isNumber())
+call    0 never executed
+call    1 never executed
+    #####:  418:        pointerArithBoolError(tok);
+call    0 never executed
+        -:  419:}
+        -:  420:
+function _ZN9CheckBool21pointerArithBoolErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  421:void CheckBool::pointerArithBoolError(const Token *tok)
+        -:  422:{
+    #####:  423:    reportError(tok,
+call    0 never executed
+        -:  424:                Severity::error,
+        -:  425:                "pointerArithBool",
+        -:  426:                "Converting pointer arithmetic result to bool. The bool is always true unless there is undefined behaviour.\n"
+        -:  427:                "Converting pointer arithmetic result to bool. The boolean result is always true unless there is pointer arithmetic overflow, and overflow is undefined behaviour. Probably a dereference is forgotten.", CWE571, false);
+    #####:  428:}
+        -:  429:
+function _ZN9CheckBool22checkAssignBoolToFloatEv called 0 returned 0% blocks executed 0%
+    #####:  430:void CheckBool::checkAssignBoolToFloat()
+        -:  431:{
+    #####:  432:    if (!mTokenizer->isCPP())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  433:        return;
+    #####:  434:    if (!mSettings->isEnabled(Settings::STYLE))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  435:        return;
+    #####:  436:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  437:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  438:        for (const Token* tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  439:            if (tok->str() == "=" && astIsBool(tok->astOperand2())) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  440:                const Token *lhs = tok->astOperand1();
+call    0 never executed
+    #####:  441:                while (lhs && (lhs->str() == "." || lhs->str() == "::"))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  442:                    lhs = lhs->astOperand2();
+call    0 never executed
+    #####:  443:                if (!lhs || !lhs->variable())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  444:                    continue;
+    #####:  445:                const Variable* var = lhs->variable();
+call    0 never executed
+    #####:  446:                if (var && var->isFloatingType() && !var->isArrayOrPointer())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  447:                    assignBoolToFloatError(tok->next());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  448:            }
+        -:  449:        }
+        -:  450:    }
+        -:  451:}
+        -:  452:
+function _ZN9CheckBool22assignBoolToFloatErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  453:void CheckBool::assignBoolToFloatError(const Token *tok)
+        -:  454:{
+    #####:  455:    reportError(tok, Severity::style, "assignBoolToFloat",
+call    0 never executed
+        -:  456:                "Boolean value assigned to floating point variable.", CWE704, false);
+    #####:  457:}
+        -:  458:
+function _ZN9CheckBool34returnValueOfFunctionReturningBoolEv called 0 returned 0% blocks executed 0%
+    #####:  459:void CheckBool::returnValueOfFunctionReturningBool(void)
+        -:  460:{
+    #####:  461:    if (!mSettings->isEnabled(Settings::STYLE))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  462:        return;
+        -:  463:
+    #####:  464:    const SymbolDatabase * const symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+        -:  465:
+    #####:  466:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  467:        if (!(scope->function && Token::Match(scope->function->retDef, "bool|_Bool")))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  468:            continue;
+        -:  469:
+    #####:  470:        for (const Token* tok = scope->bodyStart->next(); tok && (tok != scope->bodyEnd); tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+        -:  471:            // Skip lambdas
+    #####:  472:            const Token* tok2 = findLambdaEndToken(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  473:            if (tok2)
+branch  0 never executed
+branch  1 never executed
+    #####:  474:                tok = tok2;
+    #####:  475:            else if (tok->scope() && tok->scope()->isClassOrStruct())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  476:                tok = tok->scope()->bodyEnd;
+call    0 never executed
+    #####:  477:            else if (Token::simpleMatch(tok, "return") && tok->astOperand1() &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  478:                     (tok->astOperand1()->getValueGE(2, mSettings) || tok->astOperand1()->getValueLE(-1, mSettings)) &&
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  479:                     !(tok->astOperand1()->astOperand1() && Token::Match(tok->astOperand1(), "&|%or%")))
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  480:                returnValueBoolError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  481:        }
+        -:  482:    }
+        -:  483:}
+        -:  484:
+function _ZN9CheckBool20returnValueBoolErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  485:void CheckBool::returnValueBoolError(const Token *tok)
+        -:  486:{
+    #####:  487:    reportError(tok, Severity::style, "returnNonBoolInBooleanFunction", "Non-boolean value returned from function returning bool");
+call    0 never executed
+function _GLOBAL__sub_I__ZN9CheckBool21checkIncrementBooleanEv called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  488:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

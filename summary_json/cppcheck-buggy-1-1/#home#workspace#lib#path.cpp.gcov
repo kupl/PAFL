@@ -1,0 +1,568 @@
+        -:    0:Source:/home/workspace/lib/path.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/path.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/path.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#if defined(__GNUC__) && (defined(_WIN32) || defined(__CYGWIN__))
+        -:   20:#undef __STRICT_ANSI__
+        -:   21:#endif
+        -:   22:#include "path.h"
+        -:   23:#include "utils.h"
+        -:   24:
+        -:   25:#include <algorithm>
+        -:   26:#include <cctype>
+        -:   27:#include <cstdlib>
+        -:   28:#include <cstring>
+        -:   29:#include <fstream>
+        -:   30:#include <sstream>
+        -:   31:
+        -:   32:#ifndef _WIN32
+        -:   33:#include <unistd.h>
+        -:   34:#else
+        -:   35:#include <direct.h>
+        -:   36:#endif
+        -:   37:#if defined(__CYGWIN__)
+        -:   38:#include <strings.h>
+        -:   39:#endif
+        -:   40:
+        -:   41:#include <simplecpp.h>
+        -:   42:
+        -:   43:/** Is the filesystem case insensitive? */
+function _ZL25caseInsensitiveFilesystemv called 1075 returned 100% blocks executed 100%
+     1075:   44:static bool caseInsensitiveFilesystem()
+        -:   45:{
+        -:   46:#ifdef _WIN32
+        -:   47:    return true;
+        -:   48:#else
+        -:   49:    // TODO: Non-windows filesystems might be case insensitive
+     1075:   50:    return false;
+        -:   51:#endif
+        -:   52:}
+        -:   53:
+function _ZN4Path18toNativeSeparatorsENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 78 returned 100% blocks executed 100%
+       78:   54:std::string Path::toNativeSeparators(std::string path)
+        -:   55:{
+        -:   56:#if defined(_WIN32)
+        -:   57:    const char separ = '/';
+        -:   58:    const char native = '\\';
+        -:   59:#else
+       78:   60:    const char separ = '\\';
+       78:   61:    const char native = '/';
+        -:   62:#endif
+       78:   63:    std::replace(path.begin(), path.end(), separ, native);
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+       78:   64:    return path;
+call    0 returned 100%
+        -:   65:}
+        -:   66:
+function _ZN4Path20fromNativeSeparatorsENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:   67:std::string Path::fromNativeSeparators(std::string path)
+        -:   68:{
+    #####:   69:    const char nonnative = '\\';
+    #####:   70:    const char newsepar = '/';
+    #####:   71:    std::replace(path.begin(), path.end(), nonnative, newsepar);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   72:    return path;
+call    0 never executed
+        -:   73:}
+        -:   74:
+function _ZN4Path12simplifyPathENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:   75:std::string Path::simplifyPath(std::string originalPath)
+        -:   76:{
+    #####:   77:    return simplecpp::simplifyPath(originalPath);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:   78:}
+        -:   79:
+function _ZN4Path19getPathFromFilenameERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:   80:std::string Path::getPathFromFilename(const std::string &filename)
+        -:   81:{
+    #####:   82:    const std::size_t pos = filename.find_last_of("\\/");
+call    0 never executed
+        -:   83:
+    #####:   84:    if (pos != std::string::npos)
+branch  0 never executed
+branch  1 never executed
+    #####:   85:        return filename.substr(0, 1 + pos);
+call    0 never executed
+        -:   86:
+    #####:   87:    return "";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:   88:}
+        -:   89:
+function _ZN4Path12sameFileNameERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####:   90:bool Path::sameFileName(const std::string &fname1, const std::string &fname2)
+        -:   91:{
+    #####:   92:    return caseInsensitiveFilesystem() ? (caseInsensitiveStringCompare(fname1, fname2) == 0) : (fname1 == fname2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:   93:}
+        -:   94:
+        -:   95:// This wrapper exists because Sun's CC does not allow a static_cast
+        -:   96:// from extern "C" int(*)(int) to int(*)(int).
+function _ZL14tolowerWrapperi called 1436 returned 100% blocks executed 100%
+     1436:   97:static int tolowerWrapper(int c)
+        -:   98:{
+     1436:   99:    return std::tolower(c);
+        -:  100:}
+        -:  101:
+function _ZN4Path20removeQuotationMarksENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  102:std::string Path::removeQuotationMarks(std::string path)
+        -:  103:{
+    #####:  104:    path.erase(std::remove(path.begin(), path.end(), '\"'), path.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  105:    return path;
+call    0 never executed
+        -:  106:}
+        -:  107:
+function _ZN4Path20getFilenameExtensionERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 1075 returned 100% blocks executed 42%
+     1075:  108:std::string Path::getFilenameExtension(const std::string &path)
+        -:  109:{
+     1075:  110:    const std::string::size_type dotLocation = path.find_last_of('.');
+call    0 returned 100%
+     1075:  111:    if (dotLocation == std::string::npos)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  112:        return "";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  113:
+     2150:  114:    std::string extension = path.substr(dotLocation);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+     1075:  115:    if (caseInsensitiveFilesystem()) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+        -:  116:        // on a case insensitive filesystem the case doesn't matter so
+        -:  117:        // let's return the extension in lowercase
+    #####:  118:        std::transform(extension.begin(), extension.end(), extension.begin(), tolowerWrapper);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  119:    }
+     1075:  120:    return extension;
+call    0 returned 100%
+        -:  121:}
+        -:  122:
+function _ZN4Path31getFilenameExtensionInLowerCaseERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 469 returned 100% blocks executed 89%
+      469:  123:std::string Path::getFilenameExtensionInLowerCase(const std::string &path)
+        -:  124:{
+      469:  125:    std::string extension = getFilenameExtension(path);
+call    0 returned 100%
+      469:  126:    std::transform(extension.begin(), extension.end(), extension.begin(), tolowerWrapper);
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+      469:  127:    return extension;
+call    0 never executed
+        -:  128:}
+        -:  129:
+function _ZN4Path14getCurrentPathB5cxx11Ev called 4 returned 100% blocks executed 64%
+        4:  130:std::string Path::getCurrentPath()
+        -:  131:{
+        -:  132:    char currentPath[4096];
+        -:  133:
+        -:  134:#ifndef _WIN32
+        4:  135:    if (getcwd(currentPath, 4096) != nullptr)
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        -:  136:#else
+        -:  137:    if (_getcwd(currentPath, 4096) != 0)
+        -:  138:#endif
+        4:  139:        return std::string(currentPath);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        -:  140:
+    #####:  141:    return emptyString;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  142:}
+        -:  143:
+function _ZN4Path10isAbsoluteERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  144:bool Path::isAbsolute(const std::string& path)
+        -:  145:{
+    #####:  146:    const std::string& nativePath = toNativeSeparators(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+        -:  147:
+        -:  148:#ifdef _WIN32
+        -:  149:    if (path.length() < 2)
+        -:  150:        return false;
+        -:  151:
+        -:  152:    // On Windows, 'C:\foo\bar' is an absolute path, while 'C:foo\bar' is not
+        -:  153:    if (nativePath.compare(0, 2, "\\\\") == 0 || (std::isalpha(nativePath[0]) != 0 && nativePath.compare(1, 2, ":\\") == 0))
+        -:  154:        return true;
+        -:  155:#else
+    #####:  156:    if (!nativePath.empty() && nativePath[0] == '/')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  157:        return true;
+        -:  158:#endif
+        -:  159:
+    #####:  160:    return false;
+        -:  161:}
+        -:  162:
+function _ZN4Path15getRelativePathERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNSt7__debug6vectorIS5_SaIS5_EEE called 0 returned 0% blocks executed 0%
+    #####:  163:std::string Path::getRelativePath(const std::string& absolutePath, const std::vector<std::string>& basePaths)
+        -:  164:{
+    #####:  165:    for (const std::string &bp : basePaths) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  166:        if (absolutePath == bp || bp.empty()) // Seems to be a file, or path is empty
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  167:            continue;
+        -:  168:
+    #####:  169:        if (absolutePath.compare(0, bp.length(), bp) != 0)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  170:            continue;
+        -:  171:
+    #####:  172:        if (endsWith(bp,'/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  173:            return absolutePath.substr(bp.length());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  174:        else if (absolutePath.size() > bp.size() && absolutePath[bp.length()] == '/')
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  175:            return absolutePath.substr(bp.length() + 1);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  176:    }
+    #####:  177:    return absolutePath;
+call    0 never executed
+        -:  178:}
+        -:  179:
+function _ZN4Path3isCERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 386 returned 100% blocks executed 100%
+      386:  180:bool Path::isC(const std::string &path)
+        -:  181:{
+        -:  182:    // In unix, ".C" is considered C++ file
+      772:  183:    const std::string extension = getFilenameExtension(path);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+      552:  184:    return extension == ".c" ||
+call    0 returned 100%
+branch  1 taken 43% (fallthrough)
+branch  2 taken 57%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+      938:  185:           extension == ".cl";
+call    0 returned 100%
+        -:  186:}
+        -:  187:
+function _ZN4Path5isCPPERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 386 returned 100% blocks executed 83%
+      386:  188:bool Path::isCPP(const std::string &path)
+        -:  189:{
+      772:  190:    const std::string extension = getFilenameExtensionInLowerCase(path);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+      606:  191:    return extension == ".cpp" ||
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+      440:  192:           extension == ".cxx" ||
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+      440:  193:           extension == ".cc" ||
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+      440:  194:           extension == ".c++" ||
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+      440:  195:           extension == ".hpp" ||
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+      440:  196:           extension == ".hxx" ||
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+      440:  197:           extension == ".hh" ||
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+      440:  198:           extension == ".tpp" ||
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+     1432:  199:           extension == ".txx" ||
+branch  0 taken 57% (fallthrough)
+branch  1 taken 43%
+call    2 returned 100%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+     1212:  200:           getFilenameExtension(path) == ".C"; // In unix, ".C" is considered C++ file
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 57% (fallthrough)
+branch  5 taken 43%
+call    6 returned 100%
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+        -:  201:}
+        -:  202:
+function _ZN4Path10acceptFileERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNSt7__debug3setIS5_St4lessIS5_ESaIS5_EEE called 0 returned 0% blocks executed 0%
+    #####:  203:bool Path::acceptFile(const std::string &path, const std::set<std::string> &extra)
+        -:  204:{
+    #####:  205:    return !Path::isHeader(path) && (Path::isCPP(path) || Path::isC(path) || extra.find(getFilenameExtension(path)) != extra.end());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+branch 28 never executed
+branch 29 never executed
+call   30 never executed
+branch 31 never executed
+branch 32 never executed
+call   33 never executed
+branch 34 never executed
+branch 35 never executed
+call   36 never executed
+branch 37 never executed
+branch 38 never executed
+call   39 never executed
+branch 40 never executed
+branch 41 never executed
+call   42 never executed
+        -:  206:}
+        -:  207:
+function _ZN4Path8isHeaderERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  208:bool Path::isHeader(const std::string &path)
+        -:  209:{
+    #####:  210:    const std::string extension = getFilenameExtensionInLowerCase(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  211:    return (extension.compare(0, 2, ".h") == 0);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  212:}
+        -:  213:
+function _ZN4Path19getAbsoluteFilePathERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  214:std::string Path::getAbsoluteFilePath(const std::string& filePath)
+        -:  215:{
+    #####:  216:    std::string absolute_path;
+call    0 never executed
+        -:  217:#ifdef _WIN32
+        -:  218:    char absolute[_MAX_PATH];
+        -:  219:    if (_fullpath(absolute, filePath.c_str(), _MAX_PATH))
+        -:  220:        absolute_path = absolute;
+        -:  221:#elif defined(__linux__) || defined(__sun) || defined(__hpux) || defined(__GNUC__) || defined(__CPPCHECK__)
+    #####:  222:    char * absolute = realpath(filePath.c_str(), nullptr);
+call    0 never executed
+call    1 never executed
+    #####:  223:    if (absolute)
+branch  0 never executed
+branch  1 never executed
+    #####:  224:        absolute_path = absolute;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  225:    free(absolute);
+        -:  226:#else
+        -:  227:#error Platform absolute path function needed
+        -:  228:#endif
+    #####:  229:    return absolute_path;
+call    0 never executed
+        -:  230:}
+        -:  231:
+function _ZN4Path18stripDirectoryPartERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  232:std::string Path::stripDirectoryPart(const std::string &file)
+        -:  233:{
+        -:  234:#if defined(_WIN32) && !defined(__MINGW32__)
+        -:  235:    const char native = '\\';
+        -:  236:#else
+    #####:  237:    const char native = '/';
+        -:  238:#endif
+        -:  239:
+    #####:  240:    const std::string::size_type p = file.rfind(native);
+call    0 never executed
+    #####:  241:    if (p != std::string::npos) {
+branch  0 never executed
+branch  1 never executed
+    #####:  242:        return file.substr(p + 1);
+call    0 never executed
+        -:  243:    }
+    #####:  244:    return file;
+call    0 never executed
+        -:  245:}
+        -:  246:
+function _ZN4Path10fileExistsERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  247:bool Path::fileExists(const std::string &file)
+        -:  248:{
+    #####:  249:    std::ifstream f(file.c_str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  250:    return f.is_open();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+function _GLOBAL__sub_I__ZN4Path18toNativeSeparatorsENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  251:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

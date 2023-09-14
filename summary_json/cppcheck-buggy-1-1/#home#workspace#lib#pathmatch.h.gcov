@@ -1,0 +1,76 @@
+        -:    0:Source:/home/workspace/lib/pathmatch.h
+        -:    0:Graph:/home/workspace/build/cli/CMakeFiles/cli_objs.dir/cppcheckexecutor.gcno
+        -:    0:Data:/home/workspace/build/cli/CMakeFiles/cli_objs.dir/cppcheckexecutor.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2018 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#ifndef PATHMATCH_H
+        -:   20:#define PATHMATCH_H
+        -:   21:
+        -:   22:#include "config.h"
+        -:   23:
+        -:   24:#include <string>
+        -:   25:#include <vector>
+        -:   26:
+        -:   27:/// @addtogroup CLI
+        -:   28:/// @{
+        -:   29:
+        -:   30:/**
+        -:   31: * @brief Simple path matching for ignoring paths in CLI.
+        -:   32: */
+function _ZN9PathMatchD2Ev called 0 returned 0% blocks executed 0%
+    #####:   33:class CPPCHECKLIB PathMatch {
+call    0 never executed
+call    1 never executed
+        -:   34:public:
+        -:   35:
+        -:   36:    /**
+        -:   37:     * The constructor.
+        -:   38:     * @param excludedPaths List of masks.
+        -:   39:     * @param caseSensitive Match the case of the characters when
+        -:   40:     *   matching paths?
+        -:   41:     */
+        -:   42:    explicit PathMatch(const std::vector<std::string> &excludedPaths, bool caseSensitive = true);
+        -:   43:
+        -:   44:    /**
+        -:   45:     * @brief Match path against list of masks.
+        -:   46:     * @param path Path to match.
+        -:   47:     * @return true if any of the masks match the path, false otherwise.
+        -:   48:     */
+        -:   49:    bool match(const std::string &path) const;
+        -:   50:
+        -:   51:protected:
+        -:   52:
+        -:   53:    /**
+        -:   54:     * @brief Remove filename part from the path.
+        -:   55:     * @param path Path to edit.
+        -:   56:     * @return path without filename part.
+        -:   57:     */
+        -:   58:    static std::string removeFilename(const std::string &path);
+        -:   59:
+        -:   60:private:
+        -:   61:    std::vector<std::string> mExcludedPaths;
+        -:   62:    bool mCaseSensitive;
+        -:   63:    std::vector<std::string> mWorkingDirectory;
+        -:   64:};
+        -:   65:
+        -:   66:/// @}
+        -:   67:
+        -:   68:#endif // PATHMATCH_H

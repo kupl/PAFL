@@ -1,0 +1,193 @@
+        -:    0:Source:/home/workspace/lib/mathlib.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef mathlibH
+        -:   21:#define mathlibH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "config.h"
+        -:   25:
+        -:   26:#include <sstream>
+        -:   27:#include <string>
+        -:   28:
+        -:   29:/// @addtogroup Core
+        -:   30:/// @{
+        -:   31:
+        -:   32:/** @brief simple math functions that uses operands stored in std::string. useful when performing math on tokens. */
+        -:   33:
+        -:   34:class CPPCHECKLIB MathLib {
+        -:   35:    friend class TestMathLib;
+        -:   36:
+        -:   37:public:
+        -:   38:    /** @brief value class */
+        -:   39:    class value {
+        -:   40:    private:
+        -:   41:        long long mIntValue;
+        -:   42:        double mDoubleValue;
+        -:   43:        enum { INT, LONG, LONGLONG, FLOAT } mType;
+        -:   44:        bool mIsUnsigned;
+        -:   45:
+        -:   46:        void promote(const value &v);
+        -:   47:
+        -:   48:    public:
+        -:   49:        explicit value(const std::string &s);
+        -:   50:        std::string str() const;
+        -:   51:        bool isInt() const {
+        -:   52:            return mType != FLOAT;
+        -:   53:        }
+        -:   54:        bool isFloat() const {
+        -:   55:            return mType == FLOAT;
+        -:   56:        }
+        -:   57:
+        -:   58:        double getDoubleValue() const {
+        -:   59:            return isFloat() ? mDoubleValue : (double)mIntValue;
+        -:   60:        }
+        -:   61:
+        -:   62:        static value calc(char op, const value &v1, const value &v2);
+        -:   63:        int compare(const value &v) const;
+        -:   64:        value add(int v) const;
+        -:   65:        value shiftLeft(const value &v) const;
+        -:   66:        value shiftRight(const value &v) const;
+        -:   67:    };
+        -:   68:
+        -:   69:    typedef long long bigint;
+        -:   70:    typedef unsigned long long biguint;
+        -:   71:    static const int bigint_bits;
+        -:   72:
+        -:   73:    static bigint toLongNumber(const std::string & str);
+        -:   74:    static biguint toULongNumber(const std::string & str);
+        -:   75:
+function _ZN7MathLib8toStringIxEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEET_ called 0 returned 0% blocks executed 0%
+function _ZN7MathLib8toStringIiEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEET_ called 0 returned 0% blocks executed 0%
+    #####:   76:    template<class T> static std::string toString(T value) {
+    #####:   77:        std::ostringstream result;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+    #####:   78:        result << value;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:   79:        return result.str();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:   80:    }
+        -:   81:    static double toDoubleNumber(const std::string & str);
+        -:   82:
+        -:   83:    static bool isInt(const std::string & str);
+        -:   84:    static bool isFloat(const std::string &str);
+        -:   85:    static bool isDecimalFloat(const std::string &str);
+        -:   86:    static bool isNegative(const std::string &str);
+        -:   87:    static bool isPositive(const std::string &str);
+        -:   88:    static bool isDec(const std::string & str);
+        -:   89:    static bool isFloatHex(const std::string& str);
+        -:   90:    static bool isIntHex(const std::string& str);
+        -:   91:    static bool isOct(const std::string& str);
+        -:   92:    static bool isBin(const std::string& str);
+        -:   93:
+        -:   94:    static std::string getSuffix(const std::string& value);
+        -:   95:    /**
+        -:   96:     * \param[in] str string
+        -:   97:     * \param[in] supportMicrosoftExtensions support Microsoft extension: i64
+        -:   98:     *  \return true if str is a non-empty valid integer suffix
+        -:   99:     */
+        -:  100:    static bool isValidIntegerSuffix(const std::string& str, bool supportMicrosoftExtensions=true);
+        -:  101:
+        -:  102:    static std::string add(const std::string & first, const std::string & second);
+        -:  103:    static std::string subtract(const std::string & first, const std::string & second);
+        -:  104:    static std::string multiply(const std::string & first, const std::string & second);
+        -:  105:    static std::string divide(const std::string & first, const std::string & second);
+        -:  106:    static std::string mod(const std::string & first, const std::string & second);
+        -:  107:    static std::string incdec(const std::string & var, const std::string & op);
+        -:  108:    static std::string calculate(const std::string & first, const std::string & second, char action);
+        -:  109:
+        -:  110:    static std::string sin(const std::string & tok);
+        -:  111:    static std::string cos(const std::string & tok);
+        -:  112:    static std::string tan(const std::string & tok);
+        -:  113:    static std::string abs(const std::string & tok);
+        -:  114:    static bool isEqual(const std::string & first, const std::string & second);
+        -:  115:    static bool isNotEqual(const std::string & first, const std::string & second);
+        -:  116:    static bool isGreater(const std::string & first, const std::string & second);
+        -:  117:    static bool isGreaterEqual(const std::string & first, const std::string & second);
+        -:  118:    static bool isLess(const std::string & first, const std::string & second);
+        -:  119:    static bool isLessEqual(const std::string & first, const std::string & second);
+        -:  120:    static bool isNullValue(const std::string & str);
+        -:  121:    /**
+        -:  122:     * Return true if given character is 0,1,2,3,4,5,6 or 7.
+        -:  123:     * @param[in] c The character to check
+        -:  124:     * @return true if given character is octal digit.
+        -:  125:     */
+        -:  126:    static bool isOctalDigit(char c);
+        -:  127:
+        -:  128:    /**
+        -:  129:     * \param[in] str character literal
+        -:  130:     * @return Number of internal representation of the character literal
+        -:  131:     * */
+        -:  132:    static MathLib::bigint characterLiteralToLongNumber(const std::string& str);
+        -:  133:
+        -:  134:    /**
+        -:  135:     * \param[in] iCode Code being considered
+        -:  136:     * \param[in] iPos A posision within iCode
+        -:  137:     * \return Whether iCode[iPos] is a C++14 digit separator
+        -:  138:     */
+        -:  139:    static bool isDigitSeparator(const std::string& iCode, std::string::size_type iPos);
+        -:  140:
+        -:  141:private:
+        -:  142:    /*
+        -:  143:     * \param iLiteral A character literal
+        -:  144:     * \return The equivalent character literal with all escapes interpreted
+        -:  145:     */
+        -:  146:    static std::string normalizeCharacterLiteral(const std::string& iLiteral);
+        -:  147:};
+        -:  148:
+        -:  149:MathLib::value operator+(const MathLib::value &v1, const MathLib::value &v2);
+        -:  150:MathLib::value operator-(const MathLib::value &v1, const MathLib::value &v2);
+        -:  151:MathLib::value operator*(const MathLib::value &v1, const MathLib::value &v2);
+        -:  152:MathLib::value operator/(const MathLib::value &v1, const MathLib::value &v2);
+        -:  153:MathLib::value operator%(const MathLib::value &v1, const MathLib::value &v2);
+        -:  154:MathLib::value operator&(const MathLib::value &v1, const MathLib::value &v2);
+        -:  155:MathLib::value operator|(const MathLib::value &v1, const MathLib::value &v2);
+        -:  156:MathLib::value operator^(const MathLib::value &v1, const MathLib::value &v2);
+        -:  157:MathLib::value operator<<(const MathLib::value &v1, const MathLib::value &v2);
+        -:  158:MathLib::value operator>>(const MathLib::value &v1, const MathLib::value &v2);
+        -:  159:
+        -:  160:template<> CPPCHECKLIB std::string MathLib::toString(double value); // Declare specialization to avoid linker problems
+        -:  161:
+        -:  162:/// @}
+        -:  163://---------------------------------------------------------------------------
+        -:  164:#endif // mathlibH

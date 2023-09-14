@@ -1,0 +1,517 @@
+        -:    0:Source:/home/workspace/lib/checkvaarg.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkvaarg.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkvaarg.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#include "checkvaarg.h"
+        -:   20:
+        -:   21:#include "astutils.h"
+        -:   22:#include "errorlogger.h"
+        -:   23:#include "settings.h"
+        -:   24:#include "symboldatabase.h"
+        -:   25:#include "token.h"
+        -:   26:#include "tokenize.h"
+        -:   27:
+        -:   28:#include <cstddef>
+        -:   29:#include <list>
+        -:   30:
+        -:   31://---------------------------------------------------------------------------
+        -:   32:
+        -:   33:// Register this check class (by creating a static instance of it)
+        -:   34:namespace {
+        1:   35:    CheckVaarg instance;
+call    0 returned 100%
+call    1 returned 100%
+        -:   36:}
+        -:   37:
+        -:   38:
+        -:   39://---------------------------------------------------------------------------
+        -:   40:// Ensure that correct parameter is passed to va_start()
+        -:   41://---------------------------------------------------------------------------
+        -:   42:
+        -:   43:// CWE ids used:
+        1:   44:static const struct CWE CWE664(664U);   // Improper Control of a Resource Through its Lifetime
+call    0 returned 100%
+        1:   45:static const struct CWE CWE688(688U);   // Function Call With Incorrect Variable or Reference as Argument
+call    0 returned 100%
+        1:   46:static const struct CWE CWE758(758U);   // Reliance on Undefined, Unspecified, or Implementation-Defined Behavior
+call    0 returned 100%
+        -:   47:
+function _ZN10CheckVaarg17va_start_argumentEv called 0 returned 0% blocks executed 0%
+    #####:   48:void CheckVaarg::va_start_argument()
+        -:   49:{
+    #####:   50:    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:   51:    const std::size_t functions = symbolDatabase->functionScopes.size();
+call    0 never executed
+    #####:   52:    const bool printWarnings = mSettings->isEnabled(Settings::WARNING);
+call    0 never executed
+        -:   53:
+    #####:   54:    for (std::size_t i = 0; i < functions; ++i) {
+branch  0 never executed
+branch  1 never executed
+    #####:   55:        const Scope* scope = symbolDatabase->functionScopes[i];
+call    0 never executed
+    #####:   56:        const Function* function = scope->function;
+    #####:   57:        if (!function)
+branch  0 never executed
+branch  1 never executed
+    #####:   58:            continue;
+    #####:   59:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:   60:            if (!tok->scope()->isExecutable())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   61:                tok = tok->scope()->bodyEnd;
+call    0 never executed
+    #####:   62:            else if (Token::simpleMatch(tok, "va_start (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   63:                const Token* param2 = tok->tokAt(2)->nextArgument();
+call    0 never executed
+call    1 never executed
+    #####:   64:                if (!param2)
+branch  0 never executed
+branch  1 never executed
+    #####:   65:                    continue;
+    #####:   66:                const Variable* var = param2->variable();
+call    0 never executed
+    #####:   67:                if (var && var->isReference())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:   68:                    referenceAs_va_start_error(param2, var->name());
+call    0 never executed
+call    1 never executed
+    #####:   69:                if (var && var->index() + 2 < function->argCount() && printWarnings) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:   70:                    std::list<Variable>::const_reverse_iterator it = function->argumentList.rbegin();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   71:                    ++it;
+call    0 never executed
+    #####:   72:                    wrongParameterTo_va_start_error(tok, var->name(), it->name());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+        -:   73:                }
+    #####:   74:                tok = tok->linkAt(1);
+call    0 never executed
+        -:   75:            }
+        -:   76:        }
+        -:   77:    }
+    #####:   78:}
+        -:   79:
+function _ZN10CheckVaarg31wrongParameterTo_va_start_errorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####:   80:void CheckVaarg::wrongParameterTo_va_start_error(const Token *tok, const std::string& paramIsName, const std::string& paramShouldName)
+        -:   81:{
+    #####:   82:    reportError(tok, Severity::warning,
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   83:                "va_start_wrongParameter", "'" + paramIsName + "' given to va_start() is not last named argument of the function. Did you intend to pass '" + paramShouldName + "'?", CWE688, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:   84:}
+        -:   85:
+function _ZN10CheckVaarg26referenceAs_va_start_errorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:   86:void CheckVaarg::referenceAs_va_start_error(const Token *tok, const std::string& paramName)
+        -:   87:{
+    #####:   88:    reportError(tok, Severity::error,
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   89:                "va_start_referencePassed", "Using reference '" + paramName + "' as parameter for va_start() results in undefined behaviour.", CWE758, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:   90:}
+        -:   91:
+        -:   92://---------------------------------------------------------------------------
+        -:   93:// Detect missing va_end() if va_start() was used
+        -:   94:// Detect va_list usage after va_end()
+        -:   95://---------------------------------------------------------------------------
+        -:   96:
+function _ZN10CheckVaarg13va_list_usageEv called 0 returned 0% blocks executed 0%
+    #####:   97:void CheckVaarg::va_list_usage()
+        -:   98:{
+    #####:   99:    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  100:    for (const Variable* var : symbolDatabase->variableList()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  101:        if (!var || var->isPointer() || var->isReference() || var->isArray() || !var->scope() || var->typeStartToken()->str() != "va_list")
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+    #####:  102:            continue;
+    #####:  103:        if (!var->isLocal() && !var->isArgument()) // Check only local variables and arguments
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  104:            continue;
+        -:  105:
+    #####:  106:        bool open = var->isArgument(); // va_list passed as argument are opened
+call    0 never executed
+    #####:  107:        bool exitOnEndOfStatement = false;
+        -:  108:
+    #####:  109:        const Token* tok = var->nameToken()->next();
+call    0 never executed
+call    1 never executed
+    #####:  110:        for (;  tok && tok != var->scope()->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+        -:  111:            // Skip lambdas
+    #####:  112:            const Token* tok2 = findLambdaEndToken(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  113:            if (tok2)
+branch  0 never executed
+branch  1 never executed
+    #####:  114:                tok = tok2;
+    #####:  115:            if (Token::Match(tok, "va_start ( %varid%", var->declarationId())) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  116:                if (open)
+branch  0 never executed
+branch  1 never executed
+    #####:  117:                    va_start_subsequentCallsError(tok, var->name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  118:                open = true;
+    #####:  119:                tok = tok->linkAt(1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  120:            } else if (Token::Match(tok, "va_end ( %varid%", var->declarationId())) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  121:                if (!open)
+branch  0 never executed
+branch  1 never executed
+    #####:  122:                    va_list_usedBeforeStartedError(tok, var->name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  123:                open = false;
+    #####:  124:                tok = tok->linkAt(1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  125:            } else if (Token::simpleMatch(tok, "va_copy (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  126:                bool nopen = open;
+    #####:  127:                if (tok->linkAt(1)->previous()->varId() == var->declarationId()) { // Source
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  128:                    if (!open)
+branch  0 never executed
+branch  1 never executed
+    #####:  129:                        va_list_usedBeforeStartedError(tok, var->name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  130:                }
+    #####:  131:                if (tok->tokAt(2)->varId() == var->declarationId()) { // Destination
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  132:                    if (open)
+branch  0 never executed
+branch  1 never executed
+    #####:  133:                        va_start_subsequentCallsError(tok, var->name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  134:                    nopen = true;
+        -:  135:                }
+    #####:  136:                open = nopen;
+    #####:  137:                tok = tok->linkAt(1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  138:            } else if (Token::Match(tok, "throw|return"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  139:                exitOnEndOfStatement = true;
+    #####:  140:            else if (tok->str() == "break") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  141:                const Scope* scope = tok->scope();
+call    0 never executed
+    #####:  142:                while (scope->nestedIn && scope->type != Scope::eFor && scope->type != Scope::eWhile && scope->type != Scope::eDo && scope->type != Scope::eSwitch)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  143:                    scope = scope->nestedIn;
+    #####:  144:                tok = scope->bodyEnd;
+    #####:  145:                if (!tok)
+branch  0 never executed
+branch  1 never executed
+    #####:  146:                    return;
+    #####:  147:            } else if (tok->str() == "goto" || (mTokenizer->isCPP() && tok->str() == "try")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  148:                open = false;
+    #####:  149:                break;
+    #####:  150:            } else if (!open && tok->varId() == var->declarationId())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  151:                va_list_usedBeforeStartedError(tok, var->name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  152:            else if (exitOnEndOfStatement && tok->str() == ";")
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  153:                break;
+        -:  154:        }
+    #####:  155:        if (open && !var->isArgument())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  156:            va_end_missingError(tok, var->name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  157:    }
+        -:  158:}
+        -:  159:
+function _ZN10CheckVaarg19va_end_missingErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  160:void CheckVaarg::va_end_missingError(const Token *tok, const std::string& varname)
+        -:  161:{
+    #####:  162:    reportError(tok, Severity::error,
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  163:                "va_end_missing", "va_list '" + varname + "' was opened but not closed by va_end().", CWE664, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  164:}
+        -:  165:
+function _ZN10CheckVaarg30va_list_usedBeforeStartedErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  166:void CheckVaarg::va_list_usedBeforeStartedError(const Token *tok, const std::string& varname)
+        -:  167:{
+    #####:  168:    reportError(tok, Severity::error,
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  169:                "va_list_usedBeforeStarted", "va_list '" + varname + "' used before va_start() was called.", CWE664, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  170:}
+        -:  171:
+function _ZN10CheckVaarg29va_start_subsequentCallsErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  172:void CheckVaarg::va_start_subsequentCallsError(const Token *tok, const std::string& varname)
+        -:  173:{
+    #####:  174:    reportError(tok, Severity::error,
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  175:                "va_start_subsequentCalls", "va_start() or va_copy() called subsequently on '" + varname + "' without va_end() in between.", CWE664, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+function _GLOBAL__sub_I__ZN10CheckVaarg17va_start_argumentEv called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  176:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

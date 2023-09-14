@@ -1,0 +1,463 @@
+        -:    0:Source:/home/workspace/lib/errorlogger.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef errorloggerH
+        -:   21:#define errorloggerH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "config.h"
+        -:   25:#include "suppressions.h"
+        -:   26:
+        -:   27:#include <cstddef>
+        -:   28:#include <fstream>
+        -:   29:#include <list>
+        -:   30:#include <string>
+        -:   31:#include <utility>
+        -:   32:#include <vector>
+        -:   33:
+        -:   34:/**
+        -:   35: * CWE id (Common Weakness Enumeration)
+        -:   36: * See https://cwe.mitre.org/ for further reference.
+        -:   37: * */
+        -:   38:struct CWE {
+        -:   39:    explicit CWE(unsigned short ID) : id(ID) {}
+        -:   40:    unsigned short id;
+        -:   41:};
+        -:   42:
+        -:   43:
+        -:   44:
+        -:   45:class Token;
+        -:   46:class TokenList;
+        -:   47:
+        -:   48:namespace tinyxml2 {
+        -:   49:    class XMLElement;
+        -:   50:}
+        -:   51:
+        -:   52:/// @addtogroup Core
+        -:   53:/// @{
+        -:   54:
+        -:   55:/** @brief Simple container to be thrown when internal error is detected. */
+function _ZN13InternalErrorD2Ev called 0 returned 0% blocks executed 0%
+    #####:   56:struct InternalError {
+call    0 never executed
+call    1 never executed
+        -:   57:    enum Type {AST, SYNTAX, UNKNOWN_MACRO, INTERNAL, LIMIT, INSTANTIATION};
+        -:   58:    InternalError(const Token *tok, const std::string &errorMsg, Type type = INTERNAL);
+        -:   59:    const Token *token;
+        -:   60:    std::string errorMessage;
+        -:   61:    Type type;
+        -:   62:    std::string id;
+        -:   63:};
+        -:   64:
+        -:   65:/** @brief enum class for severity. Used when reporting errors. */
+        -:   66:class CPPCHECKLIB Severity {
+        -:   67:public:
+        -:   68:    /**
+        -:   69:     * Message severities.
+        -:   70:     */
+        -:   71:    enum SeverityType {
+        -:   72:        /**
+        -:   73:         * No severity (default value).
+        -:   74:         */
+        -:   75:        none,
+        -:   76:        /**
+        -:   77:         * Programming error.
+        -:   78:         * This indicates severe error like memory leak etc.
+        -:   79:         * The error is certain.
+        -:   80:         */
+        -:   81:        error,
+        -:   82:        /**
+        -:   83:         * Warning.
+        -:   84:         * Used for dangerous coding style that can cause severe runtime errors.
+        -:   85:         * For example: forgetting to initialize a member variable in a constructor.
+        -:   86:         */
+        -:   87:        warning,
+        -:   88:        /**
+        -:   89:         * Style warning.
+        -:   90:         * Used for general code cleanup recommendations. Fixing these
+        -:   91:         * will not fix any bugs but will make the code easier to maintain.
+        -:   92:         * For example: redundant code, unreachable code, etc.
+        -:   93:         */
+        -:   94:        style,
+        -:   95:        /**
+        -:   96:         * Performance warning.
+        -:   97:         * Not an error as is but suboptimal code and fixing it probably leads
+        -:   98:         * to faster performance of the compiled code.
+        -:   99:         */
+        -:  100:        performance,
+        -:  101:        /**
+        -:  102:         * Portability warning.
+        -:  103:         * This warning indicates the code is not properly portable for
+        -:  104:         * different platforms and bitnesses (32/64 bit). If the code is meant
+        -:  105:         * to compile in different platforms and bitnesses these warnings
+        -:  106:         * should be fixed.
+        -:  107:         */
+        -:  108:        portability,
+        -:  109:        /**
+        -:  110:         * Checking information.
+        -:  111:         * Information message about the checking (process) itself. These
+        -:  112:         * messages inform about header files not found etc issues that are
+        -:  113:         * not errors in the code but something user needs to know.
+        -:  114:         */
+        -:  115:        information,
+        -:  116:        /**
+        -:  117:         * Debug message.
+        -:  118:         * Debug-mode message useful for the developers.
+        -:  119:         */
+        -:  120:        debug
+        -:  121:    };
+        -:  122:
+        -:  123:    static std::string toString(SeverityType severity) {
+        -:  124:        switch (severity) {
+        -:  125:        case none:
+        -:  126:            return "";
+        -:  127:        case error:
+        -:  128:            return "error";
+        -:  129:        case warning:
+        -:  130:            return "warning";
+        -:  131:        case style:
+        -:  132:            return "style";
+        -:  133:        case performance:
+        -:  134:            return "performance";
+        -:  135:        case portability:
+        -:  136:            return "portability";
+        -:  137:        case information:
+        -:  138:            return "information";
+        -:  139:        case debug:
+        -:  140:            return "debug";
+        -:  141:        }
+        -:  142:        throw InternalError(nullptr, "Unknown severity");
+        -:  143:    }
+        -:  144:    static SeverityType fromString(const std::string &severity) {
+        -:  145:        if (severity.empty())
+        -:  146:            return none;
+        -:  147:        if (severity == "none")
+        -:  148:            return none;
+        -:  149:        if (severity == "error")
+        -:  150:            return error;
+        -:  151:        if (severity == "warning")
+        -:  152:            return warning;
+        -:  153:        if (severity == "style")
+        -:  154:            return style;
+        -:  155:        if (severity == "performance")
+        -:  156:            return performance;
+        -:  157:        if (severity == "portability")
+        -:  158:            return portability;
+        -:  159:        if (severity == "information")
+        -:  160:            return information;
+        -:  161:        if (severity == "debug")
+        -:  162:            return debug;
+        -:  163:        return none;
+        -:  164:    }
+        -:  165:};
+        -:  166:
+        -:  167:
+        -:  168:typedef std::pair<const Token *, std::string> ErrorPathItem;
+        -:  169:typedef std::list<ErrorPathItem> ErrorPath;
+        -:  170:
+        -:  171:/**
+        -:  172: * @brief This is an interface, which the class responsible of error logging
+        -:  173: * should implement.
+        -:  174: */
+        -:  175:class CPPCHECKLIB ErrorLogger {
+        -:  176:protected:
+        -:  177:    std::ofstream plistFile;
+        -:  178:public:
+        -:  179:
+        -:  180:    /**
+        -:  181:     * Wrapper for error messages, provided by reportErr()
+        -:  182:     */
+function _ZN11ErrorLogger12ErrorMessageD2Ev called 0 returned 0% blocks executed 0%
+    #####:  183:    class CPPCHECKLIB ErrorMessage {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  184:    public:
+        -:  185:        /**
+        -:  186:         * File name and line number.
+        -:  187:         * Internally paths are stored with / separator. When getting the filename
+        -:  188:         * it is by default converted to native separators.
+        -:  189:         */
+function _ZN11ErrorLogger12ErrorMessage12FileLocationC2ERKS1_ called 0 returned 0% blocks executed 0%
+function _ZN11ErrorLogger12ErrorMessage12FileLocationD2Ev called 0 returned 0% blocks executed 0%
+    #####:  190:        class CPPCHECKLIB FileLocation {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:  191:        public:
+        -:  192:            FileLocation()
+        -:  193:                : fileIndex(0), line(0), column(0) {
+        -:  194:            }
+        -:  195:
+        -:  196:            FileLocation(const std::string &file, int line, int column)
+        -:  197:                : fileIndex(0), line(line), column(column), mOrigFileName(file), mFileName(file) {
+        -:  198:            }
+        -:  199:
+        -:  200:            FileLocation(const std::string &file, const std::string &info, int line, int column)
+        -:  201:                : fileIndex(0), line(line), column(column), mOrigFileName(file), mFileName(file), mInfo(info) {
+        -:  202:            }
+        -:  203:
+        -:  204:            FileLocation(const Token* tok, const TokenList* tokenList);
+        -:  205:            FileLocation(const Token* tok, const std::string &info, const TokenList* tokenList);
+        -:  206:
+        -:  207:            /**
+        -:  208:             * Return the filename.
+        -:  209:             * @param convert If true convert path to native separators.
+        -:  210:             * @return filename.
+        -:  211:             */
+        -:  212:            std::string getfile(bool convert = true) const;
+        -:  213:
+        -:  214:            /**
+        -:  215:             * Filename with the whole path (no --rp)
+        -:  216:             * @param convert If true convert path to native separators.
+        -:  217:             * @return filename.
+        -:  218:             */
+        -:  219:            std::string getOrigFile(bool convert = true) const;
+        -:  220:
+        -:  221:            /**
+        -:  222:             * Set the filename.
+        -:  223:             * @param file Filename to set.
+        -:  224:             */
+        -:  225:            void setfile(const std::string &file);
+        -:  226:
+        -:  227:            /**
+        -:  228:             * @return the location as a string. Format: [file:line]
+        -:  229:             */
+        -:  230:            std::string stringify() const;
+        -:  231:
+        -:  232:            unsigned int fileIndex;
+        -:  233:            int line; // negative value means "no line"
+        -:  234:            unsigned int column;
+        -:  235:
+        -:  236:            std::string getinfo() const {
+        -:  237:                return mInfo;
+        -:  238:            }
+        -:  239:            void setinfo(const std::string &i) {
+        -:  240:                mInfo = i;
+        -:  241:            }
+        -:  242:
+        -:  243:        private:
+        -:  244:            std::string mOrigFileName;
+        -:  245:            std::string mFileName;
+        -:  246:            std::string mInfo;
+        -:  247:        };
+        -:  248:
+        -:  249:        ErrorMessage(const std::list<FileLocation> &callStack,
+        -:  250:                     const std::string& file1,
+        -:  251:                     Severity::SeverityType severity,
+        -:  252:                     const std::string &msg,
+        -:  253:                     const std::string &id, bool inconclusive);
+        -:  254:        ErrorMessage(const std::list<FileLocation> &callStack,
+        -:  255:                     const std::string& file1,
+        -:  256:                     Severity::SeverityType severity,
+        -:  257:                     const std::string &msg,
+        -:  258:                     const std::string &id,
+        -:  259:                     const CWE &cwe,
+        -:  260:                     bool inconclusive);
+        -:  261:        ErrorMessage(const std::list<const Token*>& callstack,
+        -:  262:                     const TokenList* list,
+        -:  263:                     Severity::SeverityType severity,
+        -:  264:                     const std::string& id,
+        -:  265:                     const std::string& msg,
+        -:  266:                     bool inconclusive);
+        -:  267:        ErrorMessage(const std::list<const Token*>& callstack,
+        -:  268:                     const TokenList* list,
+        -:  269:                     Severity::SeverityType severity,
+        -:  270:                     const std::string& id,
+        -:  271:                     const std::string& msg,
+        -:  272:                     const CWE &cwe,
+        -:  273:                     bool inconclusive);
+        -:  274:        ErrorMessage(const ErrorPath &errorPath,
+        -:  275:                     const TokenList *tokenList,
+        -:  276:                     Severity::SeverityType severity,
+        -:  277:                     const char id[],
+        -:  278:                     const std::string &msg,
+        -:  279:                     const CWE &cwe,
+        -:  280:                     bool inconclusive);
+        -:  281:        ErrorMessage();
+        -:  282:        explicit ErrorMessage(const tinyxml2::XMLElement * const errmsg);
+        -:  283:
+        -:  284:        /**
+        -:  285:         * Format the error message in XML format
+        -:  286:         */
+        -:  287:        std::string toXML() const;
+        -:  288:
+        -:  289:        static std::string getXMLHeader();
+        -:  290:        static std::string getXMLFooter();
+        -:  291:
+        -:  292:        /**
+        -:  293:         * Format the error message into a string.
+        -:  294:         * @param verbose use verbose message
+        -:  295:         * @param templateFormat Empty string to use default output format
+        -:  296:         * or template to be used. E.g. "{file}:{line},{severity},{id},{message}"
+        -:  297:         * @param templateLocation Format Empty string to use default output format
+        -:  298:         * or template to be used. E.g. "{file}:{line},{info}"
+        -:  299:        * @return formatted string
+        -:  300:         */
+        -:  301:        std::string toString(bool verbose,
+        -:  302:                             const std::string &templateFormat = emptyString,
+        -:  303:                             const std::string &templateLocation = emptyString) const;
+        -:  304:
+        -:  305:        std::string serialize() const;
+        -:  306:        bool deserialize(const std::string &data);
+        -:  307:
+        -:  308:        std::list<FileLocation> callStack;
+        -:  309:        std::string id;
+        -:  310:
+        -:  311:        /** source file (not header) */
+        -:  312:        std::string file0;
+        -:  313:
+        -:  314:        Severity::SeverityType severity;
+        -:  315:        CWE cwe;
+        -:  316:        bool inconclusive;
+        -:  317:
+        -:  318:        /** set short and verbose messages */
+        -:  319:        void setmsg(const std::string &msg);
+        -:  320:
+        -:  321:        /** Short message (single line short message) */
+        -:  322:        const std::string &shortMessage() const {
+        -:  323:            return mShortMessage;
+        -:  324:        }
+        -:  325:
+        -:  326:        /** Verbose message (may be the same as the short message) */
+        -:  327:        const std::string &verboseMessage() const {
+        -:  328:            return mVerboseMessage;
+        -:  329:        }
+        -:  330:
+        -:  331:        /** Symbol names */
+        -:  332:        const std::string &symbolNames() const {
+        -:  333:            return mSymbolNames;
+        -:  334:        }
+        -:  335:
+        -:  336:        Suppressions::ErrorMessage toSuppressionsErrorMessage() const;
+        -:  337:
+        -:  338:    private:
+        -:  339:        /**
+        -:  340:         * Replace all occurrences of searchFor with replaceWith in the
+        -:  341:         * given source.
+        -:  342:         * @param source The string to modify
+        -:  343:         * @param searchFor What should be searched for
+        -:  344:         * @param replaceWith What will replace the found item
+        -:  345:         */
+        -:  346:        static void findAndReplace(std::string &source, const std::string &searchFor, const std::string &replaceWith);
+        -:  347:
+        -:  348:        static std::string fixInvalidChars(const std::string& raw);
+        -:  349:
+        -:  350:        /** Short message */
+        -:  351:        std::string mShortMessage;
+        -:  352:
+        -:  353:        /** Verbose message */
+        -:  354:        std::string mVerboseMessage;
+        -:  355:
+        -:  356:        /** symbol names */
+        -:  357:        std::string mSymbolNames;
+        -:  358:    };
+        -:  359:
+        -:  360:    ErrorLogger() { }
+        -:  361:    virtual ~ErrorLogger() {
+        -:  362:        if (plistFile.is_open()) {
+        -:  363:            plistFile << ErrorLogger::plistFooter();
+        -:  364:            plistFile.close();
+        -:  365:        }
+        -:  366:    }
+        -:  367:
+        -:  368:    /**
+        -:  369:     * Information about progress is directed here.
+        -:  370:     * Override this to receive the progress messages.
+        -:  371:     *
+        -:  372:     * @param outmsg Message to show e.g. "Checking main.cpp..."
+        -:  373:     */
+        -:  374:    virtual void reportOut(const std::string &outmsg) = 0;
+        -:  375:
+        -:  376:    /**
+        -:  377:     * Information about found errors and warnings is directed
+        -:  378:     * here. Override this to receive the errormessages.
+        -:  379:     *
+        -:  380:     * @param msg Location and other information about the found error.
+        -:  381:     */
+        -:  382:    virtual void reportErr(const ErrorLogger::ErrorMessage &msg) = 0;
+        -:  383:
+        -:  384:    /**
+        -:  385:     * Report progress to client
+        -:  386:     * @param filename main file that is checked
+        -:  387:     * @param stage for example preprocess / tokenize / simplify / check
+        -:  388:     * @param value progress value (0-100)
+        -:  389:     */
+        -:  390:    virtual void reportProgress(const std::string &filename, const char stage[], const std::size_t value) {
+        -:  391:        (void)filename;
+        -:  392:        (void)stage;
+        -:  393:        (void)value;
+        -:  394:    }
+        -:  395:
+        -:  396:    /**
+        -:  397:     * Output information messages.
+        -:  398:     * @param msg Location and other information about the found error.
+        -:  399:     */
+        -:  400:    virtual void reportInfo(const ErrorLogger::ErrorMessage &msg) {
+        -:  401:        reportErr(msg);
+        -:  402:    }
+        -:  403:
+        -:  404:    /**
+        -:  405:     * Report unmatched suppressions
+        -:  406:     * @param unmatched list of unmatched suppressions (from Settings::Suppressions::getUnmatched(Local|Global)Suppressions)
+        -:  407:     * @return true is returned if errors are reported
+        -:  408:     */
+        -:  409:    bool reportUnmatchedSuppressions(const std::list<Suppressions::Suppression> &unmatched);
+        -:  410:
+        -:  411:    static std::string callStackToString(const std::list<ErrorLogger::ErrorMessage::FileLocation> &callStack);
+        -:  412:
+        -:  413:    /**
+        -:  414:     * Convert XML-sensitive characters into XML entities
+        -:  415:     * @param str The input string containing XML-sensitive characters
+        -:  416:     * @return The output string containing XML entities
+        -:  417:     */
+        -:  418:    static std::string toxml(const std::string &str);
+        -:  419:
+        -:  420:    static std::string plistHeader(const std::string &version, const std::vector<std::string> &files);
+        -:  421:    static std::string plistData(const ErrorLogger::ErrorMessage &msg);
+        -:  422:    static const char *plistFooter() {
+        -:  423:        return " </array>\r\n"
+        -:  424:               "</dict>\r\n"
+        -:  425:               "</plist>";
+        -:  426:    }
+        -:  427:};
+        -:  428:
+        -:  429:/** Replace substring. Example replaceStr("1,NR,3", "NR", "2") => "1,2,3" */
+        -:  430:std::string replaceStr(std::string s, const std::string &from, const std::string &to);
+        -:  431:
+        -:  432:/// @}
+        -:  433://---------------------------------------------------------------------------
+        -:  434:#endif // errorloggerH

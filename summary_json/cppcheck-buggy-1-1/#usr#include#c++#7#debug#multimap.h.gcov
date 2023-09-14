@@ -1,0 +1,649 @@
+        -:    0:Source:/usr/include/c++/7/debug/multimap.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/tokenize.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/tokenize.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:// Debugging multimap implementation -*- C++ -*-
+        -:    2:
+        -:    3:// Copyright (C) 2003-2017 Free Software Foundation, Inc.
+        -:    4://
+        -:    5:// This file is part of the GNU ISO C++ Library.  This library is free
+        -:    6:// software; you can redistribute it and/or modify it under the
+        -:    7:// terms of the GNU General Public License as published by the
+        -:    8:// Free Software Foundation; either version 3, or (at your option)
+        -:    9:// any later version.
+        -:   10:
+        -:   11:// This library is distributed in the hope that it will be useful,
+        -:   12:// but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   13:// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   14:// GNU General Public License for more details.
+        -:   15:
+        -:   16:// Under Section 7 of GPL version 3, you are granted additional
+        -:   17:// permissions described in the GCC Runtime Library Exception, version
+        -:   18:// 3.1, as published by the Free Software Foundation.
+        -:   19:
+        -:   20:// You should have received a copy of the GNU General Public License and
+        -:   21:// a copy of the GCC Runtime Library Exception along with this program;
+        -:   22:// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+        -:   23:// <http://www.gnu.org/licenses/>.
+        -:   24:
+        -:   25:/** @file debug/multimap.h
+        -:   26: *  This file is a GNU debug extension to the Standard C++ Library.
+        -:   27: */
+        -:   28:
+        -:   29:#ifndef _GLIBCXX_DEBUG_MULTIMAP_H
+        -:   30:#define _GLIBCXX_DEBUG_MULTIMAP_H 1
+        -:   31:
+        -:   32:#include <debug/safe_sequence.h>
+        -:   33:#include <debug/safe_container.h>
+        -:   34:#include <debug/safe_iterator.h>
+        -:   35:#include <utility>
+        -:   36:
+        -:   37:namespace std _GLIBCXX_VISIBILITY(default)
+        -:   38:{
+        -:   39:namespace __debug
+        -:   40:{
+        -:   41:  /// Class std::multimap with safety/checking/debug instrumentation.
+        -:   42:  template<typename _Key, typename _Tp, typename _Compare = std::less<_Key>,
+        -:   43:	   typename _Allocator = std::allocator<std::pair<const _Key, _Tp> > >
+        -:   44:    class multimap
+        -:   45:      : public __gnu_debug::_Safe_container<
+        -:   46:	multimap<_Key, _Tp, _Compare, _Allocator>, _Allocator,
+        -:   47:	__gnu_debug::_Safe_node_sequence>,
+        -:   48:	public _GLIBCXX_STD_C::multimap<_Key, _Tp, _Compare, _Allocator>
+        -:   49:    {
+        -:   50:      typedef _GLIBCXX_STD_C::multimap<
+        -:   51:	_Key, _Tp, _Compare, _Allocator>			_Base;
+        -:   52:      typedef __gnu_debug::_Safe_container<
+        -:   53:	multimap, _Allocator, __gnu_debug::_Safe_node_sequence>	_Safe;
+        -:   54:
+        -:   55:      typedef typename _Base::const_iterator	_Base_const_iterator;
+        -:   56:      typedef typename _Base::iterator		_Base_iterator;
+        -:   57:      typedef __gnu_debug::_Equal_to<_Base_const_iterator> _Equal;
+        -:   58:
+        -:   59:    public:
+        -:   60:      // types:
+        -:   61:      typedef _Key					key_type;
+        -:   62:      typedef _Tp					mapped_type;
+        -:   63:      typedef std::pair<const _Key, _Tp>		value_type;
+        -:   64:      typedef _Compare					key_compare;
+        -:   65:      typedef _Allocator				allocator_type;
+        -:   66:      typedef typename _Base::reference			reference;
+        -:   67:      typedef typename _Base::const_reference		const_reference;
+        -:   68:
+        -:   69:      typedef __gnu_debug::_Safe_iterator<_Base_iterator, multimap>
+        -:   70:							iterator;
+        -:   71:      typedef __gnu_debug::_Safe_iterator<_Base_const_iterator,
+        -:   72:					  multimap>	const_iterator;
+        -:   73:
+        -:   74:      typedef typename _Base::size_type			size_type;
+        -:   75:      typedef typename _Base::difference_type		difference_type;
+        -:   76:      typedef typename _Base::pointer			pointer;
+        -:   77:      typedef typename _Base::const_pointer		const_pointer;
+        -:   78:      typedef std::reverse_iterator<iterator>		reverse_iterator;
+        -:   79:      typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
+        -:   80:
+        -:   81:      // 23.3.1.1 construct/copy/destroy:
+        -:   82:
+        -:   83:#if __cplusplus < 201103L
+        -:   84:      multimap() : _Base() { }
+        -:   85:
+        -:   86:      multimap(const multimap& __x)
+        -:   87:      : _Base(__x) { }
+        -:   88:
+        -:   89:      ~multimap() { }
+        -:   90:#else
+function _ZNSt7__debug8multimapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPK5TokenSt4lessIS6_ESaISt4pairIKS6_S9_EEEC2Ev called 0 returned 0% blocks executed 0%
+    #####:   91:      multimap() = default;
+call    0 never executed
+call    1 never executed
+        -:   92:      multimap(const multimap&) = default;
+        -:   93:      multimap(multimap&&) = default;
+        -:   94:
+        -:   95:      multimap(initializer_list<value_type> __l,
+        -:   96:	       const _Compare& __c = _Compare(),
+        -:   97:	       const allocator_type& __a = allocator_type())
+        -:   98:      : _Base(__l, __c, __a) { }
+        -:   99:
+        -:  100:      explicit
+        -:  101:      multimap(const allocator_type& __a)
+        -:  102:      : _Base(__a) { }
+        -:  103:
+        -:  104:      multimap(const multimap& __m, const allocator_type& __a)
+        -:  105:      : _Base(__m, __a) { }
+        -:  106:
+        -:  107:      multimap(multimap&& __m, const allocator_type& __a)
+        -:  108:      : _Safe(std::move(__m._M_safe()), __a),
+        -:  109:	_Base(std::move(__m._M_base()), __a) { }
+        -:  110:
+        -:  111:      multimap(initializer_list<value_type> __l, const allocator_type& __a)
+        -:  112:      : _Base(__l, __a) { }
+        -:  113:
+        -:  114:      template<typename _InputIterator>
+        -:  115:	multimap(_InputIterator __first, _InputIterator __last,
+        -:  116:		 const allocator_type& __a)
+        -:  117:	: _Base(__gnu_debug::__base(__gnu_debug::__check_valid_range(__first,
+        -:  118:								     __last)),
+        -:  119:		__gnu_debug::__base(__last), __a) { }
+        -:  120:
+function _ZNSt7__debug8multimapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPK5TokenSt4lessIS6_ESaISt4pairIKS6_S9_EEED2Ev called 0 returned 0% blocks executed 0%
+    #####:  121:      ~multimap() = default;
+call    0 never executed
+call    1 never executed
+        -:  122:#endif
+        -:  123:
+        -:  124:      explicit multimap(const _Compare& __comp,
+        -:  125:			const _Allocator& __a = _Allocator())
+        -:  126:      : _Base(__comp, __a) { }
+        -:  127:
+        -:  128:      template<typename _InputIterator>
+        -:  129:      multimap(_InputIterator __first, _InputIterator __last,
+        -:  130:	       const _Compare& __comp = _Compare(),
+        -:  131:	       const _Allocator& __a = _Allocator())
+        -:  132:	: _Base(__gnu_debug::__base(__gnu_debug::__check_valid_range(__first,
+        -:  133:								     __last)),
+        -:  134:		__gnu_debug::__base(__last),
+        -:  135:	      __comp, __a) { }
+        -:  136:
+        -:  137:      multimap(const _Base& __x)
+        -:  138:      : _Base(__x) { }
+        -:  139:
+        -:  140:#if __cplusplus < 201103L
+        -:  141:      multimap&
+        -:  142:      operator=(const multimap& __x)
+        -:  143:      {
+        -:  144:	this->_M_safe() = __x;
+        -:  145:	_M_base() = __x;
+        -:  146:	return *this;
+        -:  147:      }
+        -:  148:#else
+        -:  149:      multimap&
+        -:  150:      operator=(const multimap&) = default;
+        -:  151:
+        -:  152:      multimap&
+        -:  153:      operator=(multimap&&) = default;
+        -:  154:
+        -:  155:      multimap&
+        -:  156:      operator=(initializer_list<value_type> __l)
+        -:  157:      {
+        -:  158:	_M_base() = __l;
+        -:  159:	this->_M_invalidate_all();
+        -:  160:	return *this;
+        -:  161:      }
+        -:  162:#endif
+        -:  163:
+        -:  164:      using _Base::get_allocator;
+        -:  165:
+        -:  166:      // iterators:
+        -:  167:      iterator
+function _ZNSt7__debug8multimapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPK5TokenSt4lessIS6_ESaISt4pairIKS6_S9_EEE5beginEv called 0 returned 0% blocks executed 0%
+    #####:  168:      begin() _GLIBCXX_NOEXCEPT
+    #####:  169:      { return iterator(_Base::begin(), this); }
+call    0 never executed
+call    1 never executed
+        -:  170:
+        -:  171:      const_iterator
+        -:  172:      begin() const _GLIBCXX_NOEXCEPT
+        -:  173:      { return const_iterator(_Base::begin(), this); }
+        -:  174:
+        -:  175:      iterator
+function _ZNSt7__debug8multimapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPK5TokenSt4lessIS6_ESaISt4pairIKS6_S9_EEE3endEv called 0 returned 0% blocks executed 0%
+    #####:  176:      end() _GLIBCXX_NOEXCEPT
+    #####:  177:      { return iterator(_Base::end(), this); }
+call    0 never executed
+call    1 never executed
+        -:  178:
+        -:  179:      const_iterator
+        -:  180:      end() const _GLIBCXX_NOEXCEPT
+        -:  181:      { return const_iterator(_Base::end(), this); }
+        -:  182:
+        -:  183:      reverse_iterator
+        -:  184:      rbegin() _GLIBCXX_NOEXCEPT
+        -:  185:      { return reverse_iterator(end()); }
+        -:  186:
+        -:  187:      const_reverse_iterator
+        -:  188:      rbegin() const _GLIBCXX_NOEXCEPT
+        -:  189:      { return const_reverse_iterator(end()); }
+        -:  190:
+        -:  191:      reverse_iterator
+        -:  192:      rend() _GLIBCXX_NOEXCEPT
+        -:  193:      { return reverse_iterator(begin()); }
+        -:  194:
+        -:  195:      const_reverse_iterator
+        -:  196:      rend() const _GLIBCXX_NOEXCEPT
+        -:  197:      { return const_reverse_iterator(begin()); }
+        -:  198:
+        -:  199:#if __cplusplus >= 201103L
+        -:  200:      const_iterator
+        -:  201:      cbegin() const noexcept
+        -:  202:      { return const_iterator(_Base::begin(), this); }
+        -:  203:
+        -:  204:      const_iterator
+        -:  205:      cend() const noexcept
+        -:  206:      { return const_iterator(_Base::end(), this); }
+        -:  207:
+        -:  208:      const_reverse_iterator
+        -:  209:      crbegin() const noexcept
+        -:  210:      { return const_reverse_iterator(end()); }
+        -:  211:
+        -:  212:      const_reverse_iterator
+        -:  213:      crend() const noexcept
+        -:  214:      { return const_reverse_iterator(begin()); }
+        -:  215:#endif
+        -:  216:
+        -:  217:      // capacity:
+        -:  218:      using _Base::empty;
+        -:  219:      using _Base::size;
+        -:  220:      using _Base::max_size;
+        -:  221:
+        -:  222:      // modifiers:
+        -:  223:#if __cplusplus >= 201103L
+        -:  224:      template<typename... _Args>
+        -:  225:	iterator
+        -:  226:	emplace(_Args&&... __args)
+        -:  227:	{
+        -:  228:	  return iterator(_Base::emplace(std::forward<_Args>(__args)...), this);
+        -:  229:	}
+        -:  230:
+        -:  231:      template<typename... _Args>
+        -:  232:	iterator
+        -:  233:	emplace_hint(const_iterator __pos, _Args&&... __args)
+        -:  234:	{
+        -:  235:	  __glibcxx_check_insert(__pos);
+        -:  236:	  return iterator(_Base::emplace_hint(__pos.base(),
+        -:  237:					      std::forward<_Args>(__args)...),
+        -:  238:			  this);
+        -:  239:	}
+        -:  240:#endif
+        -:  241:
+        -:  242:      iterator
+        -:  243:      insert(const value_type& __x)
+        -:  244:      { return iterator(_Base::insert(__x), this); }
+        -:  245:
+        -:  246:#if __cplusplus >= 201103L
+        -:  247:      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  248:      // 2354. Unnecessary copying when inserting into maps with braced-init
+        -:  249:      iterator
+        -:  250:      insert(value_type&& __x)
+        -:  251:      { return { _Base::insert(std::move(__x)), this }; }
+        -:  252:
+        -:  253:      template<typename _Pair, typename = typename
+        -:  254:	       std::enable_if<std::is_constructible<value_type,
+        -:  255:						    _Pair&&>::value>::type>
+        -:  256:	iterator
+function _ZNSt7__debug8multimapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPK5TokenSt4lessIS6_ESaISt4pairIKS6_S9_EEE6insertISC_IS6_S9_EvEEN11__gnu_debug14_Safe_iteratorISt17_Rb_tree_iteratorISE_ESG_EEOT_ called 0 returned 0% blocks executed 0%
+    #####:  257:	insert(_Pair&& __x)
+    #####:  258:	{ return iterator(_Base::insert(std::forward<_Pair>(__x)), this); }
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  259:#endif
+        -:  260:
+        -:  261:#if __cplusplus >= 201103L
+        -:  262:      void
+        -:  263:      insert(std::initializer_list<value_type> __list)
+        -:  264:      { _Base::insert(__list); }
+        -:  265:#endif
+        -:  266:
+        -:  267:      iterator
+        -:  268:#if __cplusplus >= 201103L
+        -:  269:      insert(const_iterator __position, const value_type& __x)
+        -:  270:#else
+        -:  271:      insert(iterator __position, const value_type& __x)
+        -:  272:#endif
+        -:  273:      {
+        -:  274:	__glibcxx_check_insert(__position);
+        -:  275:	return iterator(_Base::insert(__position.base(), __x), this);
+        -:  276:      }
+        -:  277:
+        -:  278:#if __cplusplus >= 201103L
+        -:  279:      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  280:      // 2354. Unnecessary copying when inserting into maps with braced-init
+        -:  281:      iterator
+        -:  282:      insert(const_iterator __position, value_type&& __x)
+        -:  283:      {
+        -:  284:	__glibcxx_check_insert(__position);
+        -:  285:	return { _Base::insert(__position.base(), std::move(__x)), this };
+        -:  286:      }
+        -:  287:
+        -:  288:      template<typename _Pair, typename = typename
+        -:  289:	       std::enable_if<std::is_constructible<value_type,
+        -:  290:						    _Pair&&>::value>::type>
+        -:  291:	iterator
+        -:  292:	insert(const_iterator __position, _Pair&& __x)
+        -:  293:	{
+        -:  294:	  __glibcxx_check_insert(__position);
+        -:  295:	  return iterator(_Base::insert(__position.base(),
+        -:  296:					std::forward<_Pair>(__x)), this);
+        -:  297:	}
+        -:  298:#endif
+        -:  299:
+        -:  300:      template<typename _InputIterator>
+        -:  301:	void
+        -:  302:	insert(_InputIterator __first, _InputIterator __last)
+        -:  303:	{
+        -:  304:	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+        -:  305:	  __glibcxx_check_valid_range2(__first, __last, __dist);
+        -:  306:
+        -:  307:	  if (__dist.second >= __gnu_debug::__dp_sign)
+        -:  308:	    _Base::insert(__gnu_debug::__unsafe(__first),
+        -:  309:			  __gnu_debug::__unsafe(__last));
+        -:  310:	  else
+        -:  311:	    _Base::insert(__first, __last);
+        -:  312:	}
+        -:  313:
+        -:  314:#if __cplusplus > 201402L
+        -:  315:      using node_type = typename _Base::node_type;
+        -:  316:
+        -:  317:      node_type
+        -:  318:      extract(const_iterator __position)
+        -:  319:      {
+        -:  320:	__glibcxx_check_erase(__position);
+        -:  321:	this->_M_invalidate_if(_Equal(__position.base()));
+        -:  322:	return _Base::extract(__position.base());
+        -:  323:      }
+        -:  324:
+        -:  325:      node_type
+        -:  326:      extract(const key_type& __key)
+        -:  327:      {
+        -:  328:	const auto __position = find(__key);
+        -:  329:	if (__position != end())
+        -:  330:	  return extract(__position);
+        -:  331:	return {};
+        -:  332:      }
+        -:  333:
+        -:  334:      iterator
+        -:  335:      insert(node_type&& __nh)
+        -:  336:      { return iterator(_Base::insert(std::move(__nh)), this); }
+        -:  337:
+        -:  338:      iterator
+        -:  339:      insert(const_iterator __hint, node_type&& __nh)
+        -:  340:      {
+        -:  341:	__glibcxx_check_insert(__hint);
+        -:  342:	return iterator(_Base::insert(__hint.base(), std::move(__nh)), this);
+        -:  343:      }
+        -:  344:
+        -:  345:      using _Base::merge;
+        -:  346:#endif // C++17
+        -:  347:
+        -:  348:#if __cplusplus >= 201103L
+        -:  349:      iterator
+        -:  350:      erase(const_iterator __position)
+        -:  351:      {
+        -:  352:	__glibcxx_check_erase(__position);
+        -:  353:	this->_M_invalidate_if(_Equal(__position.base()));
+        -:  354:	return iterator(_Base::erase(__position.base()), this);
+        -:  355:      }
+        -:  356:
+        -:  357:      iterator
+        -:  358:      erase(iterator __position)
+        -:  359:      { return erase(const_iterator(__position)); }
+        -:  360:#else
+        -:  361:      void
+        -:  362:      erase(iterator __position)
+        -:  363:      {
+        -:  364:	__glibcxx_check_erase(__position);
+        -:  365:	this->_M_invalidate_if(_Equal(__position.base()));
+        -:  366:	_Base::erase(__position.base());
+        -:  367:      }
+        -:  368:#endif
+        -:  369:
+        -:  370:      size_type
+        -:  371:      erase(const key_type& __x)
+        -:  372:      {
+        -:  373:	std::pair<_Base_iterator, _Base_iterator> __victims =
+        -:  374:	  _Base::equal_range(__x);
+        -:  375:	size_type __count = 0;
+        -:  376:	_Base_iterator __victim = __victims.first;
+        -:  377:	while (__victim !=  __victims.second)
+        -:  378:	  {
+        -:  379:	    this->_M_invalidate_if(_Equal(__victim));
+        -:  380:	    _Base::erase(__victim++);
+        -:  381:	    ++__count;
+        -:  382:	  }
+        -:  383:	return __count;
+        -:  384:      }
+        -:  385:
+        -:  386:#if __cplusplus >= 201103L
+        -:  387:      iterator
+        -:  388:      erase(const_iterator __first, const_iterator __last)
+        -:  389:      {
+        -:  390:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  391:	// 151. can't currently clear() empty container
+        -:  392:	__glibcxx_check_erase_range(__first, __last);
+        -:  393:	for (_Base_const_iterator __victim = __first.base();
+        -:  394:	     __victim != __last.base(); ++__victim)
+        -:  395:	  {
+        -:  396:	    _GLIBCXX_DEBUG_VERIFY(__victim != _Base::end(),
+        -:  397:				  _M_message(__gnu_debug::__msg_valid_range)
+        -:  398:				  ._M_iterator(__first, "first")
+        -:  399:				  ._M_iterator(__last, "last"));
+        -:  400:	    this->_M_invalidate_if(_Equal(__victim));
+        -:  401:	  }
+        -:  402:	return iterator(_Base::erase(__first.base(), __last.base()), this);
+        -:  403:      }
+        -:  404:#else
+        -:  405:      void
+        -:  406:      erase(iterator __first, iterator __last)
+        -:  407:      {
+        -:  408:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  409:	// 151. can't currently clear() empty container
+        -:  410:	__glibcxx_check_erase_range(__first, __last);
+        -:  411:	for (_Base_iterator __victim = __first.base();
+        -:  412:	     __victim != __last.base(); ++__victim)
+        -:  413:	  {
+        -:  414:	    _GLIBCXX_DEBUG_VERIFY(__victim != _Base::end(),
+        -:  415:				  _M_message(__gnu_debug::__msg_valid_range)
+        -:  416:				  ._M_iterator(__first, "first")
+        -:  417:				  ._M_iterator(__last, "last"));
+        -:  418:	    this->_M_invalidate_if(_Equal(__victim));
+        -:  419:	  }
+        -:  420:	_Base::erase(__first.base(), __last.base());
+        -:  421:      }
+        -:  422:#endif
+        -:  423:
+        -:  424:      void
+        -:  425:      swap(multimap& __x)
+        -:  426:      _GLIBCXX_NOEXCEPT_IF( noexcept(declval<_Base&>().swap(__x)) )
+        -:  427:      {
+        -:  428:	_Safe::_M_swap(__x);
+        -:  429:	_Base::swap(__x);
+        -:  430:      }
+        -:  431:
+        -:  432:      void
+        -:  433:      clear() _GLIBCXX_NOEXCEPT
+        -:  434:      {
+        -:  435:	this->_M_invalidate_all();
+        -:  436:	_Base::clear();
+        -:  437:      }
+        -:  438:
+        -:  439:      // observers:
+        -:  440:      using _Base::key_comp;
+        -:  441:      using _Base::value_comp;
+        -:  442:
+        -:  443:      // 23.3.1.3 multimap operations:
+        -:  444:      iterator
+        -:  445:      find(const key_type& __x)
+        -:  446:      { return iterator(_Base::find(__x), this); }
+        -:  447:
+        -:  448:#if __cplusplus > 201103L
+        -:  449:      template<typename _Kt,
+        -:  450:	       typename _Req =
+        -:  451:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  452:	iterator
+        -:  453:	find(const _Kt& __x)
+        -:  454:	{ return { _Base::find(__x), this }; }
+        -:  455:#endif
+        -:  456:
+        -:  457:      const_iterator
+        -:  458:      find(const key_type& __x) const
+        -:  459:      { return const_iterator(_Base::find(__x), this); }
+        -:  460:
+        -:  461:#if __cplusplus > 201103L
+        -:  462:      template<typename _Kt,
+        -:  463:	       typename _Req =
+        -:  464:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  465:	const_iterator
+        -:  466:	find(const _Kt& __x) const
+        -:  467:	{ return { _Base::find(__x), this }; }
+        -:  468:#endif
+        -:  469:
+        -:  470:      using _Base::count;
+        -:  471:
+        -:  472:      iterator
+        -:  473:      lower_bound(const key_type& __x)
+        -:  474:      { return iterator(_Base::lower_bound(__x), this); }
+        -:  475:
+        -:  476:#if __cplusplus > 201103L
+        -:  477:      template<typename _Kt,
+        -:  478:	       typename _Req =
+        -:  479:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  480:	iterator
+        -:  481:	lower_bound(const _Kt& __x)
+        -:  482:	{ return { _Base::lower_bound(__x), this }; }
+        -:  483:#endif
+        -:  484:
+        -:  485:      const_iterator
+        -:  486:      lower_bound(const key_type& __x) const
+        -:  487:      { return const_iterator(_Base::lower_bound(__x), this); }
+        -:  488:
+        -:  489:#if __cplusplus > 201103L
+        -:  490:      template<typename _Kt,
+        -:  491:	       typename _Req =
+        -:  492:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  493:	const_iterator
+        -:  494:	lower_bound(const _Kt& __x) const
+        -:  495:	{ return { _Base::lower_bound(__x), this }; }
+        -:  496:#endif
+        -:  497:
+        -:  498:      iterator
+        -:  499:      upper_bound(const key_type& __x)
+        -:  500:      { return iterator(_Base::upper_bound(__x), this); }
+        -:  501:
+        -:  502:#if __cplusplus > 201103L
+        -:  503:      template<typename _Kt,
+        -:  504:	       typename _Req =
+        -:  505:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  506:	iterator
+        -:  507:	upper_bound(const _Kt& __x)
+        -:  508:	{ return { _Base::upper_bound(__x), this }; }
+        -:  509:#endif
+        -:  510:
+        -:  511:      const_iterator
+        -:  512:      upper_bound(const key_type& __x) const
+        -:  513:      { return const_iterator(_Base::upper_bound(__x), this); }
+        -:  514:
+        -:  515:#if __cplusplus > 201103L
+        -:  516:      template<typename _Kt,
+        -:  517:	       typename _Req =
+        -:  518:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  519:	const_iterator
+        -:  520:	upper_bound(const _Kt& __x) const
+        -:  521:	{ return { _Base::upper_bound(__x), this }; }
+        -:  522:#endif
+        -:  523:
+        -:  524:      std::pair<iterator,iterator>
+        -:  525:      equal_range(const key_type& __x)
+        -:  526:      {
+        -:  527:	std::pair<_Base_iterator, _Base_iterator> __res =
+        -:  528:	_Base::equal_range(__x);
+        -:  529:	return std::make_pair(iterator(__res.first, this),
+        -:  530:			      iterator(__res.second, this));
+        -:  531:      }
+        -:  532:
+        -:  533:#if __cplusplus > 201103L
+        -:  534:      template<typename _Kt,
+        -:  535:	       typename _Req =
+        -:  536:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  537:	std::pair<iterator, iterator>
+        -:  538:	equal_range(const _Kt& __x)
+        -:  539:	{
+        -:  540:	  auto __res = _Base::equal_range(__x);
+        -:  541:	  return { { __res.first, this }, { __res.second, this } };
+        -:  542:	}
+        -:  543:#endif
+        -:  544:
+        -:  545:      std::pair<const_iterator,const_iterator>
+        -:  546:      equal_range(const key_type& __x) const
+        -:  547:      {
+        -:  548:	std::pair<_Base_const_iterator, _Base_const_iterator> __res =
+        -:  549:	  _Base::equal_range(__x);
+        -:  550:	return std::make_pair(const_iterator(__res.first, this),
+        -:  551:			      const_iterator(__res.second, this));
+        -:  552:      }
+        -:  553:
+        -:  554:#if __cplusplus > 201103L
+        -:  555:      template<typename _Kt,
+        -:  556:	       typename _Req =
+        -:  557:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  558:	std::pair<const_iterator, const_iterator>
+        -:  559:	equal_range(const _Kt& __x) const
+        -:  560:	{
+        -:  561:	  auto __res = _Base::equal_range(__x);
+        -:  562:	  return { { __res.first, this }, { __res.second, this } };
+        -:  563:	}
+        -:  564:#endif
+        -:  565:
+        -:  566:      _Base&
+function _ZNSt7__debug8multimapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPK5TokenSt4lessIS6_ESaISt4pairIKS6_S9_EEE7_M_baseEv called 0 returned 0% blocks executed 0%
+    #####:  567:      _M_base() _GLIBCXX_NOEXCEPT { return *this; }
+        -:  568:
+        -:  569:      const _Base&
+function _ZNKSt7__debug8multimapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPK5TokenSt4lessIS6_ESaISt4pairIKS6_S9_EEE7_M_baseEv called 0 returned 0% blocks executed 0%
+    #####:  570:      _M_base() const _GLIBCXX_NOEXCEPT { return *this; }
+        -:  571:    };
+        -:  572:
+        -:  573:  template<typename _Key, typename _Tp,
+        -:  574:	   typename _Compare, typename _Allocator>
+        -:  575:    inline bool
+        -:  576:    operator==(const multimap<_Key, _Tp, _Compare, _Allocator>& __lhs,
+        -:  577:	       const multimap<_Key, _Tp, _Compare, _Allocator>& __rhs)
+        -:  578:    { return __lhs._M_base() == __rhs._M_base(); }
+        -:  579:
+        -:  580:  template<typename _Key, typename _Tp,
+        -:  581:	   typename _Compare, typename _Allocator>
+        -:  582:    inline bool
+        -:  583:    operator!=(const multimap<_Key, _Tp, _Compare, _Allocator>& __lhs,
+        -:  584:	       const multimap<_Key, _Tp, _Compare, _Allocator>& __rhs)
+        -:  585:    { return __lhs._M_base() != __rhs._M_base(); }
+        -:  586:
+        -:  587:  template<typename _Key, typename _Tp,
+        -:  588:	   typename _Compare, typename _Allocator>
+        -:  589:    inline bool
+        -:  590:    operator<(const multimap<_Key, _Tp, _Compare, _Allocator>& __lhs,
+        -:  591:	      const multimap<_Key, _Tp, _Compare, _Allocator>& __rhs)
+        -:  592:    { return __lhs._M_base() < __rhs._M_base(); }
+        -:  593:
+        -:  594:  template<typename _Key, typename _Tp,
+        -:  595:	   typename _Compare, typename _Allocator>
+        -:  596:    inline bool
+        -:  597:    operator<=(const multimap<_Key, _Tp, _Compare, _Allocator>& __lhs,
+        -:  598:	       const multimap<_Key, _Tp, _Compare, _Allocator>& __rhs)
+        -:  599:    { return __lhs._M_base() <= __rhs._M_base(); }
+        -:  600:
+        -:  601:  template<typename _Key, typename _Tp,
+        -:  602:	   typename _Compare, typename _Allocator>
+        -:  603:    inline bool
+        -:  604:    operator>=(const multimap<_Key, _Tp, _Compare, _Allocator>& __lhs,
+        -:  605:	       const multimap<_Key, _Tp, _Compare, _Allocator>& __rhs)
+        -:  606:    { return __lhs._M_base() >= __rhs._M_base(); }
+        -:  607:
+        -:  608:  template<typename _Key, typename _Tp,
+        -:  609:	   typename _Compare, typename _Allocator>
+        -:  610:    inline bool
+        -:  611:    operator>(const multimap<_Key, _Tp, _Compare, _Allocator>& __lhs,
+        -:  612:	      const multimap<_Key, _Tp, _Compare, _Allocator>& __rhs)
+        -:  613:    { return __lhs._M_base() > __rhs._M_base(); }
+        -:  614:
+        -:  615:  template<typename _Key, typename _Tp,
+        -:  616:	   typename _Compare, typename _Allocator>
+        -:  617:    inline void
+        -:  618:    swap(multimap<_Key, _Tp, _Compare, _Allocator>& __lhs,
+        -:  619:	 multimap<_Key, _Tp, _Compare, _Allocator>& __rhs)
+        -:  620:    _GLIBCXX_NOEXCEPT_IF(noexcept(__lhs.swap(__rhs)))
+        -:  621:    { __lhs.swap(__rhs); }
+        -:  622:
+        -:  623:} // namespace __debug
+        -:  624:} // namespace std
+        -:  625:
+        -:  626:#endif

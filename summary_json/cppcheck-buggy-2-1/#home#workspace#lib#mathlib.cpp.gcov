@@ -1,0 +1,3856 @@
+        -:    0:Source:/home/workspace/lib/mathlib.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/mathlib.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/mathlib.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20:#include "mathlib.h"
+        -:   21:#include "errorlogger.h"
+        -:   22:#include "utils.h"
+        -:   23:
+        -:   24:#include <cctype>
+        -:   25:#include <cmath>
+        -:   26:#include <cstdlib>
+        -:   27:#include <limits>
+        -:   28:#include <locale>
+        -:   29:
+        -:   30:#if defined(_MSC_VER) && _MSC_VER <= 1700  // VS2012 doesn't have std::isinf and std::isnan
+        -:   31:#define ISINF(x)      (!_finite(x))
+        -:   32:#define ISNAN(x)      (_isnan(x))
+        -:   33:#elif defined(__INTEL_COMPILER)
+        -:   34:#define ISINF(x)      (isinf(x))
+        -:   35:#define ISNAN(x)      (isnan(x))
+        -:   36:#else  // Use C++11 functions
+        -:   37:#define ISINF(x)      (std::isinf(x))
+        -:   38:#define ISNAN(x)      (std::isnan(x))
+        -:   39:#endif
+        -:   40:
+        -:   41:const int MathLib::bigint_bits = 64;
+        -:   42:
+function _ZN7MathLib5valueC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 16 returned 100% blocks executed 68%
+       16:   43:MathLib::value::value(const std::string &s) :
+       16:   44:    mIntValue(0), mDoubleValue(0), mIsUnsigned(false)
+        -:   45:{
+       16:   46:    if (MathLib::isFloat(s)) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   47:        mType = MathLib::value::FLOAT;
+    #####:   48:        mDoubleValue = MathLib::toDoubleNumber(s);
+call    0 never executed
+    #####:   49:        return;
+        -:   50:    }
+        -:   51:
+       16:   52:    if (!MathLib::isInt(s))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   53:        throw InternalError(nullptr, "Invalid value: " + s);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:   54:
+       16:   55:    mType = MathLib::value::INT;
+       16:   56:    mIntValue = MathLib::toLongNumber(s);
+call    0 returned 100%
+        -:   57:
+       16:   58:    if (isIntHex(s) && mIntValue < 0)
+call    0 returned 100%
+branch  1 taken 88% (fallthrough)
+branch  2 taken 13%
+branch  3 taken 14% (fallthrough)
+branch  4 taken 86%
+branch  5 taken 13% (fallthrough)
+branch  6 taken 88%
+        2:   59:        mIsUnsigned = true;
+        -:   60:
+        -:   61:    // read suffix
+       16:   62:    if (s.size() >= 2U) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+       96:   63:        for (std::size_t i = s.size() - 1U; i > 0U; --i) {
+call    0 returned 100%
+branch  1 taken 83% (fallthrough)
+branch  2 taken 17%
+       80:   64:            const char c = s[i];
+call    0 returned 100%
+       80:   65:            if (c == 'u' || c == 'U')
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+        1:   66:                mIsUnsigned = true;
+       79:   67:            else if (c == 'l' || c == 'L') {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+        2:   68:                if (mType == MathLib::value::INT)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        1:   69:                    mType = MathLib::value::LONG;
+    #####:   70:                else if (mType == MathLib::value::LONG)
+branch  0 never executed
+branch  1 never executed
+    #####:   71:                    mType = MathLib::value::LONGLONG;
+       78:   72:            } else if (i > 2U && c == '4' && s[i-1] == '6' && s[i-2] == 'i')
+branch  0 taken 59% (fallthrough)
+branch  1 taken 41%
+branch  2 taken 11% (fallthrough)
+branch  3 taken 89%
+call    4 returned 100%
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 taken 0% (fallthrough)
+branch 11 taken 100%
+    #####:   73:                mType = MathLib::value::LONGLONG;
+        -:   74:        }
+        -:   75:    }
+        -:   76:}
+        -:   77:
+function _ZNK7MathLib5value3strB5cxx11Ev called 16 returned 100% blocks executed 28%
+       16:   78:std::string MathLib::value::str() const
+        -:   79:{
+       32:   80:    std::ostringstream ostr;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+       16:   81:    if (mType == MathLib::value::FLOAT) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:   82:        if (ISNAN(mDoubleValue))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   83:            return "nan.0";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   84:        if (ISINF(mDoubleValue))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   85:            return (mDoubleValue > 0) ? "inf.0" : "-inf.0";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+        -:   86:
+    #####:   87:        ostr.precision(9);
+call    0 never executed
+    #####:   88:        ostr << std::fixed << mDoubleValue;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:   89:
+        -:   90:        // remove trailing zeros
+    #####:   91:        std::string ret(ostr.str());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   92:        std::string::size_type pos = ret.size() - 1U;
+call    0 never executed
+    #####:   93:        while (ret[pos] == '0')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   94:            pos--;
+    #####:   95:        if (ret[pos] == '.')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   96:            ++pos;
+        -:   97:
+    #####:   98:        return ret.substr(0, pos+1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   99:    }
+        -:  100:
+       16:  101:    if (mIsUnsigned)
+branch  0 taken 19% (fallthrough)
+branch  1 taken 81%
+        3:  102:        ostr << static_cast<biguint>(mIntValue) << "U";
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+        -:  103:    else
+       13:  104:        ostr << mIntValue;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       16:  105:    if (mType == MathLib::value::LONG)
+branch  0 taken 6% (fallthrough)
+branch  1 taken 94%
+        1:  106:        ostr << "L";
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       15:  107:    else if (mType == MathLib::value::LONGLONG)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  108:        ostr << "LL";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+       16:  109:    return ostr.str();
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  110:}
+        -:  111:
+function _ZN7MathLib5value7promoteERKS0_ called 0 returned 0% blocks executed 0%
+    #####:  112:void MathLib::value::promote(const MathLib::value &v)
+        -:  113:{
+    #####:  114:    if (isInt() && v.isInt()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  115:        if (mType < v.mType) {
+branch  0 never executed
+branch  1 never executed
+    #####:  116:            mType = v.mType;
+    #####:  117:            mIsUnsigned = v.mIsUnsigned;
+    #####:  118:        } else if (mType == v.mType) {
+branch  0 never executed
+branch  1 never executed
+    #####:  119:            mIsUnsigned |= v.mIsUnsigned;
+        -:  120:        }
+    #####:  121:    } else if (!isFloat()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  122:        mIsUnsigned = false;
+    #####:  123:        mDoubleValue = mIntValue;
+    #####:  124:        mType = MathLib::value::FLOAT;
+        -:  125:    }
+    #####:  126:}
+        -:  127:
+        -:  128:
+function _ZN7MathLib5value4calcEcRKS0_S2_ called 0 returned 0% blocks executed 0%
+    #####:  129:MathLib::value MathLib::value::calc(char op, const MathLib::value &v1, const MathLib::value &v2)
+        -:  130:{
+    #####:  131:    value temp(v1);
+    #####:  132:    temp.promote(v2);
+call    0 never executed
+    #####:  133:    if (temp.isFloat()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  134:        switch (op) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  135:        case '+':
+    #####:  136:            temp.mDoubleValue += v2.getDoubleValue();
+call    0 never executed
+    #####:  137:            break;
+    #####:  138:        case '-':
+    #####:  139:            temp.mDoubleValue -= v2.getDoubleValue();
+call    0 never executed
+    #####:  140:            break;
+    #####:  141:        case '*':
+    #####:  142:            temp.mDoubleValue *= v2.getDoubleValue();
+call    0 never executed
+    #####:  143:            break;
+    #####:  144:        case '/':
+    #####:  145:            temp.mDoubleValue /= v2.getDoubleValue();
+call    0 never executed
+    #####:  146:            break;
+    #####:  147:        case '%':
+        -:  148:        case '&':
+        -:  149:        case '|':
+        -:  150:        case '^':
+    #####:  151:            throw InternalError(nullptr, "Invalid calculation");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  152:        default:
+    #####:  153:            throw InternalError(nullptr, "Unhandled calculation");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+        -:  154:        }
+    #####:  155:    } else if (temp.mIsUnsigned) {
+branch  0 never executed
+branch  1 never executed
+    #####:  156:        switch (op) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  157:        case '+':
+    #####:  158:            temp.mIntValue += (unsigned long long)v2.mIntValue;
+    #####:  159:            break;
+    #####:  160:        case '-':
+    #####:  161:            temp.mIntValue -= (unsigned long long)v2.mIntValue;
+    #####:  162:            break;
+    #####:  163:        case '*':
+    #####:  164:            temp.mIntValue *= (unsigned long long)v2.mIntValue;
+    #####:  165:            break;
+    #####:  166:        case '/':
+    #####:  167:            if (v2.mIntValue == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  168:                throw InternalError(nullptr, "Internal Error: Division by zero");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  169:            if (v1.mIntValue == std::numeric_limits<bigint>::min() && std::abs(v2.mIntValue)<=1)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  170:                throw InternalError(nullptr, "Internal Error: Division overflow");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  171:            temp.mIntValue /= (unsigned long long)v2.mIntValue;
+    #####:  172:            break;
+    #####:  173:        case '%':
+    #####:  174:            if (v2.mIntValue == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  175:                throw InternalError(nullptr, "Internal Error: Division by zero");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  176:            temp.mIntValue %= (unsigned long long)v2.mIntValue;
+    #####:  177:            break;
+    #####:  178:        case '&':
+    #####:  179:            temp.mIntValue &= (unsigned long long)v2.mIntValue;
+    #####:  180:            break;
+    #####:  181:        case '|':
+    #####:  182:            temp.mIntValue |= (unsigned long long)v2.mIntValue;
+    #####:  183:            break;
+    #####:  184:        case '^':
+    #####:  185:            temp.mIntValue ^= (unsigned long long)v2.mIntValue;
+    #####:  186:            break;
+    #####:  187:        default:
+    #####:  188:            throw InternalError(nullptr, "Unhandled calculation");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+        -:  189:        }
+        -:  190:    } else {
+    #####:  191:        switch (op) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  192:        case '+':
+    #####:  193:            temp.mIntValue += v2.mIntValue;
+    #####:  194:            break;
+    #####:  195:        case '-':
+    #####:  196:            temp.mIntValue -= v2.mIntValue;
+    #####:  197:            break;
+    #####:  198:        case '*':
+    #####:  199:            temp.mIntValue *= v2.mIntValue;
+    #####:  200:            break;
+    #####:  201:        case '/':
+    #####:  202:            if (v2.mIntValue == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  203:                throw InternalError(nullptr, "Internal Error: Division by zero");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  204:            if (v1.mIntValue == std::numeric_limits<bigint>::min() && std::abs(v2.mIntValue)<=1)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  205:                throw InternalError(nullptr, "Internal Error: Division overflow");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  206:            temp.mIntValue /= v2.mIntValue;
+    #####:  207:            break;
+    #####:  208:        case '%':
+    #####:  209:            if (v2.mIntValue == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  210:                throw InternalError(nullptr, "Internal Error: Division by zero");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  211:            temp.mIntValue %= v2.mIntValue;
+    #####:  212:            break;
+    #####:  213:        case '&':
+    #####:  214:            temp.mIntValue &= v2.mIntValue;
+    #####:  215:            break;
+    #####:  216:        case '|':
+    #####:  217:            temp.mIntValue |= v2.mIntValue;
+    #####:  218:            break;
+    #####:  219:        case '^':
+    #####:  220:            temp.mIntValue ^= v2.mIntValue;
+    #####:  221:            break;
+    #####:  222:        default:
+    #####:  223:            throw InternalError(nullptr, "Unhandled calculation");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+        -:  224:        }
+        -:  225:    }
+    #####:  226:    return temp;
+        -:  227:}
+        -:  228:
+        -:  229:
+function _ZNK7MathLib5value7compareERKS0_ called 0 returned 0% blocks executed 0%
+    #####:  230:int MathLib::value::compare(const MathLib::value &v) const
+        -:  231:{
+    #####:  232:    value temp(*this);
+    #####:  233:    temp.promote(v);
+call    0 never executed
+        -:  234:
+    #####:  235:    if (temp.isFloat()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  236:        if (temp.mDoubleValue < v.getDoubleValue())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  237:            return -1;
+    #####:  238:        if (temp.mDoubleValue > v.getDoubleValue())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  239:            return 1;
+    #####:  240:        return 0;
+        -:  241:    }
+        -:  242:
+    #####:  243:    if (temp.mIsUnsigned) {
+branch  0 never executed
+branch  1 never executed
+    #####:  244:        if ((unsigned long long)mIntValue < (unsigned long long)v.mIntValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  245:            return -1;
+    #####:  246:        if ((unsigned long long)mIntValue > (unsigned long long)v.mIntValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  247:            return 1;
+    #####:  248:        return 0;
+        -:  249:    }
+        -:  250:
+    #####:  251:    if (mIntValue < v.mIntValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  252:        return -1;
+    #####:  253:    if (mIntValue > v.mIntValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  254:        return 1;
+    #####:  255:    return 0;
+        -:  256:}
+        -:  257:
+function _ZNK7MathLib5value3addEi called 0 returned 0% blocks executed 0%
+    #####:  258:MathLib::value MathLib::value::add(int v) const
+        -:  259:{
+    #####:  260:    MathLib::value temp(*this);
+    #####:  261:    if (temp.isInt())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  262:        temp.mIntValue += v;
+        -:  263:    else
+    #####:  264:        temp.mDoubleValue += v;
+    #####:  265:    return temp;
+        -:  266:}
+        -:  267:
+function _ZNK7MathLib5value9shiftLeftERKS0_ called 0 returned 0% blocks executed 0%
+    #####:  268:MathLib::value MathLib::value::shiftLeft(const MathLib::value &v) const
+        -:  269:{
+    #####:  270:    if (!isInt() || !v.isInt())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  271:        throw InternalError(nullptr, "Shift operand is not integer");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  272:    MathLib::value ret(*this);
+    #####:  273:    if (v.mIntValue >= MathLib::bigint_bits) {
+branch  0 never executed
+branch  1 never executed
+    #####:  274:        return ret;
+        -:  275:    }
+    #####:  276:    ret.mIntValue <<= v.mIntValue;
+    #####:  277:    return ret;
+        -:  278:}
+        -:  279:
+function _ZNK7MathLib5value10shiftRightERKS0_ called 0 returned 0% blocks executed 0%
+    #####:  280:MathLib::value MathLib::value::shiftRight(const MathLib::value &v) const
+        -:  281:{
+    #####:  282:    if (!isInt() || !v.isInt())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  283:        throw InternalError(nullptr, "Shift operand is not integer");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  284:    MathLib::value ret(*this);
+    #####:  285:    if (v.mIntValue >= MathLib::bigint_bits) {
+branch  0 never executed
+branch  1 never executed
+    #####:  286:        return ret;
+        -:  287:    }
+    #####:  288:    ret.mIntValue >>= v.mIntValue;
+    #####:  289:    return ret;
+        -:  290:}
+        -:  291:
+        -:  292:
+function _ZN7MathLib13toULongNumberERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  293:MathLib::biguint MathLib::toULongNumber(const std::string & str)
+        -:  294:{
+        -:  295:    // hexadecimal numbers:
+    #####:  296:    if (isIntHex(str)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  297:        if (str[0] == '-') {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  298:            biguint ret = 0;
+    #####:  299:            std::istringstream istr(str);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  300:            istr >> std::hex >> ret;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  301:            return ret;
+        -:  302:        } else {
+    #####:  303:            unsigned long long ret = 0;
+    #####:  304:            std::istringstream istr(str);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  305:            istr >> std::hex >> ret;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  306:            return (biguint)ret;
+        -:  307:        }
+        -:  308:    }
+        -:  309:
+        -:  310:    // octal numbers:
+    #####:  311:    if (isOct(str)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  312:        biguint ret = 0;
+    #####:  313:        std::istringstream istr(str);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  314:        istr >> std::oct >> ret;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  315:        return ret;
+        -:  316:    }
+        -:  317:
+        -:  318:    // binary numbers:
+    #####:  319:    if (isBin(str)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  320:        biguint ret = 0;
+    #####:  321:        for (std::string::size_type i = str[0] == '0'?2:3; i < str.length(); i++) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  322:            ret <<= 1;
+    #####:  323:            if (str[i] == '1')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  324:                ret |= 1;
+        -:  325:        }
+        -:  326:        /* if (str[0] == '-')
+        -:  327:                ret = -ret; */
+    #####:  328:        return ret;
+        -:  329:    }
+        -:  330:
+    #####:  331:    if (isFloat(str)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  332:        // Things are going to be less precise now: the value can't b represented in the biguint type.
+        -:  333:        // Use min/max values as an approximation. See #5843
+    #####:  334:        const double doubleval = std::atof(str.c_str());
+call    0 never executed
+    #####:  335:        if (doubleval > (double)std::numeric_limits<biguint>::max())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  336:            return std::numeric_limits<biguint>::max();
+call    0 never executed
+        -:  337:        else
+    #####:  338:            return static_cast<biguint>(doubleval);
+        -:  339:    }
+        -:  340:
+    #####:  341:    biguint ret = 0;
+    #####:  342:    std::istringstream istr(str);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  343:    istr >> ret;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  344:    return ret;
+        -:  345:}
+        -:  346:
+function _ZL15encodeMultiCharRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 8 returned 100% blocks executed 100%
+        8:  347:static unsigned int encodeMultiChar(const std::string& str)
+        -:  348:{
+        8:  349:    unsigned int retval = 0;
+       16:  350:    for (char it : str) {
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 50% (fallthrough)
+branch  4 taken 50%
+call    5 returned 100%
+call    6 returned 100%
+        8:  351:        retval = (retval << 8) | it;
+        -:  352:    }
+        8:  353:    return retval;
+        -:  354:}
+        -:  355:
+function _ZL7isoctali called 0 returned 0% blocks executed 0%
+    #####:  356:static bool isoctal(int c)
+        -:  357:{
+    #####:  358:    return c>='0' && c<='7';
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  359:}
+        -:  360:
+function _ZN7MathLib28characterLiteralToLongNumberERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 8 returned 100% blocks executed 35%
+        8:  361:MathLib::bigint MathLib::characterLiteralToLongNumber(const std::string& str)
+        -:  362:{
+        8:  363:    if (str.empty())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  364:        return 0; // <- only possible in unit testing
+        -:  365:
+        -:  366:    // '\xF6'
+        8:  367:    if (str.size() == 4 && str.compare(0,2,"\\x")==0 && std::isxdigit(str[2]) && std::isxdigit(str[3])) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 taken 0% (fallthrough)
+branch 15 taken 100%
+    #####:  368:        return std::strtoul(str.substr(2).c_str(), nullptr, 16);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  369:    }
+        -:  370:
+        -:  371:    // '\123'
+        8:  372:    if (str.size() == 4 && str[0] == '\\' && isoctal(str[1]) && isoctal(str[2]) && isoctal(str[3])) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 taken 0% (fallthrough)
+branch 19 taken 100%
+    #####:  373:        return (char)std::strtoul(str.substr(1).c_str(), nullptr, 8);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  374:    }
+        -:  375:
+        -:  376:    // C99 6.4.4.4
+        -:  377:    // The value of an integer character constant containing more than one character (e.g., 'ab'),
+        -:  378:    // or containing a character or escape sequence that does not map to a single-byte execution character,
+        -:  379:    // is implementation-defined.
+        -:  380:    // clang and gcc seem to use the following encoding: 'AB' as (('A' << 8) | 'B')
+       16:  381:    const std::string& normStr = normalizeCharacterLiteral(str);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+        8:  382:    return encodeMultiChar(normStr);
+call    0 returned 100%
+        -:  383:}
+        -:  384:
+function _ZN7MathLib25normalizeCharacterLiteralERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 8 returned 100% blocks executed 8%
+        8:  385:std::string MathLib::normalizeCharacterLiteral(const std::string& iLiteral)
+        -:  386:{
+        8:  387:    std::string normalizedLiteral;
+call    0 returned 100%
+        8:  388:    const std::string::size_type iLiteralLen = iLiteral.size();
+call    0 returned 100%
+       16:  389:    for (std::string::size_type idx = 0; idx < iLiteralLen ; ++idx) {
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+       16:  390:        if (iLiteral[idx] != '\\') {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        8:  391:            normalizedLiteral.push_back(iLiteral[idx]);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+       16:  392:            continue;
+        -:  393:        }
+    #####:  394:        ++idx;
+    #####:  395:        if (idx == iLiteralLen) {
+branch  0 never executed
+branch  1 never executed
+    #####:  396:            throw InternalError(nullptr, "Internal Error. MathLib::normalizeCharacterLiteral: Unhandled char constant '" + iLiteral + "'.");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+        -:  397:        }
+    #####:  398:        switch (iLiteral[idx]) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  399:        case 'x':
+        -:  400:            // Hexa-decimal number: skip \x and interpret the next two characters
+        -:  401:        {
+    #####:  402:            if (++idx == iLiteralLen)
+branch  0 never executed
+branch  1 never executed
+    #####:  403:                throw InternalError(nullptr, "Internal Error. MathLib::normalizeCharacterLiteral: Unhandled char constant '" + iLiteral + "'.");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  404:            std::string tempBuf;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  405:            tempBuf.push_back(iLiteral[idx]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  406:            if (++idx != iLiteralLen)
+branch  0 never executed
+branch  1 never executed
+    #####:  407:                tempBuf.push_back(iLiteral[idx]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  408:            normalizedLiteral.push_back(static_cast<char>(MathLib::toULongNumber("0x" + tempBuf)));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  409:            continue;
+        -:  410:        }
+    #####:  411:        case 'u':
+        -:  412:        case 'U':
+        -:  413:            // Unicode string; just skip the \u or \U
+    #####:  414:            if (idx + 1 == iLiteralLen)
+branch  0 never executed
+branch  1 never executed
+    #####:  415:                throw InternalError(nullptr, "Internal Error. MathLib::characterLiteralToLongNumber: Unhandled char constant '" + iLiteral + "'.");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  416:            continue;
+        -:  417:        }
+        -:  418:        // Single digit octal number
+    #####:  419:        if (1 == iLiteralLen - idx) {
+branch  0 never executed
+branch  1 never executed
+    #####:  420:            switch (iLiteral[idx]) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  421:            case '0':
+        -:  422:            case '1':
+        -:  423:            case '2':
+        -:  424:            case '3':
+        -:  425:            case '4':
+        -:  426:            case '5':
+        -:  427:            case '6':
+        -:  428:            case '7':
+    #####:  429:                normalizedLiteral.push_back(iLiteral[idx]-'0');
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  430:                break;
+    #####:  431:            case 'a':
+    #####:  432:                normalizedLiteral.push_back('\a');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  433:                break;
+    #####:  434:            case 'b':
+    #####:  435:                normalizedLiteral.push_back('\b');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  436:                break;
+    #####:  437:            case 'e':
+    #####:  438:                normalizedLiteral.push_back(0x1B); // clang, gcc, tcc interpnormalizedLiteral this as 0x1B - escape character
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  439:                break;
+    #####:  440:            case 'f':
+    #####:  441:                normalizedLiteral.push_back('\f');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  442:                break;
+    #####:  443:            case 'n':
+    #####:  444:                normalizedLiteral.push_back('\n');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  445:                break;
+    #####:  446:            case 'r':
+    #####:  447:                normalizedLiteral.push_back('\r');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  448:                break;
+    #####:  449:            case 't':
+    #####:  450:                normalizedLiteral.push_back('\t');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  451:                break;
+    #####:  452:            case 'v':
+    #####:  453:                normalizedLiteral.push_back('\v');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  454:                break;
+    #####:  455:            case '\\':
+        -:  456:            case '\?':
+        -:  457:            case '\'':
+        -:  458:            case '\"':
+    #####:  459:                normalizedLiteral.push_back(iLiteral[idx]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  460:                break;
+    #####:  461:            default:
+    #####:  462:                throw InternalError(nullptr, "Internal Error. MathLib::normalizeCharacterLiteral: Unhandled char constant '" + iLiteral + "'.");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+        -:  463:            }
+    #####:  464:            continue;
+        -:  465:        }
+        -:  466:        // 2-3 digit octal number
+    #####:  467:        if (!MathLib::isOctalDigit(iLiteral[idx]))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  468:            throw InternalError(nullptr, "Internal Error. MathLib::normalizeCharacterLiteral: Unhandled char constant '" + iLiteral + "'.");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  469:        std::string tempBuf;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+    #####:  470:        tempBuf.push_back(iLiteral[idx]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  471:        ++idx;
+    #####:  472:        if (MathLib::isOctalDigit(iLiteral[idx])) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  473:            tempBuf.push_back(iLiteral[idx]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  474:            ++idx;
+    #####:  475:            if (MathLib::isOctalDigit(iLiteral[idx])) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  476:                tempBuf.push_back(iLiteral[idx]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  477:            }
+        -:  478:        }
+    #####:  479:        normalizedLiteral.push_back(static_cast<char>(MathLib::toLongNumber("0" + tempBuf)));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+        -:  480:    }
+        8:  481:    return normalizedLiteral;
+        -:  482:}
+        -:  483:
+function _ZN7MathLib12toLongNumberERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 3916 returned 100% blocks executed 53%
+     3916:  484:MathLib::bigint MathLib::toLongNumber(const std::string & str)
+        -:  485:{
+        -:  486:    // hexadecimal numbers:
+     3916:  487:    if (isIntHex(str)) {
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+       14:  488:        if (str[0] == '-') {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  489:            bigint ret = 0;
+    #####:  490:            std::istringstream istr(str);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  491:            istr >> std::hex >> ret;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  492:            return ret;
+        -:  493:        } else {
+       14:  494:            unsigned long long ret = 0;
+       28:  495:            std::istringstream istr(str);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+       14:  496:            istr >> std::hex >> ret;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+       14:  497:            return (bigint)ret;
+        -:  498:        }
+        -:  499:    }
+        -:  500:
+        -:  501:    // octal numbers:
+     3902:  502:    if (isOct(str)) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+        2:  503:        bigint ret = 0;
+        4:  504:        std::istringstream istr(str);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+        2:  505:        istr >> std::oct >> ret;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+        2:  506:        return ret;
+        -:  507:    }
+        -:  508:
+        -:  509:    // binary numbers:
+     3900:  510:    if (isBin(str)) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  511:        bigint ret = 0;
+    #####:  512:        for (std::string::size_type i = str[0] == '0'?2:3; i < str.length(); i++) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  513:            ret <<= 1;
+    #####:  514:            if (str[i] == '1')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  515:                ret |= 1;
+        -:  516:        }
+    #####:  517:        if (str[0] == '-')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  518:            ret = -ret;
+    #####:  519:        return ret;
+        -:  520:    }
+        -:  521:
+     3900:  522:    if (isFloat(str)) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+        -:  523:        // Things are going to be less precise now: the value can't be represented in the bigint type.
+        -:  524:        // Use min/max values as an approximation. See #5843
+        4:  525:        const double doubleval = toDoubleNumber(str);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        4:  526:        if (doubleval > (double)std::numeric_limits<bigint>::max())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  527:            return std::numeric_limits<bigint>::max();
+call    0 never executed
+        4:  528:        else if (doubleval < (double)std::numeric_limits<bigint>::min())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  529:            return std::numeric_limits<bigint>::min();
+call    0 never executed
+        -:  530:        else
+        4:  531:            return static_cast<bigint>(doubleval);
+        -:  532:    }
+        -:  533:
+     3896:  534:    if (isCharLiteral(str)) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+        8:  535:        return characterLiteralToLongNumber(getCharLiteral(str));
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+call    6 returned 100%
+call    7 never executed
+        -:  536:    }
+        -:  537:
+     3888:  538:    if (str[0] == '-') {
+call    0 returned 100%
+branch  1 taken 2% (fallthrough)
+branch  2 taken 98%
+       78:  539:        bigint ret = 0;
+      156:  540:        std::istringstream istr(str);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+       78:  541:        istr >> ret;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       78:  542:        return ret;
+        -:  543:    }
+        -:  544:
+     3810:  545:    biguint ret = 0;
+     7620:  546:    std::istringstream istr(str);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+     3810:  547:    istr >> ret;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+     3810:  548:    return ret;
+        -:  549:}
+        -:  550:
+        -:  551:// in-place conversion of (sub)string to double. Requires no heap.
+function _ZL6myStodRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEN9__gnu_cxx17__normal_iteratorIPKcS4_EESB_i called 0 returned 0% blocks executed 0%
+    #####:  552:static double myStod(const std::string& str, std::string::const_iterator from, std::string::const_iterator to, int base)
+        -:  553:{
+    #####:  554:    double result = 0.;
+    #####:  555:    bool positivesign = true;
+    #####:  556:    std::string::const_iterator it;
+    #####:  557:    if ('+' == *from) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  558:        it = from + 1;
+call    0 never executed
+    #####:  559:    } else if ('-' == *from) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  560:        it = from + 1;
+call    0 never executed
+    #####:  561:        positivesign = false;
+        -:  562:    } else
+    #####:  563:        it = from;
+    #####:  564:    const std::size_t decimalsep = str.find('.', it-str.begin());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  565:    int distance;
+    #####:  566:    if (std::string::npos == decimalsep) {
+branch  0 never executed
+branch  1 never executed
+    #####:  567:        distance = to - it;
+call    0 never executed
+    #####:  568:    } else  if (decimalsep > (to - str.begin()))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  569:        return 0.; // error handling??
+        -:  570:    else
+    #####:  571:        distance = int(decimalsep)-(from - str.begin());
+call    0 never executed
+call    1 never executed
+function _ZZL6myStodRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEN9__gnu_cxx17__normal_iteratorIPKcS4_EESB_iENKUlcE_clEc called 0 returned 0% blocks executed 0%
+    #####:  572:    auto digitval = [&](char c) {
+    #####:  573:        if ((10 < base) && (c > '9'))
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  574:            return 10 + std::tolower(c) - 'a';
+        -:  575:        else
+    #####:  576:            return c - '0';
+    #####:  577:    };
+    #####:  578:    for (; it!=to; ++it) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  579:        if ('.' == *it)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  580:            continue;
+        -:  581:        else
+    #####:  582:            --distance;
+    #####:  583:        result += digitval(*it)* std::pow(base, distance);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  584:    }
+    #####:  585:    return (positivesign)?result:-result;
+branch  0 never executed
+branch  1 never executed
+        -:  586:}
+        -:  587:
+        -:  588:
+        -:  589:// Assuming a limited support of built-in hexadecimal floats (see C99, C++17) that is a fall-back implementation.
+        -:  590:// Performance has been optimized WRT to heap activity, however the calculation part is not optimized.
+function _ZL22FloatHexToDoubleNumberRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  591:static double FloatHexToDoubleNumber(const std::string& str)
+        -:  592:{
+    #####:  593:    const std::size_t p = str.find_first_of("pP",3);
+call    0 never executed
+    #####:  594:    const double factor1 = myStod(str, str.begin() + 2, str.begin()+p, 16);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+    #####:  595:    const bool suffix = (str.back() == 'f') || (str.back() == 'F') || (str.back() == 'l') || (str.back() == 'L');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  596:    const double exponent = myStod(str, str.begin() + p + 1, (suffix)?str.end()-1:str.end(), 10);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  597:    const double factor2 = std::pow(2, exponent);
+call    0 never executed
+    #####:  598:    return factor1 * factor2;
+        -:  599:}
+        -:  600:
+function _ZN7MathLib14toDoubleNumberERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 30 returned 100% blocks executed 58%
+       30:  601:double MathLib::toDoubleNumber(const std::string &str)
+        -:  602:{
+       30:  603:    if (isCharLiteral(str))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####:  604:        return characterLiteralToLongNumber(getCharLiteral(str));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+       30:  605:    if (isIntHex(str))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  606:        return static_cast<double>(toLongNumber(str));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  607:    // nullcheck
+       30:  608:    if (isNullValue(str))
+call    0 returned 100%
+branch  1 taken 40% (fallthrough)
+branch  2 taken 60%
+       12:  609:        return 0.0;
+        -:  610:#ifdef __clang__
+        -:  611:    if (isFloat(str)) // Workaround libc++ bug at http://llvm.org/bugs/show_bug.cgi?id=17782
+        -:  612:        // TODO : handle locale
+        -:  613:        return std::strtod(str.c_str(), nullptr);
+        -:  614:#endif
+       18:  615:    if (isFloatHex(str))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  616:        return FloatHexToDoubleNumber(str);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  617:    // otherwise, convert to double
+       36:  618:    std::istringstream istr(str);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+       18:  619:    istr.imbue(std::locale::classic());
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+call    6 returned 100%
+        -:  620:    double ret;
+       18:  621:    istr >> ret;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       18:  622:    return ret;
+        -:  623:}
+        -:  624:
+function _ZN7MathLib8toStringIdEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEET_ called 0 returned 0% blocks executed 0%
+    #####:  625:template<> std::string MathLib::toString(double value)
+        -:  626:{
+    #####:  627:    std::ostringstream result;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  628:    result.precision(12);
+call    0 never executed
+    #####:  629:    result << value;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  630:    if (result.str() == "-0")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  631:        return "0.0";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  632:    if (result.str().find('.') == std::string::npos)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  633:        return result.str() + ".0";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  634:    return result.str();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  635:}
+        -:  636:
+function _ZN7MathLib7isFloatERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 6482 returned 100% blocks executed 100%
+     6482:  637:bool MathLib::isFloat(const std::string &str)
+        -:  638:{
+     6482:  639:    return isDecimalFloat(str) || isFloatHex(str);
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+        -:  640:}
+        -:  641:
+function _ZN7MathLib14isDecimalFloatERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 6482 returned 100% blocks executed 52%
+     6482:  642:bool MathLib::isDecimalFloat(const std::string &str)
+        -:  643:{
+     6482:  644:    if (str.empty())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  645:        return false;
+        -:  646:    enum class State {
+        -:  647:        START, BASE_DIGITS1, LEADING_DECIMAL, TRAILING_DECIMAL, BASE_DIGITS2, E, MANTISSA_PLUSMINUS, MANTISSA_DIGITS, SUFFIX_F, SUFFIX_L
+     6482:  648:    } state = State::START;
+     6482:  649:    std::string::const_iterator it = str.begin();
+call    0 returned 100%
+     6482:  650:    if ('+' == *it || '-' == *it)
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 2% (fallthrough)
+branch  5 taken 98%
+branch  6 taken 2% (fallthrough)
+branch  7 taken 98%
+      130:  651:        ++it;
+call    0 returned 100%
+    22466:  652:    for (; it != str.end(); ++it) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 56% (fallthrough)
+branch  3 taken 44%
+call    4 returned 100%
+     8099:  653:        switch (state) {
+branch  0 taken 80%
+branch  1 taken 0%
+branch  2 taken 19%
+branch  3 taken 1%
+branch  4 taken 1%
+branch  5 taken 0%
+branch  6 taken 0%
+branch  7 taken 0%
+branch  8 taken 0%
+branch  9 taken 0%
+branch 10 taken 0%
+     6482:  654:        case State::START:
+     6482:  655:            if (*it=='.')
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  656:                state = State::LEADING_DECIMAL;
+     6482:  657:            else if (std::isdigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+branch  3 taken 99% (fallthrough)
+branch  4 taken 1%
+     6474:  658:                state = State::BASE_DIGITS1;
+        -:  659:            else
+        8:  660:                return false;
+     6474:  661:            break;
+    #####:  662:        case State::LEADING_DECIMAL:
+    #####:  663:            if (std::isdigit(static_cast<unsigned char>(*it)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  664:                state = State::BASE_DIGITS2;
+        -:  665:            else
+    #####:  666:                return false;
+    #####:  667:            break;
+     1522:  668:        case State::BASE_DIGITS1:
+     1522:  669:            if (*it=='e' || *it=='E')
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  670:                state = State::E;
+     1522:  671:            else if (*it=='.')
+call    0 returned 100%
+branch  1 taken 6% (fallthrough)
+branch  2 taken 94%
+       86:  672:                state = State::TRAILING_DECIMAL;
+     1436:  673:            else if (!std::isdigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+branch  1 taken 7% (fallthrough)
+branch  2 taken 93%
+       99:  674:                return false;
+     1423:  675:            break;
+       83:  676:        case State::TRAILING_DECIMAL:
+       83:  677:            if (*it=='e' || *it=='E')
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  678:                state = State::E;
+       83:  679:            else if (*it=='f' || *it=='F')
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  680:                state = State::SUFFIX_F;
+       83:  681:            else if (*it=='l' || *it=='L')
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  682:                state = State::SUFFIX_L;
+       83:  683:            else if (std::isdigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+       83:  684:                state = State::BASE_DIGITS2;
+        -:  685:            else
+    #####:  686:                return false;
+       83:  687:            break;
+       12:  688:        case State::BASE_DIGITS2:
+       12:  689:            if (*it=='e' || *it=='E')
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  690:                state = State::E;
+       12:  691:            else if (*it=='f' || *it=='F')
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0%
+       12:  692:                state = State::SUFFIX_F;
+    #####:  693:            else if (*it=='l' || *it=='L')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  694:                state = State::SUFFIX_L;
+    #####:  695:            else if (!std::isdigit(static_cast<unsigned char>(*it)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  696:                return false;
+       12:  697:            break;
+    #####:  698:        case State::E:
+    #####:  699:            if (*it=='+' || *it=='-')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  700:                state = State::MANTISSA_PLUSMINUS;
+    #####:  701:            else if (std::isdigit(static_cast<unsigned char>(*it)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  702:                state = State::MANTISSA_DIGITS;
+        -:  703:            else
+    #####:  704:                return false;
+    #####:  705:            break;
+    #####:  706:        case State::MANTISSA_PLUSMINUS:
+    #####:  707:            if (!std::isdigit(static_cast<unsigned char>(*it)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  708:                return false;
+        -:  709:            else
+    #####:  710:                state = State::MANTISSA_DIGITS;
+    #####:  711:            break;
+    #####:  712:        case State::MANTISSA_DIGITS:
+    #####:  713:            if (*it=='f' || *it=='F')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  714:                state = State::SUFFIX_F;
+    #####:  715:            else if (*it=='l' || *it=='L')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  716:                state = State::SUFFIX_L;
+    #####:  717:            else if (!std::isdigit(static_cast<unsigned char>(*it)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  718:                return false;
+    #####:  719:            break;
+    #####:  720:        case State::SUFFIX_F:
+    #####:  721:            return false;
+    #####:  722:        case State::SUFFIX_L:
+    #####:  723:            return false;
+        -:  724:        }
+        -:  725:    }
+     6375:  726:    return (state==State::BASE_DIGITS2 || state==State::MANTISSA_DIGITS || state==State::TRAILING_DECIMAL || state==State::SUFFIX_F || state==State::SUFFIX_L);
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 99% (fallthrough)
+branch  5 taken 1%
+branch  6 taken 99% (fallthrough)
+branch  7 taken 1%
+branch  8 taken 0% (fallthrough)
+branch  9 taken 100%
+        -:  727:}
+        -:  728:
+function _ZN7MathLib10isNegativeERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  729:bool MathLib::isNegative(const std::string &str)
+        -:  730:{
+    #####:  731:    if (str.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  732:        return false;
+    #####:  733:    return (str[0] == '-');
+call    0 never executed
+        -:  734:}
+        -:  735:
+function _ZN7MathLib10isPositiveERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  736:bool MathLib::isPositive(const std::string &str)
+        -:  737:{
+    #####:  738:    if (str.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  739:        return false;
+    #####:  740:    return !MathLib::isNegative(str);
+call    0 never executed
+        -:  741:}
+        -:  742:
+function _ZL21_isValidIntegerSuffixN9__gnu_cxx17__normal_iteratorIPKcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES9_b called 95 returned 100% blocks executed 52%
+       95:  743:static bool _isValidIntegerSuffix(std::string::const_iterator it, std::string::const_iterator end, bool supportMicrosoftExtensions=true)
+        -:  744:{
+       95:  745:    enum { START, SUFFIX_U, SUFFIX_UL, SUFFIX_ULL, SUFFIX_L, SUFFIX_LU, SUFFIX_LL, SUFFIX_LLU, SUFFIX_I, SUFFIX_I6, SUFFIX_I64, SUFFIX_UI, SUFFIX_UI6, SUFFIX_UI64 } state = START;
+      261:  746:    for (; it != end; ++it) {
+call    0 returned 100%
+branch  1 taken 69% (fallthrough)
+branch  2 taken 31%
+call    3 returned 100%
+      123:  747:        switch (state) {
+branch  0 taken 77%
+branch  1 taken 18%
+branch  2 taken 2%
+branch  3 taken 2%
+branch  4 taken 0%
+branch  5 taken 0%
+branch  6 taken 0%
+branch  7 taken 0%
+branch  8 taken 0%
+branch  9 taken 0%
+branch 10 taken 0%
+       95:  748:        case START:
+       95:  749:            if (*it == 'u' || *it == 'U')
+call    0 returned 100%
+branch  1 taken 68% (fallthrough)
+branch  2 taken 32%
+call    3 returned 100%
+branch  4 taken 25% (fallthrough)
+branch  5 taken 75%
+branch  6 taken 48% (fallthrough)
+branch  7 taken 52%
+       46:  750:                state = SUFFIX_U;
+       49:  751:            else if (*it == 'l' || *it == 'L')
+call    0 returned 100%
+branch  1 taken 94% (fallthrough)
+branch  2 taken 6%
+call    3 returned 100%
+branch  4 taken 13% (fallthrough)
+branch  5 taken 87%
+branch  6 taken 18% (fallthrough)
+branch  7 taken 82%
+        9:  752:                state = SUFFIX_L;
+       40:  753:            else if (supportMicrosoftExtensions && (*it == 'i' || *it == 'I'))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+call    5 returned 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+branch  8 taken 0% (fallthrough)
+branch  9 taken 100%
+    #####:  754:                state = SUFFIX_I;
+        -:  755:            else
+       40:  756:                return false;
+       55:  757:            break;
+       22:  758:        case SUFFIX_U:
+       22:  759:            if (*it == 'l' || *it == 'L')
+call    0 returned 100%
+branch  1 taken 45% (fallthrough)
+branch  2 taken 55%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0%
+       22:  760:                state = SUFFIX_UL; // UL
+    #####:  761:            else if (supportMicrosoftExtensions && (*it == 'i' || *it == 'I'))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  762:                state = SUFFIX_UI;
+        -:  763:            else
+    #####:  764:                return false;
+       22:  765:            break;
+        3:  766:        case SUFFIX_UL:
+        3:  767:            if (*it == 'l' || *it == 'L')
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0%
+        3:  768:                state = SUFFIX_ULL; // ULL
+        -:  769:            else
+    #####:  770:                return false;
+        3:  771:            break;
+        3:  772:        case SUFFIX_L:
+        3:  773:            if (*it == 'u' || *it == 'U')
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  774:                state = SUFFIX_LU; // LU
+        3:  775:            else if (*it == 'l' || *it == 'L')
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0%
+        3:  776:                state = SUFFIX_LL; // LL
+        -:  777:            else
+    #####:  778:                return false;
+        3:  779:            break;
+    #####:  780:        case SUFFIX_LU:
+    #####:  781:            return false;
+    #####:  782:        case SUFFIX_LL:
+    #####:  783:            if (*it == 'u' || *it == 'U')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  784:                state = SUFFIX_LLU; // LLU
+        -:  785:            else
+    #####:  786:                return false;
+    #####:  787:            break;
+    #####:  788:        case SUFFIX_I:
+    #####:  789:            if (*it == '6')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  790:                state = SUFFIX_I6;
+        -:  791:            else
+    #####:  792:                return false;
+    #####:  793:            break;
+    #####:  794:        case SUFFIX_I6:
+    #####:  795:            if (*it == '4')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  796:                state = SUFFIX_I64;
+        -:  797:            else
+    #####:  798:                return false;
+    #####:  799:            break;
+    #####:  800:        case SUFFIX_UI:
+    #####:  801:            if (*it == '6')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  802:                state = SUFFIX_UI6;
+        -:  803:            else
+    #####:  804:                return false;
+    #####:  805:            break;
+    #####:  806:        case SUFFIX_UI6:
+    #####:  807:            if (*it == '4')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  808:                state = SUFFIX_UI64;
+        -:  809:            else
+    #####:  810:                return false;
+    #####:  811:            break;
+    #####:  812:        default:
+    #####:  813:            return false;
+        -:  814:        }
+        -:  815:    }
+       31:  816:    return ((state == SUFFIX_U) ||
+branch  0 taken 81% (fallthrough)
+branch  1 taken 19%
+       25:  817:            (state == SUFFIX_L) ||
+branch  0 taken 24% (fallthrough)
+branch  1 taken 76%
+        6:  818:            (state == SUFFIX_UL) ||
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        6:  819:            (state == SUFFIX_LU) ||
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        3:  820:            (state == SUFFIX_LL) ||
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  821:            (state == SUFFIX_ULL) ||
+branch  0 never executed
+branch  1 never executed
+    #####:  822:            (state == SUFFIX_LLU) ||
+branch  0 never executed
+branch  1 never executed
+       55:  823:            (state == SUFFIX_I64) ||
+branch  0 taken 56% (fallthrough)
+branch  1 taken 44%
+branch  2 never executed
+branch  3 never executed
+       55:  824:            (state == SUFFIX_UI64));
+        -:  825:}
+        -:  826:
+function _ZN7MathLib20isValidIntegerSuffixERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEb called 0 returned 0% blocks executed 0%
+    #####:  827:bool MathLib::isValidIntegerSuffix(const std::string& str, bool supportMicrosoftExtensions)
+        -:  828:{
+    #####:  829:    return _isValidIntegerSuffix(str.begin(), str.end(), supportMicrosoftExtensions);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  830:}
+        -:  831:
+        -:  832:
+        -:  833:
+        -:  834:/*! \brief Does the string represent an octal number?
+        -:  835: * In case leading or trailing white space is provided, the function
+        -:  836: * returns false.
+        -:  837: * Additional information can be found here:
+        -:  838: * http://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html
+        -:  839: *
+        -:  840: * \param str The string to check. In case the string is empty, the function returns false.
+        -:  841: * \return Return true in case a octal number is provided and false otherwise.
+        -:  842: **/
+function _ZN7MathLib5isOctERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 32798 returned 100% blocks executed 92%
+    32798:  843:bool MathLib::isOct(const std::string& str)
+        -:  844:{
+        -:  845:    enum class Status {
+        -:  846:        START, OCTAL_PREFIX, DIGITS
+    32798:  847:    } state = Status::START;
+    32798:  848:    if (str.empty())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  849:        return false;
+    32798:  850:    std::string::const_iterator it = str.begin();
+call    0 returned 100%
+    32798:  851:    if ('+' == *it || '-' == *it)
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+call    3 returned 100%
+branch  4 taken 1% (fallthrough)
+branch  5 taken 99%
+branch  6 taken 1% (fallthrough)
+branch  7 taken 99%
+      437:  852:        ++it;
+call    0 returned 100%
+    36412:  853:    for (; it != str.end(); ++it) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 95% (fallthrough)
+branch  3 taken 5%
+call    4 returned 100%
+    32761:  854:        switch (state) {
+branch  0 taken 99%
+branch  1 taken 1%
+branch  2 taken 1%
+branch  3 taken 0%
+    32663:  855:        case Status::START:
+    32663:  856:            if (*it == '0')
+call    0 returned 100%
+branch  1 taken 5% (fallthrough)
+branch  2 taken 95%
+     1795:  857:                state = Status::OCTAL_PREFIX;
+        -:  858:            else
+    30868:  859:                return false;
+     1795:  860:            break;
+       90:  861:        case Status::OCTAL_PREFIX:
+       90:  862:            if (isOctalDigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 4% (fallthrough)
+branch  3 taken 96%
+        4:  863:                state = Status::DIGITS;
+        -:  864:            else
+       86:  865:                return false;
+        4:  866:            break;
+        8:  867:        case Status::DIGITS:
+        8:  868:            if (isOctalDigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+        8:  869:                state = Status::DIGITS;
+        -:  870:            else
+    #####:  871:                return _isValidIntegerSuffix(it,str.end());
+call    0 never executed
+call    1 never executed
+        8:  872:            break;
+        -:  873:        }
+        -:  874:    }
+     1844:  875:    return state == Status::DIGITS;
+        -:  876:}
+        -:  877:
+function _ZN7MathLib8isIntHexERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 35370 returned 100% blocks executed 96%
+    35370:  878:bool MathLib::isIntHex(const std::string& str)
+        -:  879:{
+        -:  880:    enum Status {
+        -:  881:        START, HEX_0, HEX_X, DIGIT
+    35370:  882:    } state = START;
+    35370:  883:    if (str.empty())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  884:        return false;
+    35370:  885:    std::string::const_iterator it = str.begin();
+call    0 returned 100%
+    35370:  886:    if ('+' == *it || '-' == *it)
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+call    3 returned 100%
+branch  4 taken 1% (fallthrough)
+branch  5 taken 99%
+branch  6 taken 1% (fallthrough)
+branch  7 taken 99%
+      489:  887:        ++it;
+call    0 returned 100%
+    41426:  888:    for (; it != str.end(); ++it) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 93% (fallthrough)
+branch  3 taken 7%
+call    4 returned 100%
+    35664:  889:        switch (state) {
+branch  0 taken 99%
+branch  1 taken 1%
+branch  2 taken 1%
+branch  3 taken 1%
+branch  4 taken 0%
+    35235:  890:        case START:
+    35235:  891:            if (*it == '0')
+call    0 returned 100%
+branch  1 taken 8% (fallthrough)
+branch  2 taken 92%
+     2740:  892:                state = HEX_0;
+        -:  893:            else
+    32495:  894:                return false;
+     2740:  895:            break;
+      193:  896:        case HEX_0:
+      193:  897:            if (*it == 'x' || *it == 'X')
+call    0 returned 100%
+branch  1 taken 71% (fallthrough)
+branch  2 taken 29%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 29% (fallthrough)
+branch  7 taken 71%
+       56:  898:                state = HEX_X;
+        -:  899:            else
+      137:  900:                return false;
+       56:  901:            break;
+       56:  902:        case HEX_X:
+       56:  903:            if (isxdigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+       56:  904:                state = DIGIT;
+        -:  905:            else
+    #####:  906:                return false;
+       56:  907:            break;
+      180:  908:        case DIGIT:
+      180:  909:            if (isxdigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+branch  1 taken 2% (fallthrough)
+branch  2 taken 98%
+        -:  910:                ; //  state = DIGIT;
+        -:  911:            else
+        4:  912:                return _isValidIntegerSuffix(it,str.end());
+call    0 returned 100%
+call    1 returned 100%
+      176:  913:            break;
+        -:  914:        }
+        -:  915:    }
+     2734:  916:    return DIGIT==state;
+        -:  917:}
+        -:  918:
+function _ZN7MathLib10isFloatHexERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 6414 returned 100% blocks executed 45%
+     6414:  919:bool MathLib::isFloatHex(const std::string& str)
+        -:  920:{
+        -:  921:    enum Status {
+        -:  922:        START, HEX_0, HEX_X, WHOLE_NUMBER_DIGIT, POINT, FRACTION, EXPONENT_P, EXPONENT_SIGN, EXPONENT_DIGITS, EXPONENT_SUFFIX
+     6414:  923:    } state = START;
+     6414:  924:    if (str.empty())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  925:        return false;
+     6414:  926:    std::string::const_iterator it = str.begin();
+call    0 returned 100%
+     6414:  927:    if ('+' == *it || '-' == *it)
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 2% (fallthrough)
+branch  5 taken 98%
+branch  6 taken 2% (fallthrough)
+branch  7 taken 98%
+      130:  928:        ++it;
+call    0 returned 100%
+    10994:  929:    for (; it != str.end(); ++it) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 75% (fallthrough)
+branch  3 taken 25%
+call    4 returned 100%
+     6564:  930:        switch (state) {
+branch  0 taken 98%
+branch  1 taken 1%
+branch  2 taken 1%
+branch  3 taken 1%
+branch  4 taken 0%
+branch  5 taken 0%
+branch  6 taken 0%
+branch  7 taken 0%
+branch  8 taken 0%
+branch  9 taken 0%
+     6414:  931:        case START:
+     6414:  932:            if (*it == '0')
+call    0 returned 100%
+branch  1 taken 35% (fallthrough)
+branch  2 taken 65%
+     2218:  933:                state = HEX_0;
+        -:  934:            else
+     4196:  935:                return false;
+     2218:  936:            break;
+       91:  937:        case HEX_0:
+       91:  938:            if (*it == 'x' || *it == 'X')
+call    0 returned 100%
+branch  1 taken 85% (fallthrough)
+branch  2 taken 15%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 15% (fallthrough)
+branch  7 taken 85%
+       14:  939:                state = HEX_X;
+        -:  940:            else
+       77:  941:                return false;
+       14:  942:            break;
+       14:  943:        case HEX_X:
+       14:  944:            if (isxdigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+       14:  945:                state = WHOLE_NUMBER_DIGIT;
+    #####:  946:            else if (*it == '.')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  947:                state = POINT;
+        -:  948:            else
+    #####:  949:                return false;
+       14:  950:            break;
+       45:  951:        case WHOLE_NUMBER_DIGIT:
+       45:  952:            if (isxdigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+branch  1 taken 2% (fallthrough)
+branch  2 taken 98%
+        -:  953:                ; // state = WHOLE_NUMBER_DIGITS;
+        1:  954:            else if (*it=='.')
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  955:                state = FRACTION;
+        1:  956:            else if (*it=='p' || *it=='P')
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  957:                state = EXPONENT_P;
+        -:  958:            else
+        1:  959:                return false;
+       44:  960:            break;
+    #####:  961:        case POINT:
+        -:  962:        case FRACTION:
+    #####:  963:            if (isxdigit(static_cast<unsigned char>(*it)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  964:                state=FRACTION;
+    #####:  965:            else if (*it == 'p' || *it == 'P')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  966:                state = EXPONENT_P;
+        -:  967:            else
+    #####:  968:                return false;
+    #####:  969:            break;
+    #####:  970:        case EXPONENT_P:
+    #####:  971:            if (isdigit(static_cast<unsigned char>(*it)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  972:                state = EXPONENT_DIGITS;
+    #####:  973:            else if (*it == '+' || *it == '-')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  974:                state = EXPONENT_SIGN;
+        -:  975:            else
+    #####:  976:                return false;
+    #####:  977:            break;
+    #####:  978:        case EXPONENT_SIGN:
+    #####:  979:            if (isdigit(static_cast<unsigned char>(*it)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  980:                state = EXPONENT_DIGITS;
+        -:  981:            else
+    #####:  982:                return false;
+    #####:  983:            break;
+    #####:  984:        case EXPONENT_DIGITS:
+    #####:  985:            if (isdigit(static_cast<unsigned char>(*it)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  986:                ; //  state = EXPONENT_DIGITS;
+    #####:  987:            else if (*it == 'f' || *it == 'F' || *it == 'l' || *it == 'L')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  988:                state = EXPONENT_SUFFIX;
+        -:  989:            else
+    #####:  990:                return false;
+    #####:  991:            break;
+    #####:  992:        case EXPONENT_SUFFIX:
+    #####:  993:            return false;
+        -:  994:        }
+        -:  995:    }
+     2140:  996:    return (EXPONENT_DIGITS==state) || (EXPONENT_SUFFIX == state);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+        -:  997:}
+        -:  998:
+        -:  999:
+        -: 1000:/*! \brief Does the string represent a binary number?
+        -: 1001: * In case leading or trailing white space is provided, the function
+        -: 1002: * returns false.
+        -: 1003: * Additional information can be found here:
+        -: 1004: * http://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html
+        -: 1005: *
+        -: 1006: * \param str The string to check. In case the string is empty, the function returns false.
+        -: 1007: * \return Return true in case a binary number is provided and false otherwise.
+        -: 1008: **/
+function _ZN7MathLib5isBinERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 32794 returned 100% blocks executed 56%
+    32794: 1009:bool MathLib::isBin(const std::string& str)
+        -: 1010:{
+        -: 1011:    enum Status {
+        -: 1012:        START, GNU_BIN_PREFIX_0, GNU_BIN_PREFIX_B, DIGIT
+    32794: 1013:    } state = START;
+    32794: 1014:    if (str.empty())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####: 1015:        return false;
+    32794: 1016:    std::string::const_iterator it = str.begin();
+call    0 returned 100%
+    32794: 1017:    if ('+' == *it || '-' == *it)
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+call    3 returned 100%
+branch  4 taken 1% (fallthrough)
+branch  5 taken 99%
+branch  6 taken 1% (fallthrough)
+branch  7 taken 99%
+      437: 1018:        ++it;
+call    0 returned 100%
+    36376: 1019:    for (; it != str.end(); ++it) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 95% (fallthrough)
+branch  3 taken 5%
+call    4 returned 100%
+    32745: 1020:        switch (state) {
+branch  0 taken 99%
+branch  1 taken 1%
+branch  2 taken 0%
+branch  3 taken 0%
+branch  4 taken 0%
+    32659: 1021:        case START:
+    32659: 1022:            if (*it == '0')
+call    0 returned 100%
+branch  1 taken 5% (fallthrough)
+branch  2 taken 95%
+     1791: 1023:                state = GNU_BIN_PREFIX_0;
+        -: 1024:            else
+    30868: 1025:                return false;
+     1791: 1026:            break;
+       86: 1027:        case GNU_BIN_PREFIX_0:
+       86: 1028:            if (*it == 'b' || *it == 'B')
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####: 1029:                state = GNU_BIN_PREFIX_B;
+        -: 1030:            else
+       86: 1031:                return false;
+    #####: 1032:            break;
+    #####: 1033:        case GNU_BIN_PREFIX_B:
+    #####: 1034:            if (*it == '0' || *it == '1')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1035:                state = DIGIT;
+        -: 1036:            else
+    #####: 1037:                return false;
+    #####: 1038:            break;
+    #####: 1039:        case DIGIT:
+    #####: 1040:            if (*it == '0' || *it == '1')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+        -: 1041:                ; //  state = DIGIT;
+        -: 1042:            else
+    #####: 1043:                return _isValidIntegerSuffix(it,str.end());
+call    0 never executed
+call    1 never executed
+    #####: 1044:            break;
+        -: 1045:        }
+        -: 1046:    }
+     1840: 1047:    return state == DIGIT;
+        -: 1048:}
+        -: 1049:
+function _ZN7MathLib5isDecERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 4076 returned 100% blocks executed 97%
+     4076: 1050:bool MathLib::isDec(const std::string & str)
+        -: 1051:{
+        -: 1052:    enum Status {
+        -: 1053:        START, DIGIT
+     4076: 1054:    } state = START;
+     4076: 1055:    if (str.empty())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####: 1056:        return false;
+     4076: 1057:    std::string::const_iterator it = str.begin();
+call    0 returned 100%
+     4076: 1058:    if ('+' == *it || '-' == *it)
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 2% (fallthrough)
+branch  5 taken 98%
+branch  6 taken 2% (fallthrough)
+branch  7 taken 98%
+       80: 1059:        ++it;
+call    0 returned 100%
+    13346: 1060:    for (; it != str.end(); ++it) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 57% (fallthrough)
+branch  3 taken 43%
+call    4 returned 100%
+     4970: 1061:        switch (state) {
+branch  0 taken 82%
+branch  1 taken 18%
+branch  2 taken 0%
+     4074: 1062:        case START:
+     4074: 1063:            if (isdigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+branch  1 taken 94% (fallthrough)
+branch  2 taken 6%
+branch  3 taken 94% (fallthrough)
+branch  4 taken 6%
+     3830: 1064:                state = DIGIT;
+        -: 1065:            else
+      244: 1066:                return false;
+     3830: 1067:            break;
+      896: 1068:        case DIGIT:
+      896: 1069:            if (isdigit(static_cast<unsigned char>(*it)))
+call    0 returned 100%
+branch  1 taken 90% (fallthrough)
+branch  2 taken 10%
+branch  3 taken 90% (fallthrough)
+branch  4 taken 10%
+      805: 1070:                state = DIGIT;
+        -: 1071:            else
+       91: 1072:                return _isValidIntegerSuffix(it,str.end());
+call    0 returned 100%
+call    1 returned 100%
+      805: 1073:            break;
+        -: 1074:        }
+        -: 1075:    }
+     3741: 1076:    return state == DIGIT;
+        -: 1077:}
+        -: 1078:
+function _ZN7MathLib5isIntERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 4076 returned 100% blocks executed 100%
+     4076: 1079:bool MathLib::isInt(const std::string & str)
+        -: 1080:{
+     4076: 1081:    return isDec(str) || isIntHex(str) || isOct(str) || isBin(str);
+call    0 returned 100%
+branch  1 taken 7% (fallthrough)
+branch  2 taken 93%
+call    3 returned 100%
+branch  4 taken 95% (fallthrough)
+branch  5 taken 5%
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0%
+call    9 returned 100%
+branch 10 taken 0% (fallthrough)
+branch 11 taken 100%
+        -: 1082:}
+        -: 1083:
+function _ZN7MathLib9getSuffixERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1084:std::string MathLib::getSuffix(const std::string& value)
+        -: 1085:{
+    #####: 1086:    if (value.size() > 3 && value[value.size() - 3] == 'i' && value[value.size() - 2] == '6' && value[value.size() - 1] == '4') {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+    #####: 1087:        if (value[value.size() - 4] == 'u')
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1088:            return "ULL";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####: 1089:        return "LL";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -: 1090:    }
+    #####: 1091:    bool isUnsigned = false;
+    #####: 1092:    unsigned int longState = 0;
+    #####: 1093:    for (std::size_t i = 1U; i < value.size(); ++i) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1094:        const char c = value[value.size() - i];
+call    0 never executed
+call    1 never executed
+    #####: 1095:        if (c == 'u' || c == 'U')
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1096:            isUnsigned = true;
+    #####: 1097:        else if (c == 'L' || c == 'l')
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1098:            longState++;
+        -: 1099:        else break;
+        -: 1100:    }
+    #####: 1101:    if (longState == 0)
+branch  0 never executed
+branch  1 never executed
+    #####: 1102:        return isUnsigned ? "U" : "";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1103:    if (longState == 1)
+branch  0 never executed
+branch  1 never executed
+    #####: 1104:        return isUnsigned ? "UL" : "L";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1105:    if (longState == 2)
+branch  0 never executed
+branch  1 never executed
+    #####: 1106:        return isUnsigned ? "ULL" : "LL";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1107:    else return "";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -: 1108:}
+        -: 1109:
+function _ZL9intsuffixRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ called 0 returned 0% blocks executed 0%
+    #####: 1110:static std::string intsuffix(const std::string & first, const std::string & second)
+        -: 1111:{
+    #####: 1112:    const std::string suffix1 = MathLib::getSuffix(first);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####: 1113:    const std::string suffix2 = MathLib::getSuffix(second);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####: 1114:    if (suffix1 == "ULL" || suffix2 == "ULL")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1115:        return "ULL";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####: 1116:    if (suffix1 == "LL" || suffix2 == "LL")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1117:        return "LL";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####: 1118:    if (suffix1 == "UL" || suffix2 == "UL")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1119:        return "UL";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####: 1120:    if (suffix1 == "L" || suffix2 == "L")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1121:        return "L";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####: 1122:    if (suffix1 == "U" || suffix2 == "U")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1123:        return "U";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -: 1124:
+    #####: 1125:    return suffix1.empty() ? suffix2 : suffix1;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -: 1126:}
+        -: 1127:
+function _ZN7MathLib3addERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1128:std::string MathLib::add(const std::string & first, const std::string & second)
+        -: 1129:{
+        -: 1130:#ifdef TEST_MATHLIB_VALUE
+        -: 1131:    return (value(first) + value(second)).str();
+        -: 1132:#else
+    #####: 1133:    if (MathLib::isInt(first) && MathLib::isInt(second)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1134:        return toString(toLongNumber(first) + toLongNumber(second)) + intsuffix(first, second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -: 1135:    }
+        -: 1136:
+    #####: 1137:    double d1 = toDoubleNumber(first);
+call    0 never executed
+    #####: 1138:    double d2 = toDoubleNumber(second);
+call    0 never executed
+        -: 1139:
+    #####: 1140:    int count = 0;
+    #####: 1141:    while (d1 > 100000.0 * d2 && toString(d1+d2)==first && ++count<5)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+    #####: 1142:        d2 *= 10.0;
+    #####: 1143:    while (d2 > 100000.0 * d1 && toString(d1+d2)==second && ++count<5)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+    #####: 1144:        d1 *= 10.0;
+        -: 1145:
+    #####: 1146:    return toString(d1 + d2);
+call    0 never executed
+        -: 1147:#endif
+        -: 1148:}
+        -: 1149:
+function _ZN7MathLib8subtractERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1150:std::string MathLib::subtract(const std::string &first, const std::string &second)
+        -: 1151:{
+        -: 1152:#ifdef TEST_MATHLIB_VALUE
+        -: 1153:    return (value(first) - value(second)).str();
+        -: 1154:#else
+    #####: 1155:    if (MathLib::isInt(first) && MathLib::isInt(second)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1156:        return toString(toLongNumber(first) - toLongNumber(second)) + intsuffix(first, second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -: 1157:    }
+        -: 1158:
+    #####: 1159:    if (first == second)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1160:        return "0.0" ;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -: 1161:
+    #####: 1162:    double d1 = toDoubleNumber(first);
+call    0 never executed
+    #####: 1163:    double d2 = toDoubleNumber(second);
+call    0 never executed
+        -: 1164:
+    #####: 1165:    int count = 0;
+    #####: 1166:    while (d1 > 100000.0 * d2 && toString(d1-d2)==first && ++count<5)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+    #####: 1167:        d2 *= 10.0;
+    #####: 1168:    while (d2 > 100000.0 * d1 && toString(d1-d2)==second && ++count<5)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+    #####: 1169:        d1 *= 10.0;
+        -: 1170:
+    #####: 1171:    return toString(d1 - d2);
+call    0 never executed
+        -: 1172:#endif
+        -: 1173:}
+        -: 1174:
+function _ZN7MathLib6incdecERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1175:std::string MathLib::incdec(const std::string & var, const std::string & op)
+        -: 1176:{
+        -: 1177:#ifdef TEST_MATHLIB_VALUE
+        -: 1178:    if (op == "++")
+        -: 1179:        return value(var).add(1).str();
+        -: 1180:    else if (op == "--")
+        -: 1181:        return value(var).add(-1).str();
+        -: 1182:#else
+    #####: 1183:    if (op == "++")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1184:        return MathLib::add(var, "1");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####: 1185:    else if (op == "--")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1186:        return MathLib::subtract(var, "1");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -: 1187:#endif
+        -: 1188:
+    #####: 1189:    throw InternalError(nullptr, std::string("Unexpected operation '") + op + "' in MathLib::incdec(). Please report this to Cppcheck developers.");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+        -: 1190:}
+        -: 1191:
+function _ZN7MathLib6divideERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1192:std::string MathLib::divide(const std::string &first, const std::string &second)
+        -: 1193:{
+        -: 1194:#ifdef TEST_MATHLIB_VALUE
+        -: 1195:    return (value(first) / value(second)).str();
+        -: 1196:#else
+    #####: 1197:    if (MathLib::isInt(first) && MathLib::isInt(second)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1198:        const bigint a = toLongNumber(first);
+call    0 never executed
+    #####: 1199:        const bigint b = toLongNumber(second);
+call    0 never executed
+    #####: 1200:        if (b == 0)
+branch  0 never executed
+branch  1 never executed
+    #####: 1201:            throw InternalError(nullptr, "Internal Error: Division by zero");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####: 1202:        if (a == std::numeric_limits<bigint>::min() && std::abs(b)<=1)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1203:            throw InternalError(nullptr, "Internal Error: Division overflow");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####: 1204:        return toString(toLongNumber(first) / b) + intsuffix(first, second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####: 1205:    } else if (isNullValue(second)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1206:        if (isNullValue(first))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1207:            return "nan.0";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####: 1208:        return isPositive(first) ? "inf.0" : "-inf.0";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+        -: 1209:    }
+    #####: 1210:    return toString(toDoubleNumber(first) / toDoubleNumber(second));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -: 1211:#endif
+        -: 1212:}
+        -: 1213:
+function _ZN7MathLib8multiplyERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1214:std::string MathLib::multiply(const std::string &first, const std::string &second)
+        -: 1215:{
+        -: 1216:#ifdef TEST_MATHLIB_VALUE
+        -: 1217:    return (value(first) * value(second)).str();
+        -: 1218:#else
+    #####: 1219:    if (MathLib::isInt(first) && MathLib::isInt(second)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1220:        return toString(toLongNumber(first) * toLongNumber(second)) + intsuffix(first, second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+        -: 1221:    }
+    #####: 1222:    return toString(toDoubleNumber(first) * toDoubleNumber(second));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -: 1223:#endif
+        -: 1224:}
+        -: 1225:
+function _ZN7MathLib3modERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1226:std::string MathLib::mod(const std::string &first, const std::string &second)
+        -: 1227:{
+        -: 1228:#ifdef TEST_MATHLIB_VALUE
+        -: 1229:    return (value(first) % value(second)).str();
+        -: 1230:#else
+    #####: 1231:    if (MathLib::isInt(first) && MathLib::isInt(second)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1232:        const bigint b = toLongNumber(second);
+call    0 never executed
+    #####: 1233:        if (b == 0)
+branch  0 never executed
+branch  1 never executed
+    #####: 1234:            throw InternalError(nullptr, "Internal Error: Division by zero");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####: 1235:        return toString(toLongNumber(first) % b) + intsuffix(first, second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+        -: 1236:    }
+    #####: 1237:    return toString(std::fmod(toDoubleNumber(first),toDoubleNumber(second)));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -: 1238:#endif
+        -: 1239:}
+        -: 1240:
+function _ZN7MathLib9calculateERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_c called 0 returned 0% blocks executed 0%
+    #####: 1241:std::string MathLib::calculate(const std::string &first, const std::string &second, char action)
+        -: 1242:{
+    #####: 1243:    switch (action) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####: 1244:    case '+':
+    #####: 1245:        return MathLib::add(first, second);
+call    0 never executed
+        -: 1246:
+    #####: 1247:    case '-':
+    #####: 1248:        return MathLib::subtract(first, second);
+call    0 never executed
+        -: 1249:
+    #####: 1250:    case '*':
+    #####: 1251:        return MathLib::multiply(first, second);
+call    0 never executed
+        -: 1252:
+    #####: 1253:    case '/':
+    #####: 1254:        return MathLib::divide(first, second);
+call    0 never executed
+        -: 1255:
+    #####: 1256:    case '%':
+    #####: 1257:        return MathLib::mod(first, second);
+call    0 never executed
+        -: 1258:
+    #####: 1259:    case '&':
+    #####: 1260:        return MathLib::toString(MathLib::toLongNumber(first) & MathLib::toLongNumber(second)) + intsuffix(first,second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -: 1261:
+    #####: 1262:    case '|':
+    #####: 1263:        return MathLib::toString(MathLib::toLongNumber(first) | MathLib::toLongNumber(second)) + intsuffix(first,second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -: 1264:
+    #####: 1265:    case '^':
+    #####: 1266:        return MathLib::toString(MathLib::toLongNumber(first) ^ MathLib::toLongNumber(second)) + intsuffix(first,second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -: 1267:
+    #####: 1268:    default:
+    #####: 1269:        throw InternalError(nullptr, std::string("Unexpected action '") + action + "' in MathLib::calculate(). Please report this to Cppcheck developers.");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+        -: 1270:    }
+        -: 1271:}
+        -: 1272:
+function _ZN7MathLib3sinERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1273:std::string MathLib::sin(const std::string &tok)
+        -: 1274:{
+    #####: 1275:    return toString(std::sin(toDoubleNumber(tok)));
+call    0 never executed
+call    1 never executed
+        -: 1276:}
+        -: 1277:
+        -: 1278:
+function _ZN7MathLib3cosERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1279:std::string MathLib::cos(const std::string &tok)
+        -: 1280:{
+    #####: 1281:    return toString(std::cos(toDoubleNumber(tok)));
+call    0 never executed
+call    1 never executed
+        -: 1282:}
+        -: 1283:
+function _ZN7MathLib3tanERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1284:std::string MathLib::tan(const std::string &tok)
+        -: 1285:{
+    #####: 1286:    return toString(std::tan(toDoubleNumber(tok)));
+call    0 never executed
+call    1 never executed
+        -: 1287:}
+        -: 1288:
+        -: 1289:
+function _ZN7MathLib3absERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1290:std::string MathLib::abs(const std::string &tok)
+        -: 1291:{
+    #####: 1292:    return toString(std::abs(toDoubleNumber(tok)));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -: 1293:}
+        -: 1294:
+function _ZN7MathLib7isEqualERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1295:bool MathLib::isEqual(const std::string &first, const std::string &second)
+        -: 1296:{
+        -: 1297:    // this conversion is needed for formatting
+        -: 1298:    // e.g. if first=0.1 and second=1.0E-1, the direct comparison of the strings would fail
+    #####: 1299:    return toString(toDoubleNumber(first)) == toString(toDoubleNumber(second));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -: 1300:}
+        -: 1301:
+function _ZN7MathLib10isNotEqualERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1302:bool MathLib::isNotEqual(const std::string &first, const std::string &second)
+        -: 1303:{
+    #####: 1304:    return !isEqual(first, second);
+call    0 never executed
+        -: 1305:}
+        -: 1306:
+function _ZN7MathLib9isGreaterERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1307:bool MathLib::isGreater(const std::string &first, const std::string &second)
+        -: 1308:{
+    #####: 1309:    return toDoubleNumber(first) > toDoubleNumber(second);
+call    0 never executed
+call    1 never executed
+        -: 1310:}
+        -: 1311:
+function _ZN7MathLib14isGreaterEqualERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1312:bool MathLib::isGreaterEqual(const std::string &first, const std::string &second)
+        -: 1313:{
+    #####: 1314:    return toDoubleNumber(first) >= toDoubleNumber(second);
+call    0 never executed
+call    1 never executed
+        -: 1315:}
+        -: 1316:
+function _ZN7MathLib6isLessERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1317:bool MathLib::isLess(const std::string &first, const std::string &second)
+        -: 1318:{
+    #####: 1319:    return toDoubleNumber(first) < toDoubleNumber(second);
+call    0 never executed
+call    1 never executed
+        -: 1320:}
+        -: 1321:
+function _ZN7MathLib11isLessEqualERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1322:bool MathLib::isLessEqual(const std::string &first, const std::string &second)
+        -: 1323:{
+    #####: 1324:    return toDoubleNumber(first) <= toDoubleNumber(second);
+call    0 never executed
+call    1 never executed
+        -: 1325:}
+        -: 1326:
+        -: 1327:/*! \brief Does the string represent the numerical value of 0?
+        -: 1328: * In case leading or trailing white space is provided, the function
+        -: 1329: * returns false.
+        -: 1330: * Requirement for this function:
+        -: 1331: * - This code is allowed to be slow because of simplicity of the code.
+        -: 1332: *
+        -: 1333: * \param[in] str The string to check. In case the string is empty, the function returns false.
+        -: 1334: * \return Return true in case the string represents a numerical null value.
+        -: 1335: **/
+function _ZN7MathLib11isNullValueERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 30 returned 100% blocks executed 72%
+       30: 1336:bool MathLib::isNullValue(const std::string &str)
+        -: 1337:{
+       30: 1338:    if (str.empty() || (!std::isdigit(static_cast<unsigned char>(str[0])) && (str[0] != '.' && str[0] != '-' && str[0] != '+')))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 taken 0% (fallthrough)
+branch 16 taken 100%
+    #####: 1339:        return false; // Has to be a number
+        -: 1340:
+       76: 1341:    for (char i : str) {
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 84% (fallthrough)
+branch  4 taken 16%
+call    5 returned 100%
+call    6 returned 100%
+       64: 1342:        if (std::isdigit(static_cast<unsigned char>(i)) && i != '0') // May not contain digits other than 0
+branch  0 taken 73% (fallthrough)
+branch  1 taken 27%
+branch  2 taken 73% (fallthrough)
+branch  3 taken 27%
+branch  4 taken 38% (fallthrough)
+branch  5 taken 62%
+       36: 1343:            return false;
+       46: 1344:        if (i == 'E' || i == 'e')
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####: 1345:            return true;
+        -: 1346:    }
+       12: 1347:    return true;
+        -: 1348:}
+        -: 1349:
+function _ZN7MathLib12isOctalDigitEc called 98 returned 100% blocks executed 100%
+       98: 1350:bool MathLib::isOctalDigit(char c)
+        -: 1351:{
+       98: 1352:    return (c >= '0' && c <= '7');
+branch  0 taken 69% (fallthrough)
+branch  1 taken 31%
+branch  2 taken 18% (fallthrough)
+branch  3 taken 82%
+        -: 1353:}
+        -: 1354:
+function _ZN7MathLib16isDigitSeparatorERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEm called 0 returned 0% blocks executed 0%
+    #####: 1355:bool MathLib::isDigitSeparator(const std::string& iCode, std::string::size_type iPos)
+        -: 1356:{
+    #####: 1357:    if (iPos == 0 || iPos >= iCode.size() || iCode[iPos] != '\'')
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####: 1358:        return false;
+    #####: 1359:    std::string::size_type i = iPos - 1;
+    #####: 1360:    while (std::isxdigit(iCode[i])) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1361:        if (i == 0)
+branch  0 never executed
+branch  1 never executed
+    #####: 1362:            return true; // Only xdigits before '
+    #####: 1363:        --i;
+        -: 1364:    }
+    #####: 1365:    if (i == iPos - 1) { // No xdigit before '
+branch  0 never executed
+branch  1 never executed
+    #####: 1366:        return false;
+        -: 1367:    } else {
+    #####: 1368:        switch (iCode[i]) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1369:        case ' ':
+        -: 1370:        case '.':
+        -: 1371:        case ',':
+        -: 1372:        case 'x':
+        -: 1373:        case '(':
+        -: 1374:        case '{':
+        -: 1375:        case '+':
+        -: 1376:        case '-':
+        -: 1377:        case '*':
+        -: 1378:        case '%':
+        -: 1379:        case '/':
+        -: 1380:        case '&':
+        -: 1381:        case '|':
+        -: 1382:        case '^':
+        -: 1383:        case '~':
+        -: 1384:        case '=':
+    #####: 1385:            return true;
+    #####: 1386:        case '\'':
+    #####: 1387:            return isDigitSeparator(iCode, i);
+call    0 never executed
+    #####: 1388:        default:
+    #####: 1389:            return false;
+        -: 1390:        }
+        -: 1391:    }
+        -: 1392:}
+        -: 1393:
+function _ZplRKN7MathLib5valueES2_ called 0 returned 0% blocks executed 0%
+    #####: 1394:MathLib::value operator+(const MathLib::value &v1, const MathLib::value &v2)
+        -: 1395:{
+    #####: 1396:    return MathLib::value::calc('+',v1,v2);
+call    0 never executed
+        -: 1397:}
+        -: 1398:
+function _ZmiRKN7MathLib5valueES2_ called 0 returned 0% blocks executed 0%
+    #####: 1399:MathLib::value operator-(const MathLib::value &v1, const MathLib::value &v2)
+        -: 1400:{
+    #####: 1401:    return MathLib::value::calc('-',v1,v2);
+call    0 never executed
+        -: 1402:}
+        -: 1403:
+function _ZmlRKN7MathLib5valueES2_ called 0 returned 0% blocks executed 0%
+    #####: 1404:MathLib::value operator*(const MathLib::value &v1, const MathLib::value &v2)
+        -: 1405:{
+    #####: 1406:    return MathLib::value::calc('*',v1,v2);
+call    0 never executed
+        -: 1407:}
+        -: 1408:
+function _ZdvRKN7MathLib5valueES2_ called 0 returned 0% blocks executed 0%
+    #####: 1409:MathLib::value operator/(const MathLib::value &v1, const MathLib::value &v2)
+        -: 1410:{
+    #####: 1411:    return MathLib::value::calc('/',v1,v2);
+call    0 never executed
+        -: 1412:}
+        -: 1413:
+function _ZrmRKN7MathLib5valueES2_ called 0 returned 0% blocks executed 0%
+    #####: 1414:MathLib::value operator%(const MathLib::value &v1, const MathLib::value &v2)
+        -: 1415:{
+    #####: 1416:    return MathLib::value::calc('%',v1,v2);
+call    0 never executed
+        -: 1417:}
+        -: 1418:
+function _ZanRKN7MathLib5valueES2_ called 0 returned 0% blocks executed 0%
+    #####: 1419:MathLib::value operator&(const MathLib::value &v1, const MathLib::value &v2)
+        -: 1420:{
+    #####: 1421:    return MathLib::value::calc('&',v1,v2);
+call    0 never executed
+        -: 1422:}
+        -: 1423:
+function _ZorRKN7MathLib5valueES2_ called 0 returned 0% blocks executed 0%
+    #####: 1424:MathLib::value operator|(const MathLib::value &v1, const MathLib::value &v2)
+        -: 1425:{
+    #####: 1426:    return MathLib::value::calc('|',v1,v2);
+call    0 never executed
+        -: 1427:}
+        -: 1428:
+function _ZeoRKN7MathLib5valueES2_ called 0 returned 0% blocks executed 0%
+    #####: 1429:MathLib::value operator^(const MathLib::value &v1, const MathLib::value &v2)
+        -: 1430:{
+    #####: 1431:    return MathLib::value::calc('^',v1,v2);
+call    0 never executed
+        -: 1432:}
+        -: 1433:
+function _ZlsRKN7MathLib5valueES2_ called 0 returned 0% blocks executed 0%
+    #####: 1434:MathLib::value operator<<(const MathLib::value &v1, const MathLib::value &v2)
+        -: 1435:{
+    #####: 1436:    return v1.shiftLeft(v2);
+call    0 never executed
+        -: 1437:}
+        -: 1438:
+function _ZrsRKN7MathLib5valueES2_ called 0 returned 0% blocks executed 0%
+    #####: 1439:MathLib::value operator>>(const MathLib::value &v1, const MathLib::value &v2)
+        -: 1440:{
+    #####: 1441:    return v1.shiftRight(v2);
+call    0 never executed
+function _GLOBAL__sub_I__ZN7MathLib11bigint_bitsE called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3: 1442:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

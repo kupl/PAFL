@@ -1,0 +1,114 @@
+        -:    0:Source:/usr/include/c++/7/debug/safe_unordered_container.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:// Safe container implementation  -*- C++ -*-
+        -:    2:
+        -:    3:// Copyright (C) 2011-2017 Free Software Foundation, Inc.
+        -:    4://
+        -:    5:// This file is part of the GNU ISO C++ Library.  This library is free
+        -:    6:// software; you can redistribute it and/or modify it under the
+        -:    7:// terms of the GNU General Public License as published by the
+        -:    8:// Free Software Foundation; either version 3, or (at your option)
+        -:    9:// any later version.
+        -:   10:
+        -:   11:// This library is distributed in the hope that it will be useful,
+        -:   12:// but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   13:// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   14:// GNU General Public License for more details.
+        -:   15:
+        -:   16:// Under Section 7 of GPL version 3, you are granted additional
+        -:   17:// permissions described in the GCC Runtime Library Exception, version
+        -:   18:// 3.1, as published by the Free Software Foundation.
+        -:   19:
+        -:   20:// You should have received a copy of the GNU General Public License and
+        -:   21:// a copy of the GCC Runtime Library Exception along with this program;
+        -:   22:// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+        -:   23:// <http://www.gnu.org/licenses/>.
+        -:   24:
+        -:   25:/** @file debug/safe_unordered_container.h
+        -:   26: *  This file is a GNU debug extension to the Standard C++ Library.
+        -:   27: */
+        -:   28:
+        -:   29:#ifndef _GLIBCXX_DEBUG_SAFE_UNORDERED_CONTAINER_H
+        -:   30:#define _GLIBCXX_DEBUG_SAFE_UNORDERED_CONTAINER_H 1
+        -:   31:
+        -:   32:#include <debug/assertions.h>
+        -:   33:#include <debug/macros.h>
+        -:   34:#include <debug/functions.h>
+        -:   35:#include <debug/safe_unordered_base.h>
+        -:   36:
+        -:   37:namespace __gnu_debug
+        -:   38:{
+        -:   39:  /**
+        -:   40:   * @brief Base class for constructing a @a safe unordered container type
+        -:   41:   * that tracks iterators that reference it.
+        -:   42:   *
+        -:   43:   * The class template %_Safe_unordered_container simplifies the
+        -:   44:   * construction of @a safe unordered containers that track the iterators
+        -:   45:   * that reference the container, so that the iterators are notified of
+        -:   46:   * changes in the container that may affect their operation, e.g., if
+        -:   47:   * the container invalidates its iterators or is destructed. This class
+        -:   48:   * template may only be used by deriving from it and passing the name
+        -:   49:   * of the derived class as its template parameter via the curiously
+        -:   50:   * recurring template pattern. The derived class must have @c
+        -:   51:   * iterator and @c const_iterator types that are instantiations of
+        -:   52:   * class template _Safe_iterator for this container and @c local_iterator
+        -:   53:   * and @c const_local_iterator types that are instantiations of class
+        -:   54:   * template _Safe_local_iterator for this container. Iterators will
+        -:   55:   * then be tracked automatically.
+        -:   56:   */
+        -:   57:  template<typename _Container>
+function _ZN11__gnu_debug25_Safe_unordered_containerINSt7__debug13unordered_mapIiN9ValueFlow5ValueESt4hashIiESt8equal_toIiESaISt4pairIKiS4_EEEEEC2Ev called 323 returned 100% blocks executed 100%
+function _ZN11__gnu_debug25_Safe_unordered_containerINSt7__debug13unordered_mapIiN9ValueFlow5ValueESt4hashIiESt8equal_toIiESaISt4pairIKiS4_EEEEED2Ev called 323 returned 100% blocks executed 100%
+      646:   58:    class _Safe_unordered_container : public _Safe_unordered_container_base
+call    0 returned 100%
+call    1 returned 100%
+        -:   59:    {
+        -:   60:    private:
+        -:   61:      _Container&
+        -:   62:      _M_cont() noexcept
+        -:   63:      { return *static_cast<_Container*>(this); }
+        -:   64:
+        -:   65:    protected:
+        -:   66:      void
+        -:   67:      _M_invalidate_locals()
+        -:   68:      {
+        -:   69:	auto __local_end = _M_cont()._M_base().end(0);
+        -:   70:	this->_M_invalidate_local_if(
+        -:   71:		[__local_end](__decltype(_M_cont()._M_base().cend(0)) __it)
+        -:   72:		{ return __it != __local_end; });
+        -:   73:      }
+        -:   74:
+        -:   75:      void
+        -:   76:      _M_invalidate_all()
+        -:   77:      {
+        -:   78:	auto __end = _M_cont()._M_base().end();
+        -:   79:	this->_M_invalidate_if(
+        -:   80:		[__end](__decltype(_M_cont()._M_base().cend()) __it)
+        -:   81:		{ return __it != __end; });
+        -:   82:	_M_invalidate_locals();
+        -:   83:      }
+        -:   84:
+        -:   85:      /** Invalidates all iterators @c x that reference this container,
+        -:   86:	  are not singular, and for which @c __pred(x) returns @c
+        -:   87:	  true. @c __pred will be invoked with the normal iterators nested
+        -:   88:	  in the safe ones. */
+        -:   89:      template<typename _Predicate>
+        -:   90:	void
+        -:   91:	_M_invalidate_if(_Predicate __pred);
+        -:   92:
+        -:   93:      /** Invalidates all local iterators @c x that reference this container,
+        -:   94:	  are not singular, and for which @c __pred(x) returns @c
+        -:   95:	  true. @c __pred will be invoked with the normal ilocal iterators
+        -:   96:	  nested in the safe ones. */
+        -:   97:      template<typename _Predicate>
+        -:   98:	void
+        -:   99:	_M_invalidate_local_if(_Predicate __pred);
+        -:  100:    };
+        -:  101:} // namespace __gnu_debug
+        -:  102:
+        -:  103:#include <debug/safe_unordered_container.tcc>
+        -:  104:
+        -:  105:#endif

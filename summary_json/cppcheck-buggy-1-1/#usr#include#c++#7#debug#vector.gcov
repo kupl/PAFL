@@ -1,0 +1,1217 @@
+        -:    0:Source:/usr/include/c++/7/debug/vector
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:// Debugging vector implementation -*- C++ -*-
+        -:    2:
+        -:    3:// Copyright (C) 2003-2017 Free Software Foundation, Inc.
+        -:    4://
+        -:    5:// This file is part of the GNU ISO C++ Library.  This library is free
+        -:    6:// software; you can redistribute it and/or modify it under the
+        -:    7:// terms of the GNU General Public License as published by the
+        -:    8:// Free Software Foundation; either version 3, or (at your option)
+        -:    9:// any later version.
+        -:   10:
+        -:   11:// This library is distributed in the hope that it will be useful,
+        -:   12:// but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   13:// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   14:// GNU General Public License for more details.
+        -:   15:
+        -:   16:// Under Section 7 of GPL version 3, you are granted additional
+        -:   17:// permissions described in the GCC Runtime Library Exception, version
+        -:   18:// 3.1, as published by the Free Software Foundation.
+        -:   19:
+        -:   20:// You should have received a copy of the GNU General Public License and
+        -:   21:// a copy of the GCC Runtime Library Exception along with this program;
+        -:   22:// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+        -:   23:// <http://www.gnu.org/licenses/>.
+        -:   24:
+        -:   25:/** @file debug/vector
+        -:   26: *  This file is a GNU debug extension to the Standard C++ Library.
+        -:   27: */
+        -:   28:
+        -:   29:#ifndef _GLIBCXX_DEBUG_VECTOR
+        -:   30:#define _GLIBCXX_DEBUG_VECTOR 1
+        -:   31:
+        -:   32:#pragma GCC system_header
+        -:   33:
+        -:   34:#include <vector>
+        -:   35:#include <utility>
+        -:   36:#include <debug/safe_sequence.h>
+        -:   37:#include <debug/safe_container.h>
+        -:   38:#include <debug/safe_iterator.h>
+        -:   39:
+        -:   40:namespace __gnu_debug
+        -:   41:{
+        -:   42:  /** @brief Base class for Debug Mode vector.
+        -:   43:   *
+        -:   44:   * Adds information about the guaranteed capacity, which is useful for
+        -:   45:   * detecting code which relies on non-portable implementation details of
+        -:   46:   * the libstdc++ reallocation policy.
+        -:   47:   */
+        -:   48:  template<typename _SafeSequence,
+        -:   49:	   typename _BaseSequence>
+        -:   50:    class _Safe_vector
+        -:   51:    {
+        -:   52:      typedef typename _BaseSequence::size_type size_type;
+        -:   53:
+        -:   54:      const _SafeSequence&
+function _ZNK11__gnu_debug12_Safe_vectorINSt7__debug6vectorIxSaIxEEENSt9__cxx19986vectorIxS3_EEE6_M_seqEv called 0 returned 0% blocks executed 0%
+function _ZNK11__gnu_debug12_Safe_vectorINSt7__debug6vectorINS1_4listIN9ValueFlow5ValueESaIS5_EEESaIS7_EEENSt9__cxx19986vectorIS7_S8_EEE6_M_seqEv called 0 returned 0% blocks executed 0%
+function _ZNK11__gnu_debug12_Safe_vectorINSt7__debug6vectorI13LifetimeTokenSaIS3_EEENSt9__cxx19986vectorIS3_S4_EEE6_M_seqEv called 1394 returned 100% blocks executed 100%
+function _ZNK11__gnu_debug12_Safe_vectorINSt7__debug6vectorIPK5TokenSaIS5_EEENSt9__cxx19986vectorIS5_S6_EEE6_M_seqEv called 0 returned 0% blocks executed 0%
+function _ZNK11__gnu_debug12_Safe_vectorINSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaISA_EEENSt9__cxx19986vectorISA_SB_EEE6_M_seqEv called 278 returned 100% blocks executed 100%
+function _ZNK11__gnu_debug12_Safe_vectorINSt7__debug6vectorIN11FwdAnalysis13KnownAndTokenESaIS4_EEENSt9__cxx19986vectorIS4_S5_EEE6_M_seqEv called 0 returned 0% blocks executed 0%
+     1672:   55:      _M_seq() const { return *static_cast<const _SafeSequence*>(this); }
+        -:   56:
+        -:   57:    protected:
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorIxSaIxEEENSt9__cxx19986vectorIxS3_EEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorINS1_4listIN9ValueFlow5ValueESaIS5_EEESaIS7_EEENSt9__cxx19986vectorIS7_S8_EEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorI13LifetimeTokenSaIS3_EEENSt9__cxx19986vectorIS3_S4_EEEC2Ev called 697 returned 100% blocks executed 100%
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorIPK5TokenSaIS5_EEENSt9__cxx19986vectorIS5_S6_EEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaISA_EEENSt9__cxx19986vectorISA_SB_EEEC2Ev called 230 returned 100% blocks executed 100%
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorIN11FwdAnalysis13KnownAndTokenESaIS4_EEENSt9__cxx19986vectorIS4_S5_EEEC2Ev called 0 returned 0% blocks executed 0%
+      927:   58:      _Safe_vector() _GLIBCXX_NOEXCEPT
+      927:   59:	: _M_guaranteed_capacity(0)
+      927:   60:      { _M_update_guaranteed_capacity(); }
+call    0 never executed
+call    1 never executed
+call    2 returned 100%
+call    3 never executed
+call    4 returned 100%
+call    5 never executed
+        -:   61:
+        -:   62:      _Safe_vector(const _Safe_vector&) _GLIBCXX_NOEXCEPT
+        -:   63:	: _M_guaranteed_capacity(0)
+        -:   64:      { _M_update_guaranteed_capacity(); }
+        -:   65:
+        -:   66:      _Safe_vector(size_type __n) _GLIBCXX_NOEXCEPT
+        -:   67:	: _M_guaranteed_capacity(__n)
+        -:   68:      { }
+        -:   69:
+        -:   70:#if __cplusplus >= 201103L
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorI13LifetimeTokenSaIS3_EEENSt9__cxx19986vectorIS3_S4_EEEC2EOS9_ called 0 returned 0% blocks executed 0%
+    #####:   71:      _Safe_vector(_Safe_vector&& __x) noexcept
+    #####:   72:	: _Safe_vector()
+call    0 never executed
+    #####:   73:      { __x._M_guaranteed_capacity = 0; }
+        -:   74:
+        -:   75:      _Safe_vector&
+        -:   76:      operator=(const _Safe_vector&) noexcept
+        -:   77:      {
+        -:   78:	_M_update_guaranteed_capacity();
+        -:   79:	return *this;
+        -:   80:      }
+        -:   81:
+        -:   82:      _Safe_vector&
+        -:   83:      operator=(_Safe_vector&& __x) noexcept
+        -:   84:      {
+        -:   85:	_M_update_guaranteed_capacity();
+        -:   86:	__x._M_guaranteed_capacity = 0;
+        -:   87:	return *this;
+        -:   88:      }
+        -:   89:#endif
+        -:   90:
+        -:   91:      size_type _M_guaranteed_capacity;
+        -:   92:
+        -:   93:      bool
+function _ZNK11__gnu_debug12_Safe_vectorINSt7__debug6vectorIxSaIxEEENSt9__cxx19986vectorIxS3_EEE24_M_requires_reallocationEm called 0 returned 0% blocks executed 0%
+function _ZNK11__gnu_debug12_Safe_vectorINSt7__debug6vectorINS1_4listIN9ValueFlow5ValueESaIS5_EEESaIS7_EEENSt9__cxx19986vectorIS7_S8_EEE24_M_requires_reallocationEm called 0 returned 0% blocks executed 0%
+function _ZNK11__gnu_debug12_Safe_vectorINSt7__debug6vectorIPK5TokenSaIS5_EEENSt9__cxx19986vectorIS5_S6_EEE24_M_requires_reallocationEm called 0 returned 0% blocks executed 0%
+function _ZNK11__gnu_debug12_Safe_vectorINSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaISA_EEENSt9__cxx19986vectorISA_SB_EEE24_M_requires_reallocationEm called 16 returned 100% blocks executed 100%
+       16:   94:      _M_requires_reallocation(size_type __elements) const _GLIBCXX_NOEXCEPT
+       16:   95:      { return __elements > _M_seq().capacity(); }
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 returned 100%
+call    7 returned 100%
+        -:   96:
+        -:   97:      void
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorIxSaIxEEENSt9__cxx19986vectorIxS3_EEE29_M_update_guaranteed_capacityEv called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorINS1_4listIN9ValueFlow5ValueESaIS5_EEESaIS7_EEENSt9__cxx19986vectorIS7_S8_EEE29_M_update_guaranteed_capacityEv called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorI13LifetimeTokenSaIS3_EEENSt9__cxx19986vectorIS3_S4_EEE29_M_update_guaranteed_capacityEv called 697 returned 100% blocks executed 100%
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorIPK5TokenSaIS5_EEENSt9__cxx19986vectorIS5_S6_EEE29_M_update_guaranteed_capacityEv called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaISA_EEENSt9__cxx19986vectorISA_SB_EEE29_M_update_guaranteed_capacityEv called 246 returned 100% blocks executed 100%
+function _ZN11__gnu_debug12_Safe_vectorINSt7__debug6vectorIN11FwdAnalysis13KnownAndTokenESaIS4_EEENSt9__cxx19986vectorIS4_S5_EEE29_M_update_guaranteed_capacityEv called 0 returned 0% blocks executed 0%
+      943:   98:      _M_update_guaranteed_capacity() _GLIBCXX_NOEXCEPT
+        -:   99:      {
+      943:  100:	if (_M_seq().size() > _M_guaranteed_capacity)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 returned 100%
+call    9 returned 100%
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0%
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 returned 100%
+call   17 returned 100%
+branch 18 taken 7% (fallthrough)
+branch 19 taken 93%
+call   20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+      713:  101:	  _M_guaranteed_capacity = _M_seq().size();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 returned 100%
+call    5 returned 100%
+call    6 never executed
+call    7 never executed
+call    8 returned 100%
+call    9 returned 100%
+call   10 never executed
+call   11 never executed
+      943:  102:      }
+        -:  103:    };
+        -:  104:}
+        -:  105:
+        -:  106:namespace std _GLIBCXX_VISIBILITY(default)
+        -:  107:{
+        -:  108:namespace __debug
+        -:  109:{
+        -:  110:  /// Class std::vector with safety/checking/debug instrumentation.
+        -:  111:  template<typename _Tp,
+        -:  112:	   typename _Allocator = std::allocator<_Tp> >
+        -:  113:    class vector
+        -:  114:    : public __gnu_debug::_Safe_container<
+        -:  115:	vector<_Tp, _Allocator>, _Allocator, __gnu_debug::_Safe_sequence>,
+        -:  116:      public _GLIBCXX_STD_C::vector<_Tp, _Allocator>,
+        -:  117:      public __gnu_debug::_Safe_vector<
+        -:  118:	vector<_Tp, _Allocator>,
+        -:  119:	_GLIBCXX_STD_C::vector<_Tp, _Allocator> >
+        -:  120:    {
+        -:  121:      typedef _GLIBCXX_STD_C::vector<_Tp, _Allocator>		_Base;
+        -:  122:      typedef __gnu_debug::_Safe_container<
+        -:  123:	vector, _Allocator, __gnu_debug::_Safe_sequence>	_Safe;
+        -:  124:      typedef __gnu_debug::_Safe_vector<vector, _Base>		_Safe_vector;
+        -:  125:
+        -:  126:      typedef typename _Base::iterator		_Base_iterator;
+        -:  127:      typedef typename _Base::const_iterator	_Base_const_iterator;
+        -:  128:      typedef __gnu_debug::_Equal_to<_Base_const_iterator> _Equal;
+        -:  129:
+        -:  130:    public:
+        -:  131:      typedef typename _Base::reference			reference;
+        -:  132:      typedef typename _Base::const_reference		const_reference;
+        -:  133:
+        -:  134:      typedef __gnu_debug::_Safe_iterator<
+        -:  135:	_Base_iterator, vector>				iterator;
+        -:  136:      typedef __gnu_debug::_Safe_iterator<
+        -:  137:	_Base_const_iterator, vector>			const_iterator;
+        -:  138:
+        -:  139:      typedef typename _Base::size_type			size_type;
+        -:  140:      typedef typename _Base::difference_type		difference_type;
+        -:  141:
+        -:  142:      typedef _Tp					value_type;
+        -:  143:      typedef _Allocator				allocator_type;
+        -:  144:      typedef typename _Base::pointer			pointer;
+        -:  145:      typedef typename _Base::const_pointer		const_pointer;
+        -:  146:      typedef std::reverse_iterator<iterator>		reverse_iterator;
+        -:  147:      typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
+        -:  148:
+        -:  149:      // 23.2.4.1 construct/copy/destroy:
+        -:  150:
+        -:  151:#if __cplusplus < 201103L
+        -:  152:      vector() _GLIBCXX_NOEXCEPT
+        -:  153:      : _Base() { }
+        -:  154:#else
+function _ZNSt7__debug6vectorIxSaIxEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorINS_4listIN9ValueFlow5ValueESaIS3_EEESaIS5_EEC2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorI13LifetimeTokenSaIS1_EEC2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorIPK5TokenSaIS3_EEC2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaIS8_EEC2Ev called 230 returned 100% blocks executed 100%
+function _ZNSt7__debug6vectorIN11FwdAnalysis13KnownAndTokenESaIS2_EEC2Ev called 0 returned 0% blocks executed 0%
+      230:  155:      vector() = default;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 returned 100%
+call   13 returned 100%
+call   14 returned 100%
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -:  156:#endif
+        -:  157:
+        -:  158:      explicit
+        -:  159:      vector(const _Allocator& __a) _GLIBCXX_NOEXCEPT
+        -:  160:      : _Base(__a) { }
+        -:  161:
+        -:  162:#if __cplusplus >= 201103L
+        -:  163:      explicit
+        -:  164:      vector(size_type __n, const _Allocator& __a = _Allocator())
+        -:  165:      : _Base(__n, __a), _Safe_vector(__n) { }
+        -:  166:
+        -:  167:      vector(size_type __n, const _Tp& __value,
+        -:  168:	     const _Allocator& __a = _Allocator())
+        -:  169:      : _Base(__n, __value, __a) { }
+        -:  170:#else
+        -:  171:      explicit
+        -:  172:      vector(size_type __n, const _Tp& __value = _Tp(),
+        -:  173:	     const _Allocator& __a = _Allocator())
+        -:  174:      : _Base(__n, __value, __a) { }
+        -:  175:#endif
+        -:  176:
+        -:  177:#if __cplusplus >= 201103L
+        -:  178:      template<class _InputIterator,
+        -:  179:	       typename = std::_RequireInputIter<_InputIterator>>
+        -:  180:#else
+        -:  181:      template<class _InputIterator>
+        -:  182:#endif
+        -:  183:	vector(_InputIterator __first, _InputIterator __last,
+        -:  184:	       const _Allocator& __a = _Allocator())
+        -:  185:	: _Base(__gnu_debug::__base(__gnu_debug::__check_valid_range(__first,
+        -:  186:								     __last)),
+        -:  187:		__gnu_debug::__base(__last), __a) { }
+        -:  188:
+        -:  189:#if __cplusplus < 201103L
+        -:  190:      vector(const vector& __x)
+        -:  191:      : _Base(__x) { }
+        -:  192:
+        -:  193:      ~vector() _GLIBCXX_NOEXCEPT { }
+        -:  194:#else
+        -:  195:      vector(const vector&) = default;
+function _ZNSt7__debug6vectorI13LifetimeTokenSaIS1_EEC2EOS3_ called 0 returned 0% blocks executed 0%
+    #####:  196:      vector(vector&&) = default;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  197:
+        -:  198:      vector(const vector& __x, const allocator_type& __a)
+        -:  199:      : _Base(__x, __a) { }
+        -:  200:
+        -:  201:      vector(vector&& __x, const allocator_type& __a)
+        -:  202:      : _Safe(std::move(__x._M_safe()), __a),
+        -:  203:	_Base(std::move(__x._M_base()), __a),
+        -:  204:	_Safe_vector(std::move(__x)) { }
+        -:  205:
+function _ZNSt7__debug6vectorI13LifetimeTokenSaIS1_EEC2ESt16initializer_listIS1_ERKS2_ called 697 returned 100% blocks executed 83%
+      697:  206:      vector(initializer_list<value_type> __l,
+        -:  207:	     const allocator_type& __a = allocator_type())
+      697:  208:      : _Base(__l, __a) { }
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        -:  209:
+function _ZNSt7__debug6vectorIxSaIxEED2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorINS_4listIN9ValueFlow5ValueESaIS3_EEESaIS5_EED2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorIPK5TokenSaIS3_EED2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaIS8_EED2Ev called 230 returned 100% blocks executed 100%
+function _ZNSt7__debug6vectorIN11FwdAnalysis13KnownAndTokenESaIS2_EED2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorI13LifetimeTokenSaIS1_EED2Ev called 0 returned 0% blocks executed 0%
+      230:  210:      ~vector() = default;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 returned 100%
+call    7 returned 100%
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:  211:#endif
+        -:  212:
+        -:  213:      /// Construction from a normal-mode vector
+        -:  214:      vector(const _Base& __x)
+        -:  215:      : _Base(__x) { }
+        -:  216:
+        -:  217:#if __cplusplus < 201103L
+        -:  218:      vector&
+        -:  219:      operator=(const vector& __x)
+        -:  220:      {
+        -:  221:	this->_M_safe() = __x;
+        -:  222:	_M_base() = __x;
+        -:  223:	this->_M_update_guaranteed_capacity();
+        -:  224:	return *this;
+        -:  225:      }
+        -:  226:#else
+        -:  227:      vector&
+        -:  228:      operator=(const vector&) = default;
+        -:  229:
+        -:  230:      vector&
+        -:  231:      operator=(vector&&) = default;
+        -:  232:
+        -:  233:      vector&
+        -:  234:      operator=(initializer_list<value_type> __l)
+        -:  235:      {
+        -:  236:	_M_base() = __l;
+        -:  237:	this->_M_invalidate_all();
+        -:  238:	this->_M_update_guaranteed_capacity();
+        -:  239:	return *this;
+        -:  240:      }
+        -:  241:#endif
+        -:  242:
+        -:  243:#if __cplusplus >= 201103L
+        -:  244:      template<typename _InputIterator,
+        -:  245:	       typename = std::_RequireInputIter<_InputIterator>>
+        -:  246:#else
+        -:  247:      template<typename _InputIterator>
+        -:  248:#endif
+        -:  249:	void
+        -:  250:	assign(_InputIterator __first, _InputIterator __last)
+        -:  251:	{
+        -:  252:	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+        -:  253:	  __glibcxx_check_valid_range2(__first, __last, __dist);
+        -:  254:
+        -:  255:	  if (__dist.second >= __gnu_debug::__dp_sign)
+        -:  256:	    _Base::assign(__gnu_debug::__unsafe(__first),
+        -:  257:			  __gnu_debug::__unsafe(__last));
+        -:  258:	  else
+        -:  259:	    _Base::assign(__first, __last);
+        -:  260:
+        -:  261:	  this->_M_invalidate_all();
+        -:  262:	  this->_M_update_guaranteed_capacity();
+        -:  263:	}
+        -:  264:
+        -:  265:      void
+        -:  266:      assign(size_type __n, const _Tp& __u)
+        -:  267:      {
+        -:  268:	_Base::assign(__n, __u);
+        -:  269:	this->_M_invalidate_all();
+        -:  270:	this->_M_update_guaranteed_capacity();
+        -:  271:      }
+        -:  272:
+        -:  273:#if __cplusplus >= 201103L
+        -:  274:      void
+        -:  275:      assign(initializer_list<value_type> __l)
+        -:  276:      {
+        -:  277:	_Base::assign(__l);
+        -:  278:	this->_M_invalidate_all();
+        -:  279:	this->_M_update_guaranteed_capacity();
+        -:  280:      }
+        -:  281:#endif
+        -:  282:
+        -:  283:      using _Base::get_allocator;
+        -:  284:
+        -:  285:      // iterators:
+        -:  286:      iterator
+function _ZNSt7__debug6vectorIxSaIxEE5beginEv called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorIN11FwdAnalysis13KnownAndTokenESaIS2_EE5beginEv called 31 returned 100% blocks executed 100%
+function _ZNSt7__debug6vectorIPK5TokenSaIS3_EE5beginEv called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaIS8_EE5beginEv called 141 returned 100% blocks executed 100%
+function _ZNSt7__debug6vectorIPK5ScopeSaIS3_EE5beginEv called 1674 returned 100% blocks executed 100%
+function _ZNSt7__debug6vectorI13LifetimeTokenSaIS1_EE5beginEv called 0 returned 0% blocks executed 0%
+     1846:  287:      begin() _GLIBCXX_NOEXCEPT
+     1846:  288:      { return iterator(_Base::begin(), this); }
+call    0 never executed
+call    1 never executed
+call    2 returned 100%
+call    3 returned 100%
+call    4 never executed
+call    5 never executed
+call    6 returned 100%
+call    7 returned 100%
+call    8 returned 100%
+call    9 returned 100%
+call   10 never executed
+call   11 never executed
+        -:  289:
+        -:  290:      const_iterator
+function _ZNKSt7__debug6vectorIPK8VariableSaIS3_EE5beginEv called 0 returned 0% blocks executed 0%
+    #####:  291:      begin() const _GLIBCXX_NOEXCEPT
+    #####:  292:      { return const_iterator(_Base::begin(), this); }
+call    0 never executed
+call    1 never executed
+        -:  293:
+        -:  294:      iterator
+function _ZNSt7__debug6vectorIxSaIxEE3endEv called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorIN11FwdAnalysis13KnownAndTokenESaIS2_EE3endEv called 31 returned 100% blocks executed 100%
+function _ZNSt7__debug6vectorIPK5TokenSaIS3_EE3endEv called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaIS8_EE3endEv called 141 returned 100% blocks executed 100%
+function _ZNSt7__debug6vectorIPK5ScopeSaIS3_EE3endEv called 1674 returned 100% blocks executed 100%
+function _ZNSt7__debug6vectorI13LifetimeTokenSaIS1_EE3endEv called 0 returned 0% blocks executed 0%
+     1846:  295:      end() _GLIBCXX_NOEXCEPT
+     1846:  296:      { return iterator(_Base::end(), this); }
+call    0 never executed
+call    1 never executed
+call    2 returned 100%
+call    3 returned 100%
+call    4 never executed
+call    5 never executed
+call    6 returned 100%
+call    7 returned 100%
+call    8 returned 100%
+call    9 returned 100%
+call   10 never executed
+call   11 never executed
+        -:  297:
+        -:  298:      const_iterator
+function _ZNKSt7__debug6vectorIPK8VariableSaIS3_EE3endEv called 0 returned 0% blocks executed 0%
+    #####:  299:      end() const _GLIBCXX_NOEXCEPT
+    #####:  300:      { return const_iterator(_Base::end(), this); }
+call    0 never executed
+call    1 never executed
+        -:  301:
+        -:  302:      reverse_iterator
+        -:  303:      rbegin() _GLIBCXX_NOEXCEPT
+        -:  304:      { return reverse_iterator(end()); }
+        -:  305:
+        -:  306:      const_reverse_iterator
+        -:  307:      rbegin() const _GLIBCXX_NOEXCEPT
+        -:  308:      { return const_reverse_iterator(end()); }
+        -:  309:
+        -:  310:      reverse_iterator
+        -:  311:      rend() _GLIBCXX_NOEXCEPT
+        -:  312:      { return reverse_iterator(begin()); }
+        -:  313:
+        -:  314:      const_reverse_iterator
+        -:  315:      rend() const _GLIBCXX_NOEXCEPT
+        -:  316:      { return const_reverse_iterator(begin()); }
+        -:  317:
+        -:  318:#if __cplusplus >= 201103L
+        -:  319:      const_iterator
+        -:  320:      cbegin() const noexcept
+        -:  321:      { return const_iterator(_Base::begin(), this); }
+        -:  322:
+        -:  323:      const_iterator
+        -:  324:      cend() const noexcept
+        -:  325:      { return const_iterator(_Base::end(), this); }
+        -:  326:
+        -:  327:      const_reverse_iterator
+        -:  328:      crbegin() const noexcept
+        -:  329:      { return const_reverse_iterator(end()); }
+        -:  330:
+        -:  331:      const_reverse_iterator
+        -:  332:      crend() const noexcept
+        -:  333:      { return const_reverse_iterator(begin()); }
+        -:  334:#endif
+        -:  335:
+        -:  336:      // 23.2.4.2 capacity:
+        -:  337:      using _Base::size;
+        -:  338:      using _Base::max_size;
+        -:  339:
+        -:  340:#if __cplusplus >= 201103L
+        -:  341:      void
+        -:  342:      resize(size_type __sz)
+        -:  343:      {
+        -:  344:	bool __realloc = this->_M_requires_reallocation(__sz);
+        -:  345:	if (__sz < this->size())
+        -:  346:	  this->_M_invalidate_after_nth(__sz);
+        -:  347:	_Base::resize(__sz);
+        -:  348:	if (__realloc)
+        -:  349:	  this->_M_invalidate_all();
+        -:  350:	this->_M_update_guaranteed_capacity();
+        -:  351:      }
+        -:  352:
+        -:  353:      void
+        -:  354:      resize(size_type __sz, const _Tp& __c)
+        -:  355:      {
+        -:  356:	bool __realloc = this->_M_requires_reallocation(__sz);
+        -:  357:	if (__sz < this->size())
+        -:  358:	  this->_M_invalidate_after_nth(__sz);
+        -:  359:	_Base::resize(__sz, __c);
+        -:  360:	if (__realloc)
+        -:  361:	  this->_M_invalidate_all();
+        -:  362:	this->_M_update_guaranteed_capacity();
+        -:  363:      }
+        -:  364:#else
+        -:  365:      void
+        -:  366:      resize(size_type __sz, _Tp __c = _Tp())
+        -:  367:      {
+        -:  368:	bool __realloc = this->_M_requires_reallocation(__sz);
+        -:  369:	if (__sz < this->size())
+        -:  370:	  this->_M_invalidate_after_nth(__sz);
+        -:  371:	_Base::resize(__sz, __c);
+        -:  372:	if (__realloc)
+        -:  373:	  this->_M_invalidate_all();
+        -:  374:	this->_M_update_guaranteed_capacity();
+        -:  375:      }
+        -:  376:#endif
+        -:  377:
+        -:  378:#if __cplusplus >= 201103L
+        -:  379:      void
+        -:  380:      shrink_to_fit()
+        -:  381:      {
+        -:  382:	if (_Base::_M_shrink_to_fit())
+        -:  383:	  {
+        -:  384:	    this->_M_guaranteed_capacity = _Base::capacity();
+        -:  385:	    this->_M_invalidate_all();
+        -:  386:	  }
+        -:  387:      }
+        -:  388:#endif
+        -:  389:
+        -:  390:      size_type
+function _ZNKSt7__debug6vectorIxSaIxEE8capacityEv called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug6vectorINS_4listIN9ValueFlow5ValueESaIS3_EEESaIS5_EE8capacityEv called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug6vectorIPK5TokenSaIS3_EE8capacityEv called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaIS8_EE8capacityEv called 16 returned 100% blocks executed 100%
+       16:  391:      capacity() const _GLIBCXX_NOEXCEPT
+        -:  392:      {
+        -:  393:#ifdef _GLIBCXX_DEBUG_PEDANTIC
+        -:  394:	return this->_M_guaranteed_capacity;
+        -:  395:#else
+       16:  396:	return _Base::capacity();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 returned 100%
+        -:  397:#endif
+        -:  398:      }
+        -:  399:
+        -:  400:      using _Base::empty;
+        -:  401:
+        -:  402:      void
+        -:  403:      reserve(size_type __n)
+        -:  404:      {
+        -:  405:	bool __realloc = this->_M_requires_reallocation(__n);
+        -:  406:	_Base::reserve(__n);
+        -:  407:	if (__n > this->_M_guaranteed_capacity)
+        -:  408:	  this->_M_guaranteed_capacity = __n;
+        -:  409:	if (__realloc)
+        -:  410:	  this->_M_invalidate_all();
+        -:  411:      }
+        -:  412:
+        -:  413:      // element access:
+        -:  414:      reference
+function _ZNSt7__debug6vectorIxSaIxEEixEm called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorIPK5TokenSaIS3_EEixEm called 0 returned 0% blocks executed 0%
+    #####:  415:      operator[](size_type __n) _GLIBCXX_NOEXCEPT
+        -:  416:      {
+    #####:  417:	__glibcxx_check_subscript(__n);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  418:	return _M_base()[__n];
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:  419:      }
+        -:  420:
+        -:  421:      const_reference
+function _ZNKSt7__debug6vectorIPK5TokenSaIS3_EEixEm called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug6vectorINS_4listIN9ValueFlow5ValueESaIS3_EEESaIS5_EEixEm called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug6vectorI9DimensionSaIS1_EEixEm called 0 returned 0% blocks executed 0%
+    #####:  422:      operator[](size_type __n) const _GLIBCXX_NOEXCEPT
+        -:  423:      {
+    #####:  424:	__glibcxx_check_subscript(__n);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+    #####:  425:	return _M_base()[__n];
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  426:      }
+        -:  427:
+        -:  428:      using _Base::at;
+        -:  429:
+        -:  430:      reference
+function _ZNSt7__debug6vectorI13LifetimeTokenSaIS1_EE5frontEv called 2736 returned 100% blocks executed 50%
+     2736:  431:      front() _GLIBCXX_NOEXCEPT
+        -:  432:      {
+     2736:  433:	__glibcxx_check_nonempty();
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+     2736:  434:	return _Base::front();
+call    0 returned 100%
+        -:  435:      }
+        -:  436:
+        -:  437:      const_reference
+function _ZNKSt7__debug6vectorI9DimensionSaIS1_EE5frontEv called 0 returned 0% blocks executed 0%
+    #####:  438:      front() const _GLIBCXX_NOEXCEPT
+        -:  439:      {
+    #####:  440:	__glibcxx_check_nonempty();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  441:	return _Base::front();
+call    0 never executed
+        -:  442:      }
+        -:  443:
+        -:  444:      reference
+function _ZNSt7__debug6vectorINS_4listIN9ValueFlow5ValueESaIS3_EEESaIS5_EE4backEv called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorIPK5TokenSaIS3_EE4backEv called 0 returned 0% blocks executed 0%
+    #####:  445:      back() _GLIBCXX_NOEXCEPT
+        -:  446:      {
+    #####:  447:	__glibcxx_check_nonempty();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  448:	return _Base::back();
+call    0 never executed
+call    1 never executed
+        -:  449:      }
+        -:  450:
+        -:  451:      const_reference
+        -:  452:      back() const _GLIBCXX_NOEXCEPT
+        -:  453:      {
+        -:  454:	__glibcxx_check_nonempty();
+        -:  455:	return _Base::back();
+        -:  456:      }
+        -:  457:
+        -:  458:      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  459:      // DR 464. Suggestion for new member functions in standard containers.
+        -:  460:      using _Base::data;
+        -:  461:
+        -:  462:      // 23.2.4.3 modifiers:
+        -:  463:      void
+function _ZNSt7__debug6vectorIxSaIxEE9push_backERKx called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorIPK5TokenSaIS3_EE9push_backERKS3_ called 0 returned 0% blocks executed 0%
+    #####:  464:      push_back(const _Tp& __x)
+        -:  465:      {
+    #####:  466:	bool __realloc = this->_M_requires_reallocation(this->size() + 1);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+    #####:  467:	_Base::push_back(__x);
+call    0 never executed
+call    1 never executed
+    #####:  468:	if (__realloc)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  469:	  this->_M_invalidate_all();
+call    0 never executed
+call    1 never executed
+    #####:  470:	this->_M_update_guaranteed_capacity();
+call    0 never executed
+call    1 never executed
+    #####:  471:      }
+        -:  472:
+        -:  473:#if __cplusplus >= 201103L
+        -:  474:      template<typename _Up = _Tp>
+        -:  475:	typename __gnu_cxx::__enable_if<!std::__are_same<_Up, bool>::__value,
+        -:  476:					void>::__type
+        -:  477:	push_back(_Tp&& __x)
+        -:  478:	{ emplace_back(std::move(__x)); }
+        -:  479:
+        -:  480:      template<typename... _Args>
+        -:  481:#if __cplusplus > 201402L
+        -:  482:	reference
+        -:  483:#else
+        -:  484:	void
+        -:  485:#endif
+function _ZNSt7__debug6vectorINS_4listIN9ValueFlow5ValueESaIS3_EEESaIS5_EE12emplace_backIJS5_EEEvDpOT_ called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaIS8_EE12emplace_backIJS4_RS7_EEEvDpOT_ called 16 returned 100% blocks executed 100%
+       16:  486:	emplace_back(_Args&&... __args)
+        -:  487:	{
+       16:  488:	  bool __realloc = this->_M_requires_reallocation(this->size() + 1);
+call    0 never executed
+call    1 never executed
+call    2 returned 100%
+call    3 returned 100%
+       16:  489:	  _Base::emplace_back(std::forward<_Args>(__args)...);
+call    0 never executed
+call    1 never executed
+call    2 returned 100%
+call    3 returned 100%
+call    4 returned 100%
+       16:  490:	  if (__realloc)
+branch  0 never executed
+branch  1 never executed
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+       16:  491:	    this->_M_invalidate_all();
+call    0 never executed
+call    1 returned 100%
+       16:  492:	  this->_M_update_guaranteed_capacity();
+call    0 never executed
+call    1 returned 100%
+        -:  493:#if __cplusplus > 201402L
+        -:  494:	  return back();
+        -:  495:#endif
+       16:  496:	}
+        -:  497:#endif
+        -:  498:
+        -:  499:      void
+        -:  500:      pop_back() _GLIBCXX_NOEXCEPT
+        -:  501:      {
+        -:  502:	__glibcxx_check_nonempty();
+        -:  503:	this->_M_invalidate_if(_Equal(--_Base::end()));
+        -:  504:	_Base::pop_back();
+        -:  505:      }
+        -:  506:
+        -:  507:#if __cplusplus >= 201103L
+        -:  508:      template<typename... _Args>
+        -:  509:	iterator
+        -:  510:	emplace(const_iterator __position, _Args&&... __args)
+        -:  511:	{
+        -:  512:	  __glibcxx_check_insert(__position);
+        -:  513:	  bool __realloc = this->_M_requires_reallocation(this->size() + 1);
+        -:  514:	  difference_type __offset = __position.base() - _Base::begin();
+        -:  515:	  _Base_iterator __res = _Base::emplace(__position.base(),
+        -:  516:						std::forward<_Args>(__args)...);
+        -:  517:	  if (__realloc)
+        -:  518:	    this->_M_invalidate_all();
+        -:  519:	  else
+        -:  520:	    this->_M_invalidate_after_nth(__offset);
+        -:  521:	  this->_M_update_guaranteed_capacity();
+        -:  522:	  return iterator(__res, this);
+        -:  523:	}
+        -:  524:#endif
+        -:  525:
+        -:  526:      iterator
+        -:  527:#if __cplusplus >= 201103L
+        -:  528:      insert(const_iterator __position, const _Tp& __x)
+        -:  529:#else
+        -:  530:      insert(iterator __position, const _Tp& __x)
+        -:  531:#endif
+        -:  532:      {
+        -:  533:	__glibcxx_check_insert(__position);
+        -:  534:	bool __realloc = this->_M_requires_reallocation(this->size() + 1);
+        -:  535:	difference_type __offset = __position.base() - _Base::begin();
+        -:  536:	_Base_iterator __res = _Base::insert(__position.base(), __x);
+        -:  537:	if (__realloc)
+        -:  538:	  this->_M_invalidate_all();
+        -:  539:	else
+        -:  540:	  this->_M_invalidate_after_nth(__offset);
+        -:  541:	this->_M_update_guaranteed_capacity();
+        -:  542:	return iterator(__res, this);
+        -:  543:      }
+        -:  544:
+        -:  545:#if __cplusplus >= 201103L
+        -:  546:      template<typename _Up = _Tp>
+        -:  547:	typename __gnu_cxx::__enable_if<!std::__are_same<_Up, bool>::__value,
+        -:  548:					iterator>::__type
+        -:  549:	insert(const_iterator __position, _Tp&& __x)
+        -:  550:	{ return emplace(__position, std::move(__x)); }
+        -:  551:
+        -:  552:      iterator
+        -:  553:      insert(const_iterator __position, initializer_list<value_type> __l)
+        -:  554:      { return this->insert(__position, __l.begin(), __l.end()); }
+        -:  555:#endif
+        -:  556:
+        -:  557:#if __cplusplus >= 201103L
+        -:  558:      iterator
+        -:  559:      insert(const_iterator __position, size_type __n, const _Tp& __x)
+        -:  560:      {
+        -:  561:	__glibcxx_check_insert(__position);
+        -:  562:	bool __realloc = this->_M_requires_reallocation(this->size() + __n);
+        -:  563:	difference_type __offset = __position.base() - _Base::cbegin();
+        -:  564:	_Base_iterator __res = _Base::insert(__position.base(), __n, __x);
+        -:  565:	if (__realloc)
+        -:  566:	  this->_M_invalidate_all();
+        -:  567:	else
+        -:  568:	  this->_M_invalidate_after_nth(__offset);
+        -:  569:	this->_M_update_guaranteed_capacity();
+        -:  570:	return iterator(__res, this);
+        -:  571:      }
+        -:  572:#else
+        -:  573:      void
+        -:  574:      insert(iterator __position, size_type __n, const _Tp& __x)
+        -:  575:      {
+        -:  576:	__glibcxx_check_insert(__position);
+        -:  577:	bool __realloc = this->_M_requires_reallocation(this->size() + __n);
+        -:  578:	difference_type __offset = __position.base() - _Base::begin();
+        -:  579:	_Base::insert(__position.base(), __n, __x);
+        -:  580:	if (__realloc)
+        -:  581:	  this->_M_invalidate_all();
+        -:  582:	else
+        -:  583:	  this->_M_invalidate_after_nth(__offset);
+        -:  584:	this->_M_update_guaranteed_capacity();
+        -:  585:      }
+        -:  586:#endif
+        -:  587:
+        -:  588:#if __cplusplus >= 201103L
+        -:  589:      template<class _InputIterator,
+        -:  590:	       typename = std::_RequireInputIter<_InputIterator>>
+        -:  591:	iterator
+function _ZNSt7__debug6vectorI13LifetimeTokenSaIS1_EE6insertIN11__gnu_debug14_Safe_iteratorIN9__gnu_cxx17__normal_iteratorIPS1_NSt9__cxx19986vectorIS1_S2_EEEES3_EEvEESE_NS6_INS8_IPKS1_SC_EES3_EET_SJ_ called 0 returned 0% blocks executed 0%
+    #####:  592:	insert(const_iterator __position,
+        -:  593:	       _InputIterator __first, _InputIterator __last)
+        -:  594:	{
+    #####:  595:	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+    #####:  596:	  __glibcxx_check_insert_range(__position, __first, __last, __dist);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+call   29 never executed
+call   30 never executed
+branch 31 never executed
+branch 32 never executed
+call   33 never executed
+branch 34 never executed
+branch 35 never executed
+call   36 never executed
+call   37 never executed
+call   38 never executed
+call   39 never executed
+branch 40 never executed
+branch 41 never executed
+call   42 never executed
+call   43 never executed
+branch 44 never executed
+branch 45 never executed
+call   46 never executed
+call   47 never executed
+call   48 never executed
+branch 49 never executed
+branch 50 never executed
+call   51 never executed
+branch 52 never executed
+branch 53 never executed
+call   54 never executed
+branch 55 never executed
+branch 56 never executed
+call   57 never executed
+call   58 never executed
+call   59 never executed
+        -:  597:
+        -:  598:	  /* Hard to guess if invalidation will occur, because __last
+        -:  599:	     - __first can't be calculated in all cases, so we just
+        -:  600:	     punt here by checking if it did occur. */
+    #####:  601:	  _Base_iterator __old_begin = _M_base().begin();
+call    0 never executed
+call    1 never executed
+    #####:  602:	  difference_type __offset = __position.base() - _Base::cbegin();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  603:	  _Base_iterator __res;
+    #####:  604:	  if (__dist.second >= __gnu_debug::__dp_sign)
+branch  0 never executed
+branch  1 never executed
+    #####:  605:	    __res = _Base::insert(__position.base(),
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  606:				  __gnu_debug::__unsafe(__first),
+        -:  607:				  __gnu_debug::__unsafe(__last));
+        -:  608:	  else
+    #####:  609:	    __res = _Base::insert(__position.base(), __first, __last);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  610:
+    #####:  611:	  if (_M_base().begin() != __old_begin)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  612:	    this->_M_invalidate_all();
+call    0 never executed
+        -:  613:	  else
+    #####:  614:	    this->_M_invalidate_after_nth(__offset);
+call    0 never executed
+    #####:  615:	  this->_M_update_guaranteed_capacity();
+call    0 never executed
+    #####:  616:	  return iterator(__res, this);
+call    0 never executed
+        -:  617:	}
+        -:  618:#else
+        -:  619:      template<class _InputIterator>
+        -:  620:	void
+        -:  621:	insert(iterator __position,
+        -:  622:	       _InputIterator __first, _InputIterator __last)
+        -:  623:	{
+        -:  624:	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+        -:  625:	  __glibcxx_check_insert_range(__position, __first, __last, __dist);
+        -:  626:
+        -:  627:	  /* Hard to guess if invalidation will occur, because __last
+        -:  628:	     - __first can't be calculated in all cases, so we just
+        -:  629:	     punt here by checking if it did occur. */
+        -:  630:	  _Base_iterator __old_begin = _M_base().begin();
+        -:  631:	  difference_type __offset = __position.base() - _Base::begin();
+        -:  632:	  if (__dist.second >= __gnu_debug::__dp_sign)
+        -:  633:	    _Base::insert(__position.base(), __gnu_debug::__unsafe(__first),
+        -:  634:					     __gnu_debug::__unsafe(__last));
+        -:  635:	  else
+        -:  636:	    _Base::insert(__position.base(), __first, __last);
+        -:  637:
+        -:  638:	  if (_M_base().begin() != __old_begin)
+        -:  639:	    this->_M_invalidate_all();
+        -:  640:	  else
+        -:  641:	    this->_M_invalidate_after_nth(__offset);
+        -:  642:	  this->_M_update_guaranteed_capacity();
+        -:  643:	}
+        -:  644:#endif
+        -:  645:
+        -:  646:      iterator
+        -:  647:#if __cplusplus >= 201103L
+        -:  648:      erase(const_iterator __position)
+        -:  649:#else
+        -:  650:      erase(iterator __position)
+        -:  651:#endif
+        -:  652:      {
+        -:  653:	__glibcxx_check_erase(__position);
+        -:  654:	difference_type __offset = __position.base() - _Base::begin();
+        -:  655:	_Base_iterator __res = _Base::erase(__position.base());
+        -:  656:	this->_M_invalidate_after_nth(__offset);
+        -:  657:	return iterator(__res, this);
+        -:  658:      }
+        -:  659:
+        -:  660:      iterator
+        -:  661:#if __cplusplus >= 201103L
+        -:  662:      erase(const_iterator __first, const_iterator __last)
+        -:  663:#else
+        -:  664:      erase(iterator __first, iterator __last)
+        -:  665:#endif
+        -:  666:      {
+        -:  667:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  668:	// 151. can't currently clear() empty container
+        -:  669:	__glibcxx_check_erase_range(__first, __last);
+        -:  670:
+        -:  671:	if (__first.base() != __last.base())
+        -:  672:	  {
+        -:  673:	    difference_type __offset = __first.base() - _Base::begin();
+        -:  674:	    _Base_iterator __res = _Base::erase(__first.base(),
+        -:  675:						__last.base());
+        -:  676:	    this->_M_invalidate_after_nth(__offset);
+        -:  677:	    return iterator(__res, this);
+        -:  678:	  }
+        -:  679:	else
+        -:  680:#if __cplusplus >= 201103L
+        -:  681:	  return begin() + (__first.base() - cbegin().base());
+        -:  682:#else
+        -:  683:	  return __first;
+        -:  684:#endif
+        -:  685:      }
+        -:  686:
+        -:  687:      void
+        -:  688:      swap(vector& __x)
+        -:  689:      _GLIBCXX_NOEXCEPT_IF( noexcept(declval<_Base&>().swap(__x)) )
+        -:  690:      {
+        -:  691:	_Safe::_M_swap(__x);
+        -:  692:	_Base::swap(__x);
+        -:  693:	std::swap(this->_M_guaranteed_capacity, __x._M_guaranteed_capacity);
+        -:  694:      }
+        -:  695:
+        -:  696:      void
+        -:  697:      clear() _GLIBCXX_NOEXCEPT
+        -:  698:      {
+        -:  699:	_Base::clear();
+        -:  700:	this->_M_invalidate_all();
+        -:  701:      }
+        -:  702:
+        -:  703:      _Base&
+function _ZNSt7__debug6vectorIN11FwdAnalysis13KnownAndTokenESaIS2_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaIS8_EE7_M_baseEv called 20 returned 100% blocks executed 100%
+function _ZNSt7__debug6vectorIPK5ScopeSaIS3_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorIxSaIxEE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorIPK5TokenSaIS3_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug6vectorI13LifetimeTokenSaIS1_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+       20:  704:      _M_base() _GLIBCXX_NOEXCEPT { return *this; }
+        -:  705:
+        -:  706:      const _Base&
+function _ZNKSt7__debug6vectorI13LifetimeTokenSaIS1_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug6vectorIPK8VariableSaIS3_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug6vectorIPK5TokenSaIS3_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug6vectorINS_4listIN9ValueFlow5ValueESaIS3_EEESaIS5_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug6vectorI9DimensionSaIS1_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+    #####:  707:      _M_base() const _GLIBCXX_NOEXCEPT { return *this; }
+        -:  708:
+        -:  709:    private:
+        -:  710:      void
+function _ZNSt7__debug6vectorI13LifetimeTokenSaIS1_EE23_M_invalidate_after_nthEl called 0 returned 0% blocks executed 0%
+    #####:  711:      _M_invalidate_after_nth(difference_type __n) _GLIBCXX_NOEXCEPT
+        -:  712:      {
+        -:  713:	typedef __gnu_debug::_After_nth_from<_Base_const_iterator> _After_nth;
+    #####:  714:	this->_M_invalidate_if(_After_nth(__n, _Base::begin()));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+    #####:  715:      }
+        -:  716:    };
+        -:  717:
+        -:  718:  template<typename _Tp, typename _Alloc>
+        -:  719:    inline bool
+        -:  720:    operator==(const vector<_Tp, _Alloc>& __lhs,
+        -:  721:	       const vector<_Tp, _Alloc>& __rhs)
+        -:  722:    { return __lhs._M_base() == __rhs._M_base(); }
+        -:  723:
+        -:  724:  template<typename _Tp, typename _Alloc>
+        -:  725:    inline bool
+        -:  726:    operator!=(const vector<_Tp, _Alloc>& __lhs,
+        -:  727:	       const vector<_Tp, _Alloc>& __rhs)
+        -:  728:    { return __lhs._M_base() != __rhs._M_base(); }
+        -:  729:
+        -:  730:  template<typename _Tp, typename _Alloc>
+        -:  731:    inline bool
+        -:  732:    operator<(const vector<_Tp, _Alloc>& __lhs,
+        -:  733:	      const vector<_Tp, _Alloc>& __rhs)
+        -:  734:    { return __lhs._M_base() < __rhs._M_base(); }
+        -:  735:
+        -:  736:  template<typename _Tp, typename _Alloc>
+        -:  737:    inline bool
+        -:  738:    operator<=(const vector<_Tp, _Alloc>& __lhs,
+        -:  739:	       const vector<_Tp, _Alloc>& __rhs)
+        -:  740:    { return __lhs._M_base() <= __rhs._M_base(); }
+        -:  741:
+        -:  742:  template<typename _Tp, typename _Alloc>
+        -:  743:    inline bool
+        -:  744:    operator>=(const vector<_Tp, _Alloc>& __lhs,
+        -:  745:	       const vector<_Tp, _Alloc>& __rhs)
+        -:  746:    { return __lhs._M_base() >= __rhs._M_base(); }
+        -:  747:
+        -:  748:  template<typename _Tp, typename _Alloc>
+        -:  749:    inline bool
+        -:  750:    operator>(const vector<_Tp, _Alloc>& __lhs,
+        -:  751:	      const vector<_Tp, _Alloc>& __rhs)
+        -:  752:    { return __lhs._M_base() > __rhs._M_base(); }
+        -:  753:
+        -:  754:  template<typename _Tp, typename _Alloc>
+        -:  755:    inline void
+        -:  756:    swap(vector<_Tp, _Alloc>& __lhs, vector<_Tp, _Alloc>& __rhs)
+        -:  757:    _GLIBCXX_NOEXCEPT_IF(noexcept(__lhs.swap(__rhs)))
+        -:  758:    { __lhs.swap(__rhs); }
+        -:  759:
+        -:  760:} // namespace __debug
+        -:  761:
+        -:  762:#if __cplusplus >= 201103L
+        -:  763:  // DR 1182.
+        -:  764:  /// std::hash specialization for vector<bool>.
+        -:  765:  template<typename _Alloc>
+        -:  766:    struct hash<__debug::vector<bool, _Alloc>>
+        -:  767:    : public __hash_base<size_t, __debug::vector<bool, _Alloc>>
+        -:  768:    {
+        -:  769:      size_t
+        -:  770:      operator()(const __debug::vector<bool, _Alloc>& __b) const noexcept
+        -:  771:      { return std::hash<_GLIBCXX_STD_C::vector<bool, _Alloc>>()(__b); }
+        -:  772:    };
+        -:  773:#endif
+        -:  774:
+        -:  775:} // namespace std
+        -:  776:
+        -:  777:namespace __gnu_debug
+        -:  778:{
+        -:  779:  template<typename _Tp, typename _Alloc>
+        -:  780:    struct _Is_contiguous_sequence<std::__debug::vector<_Tp, _Alloc> >
+        -:  781:    : std::__true_type
+        -:  782:    { };
+        -:  783:
+        -:  784:  template<typename _Alloc>
+        -:  785:    struct _Is_contiguous_sequence<std::__debug::vector<bool, _Alloc> >
+        -:  786:    : std::__false_type
+        -:  787:    { };
+        -:  788:}
+        -:  789:
+        -:  790:#endif

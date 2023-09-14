@@ -1,0 +1,226 @@
+        -:    0:Source:/home/workspace/lib/tokenlist.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef tokenlistH
+        -:   21:#define tokenlistH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "config.h"
+        -:   25:#include "token.h"
+        -:   26:
+        -:   27:#include <string>
+        -:   28:#include <vector>
+        -:   29:
+        -:   30:class Settings;
+        -:   31:class Token;
+        -:   32:
+        -:   33:namespace simplecpp {
+        -:   34:    class TokenList;
+        -:   35:}
+        -:   36:
+        -:   37:/// @addtogroup Core
+        -:   38:/// @{
+        -:   39:
+        -:   40:class CPPCHECKLIB TokenList {
+        -:   41:public:
+        -:   42:    explicit TokenList(const Settings* settings);
+        -:   43:    ~TokenList();
+        -:   44:
+        -:   45:    void setSettings(const Settings *settings) {
+        -:   46:        mSettings = settings;
+        -:   47:    }
+        -:   48:
+function _ZNK9TokenList11getSettingsEv called 40378 returned 100% blocks executed 100%
+    40378:   49:    const Settings *getSettings() const {
+    40378:   50:        return mSettings;
+        -:   51:    }
+        -:   52:
+        -:   53:    /** @return the source file path. e.g. "file.cpp" */
+        -:   54:    const std::string& getSourceFilePath() const;
+        -:   55:
+        -:   56:    /** Is the code C. Used for bailouts */
+        -:   57:    bool isC() const {
+        -:   58:        return mIsC;
+        -:   59:    }
+        -:   60:
+        -:   61:    /** Is the code CPP. Used for bailouts */
+function _ZNK9TokenList5isCPPEv called 0 returned 0% blocks executed 0%
+    #####:   62:    bool isCPP() const {
+    #####:   63:        return mIsCpp;
+        -:   64:    }
+        -:   65:
+        -:   66:    /**
+        -:   67:     * Delete all tokens in given token list
+        -:   68:     * @param tok token list to delete
+        -:   69:     */
+        -:   70:    static void deleteTokens(Token *tok);
+        -:   71:
+        -:   72:    void addtoken(std::string str, const nonneg int lineno, const nonneg int fileno, bool split = false);
+        -:   73:    void addtoken(std::string str, const Token *locationTok);
+        -:   74:
+        -:   75:    void addtoken(const Token *tok, const nonneg int lineno, const nonneg int fileno);
+        -:   76:    void addtoken(const Token *tok, const Token *locationTok);
+        -:   77:    void addtoken(const Token *tok);
+        -:   78:
+        -:   79:    static void insertTokens(Token *dest, const Token *src, nonneg int n);
+        -:   80:
+        -:   81:    /**
+        -:   82:     * Copy tokens.
+        -:   83:     * @param dest destination token where copied tokens will be inserted after
+        -:   84:     * @param first first token to copy
+        -:   85:     * @param last last token to copy
+        -:   86:     * @param one_line true=>copy all tokens to the same line as dest. false=>copy all tokens to dest while keeping the 'line breaks'
+        -:   87:     * @return new location of last token copied
+        -:   88:     */
+        -:   89:    static Token *copyTokens(Token *dest, const Token *first, const Token *last, bool one_line = true);
+        -:   90:
+        -:   91:    /**
+        -:   92:     * Create tokens from code.
+        -:   93:     * The code must be preprocessed first:
+        -:   94:     * - multiline strings are not handled.
+        -:   95:     * - UTF in the code are not handled.
+        -:   96:     * - comments are not handled.
+        -:   97:     * @param code input stream for code
+        -:   98:     * @param file0 source file name
+        -:   99:     */
+        -:  100:    bool createTokens(std::istream &code, const std::string& file0 = emptyString);
+        -:  101:
+        -:  102:    void createTokens(const simplecpp::TokenList *tokenList);
+        -:  103:
+        -:  104:    /** Deallocate list */
+        -:  105:    void deallocateTokens();
+        -:  106:
+        -:  107:    /** append file name if seen the first time; return its index in any case */
+        -:  108:    int appendFileIfNew(const std::string &fileName);
+        -:  109:
+        -:  110:    /** get first token of list */
+function _ZNK9TokenList5frontEv called 0 returned 0% blocks executed 0%
+    #####:  111:    const Token *front() const {
+    #####:  112:        return mTokensFrontBack.front;
+        -:  113:    }
+function _ZN9TokenList5frontEv called 0 returned 0% blocks executed 0%
+    #####:  114:    Token *front() {
+    #####:  115:        return mTokensFrontBack.front;
+        -:  116:    }
+        -:  117:
+        -:  118:    /** get last token of list */
+        -:  119:    const Token *back() const {
+        -:  120:        return mTokensFrontBack.back;
+        -:  121:    }
+function _ZN9TokenList4backEv called 0 returned 0% blocks executed 0%
+    #####:  122:    Token *back() {
+    #####:  123:        return mTokensFrontBack.back;
+        -:  124:    }
+        -:  125:
+        -:  126:    /**
+        -:  127:     * Get filenames (the sourcefile + the files it include).
+        -:  128:     * The first filename is the filename for the sourcefile
+        -:  129:     * @return vector with filenames
+        -:  130:     */
+        -:  131:    const std::vector<std::string>& getFiles() const {
+        -:  132:        return mFiles;
+        -:  133:    }
+        -:  134:
+        -:  135:    std::string getOrigFile(const Token *tok) const;
+        -:  136:
+        -:  137:    /**
+        -:  138:     * get filename for given token
+        -:  139:     * @param tok The given token
+        -:  140:     * @return filename for the given token
+        -:  141:     */
+        -:  142:    const std::string& file(const Token *tok) const;
+        -:  143:
+        -:  144:    /**
+        -:  145:     * Get file:line for a given token
+        -:  146:     * @param tok given token
+        -:  147:     * @return location for given token
+        -:  148:     */
+        -:  149:    std::string fileLine(const Token *tok) const;
+        -:  150:
+        -:  151:    /**
+        -:  152:    * Calculates a 64-bit checksum of the token list used to compare
+        -:  153:    * multiple token lists with each other as quickly as possible.
+        -:  154:    */
+        -:  155:    unsigned long long calculateChecksum() const;
+        -:  156:
+        -:  157:    /**
+        -:  158:     * Create abstract syntax tree.
+        -:  159:     */
+        -:  160:    void createAst();
+        -:  161:
+        -:  162:    /**
+        -:  163:     * Check abstract syntax tree.
+        -:  164:     * Throws InternalError on failure
+        -:  165:     */
+        -:  166:    void validateAst() const;
+        -:  167:
+        -:  168:    /**
+        -:  169:     * Verify that the given token is an element of the tokenlist.
+        -:  170:     * That method is implemented for debugging purposes.
+        -:  171:     * @param[in] tok token to be checked
+        -:  172:     * \return true if token was found in tokenlist, false else. In case of nullptr true is returned.
+        -:  173:     */
+        -:  174:    bool validateToken(const Token* tok) const;
+        -:  175:
+        -:  176:    /**
+        -:  177:     * Convert platform dependent types to standard types.
+        -:  178:     * 32 bits: size_t -> unsigned long
+        -:  179:     * 64 bits: size_t -> unsigned long long
+        -:  180:     */
+        -:  181:    void simplifyPlatformTypes();
+        -:  182:
+        -:  183:    /**
+        -:  184:     * Collapse compound standard types into a single token.
+        -:  185:     * unsigned long long int => long _isUnsigned=true,_isLong=true
+        -:  186:     */
+        -:  187:    void simplifyStdType();
+        -:  188:
+        -:  189:private:
+        -:  190:
+        -:  191:    /** Disable copy constructor, no implementation */
+        -:  192:    TokenList(const TokenList &);
+        -:  193:
+        -:  194:    /** Disable assignment operator, no implementation */
+        -:  195:    TokenList &operator=(const TokenList &);
+        -:  196:
+        -:  197:    /** Token list */
+        -:  198:    TokensFrontBack mTokensFrontBack;
+        -:  199:
+        -:  200:    /** filenames for the tokenized source code (source + included) */
+        -:  201:    std::vector<std::string> mFiles;
+        -:  202:
+        -:  203:    /** Original filenames for the tokenized source code (source + included) */
+        -:  204:    std::vector<std::string> mOrigFiles;
+        -:  205:
+        -:  206:    /** settings */
+        -:  207:    const Settings* mSettings;
+        -:  208:
+        -:  209:    /** File is known to be C/C++ code */
+        -:  210:    bool mIsC, mIsCpp;
+        -:  211:};
+        -:  212:
+        -:  213:/// @}
+        -:  214:
+        -:  215://---------------------------------------------------------------------------
+        -:  216:#endif // tokenlistH

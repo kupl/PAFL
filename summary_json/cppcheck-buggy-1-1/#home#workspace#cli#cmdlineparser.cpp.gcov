@@ -1,0 +1,2881 @@
+        -:    0:Source:/home/workspace/cli/cmdlineparser.cpp
+        -:    0:Graph:/home/workspace/build/cli/CMakeFiles/cli_objs.dir/cmdlineparser.gcno
+        -:    0:Data:/home/workspace/build/cli/CMakeFiles/cli_objs.dir/cmdlineparser.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#include "cmdlineparser.h"
+        -:   20:
+        -:   21:#include "check.h"
+        -:   22:#include "cppcheckexecutor.h"
+        -:   23:#include "filelister.h"
+        -:   24:#include "importproject.h"
+        -:   25:#include "path.h"
+        -:   26:#include "platform.h"
+        -:   27:#include "settings.h"
+        -:   28:#include "standards.h"
+        -:   29:#include "suppressions.h"
+        -:   30:#include "threadexecutor.h" // Threading model
+        -:   31:#include "timer.h"
+        -:   32:#include "utils.h"
+        -:   33:
+        -:   34:#include <algorithm>
+        -:   35:#include <cstdio>
+        -:   36:#include <cstdlib> // EXIT_FAILURE
+        -:   37:#include <cstring>
+        -:   38:#include <iostream>
+        -:   39:#include <list>
+        -:   40:#include <set>
+        -:   41:
+        -:   42:#ifdef HAVE_RULES
+        -:   43:// xml is used for rules
+        -:   44:#include <tinyxml2.h>
+        -:   45:#endif
+        -:   46:
+function _ZL14addFilesToListRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERNSt7__debug6vectorIS4_SaIS4_EEE called 0 returned 0% blocks executed 0%
+    #####:   47:static void addFilesToList(const std::string& FileList, std::vector<std::string>& PathNames)
+        -:   48:{
+        -:   49:    // To keep things initially simple, if the file can't be opened, just be silent and move on.
+        -:   50:    std::istream *Files;
+    #####:   51:    std::ifstream Infile;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   52:    if (FileList == "-") { // read from stdin
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   53:        Files = &std::cin;
+        -:   54:    } else {
+    #####:   55:        Infile.open(FileList);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   56:        Files = &Infile;
+        -:   57:    }
+    #####:   58:    if (Files && *Files) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:   59:        std::string FileName;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   60:        while (std::getline(*Files, FileName)) { // next line
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   61:            if (!FileName.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   62:                PathNames.push_back(FileName);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   63:            }
+        -:   64:        }
+        -:   65:    }
+    #####:   66:}
+        -:   67:
+function _ZL21addIncludePathsToListRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPNSt7__debug4listIS4_SaIS4_EEE called 0 returned 0% blocks executed 0%
+    #####:   68:static bool addIncludePathsToList(const std::string& FileList, std::list<std::string>* PathNames)
+        -:   69:{
+    #####:   70:    std::ifstream Files(FileList);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   71:    if (Files) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   72:        std::string PathName;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   73:        while (std::getline(Files, PathName)) { // next line
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   74:            if (!PathName.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   75:                PathName = Path::removeQuotationMarks(PathName);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:   76:                PathName = Path::fromNativeSeparators(PathName);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:   77:
+        -:   78:                // If path doesn't end with / or \, add it
+    #####:   79:                if (!endsWith(PathName, '/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   80:                    PathName += '/';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   81:
+    #####:   82:                PathNames->push_back(PathName);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   83:            }
+        -:   84:        }
+    #####:   85:        return true;
+        -:   86:    }
+    #####:   87:    return false;
+        -:   88:}
+        -:   89:
+function _ZL13addPathsToSetRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPNSt7__debug3setIS4_St4lessIS4_ESaIS4_EEE called 0 returned 0% blocks executed 0%
+    #####:   90:static bool addPathsToSet(const std::string& FileName, std::set<std::string>* set)
+        -:   91:{
+    #####:   92:    std::list<std::string> templist;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   93:    if (!addIncludePathsToList(FileName, &templist))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   94:        return false;
+    #####:   95:    set->insert(templist.begin(), templist.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:   96:    return true;
+        -:   97:}
+        -:   98:
+function _ZN13CmdLineParserC2EP8Settings called 1 returned 100% blocks executed 100%
+        1:   99:CmdLineParser::CmdLineParser(Settings *settings)
+        -:  100:    : mSettings(settings)
+        -:  101:    , mShowHelp(false)
+        -:  102:    , mShowVersion(false)
+        -:  103:    , mShowErrorMessages(false)
+        1:  104:    , mExitAfterPrint(false)
+call    0 returned 100%
+call    1 returned 100%
+        -:  105:{
+        1:  106:}
+        -:  107:
+function _ZN13CmdLineParser12printMessageERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  108:void CmdLineParser::printMessage(const std::string &message)
+        -:  109:{
+    #####:  110:    std::cout << message << std::endl;
+call    0 never executed
+call    1 never executed
+    #####:  111:}
+        -:  112:
+function _ZN13CmdLineParser12printMessageEPKc called 0 returned 0% blocks executed 0%
+    #####:  113:void CmdLineParser::printMessage(const char* message)
+        -:  114:{
+    #####:  115:    std::cout << message << std::endl;
+call    0 never executed
+call    1 never executed
+    #####:  116:}
+        -:  117:
+function _ZN13CmdLineParser13parseFromArgsEiPKPKc called 0 returned 0% blocks executed 0%
+    #####:  118:bool CmdLineParser::parseFromArgs(int argc, const char* const argv[])
+        -:  119:{
+    #####:  120:    bool def = false;
+    #####:  121:    bool maxconfigs = false;
+        -:  122:
+    #####:  123:    mSettings->exename = argv[0];
+call    0 never executed
+        -:  124:
+    #####:  125:    for (int i = 1; i < argc; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  126:        if (argv[i][0] == '-') {
+branch  0 never executed
+branch  1 never executed
+    #####:  127:            if (std::strcmp(argv[i], "--version") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  128:                mShowVersion = true;
+    #####:  129:                mExitAfterPrint = true;
+    #####:  130:                return true;
+        -:  131:            }
+        -:  132:
+    #####:  133:            else if (std::strncmp(argv[i], "--addon=", 8) == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  134:                mSettings->addons.emplace_back(argv[i]+8);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  135:
+    #####:  136:            else if (std::strncmp(argv[i], "--cppcheck-build-dir=", 21) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  137:                mSettings->buildDir = Path::fromNativeSeparators(argv[i] + 21);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  138:                if (endsWith(mSettings->buildDir, '/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  139:                    mSettings->buildDir.erase(mSettings->buildDir.size() - 1U);
+call    0 never executed
+call    1 never executed
+        -:  140:            }
+        -:  141:
+        -:  142:            // Flag used for various purposes during debugging
+    #####:  143:            else if (std::strcmp(argv[i], "--debug-simplified") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  144:                mSettings->debugSimplified = true;
+        -:  145:
+        -:  146:            // Show --debug output after the first simplifications
+    #####:  147:            else if (std::strcmp(argv[i], "--debug") == 0 ||
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  148:                     std::strcmp(argv[i], "--debug-normal") == 0)
+    #####:  149:                mSettings->debugnormal = true;
+        -:  150:
+        -:  151:            // Show debug warnings
+    #####:  152:            else if (std::strcmp(argv[i], "--debug-warnings") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  153:                mSettings->debugwarnings = true;
+        -:  154:
+        -:  155:            // Show template information
+    #####:  156:            else if (std::strcmp(argv[i], "--debug-template") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  157:                mSettings->debugtemplate = true;
+        -:  158:
+        -:  159:            // dump cppcheck data
+    #####:  160:            else if (std::strcmp(argv[i], "--dump") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  161:                mSettings->dump = true;
+        -:  162:
+        -:  163:            // max ctu depth
+    #####:  164:            else if (std::strncmp(argv[i], "--max-ctu-depth=", 16) == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  165:                mSettings->maxCtuDepth = std::atoi(argv[i] + 16);
+        -:  166:
+    #####:  167:            else if (std::strcmp(argv[i], "--experimental-fast") == 0)
+branch  0 never executed
+branch  1 never executed
+        -:  168:                // TODO: Reomve this flag!
+        -:  169:                ;
+        -:  170:
+        -:  171:            // (Experimental) exception handling inside cppcheck client
+    #####:  172:            else if (std::strcmp(argv[i], "--exception-handling") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  173:                mSettings->exceptionHandling = true;
+    #####:  174:            else if (std::strncmp(argv[i], "--exception-handling=", 21) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  175:                mSettings->exceptionHandling = true;
+    #####:  176:                const std::string exceptionOutfilename = &(argv[i][21]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  177:                CppCheckExecutor::setExceptionOutput((exceptionOutfilename=="stderr") ? stderr : stdout);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  178:            }
+        -:  179:
+        -:  180:            // Inconclusive checking
+    #####:  181:            else if (std::strcmp(argv[i], "--inconclusive") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  182:                mSettings->inconclusive = true;
+        -:  183:
+        -:  184:            // Experimental: Safe checking
+    #####:  185:            else if (std::strcmp(argv[i], "--safe-classes") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  186:                mSettings->safeChecks.classes = true;
+        -:  187:
+        -:  188:            // Experimental: Safe checking
+    #####:  189:            else if (std::strcmp(argv[i], "--safe-functions") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  190:                mSettings->safeChecks.externalFunctions = mSettings->safeChecks.internalFunctions = true;
+        -:  191:
+        -:  192:            // Experimental: Verify
+    #####:  193:            else if (std::strcmp(argv[i], "--verify") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  194:                mSettings->verification = true;
+        -:  195:
+        -:  196:            // Enforce language (--language=, -x)
+    #####:  197:            else if (std::strncmp(argv[i], "--language=", 11) == 0 || std::strcmp(argv[i], "-x") == 0) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  198:                std::string str;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+    #####:  199:                if (argv[i][2]) {
+branch  0 never executed
+branch  1 never executed
+    #####:  200:                    str = argv[i]+11;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  201:                } else {
+    #####:  202:                    i++;
+    #####:  203:                    if (i >= argc || argv[i][0] == '-') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  204:                        printMessage("cppcheck: No language given to '-x' option.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  205:                        return false;
+        -:  206:                    }
+    #####:  207:                    str = argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  208:                }
+        -:  209:
+    #####:  210:                if (str == "c")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  211:                    mSettings->enforcedLang = Settings::C;
+    #####:  212:                else if (str == "c++")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  213:                    mSettings->enforcedLang = Settings::CPP;
+        -:  214:                else {
+    #####:  215:                    printMessage("cppcheck: Unknown language '" + str + "' enforced.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  216:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  217:                }
+        -:  218:            }
+        -:  219:
+        -:  220:            // Filter errors
+    #####:  221:            else if (std::strncmp(argv[i], "--exitcode-suppressions=", 24) == 0) {
+branch  0 never executed
+branch  1 never executed
+        -:  222:                // exitcode-suppressions=filename.txt
+    #####:  223:                std::string filename = 24 + argv[i];
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:  224:
+    #####:  225:                std::ifstream f(filename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  226:                if (!f.is_open()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  227:                    printMessage("cppcheck: Couldn't open the file: \"" + filename + "\".");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  228:                    return false;
+        -:  229:                }
+    #####:  230:                const std::string errmsg(mSettings->nofail.parseFile(f));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  231:                if (!errmsg.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  232:                    printMessage(errmsg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  233:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  234:                }
+        -:  235:            }
+        -:  236:
+        -:  237:            // Filter errors
+    #####:  238:            else if (std::strncmp(argv[i], "--suppressions-list=", 20) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  239:                std::string filename = argv[i]+20;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  240:                std::ifstream f(filename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  241:                if (!f.is_open()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  242:                    std::string message("cppcheck: Couldn't open the file: \"");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  243:                    message += filename;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  244:                    message += "\".";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  245:                    if (std::count(filename.begin(), filename.end(), ',') > 0 ||
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  246:                        std::count(filename.begin(), filename.end(), '.') > 1) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  247:                        // If user tried to pass multiple files (we can only guess that)
+        -:  248:                        // e.g. like this: --suppressions-list=a.txt,b.txt
+        -:  249:                        // print more detailed error message to tell user how he can solve the problem
+    #####:  250:                        message += "\nIf you want to pass two files, you can do it e.g. like this:";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  251:                        message += "\n    cppcheck --suppressions-list=a.txt --suppressions-list=b.txt file.cpp";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  252:                    }
+        -:  253:
+    #####:  254:                    printMessage(message);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  255:                    return false;
+        -:  256:                }
+    #####:  257:                const std::string errmsg(mSettings->nomsg.parseFile(f));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  258:                if (!errmsg.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  259:                    printMessage(errmsg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  260:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  261:                }
+        -:  262:            }
+        -:  263:
+    #####:  264:            else if (std::strncmp(argv[i], "--suppress-xml=", 15) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  265:                const char * filename = argv[i] + 15;
+    #####:  266:                const std::string errmsg(mSettings->nomsg.parseXmlFile(filename));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  267:                if (!errmsg.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  268:                    printMessage(errmsg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  269:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  270:                }
+        -:  271:            }
+        -:  272:
+    #####:  273:            else if (std::strncmp(argv[i], "--suppress=", 11) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  274:                const std::string suppression = argv[i]+11;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  275:                const std::string errmsg(mSettings->nomsg.addSuppressionLine(suppression));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  276:                if (!errmsg.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  277:                    printMessage(errmsg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  278:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  279:                }
+        -:  280:            }
+        -:  281:
+        -:  282:            // Enables inline suppressions.
+    #####:  283:            else if (std::strcmp(argv[i], "--inline-suppr") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  284:                mSettings->inlineSuppressions = true;
+        -:  285:
+        -:  286:            // Verbose error messages (configuration info)
+    #####:  287:            else if (std::strcmp(argv[i], "-v") == 0 || std::strcmp(argv[i], "--verbose") == 0)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  288:                mSettings->verbose = true;
+        -:  289:
+        -:  290:            // Force checking of files that have "too many" configurations
+    #####:  291:            else if (std::strcmp(argv[i], "-f") == 0 || std::strcmp(argv[i], "--force") == 0)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  292:                mSettings->force = true;
+        -:  293:
+        -:  294:            // Output relative paths
+    #####:  295:            else if (std::strcmp(argv[i], "-rp") == 0 || std::strcmp(argv[i], "--relative-paths") == 0)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  296:                mSettings->relativePaths = true;
+    #####:  297:            else if (std::strncmp(argv[i], "-rp=", 4) == 0 || std::strncmp(argv[i], "--relative-paths=", 17) == 0) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  298:                mSettings->relativePaths = true;
+    #####:  299:                if (argv[i][argv[i][3]=='='?4:17] != 0) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  300:                    std::string paths = argv[i]+(argv[i][3]=='='?4:17);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  301:                    for (;;) {
+    #####:  302:                        const std::string::size_type pos = paths.find(';');
+call    0 never executed
+    #####:  303:                        if (pos == std::string::npos) {
+branch  0 never executed
+branch  1 never executed
+    #####:  304:                            mSettings->basePaths.push_back(Path::fromNativeSeparators(paths));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  305:                            break;
+        -:  306:                        }
+    #####:  307:                        mSettings->basePaths.push_back(Path::fromNativeSeparators(paths.substr(0, pos)));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  308:                        paths.erase(0, pos + 1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  309:                    }
+        -:  310:                } else {
+    #####:  311:                    printMessage("cppcheck: No paths specified for the '" + std::string(argv[i]) + "' option.");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+    #####:  312:                    return false;
+    #####:  313:                }
+        -:  314:            }
+        -:  315:
+        -:  316:            // Write results in file
+    #####:  317:            else if (std::strncmp(argv[i], "--output-file=", 14) == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  318:                mSettings->outputFile = Path::simplifyPath(Path::fromNativeSeparators(argv[i] + 14));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+        -:  319:
+        -:  320:            // Write results in results.plist
+    #####:  321:            else if (std::strncmp(argv[i], "--plist-output=", 15) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  322:                mSettings->plistOutput = Path::simplifyPath(Path::fromNativeSeparators(argv[i] + 15));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  323:                if (mSettings->plistOutput.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  324:                    mSettings->plistOutput = "./";
+call    0 never executed
+    #####:  325:                else if (!endsWith(mSettings->plistOutput,'/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  326:                    mSettings->plistOutput += '/';
+call    0 never executed
+        -:  327:            }
+        -:  328:
+        -:  329:            // Write results in results.xml
+    #####:  330:            else if (std::strcmp(argv[i], "--xml") == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  331:                mSettings->xml = true;
+        -:  332:
+        -:  333:            // Define the XML file version (and enable XML output)
+    #####:  334:            else if (std::strncmp(argv[i], "--xml-version=", 14) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  335:                const std::string numberString(argv[i]+14);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:  336:
+    #####:  337:                std::istringstream iss(numberString);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  338:                if (!(iss >> mSettings->xml_version)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  339:                    printMessage("cppcheck: argument to '--xml-version' is not a number.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  340:                    return false;
+        -:  341:                }
+        -:  342:
+    #####:  343:                if (mSettings->xml_version != 2) {
+branch  0 never executed
+branch  1 never executed
+        -:  344:                    // We only have xml version 2
+    #####:  345:                    printMessage("cppcheck: '--xml-version' can only be 2.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  346:                    return false;
+        -:  347:                }
+        -:  348:
+        -:  349:                // Enable also XML if version is set
+    #####:  350:                mSettings->xml = true;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  351:            }
+        -:  352:
+        -:  353:            // Only print something when there are errors
+    #####:  354:            else if (std::strcmp(argv[i], "-q") == 0 || std::strcmp(argv[i], "--quiet") == 0)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  355:                mSettings->quiet = true;
+        -:  356:
+        -:  357:            // Check configuration
+    #####:  358:            else if (std::strcmp(argv[i], "--check-config") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  359:                mSettings->checkConfiguration = true;
+        -:  360:            }
+        -:  361:
+        -:  362:            // Check library definitions
+    #####:  363:            else if (std::strcmp(argv[i], "--check-library") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  364:                mSettings->checkLibrary = true;
+        -:  365:            }
+        -:  366:
+    #####:  367:            else if (std::strncmp(argv[i], "--enable=", 9) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  368:                const std::string errmsg = mSettings->addEnabled(argv[i] + 9);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  369:                if (!errmsg.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  370:                    printMessage(errmsg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  371:                    return false;
+        -:  372:                }
+        -:  373:                // when "style" is enabled, also enable "warning", "performance" and "portability"
+    #####:  374:                if (mSettings->isEnabled(Settings::STYLE)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  375:                    mSettings->addEnabled("warning");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  376:                    mSettings->addEnabled("performance");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  377:                    mSettings->addEnabled("portability");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+        -:  378:                }
+        -:  379:            }
+        -:  380:
+        -:  381:            // --error-exitcode=1
+    #####:  382:            else if (std::strncmp(argv[i], "--error-exitcode=", 17) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  383:                const std::string temp = argv[i]+17;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  384:                std::istringstream iss(temp);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  385:                if (!(iss >> mSettings->exitCode)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  386:                    mSettings->exitCode = 0;
+    #####:  387:                    printMessage("cppcheck: Argument must be an integer. Try something like '--error-exitcode=1'.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  388:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  389:                }
+        -:  390:            }
+        -:  391:
+        -:  392:            // User define
+    #####:  393:            else if (std::strncmp(argv[i], "-D", 2) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  394:                std::string define;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  395:
+        -:  396:                // "-D define"
+    #####:  397:                if (std::strcmp(argv[i], "-D") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  398:                    ++i;
+    #####:  399:                    if (i >= argc || argv[i][0] == '-') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  400:                        printMessage("cppcheck: argument to '-D' is missing.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  401:                        return false;
+        -:  402:                    }
+        -:  403:
+    #####:  404:                    define = argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  405:                }
+        -:  406:                // "-Ddefine"
+        -:  407:                else {
+    #####:  408:                    define = 2 + argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  409:                }
+        -:  410:
+        -:  411:                // No "=", append a "=1"
+    #####:  412:                if (define.find('=') == std::string::npos)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  413:                    define += "=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  414:
+    #####:  415:                if (!mSettings->userDefines.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  416:                    mSettings->userDefines += ";";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  417:                mSettings->userDefines += define;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  418:
+    #####:  419:                def = true;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  420:            }
+        -:  421:            // User undef
+    #####:  422:            else if (std::strncmp(argv[i], "-U", 2) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  423:                std::string undef;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  424:
+        -:  425:                // "-U undef"
+    #####:  426:                if (std::strcmp(argv[i], "-U") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  427:                    ++i;
+    #####:  428:                    if (i >= argc || argv[i][0] == '-') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  429:                        printMessage("cppcheck: argument to '-U' is missing.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  430:                        return false;
+        -:  431:                    }
+        -:  432:
+    #####:  433:                    undef = argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  434:                }
+        -:  435:                // "-Uundef"
+        -:  436:                else {
+    #####:  437:                    undef = 2 + argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  438:                }
+        -:  439:
+    #####:  440:                mSettings->userUndefs.insert(undef);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  441:            }
+        -:  442:
+        -:  443:            // -E
+    #####:  444:            else if (std::strcmp(argv[i], "-E") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  445:                mSettings->preprocessOnly = true;
+    #####:  446:                mSettings->quiet = true;
+        -:  447:            }
+        -:  448:
+        -:  449:            // Include paths
+    #####:  450:            else if (std::strncmp(argv[i], "-I", 2) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  451:                std::string path;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:  452:
+        -:  453:                // "-I path/"
+    #####:  454:                if (std::strcmp(argv[i], "-I") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  455:                    ++i;
+    #####:  456:                    if (i >= argc || argv[i][0] == '-') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  457:                        printMessage("cppcheck: argument to '-I' is missing.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  458:                        return false;
+        -:  459:                    }
+    #####:  460:                    path = argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  461:                }
+        -:  462:
+        -:  463:                // "-Ipath/"
+        -:  464:                else {
+    #####:  465:                    path = 2 + argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  466:                }
+    #####:  467:                path = Path::removeQuotationMarks(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  468:                path = Path::fromNativeSeparators(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  469:
+        -:  470:                // If path doesn't end with / or \, add it
+    #####:  471:                if (!endsWith(path,'/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  472:                    path += '/';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  473:
+    #####:  474:                mSettings->includePaths.push_back(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  475:            } else if (std::strncmp(argv[i], "--include=", 10) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  476:                std::string path = argv[i] + 10;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+        -:  477:
+    #####:  478:                path = Path::fromNativeSeparators(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  479:
+    #####:  480:                mSettings->userIncludes.push_back(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  481:            } else if (std::strncmp(argv[i], "--includes-file=", 16) == 0) {
+branch  0 never executed
+branch  1 never executed
+        -:  482:                // open this file and read every input file (1 file name per line)
+    #####:  483:                const std::string includesFile(16 + argv[i]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  484:                if (!addIncludePathsToList(includesFile, &mSettings->includePaths)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  485:                    printMessage("Cppcheck: unable to open includes file at '" + includesFile + "'");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  486:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  487:                }
+    #####:  488:            } else if (std::strncmp(argv[i], "--config-exclude=",17) ==0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  489:                std::string path = argv[i] + 17;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  490:                path = Path::fromNativeSeparators(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  491:                mSettings->configExcludePaths.insert(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  492:            } else if (std::strncmp(argv[i], "--config-excludes-file=", 23) == 0) {
+branch  0 never executed
+branch  1 never executed
+        -:  493:                // open this file and read every input file (1 file name per line)
+    #####:  494:                const std::string cfgExcludesFile(23 + argv[i]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  495:                if (!addPathsToSet(cfgExcludesFile, &mSettings->configExcludePaths)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  496:                    printMessage("Cppcheck: unable to open config excludes file at '" + cfgExcludesFile + "'");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  497:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  498:                }
+        -:  499:            }
+        -:  500:
+        -:  501:            // file list specified
+    #####:  502:            else if (std::strncmp(argv[i], "--file-list=", 12) == 0) {
+branch  0 never executed
+branch  1 never executed
+        -:  503:                // open this file and read every input file (1 file name per line)
+    #####:  504:                addFilesToList(12 + argv[i], mPathNames);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:  505:            }
+        -:  506:
+        -:  507:            // Ignored paths
+    #####:  508:            else if (std::strncmp(argv[i], "-i", 2) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  509:                std::string path;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:  510:
+        -:  511:                // "-i path/"
+    #####:  512:                if (std::strcmp(argv[i], "-i") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  513:                    ++i;
+    #####:  514:                    if (i >= argc || argv[i][0] == '-') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  515:                        printMessage("cppcheck: argument to '-i' is missing.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  516:                        return false;
+        -:  517:                    }
+    #####:  518:                    path = argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  519:                }
+        -:  520:
+        -:  521:                // "-ipath/"
+        -:  522:                else {
+    #####:  523:                    path = 2 + argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  524:                }
+        -:  525:
+    #####:  526:                if (!path.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  527:                    path = Path::removeQuotationMarks(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  528:                    path = Path::fromNativeSeparators(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  529:                    path = Path::simplifyPath(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  530:
+    #####:  531:                    if (FileLister::isDirectory(path)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  532:                        // If directory name doesn't end with / or \, add it
+    #####:  533:                        if (!endsWith(path, '/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  534:                            path += '/';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  535:                    }
+    #####:  536:                    mIgnoredPaths.push_back(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  537:                }
+        -:  538:            }
+        -:  539:
+        -:  540:            // --library
+    #####:  541:            else if (std::strncmp(argv[i], "--library=", 10) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  542:                std::string lib(argv[i] + 10);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  543:                mSettings->libraries.push_back(lib);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  544:            }
+        -:  545:
+        -:  546:            // --project
+    #####:  547:            else if (std::strncmp(argv[i], "--project=", 10) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  548:                const std::string projectFile = argv[i]+10;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  549:                ImportProject::Type projType = mSettings->project.import(projectFile, mSettings);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  550:                if (projType == ImportProject::Type::CPPCHECK_GUI) {
+branch  0 never executed
+branch  1 never executed
+    #####:  551:                    mPathNames = mSettings->project.guiProject.pathNames;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  552:                    for (const std::string &lib : mSettings->project.guiProject.libraries)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  553:                        mSettings->libraries.push_back(lib);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  554:
+    #####:  555:                    for (const std::string &ignorePath : mSettings->project.guiProject.excludedPaths)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  556:                        mIgnoredPaths.emplace_back(ignorePath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  557:
+    #####:  558:                    const std::string platform(mSettings->project.guiProject.platform);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  559:
+    #####:  560:                    if (platform == "win32A")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  561:                        mSettings->platform(Settings::Win32A);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  562:                    else if (platform == "win32W")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  563:                        mSettings->platform(Settings::Win32W);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  564:                    else if (platform == "win64")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  565:                        mSettings->platform(Settings::Win64);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  566:                    else if (platform == "unix32")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  567:                        mSettings->platform(Settings::Unix32);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  568:                    else if (platform == "unix64")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  569:                        mSettings->platform(Settings::Unix64);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  570:                    else if (platform == "native")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  571:                        mSettings->platform(Settings::Native);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  572:                    else if (platform == "unspecified" || platform == "Unspecified" || platform == "")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+        -:  573:                        ;
+    #####:  574:                    else if (!mSettings->loadPlatformFile(argv[0], platform)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  575:                        std::string message("cppcheck: error: unrecognized platform: \"");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  576:                        message += platform;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  577:                        message += "\".";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  578:                        printMessage(message);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  579:                        return false;
+        -:  580:                    }
+        -:  581:
+    #####:  582:                    if (!mSettings->project.guiProject.projectFile.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  583:                        projType = mSettings->project.import(mSettings->project.guiProject.projectFile, mSettings);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  584:                }
+    #####:  585:                if (projType == ImportProject::Type::VS_SLN || projType == ImportProject::Type::VS_VCXPROJ) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  586:                    if (mSettings->project.guiProject.analyzeAllVsConfigs == "false")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  587:                        mSettings->project.selectOneVsConfig(mSettings->platformType);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  588:                    if (!CppCheckExecutor::tryLoadLibrary(mSettings->library, argv[0], "windows.cfg")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  589:                        // This shouldn't happen normally.
+    #####:  590:                        printMessage("cppcheck: Failed to load 'windows.cfg'. Your Cppcheck installation is broken. Please re-install.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  591:                        return false;
+        -:  592:                    }
+        -:  593:                }
+    #####:  594:                if (projType == ImportProject::Type::MISSING) {
+branch  0 never executed
+branch  1 never executed
+    #####:  595:                    printMessage("cppcheck: Failed to open project '" + projectFile + "'.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  596:                    return false;
+        -:  597:                }
+    #####:  598:                if (projType == ImportProject::Type::UNKNOWN) {
+branch  0 never executed
+branch  1 never executed
+    #####:  599:                    printMessage("cppcheck: Failed to load project '" + projectFile + "'. The format is unknown.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  600:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  601:                }
+        -:  602:            }
+        -:  603:
+        -:  604:            // Report progress
+    #####:  605:            else if (std::strcmp(argv[i], "--report-progress") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  606:                mSettings->reportProgress = true;
+        -:  607:            }
+        -:  608:
+        -:  609:            // --std
+    #####:  610:            else if (std::strcmp(argv[i], "--std=posix") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  611:                printMessage("cppcheck: Option --std=posix is deprecated and will be removed in 1.95.");
+call    0 never executed
+    #####:  612:            } else if (std::strcmp(argv[i], "--std=c89") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  613:                mSettings->standards.c = Standards::C89;
+    #####:  614:            } else if (std::strcmp(argv[i], "--std=c99") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  615:                mSettings->standards.c = Standards::C99;
+    #####:  616:            } else if (std::strcmp(argv[i], "--std=c11") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  617:                mSettings->standards.c = Standards::C11;
+    #####:  618:            } else if (std::strcmp(argv[i], "--std=c++03") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  619:                mSettings->standards.cpp = Standards::CPP03;
+    #####:  620:            } else if (std::strcmp(argv[i], "--std=c++11") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  621:                mSettings->standards.cpp = Standards::CPP11;
+    #####:  622:            } else if (std::strcmp(argv[i], "--std=c++14") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  623:                mSettings->standards.cpp = Standards::CPP14;
+    #####:  624:            } else if (std::strcmp(argv[i], "--std=c++17") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  625:                mSettings->standards.cpp = Standards::CPP17;
+    #####:  626:            } else if (std::strcmp(argv[i], "--std=c++20") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  627:                mSettings->standards.cpp = Standards::CPP20;
+        -:  628:            }
+        -:  629:
+        -:  630:            // Output formatter
+    #####:  631:            else if (std::strcmp(argv[i], "--template") == 0 ||
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  632:                     std::strncmp(argv[i], "--template=", 11) == 0) {
+        -:  633:                // "--template format"
+    #####:  634:                if (argv[i][10] == '=')
+branch  0 never executed
+branch  1 never executed
+    #####:  635:                    mSettings->templateFormat = argv[i] + 11;
+call    0 never executed
+    #####:  636:                else if ((i+1) < argc && argv[i+1][0] != '-') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  637:                    ++i;
+    #####:  638:                    mSettings->templateFormat = argv[i];
+call    0 never executed
+        -:  639:                } else {
+    #####:  640:                    printMessage("cppcheck: argument to '--template' is missing.");
+call    0 never executed
+    #####:  641:                    return false;
+        -:  642:                }
+        -:  643:
+    #####:  644:                if (mSettings->templateFormat == "gcc") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  645:                    mSettings->templateFormat = "{file}:{line}:{column}: warning: {message} [{id}]\\n{code}";
+call    0 never executed
+    #####:  646:                    mSettings->templateLocation = "{file}:{line}:{column}: note: {info}\\n{code}";
+call    0 never executed
+    #####:  647:                } else if (mSettings->templateFormat == "daca2") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  648:                    mSettings->templateFormat = "{file}:{line}:{column}: {severity}: {message} [{id}]";
+call    0 never executed
+    #####:  649:                    mSettings->templateLocation = "{file}:{line}:{column}: note: {info}";
+call    0 never executed
+    #####:  650:                } else if (mSettings->templateFormat == "vs")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  651:                    mSettings->templateFormat = "{file}({line}): {severity}: {message}";
+call    0 never executed
+    #####:  652:                else if (mSettings->templateFormat == "edit")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  653:                    mSettings->templateFormat = "{file} +{line}: {severity}: {message}";
+call    0 never executed
+    #####:  654:                else if (mSettings->templateFormat == "cppcheck1")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  655:                    mSettings->templateFormat = "{callstack}: ({severity}{inconclusive:, inconclusive}) {message}";
+call    0 never executed
+        -:  656:            }
+        -:  657:
+    #####:  658:            else if (std::strcmp(argv[i], "--template-location") == 0 ||
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  659:                     std::strncmp(argv[i], "--template-location=", 20) == 0) {
+        -:  660:                // "--template-location format"
+    #####:  661:                if (argv[i][19] == '=')
+branch  0 never executed
+branch  1 never executed
+    #####:  662:                    mSettings->templateLocation = argv[i] + 20;
+call    0 never executed
+    #####:  663:                else if ((i+1) < argc && argv[i+1][0] != '-') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  664:                    ++i;
+    #####:  665:                    mSettings->templateLocation = argv[i];
+call    0 never executed
+        -:  666:                } else {
+    #####:  667:                    printMessage("cppcheck: argument to '--template' is missing.");
+call    0 never executed
+    #####:  668:                    return false;
+        -:  669:                }
+        -:  670:            }
+        -:  671:
+        -:  672:            // Checking threads
+    #####:  673:            else if (std::strncmp(argv[i], "-j", 2) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  674:                std::string numberString;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  675:
+        -:  676:                // "-j 3"
+    #####:  677:                if (std::strcmp(argv[i], "-j") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  678:                    ++i;
+    #####:  679:                    if (i >= argc || argv[i][0] == '-') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  680:                        printMessage("cppcheck: argument to '-j' is missing.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  681:                        return false;
+        -:  682:                    }
+        -:  683:
+    #####:  684:                    numberString = argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  685:                }
+        -:  686:
+        -:  687:                // "-j3"
+        -:  688:                else
+    #####:  689:                    numberString = argv[i]+2;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  690:
+    #####:  691:                std::istringstream iss(numberString);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  692:                if (!(iss >> mSettings->jobs)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  693:                    printMessage("cppcheck: argument to '-j' is not a number.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  694:                    return false;
+        -:  695:                }
+        -:  696:
+    #####:  697:                if (mSettings->jobs > 10000) {
+branch  0 never executed
+branch  1 never executed
+        -:  698:                    // This limit is here just to catch typos. If someone has
+        -:  699:                    // need for more jobs, this value should be increased.
+    #####:  700:                    printMessage("cppcheck: argument for '-j' is allowed to be 10000 at max.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  701:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  702:                }
+    #####:  703:            } else if (std::strncmp(argv[i], "-l", 2) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  704:                std::string numberString;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  705:
+        -:  706:                // "-l 3"
+    #####:  707:                if (std::strcmp(argv[i], "-l") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  708:                    ++i;
+    #####:  709:                    if (i >= argc || argv[i][0] == '-') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  710:                        printMessage("cppcheck: argument to '-l' is missing.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  711:                        return false;
+        -:  712:                    }
+        -:  713:
+    #####:  714:                    numberString = argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  715:                }
+        -:  716:
+        -:  717:                // "-l3"
+        -:  718:                else
+    #####:  719:                    numberString = argv[i]+2;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  720:
+    #####:  721:                std::istringstream iss(numberString);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  722:                if (!(iss >> mSettings->loadAverage)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  723:                    printMessage("cppcheck: argument to '-l' is not a number.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  724:                    return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  725:                }
+        -:  726:            }
+        -:  727:
+        -:  728:            // print all possible error messages..
+    #####:  729:            else if (std::strcmp(argv[i], "--errorlist") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  730:                mShowErrorMessages = true;
+    #####:  731:                mSettings->xml = true;
+    #####:  732:                mExitAfterPrint = true;
+        -:  733:            }
+        -:  734:
+        -:  735:            // documentation..
+    #####:  736:            else if (std::strcmp(argv[i], "--doc") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  737:                std::ostringstream doc;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -:  738:                // Get documentation..
+    #####:  739:                for (const Check * it : Check::instances()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  740:                    const std::string& name(it->name());
+call    0 never executed
+    #####:  741:                    const std::string info(it->classInfo());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  742:                    if (!name.empty() && !info.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+        -:  743:                        doc << "## " << name << " ##\n"
+    #####:  744:                            << info << "\n";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+        -:  745:                }
+        -:  746:
+    #####:  747:                std::cout << doc.str();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  748:                mExitAfterPrint = true;
+    #####:  749:                return true;
+        -:  750:            }
+        -:  751:
+        -:  752:            // show timing information..
+    #####:  753:            else if (std::strncmp(argv[i], "--showtime=", 11) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  754:                const std::string showtimeMode = argv[i] + 11;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  755:                if (showtimeMode == "file")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  756:                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_FILE;
+    #####:  757:                else if (showtimeMode == "summary")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  758:                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_SUMMARY;
+    #####:  759:                else if (showtimeMode == "top5")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  760:                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_TOP5;
+    #####:  761:                else if (showtimeMode.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  762:                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_NONE;
+        -:  763:                else {
+    #####:  764:                    std::string message("cppcheck: error: unrecognized showtime mode: \"");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+    #####:  765:                    message += showtimeMode;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  766:                    message += "\". Supported modes: file, summary, top5.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  767:                    printMessage(message);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  768:                    return false;
+        -:  769:                }
+        -:  770:            }
+        -:  771:
+        -:  772:#ifdef HAVE_RULES
+        -:  773:            // Rule given at command line
+        -:  774:            else if (std::strncmp(argv[i], "--rule=", 7) == 0) {
+        -:  775:                Settings::Rule rule;
+        -:  776:                rule.pattern = 7 + argv[i];
+        -:  777:                mSettings->rules.push_back(rule);
+        -:  778:            }
+        -:  779:
+        -:  780:            // Rule file
+        -:  781:            else if (std::strncmp(argv[i], "--rule-file=", 12) == 0) {
+        -:  782:                tinyxml2::XMLDocument doc;
+        -:  783:                if (doc.LoadFile(12+argv[i]) == tinyxml2::XML_SUCCESS) {
+        -:  784:                    tinyxml2::XMLElement *node = doc.FirstChildElement();
+        -:  785:                    for (; node && strcmp(node->Value(), "rule") == 0; node = node->NextSiblingElement()) {
+        -:  786:                        Settings::Rule rule;
+        -:  787:
+        -:  788:                        tinyxml2::XMLElement *tokenlist = node->FirstChildElement("tokenlist");
+        -:  789:                        if (tokenlist)
+        -:  790:                            rule.tokenlist = tokenlist->GetText();
+        -:  791:
+        -:  792:                        tinyxml2::XMLElement *pattern = node->FirstChildElement("pattern");
+        -:  793:                        if (pattern) {
+        -:  794:                            rule.pattern = pattern->GetText();
+        -:  795:                        }
+        -:  796:
+        -:  797:                        tinyxml2::XMLElement *message = node->FirstChildElement("message");
+        -:  798:                        if (message) {
+        -:  799:                            tinyxml2::XMLElement *severity = message->FirstChildElement("severity");
+        -:  800:                            if (severity)
+        -:  801:                                rule.severity = Severity::fromString(severity->GetText());
+        -:  802:
+        -:  803:                            tinyxml2::XMLElement *id = message->FirstChildElement("id");
+        -:  804:                            if (id)
+        -:  805:                                rule.id = id->GetText();
+        -:  806:
+        -:  807:                            tinyxml2::XMLElement *summary = message->FirstChildElement("summary");
+        -:  808:                            if (summary)
+        -:  809:                                rule.summary = summary->GetText() ? summary->GetText() : "";
+        -:  810:                        }
+        -:  811:
+        -:  812:                        if (!rule.pattern.empty())
+        -:  813:                            mSettings->rules.push_back(rule);
+        -:  814:                    }
+        -:  815:                } else {
+        -:  816:                    printMessage("cppcheck: error: unable to load rule-file: " + std::string(12+argv[i]));
+        -:  817:                    return false;
+        -:  818:                }
+        -:  819:            }
+        -:  820:#endif
+        -:  821:
+        -:  822:            // Specify platform
+    #####:  823:            else if (std::strncmp(argv[i], "--platform=", 11) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  824:                const std::string platform(11+argv[i]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+        -:  825:
+    #####:  826:                if (platform == "win32A")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  827:                    mSettings->platform(Settings::Win32A);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  828:                else if (platform == "win32W")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  829:                    mSettings->platform(Settings::Win32W);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  830:                else if (platform == "win64")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  831:                    mSettings->platform(Settings::Win64);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  832:                else if (platform == "unix32")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  833:                    mSettings->platform(Settings::Unix32);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  834:                else if (platform == "unix64")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  835:                    mSettings->platform(Settings::Unix64);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  836:                else if (platform == "native")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  837:                    mSettings->platform(Settings::Native);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  838:                else if (platform == "unspecified")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  839:                    mSettings->platform(Settings::Unspecified);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  840:                else if (!mSettings->loadPlatformFile(argv[0], platform)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  841:                    std::string message("cppcheck: error: unrecognized platform: \"");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+    #####:  842:                    message += platform;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  843:                    message += "\".";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  844:                    printMessage(message);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  845:                    return false;
+        -:  846:                }
+        -:  847:            }
+        -:  848:
+        -:  849:            // Set maximum number of #ifdef configurations to check
+    #####:  850:            else if (std::strncmp(argv[i], "--max-configs=", 14) == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  851:                mSettings->force = false;
+        -:  852:
+    #####:  853:                std::istringstream iss(14+argv[i]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  854:                if (!(iss >> mSettings->maxConfigs)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  855:                    printMessage("cppcheck: argument to '--max-configs=' is not a number.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  856:                    return false;
+        -:  857:                }
+        -:  858:
+    #####:  859:                if (mSettings->maxConfigs < 1) {
+branch  0 never executed
+branch  1 never executed
+    #####:  860:                    printMessage("cppcheck: argument to '--max-configs=' must be greater than 0.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  861:                    return false;
+        -:  862:                }
+        -:  863:
+    #####:  864:                maxconfigs = true;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  865:            }
+        -:  866:
+        -:  867:            // Print help
+    #####:  868:            else if (std::strcmp(argv[i], "-h") == 0 || std::strcmp(argv[i], "--help") == 0) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  869:                mPathNames.clear();
+call    0 never executed
+    #####:  870:                mShowHelp = true;
+    #####:  871:                mExitAfterPrint = true;
+    #####:  872:                break;
+        -:  873:            }
+        -:  874:
+        -:  875:            else {
+    #####:  876:                std::string message("cppcheck: error: unrecognized command line option: \"");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  877:                message += argv[i];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  878:                message += "\".";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  879:                printMessage(message);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  880:                return false;
+        -:  881:            }
+        -:  882:        }
+        -:  883:
+        -:  884:        else {
+    #####:  885:            std::string path = Path::removeQuotationMarks(argv[i]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  886:            path = Path::fromNativeSeparators(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  887:            mPathNames.push_back(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  888:        }
+        -:  889:    }
+        -:  890:
+        -:  891:    // Default template format..
+    #####:  892:    if (mSettings->templateFormat.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  893:        mSettings->templateFormat = "{file}:{line}:{column}: {severity}:{inconclusive:inconclusive:} {message} [{id}]\\n{code}";
+call    0 never executed
+    #####:  894:        if (mSettings->templateLocation.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  895:            mSettings->templateLocation = "{file}:{line}:{column}: note: {info}\\n{code}";
+call    0 never executed
+        -:  896:    }
+        -:  897:
+    #####:  898:    mSettings->project.ignorePaths(mIgnoredPaths);
+call    0 never executed
+        -:  899:
+    #####:  900:    if (mSettings->force)
+branch  0 never executed
+branch  1 never executed
+    #####:  901:        mSettings->maxConfigs = ~0U;
+        -:  902:
+    #####:  903:    else if ((def || mSettings->preprocessOnly) && !maxconfigs)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  904:        mSettings->maxConfigs = 1U;
+        -:  905:
+    #####:  906:    if (mSettings->isEnabled(Settings::UNUSED_FUNCTION) && mSettings->jobs > 1) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  907:        printMessage("cppcheck: unusedFunction check can't be used with '-j' option. Disabling unusedFunction check.");
+call    0 never executed
+        -:  908:    }
+        -:  909:
+    #####:  910:    if (argc <= 1) {
+branch  0 never executed
+branch  1 never executed
+    #####:  911:        mShowHelp = true;
+    #####:  912:        mExitAfterPrint = true;
+        -:  913:    }
+        -:  914:
+    #####:  915:    if (mShowHelp) {
+branch  0 never executed
+branch  1 never executed
+    #####:  916:        printHelp();
+call    0 never executed
+    #####:  917:        return true;
+        -:  918:    }
+        -:  919:
+        -:  920:    // Print error only if we have "real" command and expect files
+    #####:  921:    if (!mExitAfterPrint && mPathNames.empty() && mSettings->project.fileSettings.empty()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  922:        printMessage("cppcheck: No C or C++ source files found.");
+call    0 never executed
+    #####:  923:        return false;
+        -:  924:    }
+        -:  925:
+        -:  926:    // Use paths _pathnames if no base paths for relative path output are given
+    #####:  927:    if (mSettings->basePaths.empty() && mSettings->relativePaths)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  928:        mSettings->basePaths = mPathNames;
+call    0 never executed
+        -:  929:
+    #####:  930:    return true;
+        -:  931:}
+        -:  932:
+function _ZN13CmdLineParser9printHelpEv called 0 returned 0% blocks executed 0%
+    #####:  933:void CmdLineParser::printHelp()
+        -:  934:{
+        -:  935:    std::cout << "Cppcheck - A tool for static C/C++ code analysis\n"
+        -:  936:              "\n"
+        -:  937:              "Syntax:\n"
+        -:  938:              "    cppcheck [OPTIONS] [files or paths]\n"
+        -:  939:              "\n"
+        -:  940:              "If a directory is given instead of a filename, *.cpp, *.cxx, *.cc, *.c++, *.c,\n"
+        -:  941:              "*.tpp, and *.txx files are checked recursively from the given directory.\n\n"
+        -:  942:              "Options:\n"
+        -:  943:              "    --addon=<addon>\n"
+        -:  944:              "                         Execute addon. i.e. cert.\n"
+        -:  945:              "    --cppcheck-build-dir=<dir>\n"
+        -:  946:              "                         Analysis output directory. Useful for various data.\n"
+        -:  947:              "                         Some possible usages are; whole program analysis,\n"
+        -:  948:              "                         incremental analysis, distributed analysis.\n"
+        -:  949:              "    --check-config       Check cppcheck configuration. The normal code\n"
+        -:  950:              "                         analysis is disabled by this flag.\n"
+        -:  951:              "    --check-library      Show information messages when library files have\n"
+        -:  952:              "                         incomplete info.\n"
+        -:  953:              "    --config-exclude=<dir>\n"
+        -:  954:              "                         Path (prefix) to be excluded from configuration\n"
+        -:  955:              "                         checking. Preprocessor configurations defined in\n"
+        -:  956:              "                         headers (but not sources) matching the prefix will not\n"
+        -:  957:              "                         be considered for evaluation.\n"
+        -:  958:              "    --config-excludes-file=<file>\n"
+        -:  959:              "                         A file that contains a list of config-excludes\n"
+        -:  960:              "    --doc                Print a list of all available checks.\n"
+        -:  961:              "    --dump               Dump xml data for each translation unit. The dump\n"
+        -:  962:              "                         files have the extension .dump and contain ast,\n"
+        -:  963:              "                         tokenlist, symboldatabase, valueflow.\n"
+        -:  964:              "    -D<ID>               Define preprocessor symbol. Unless --max-configs or\n"
+        -:  965:              "                         --force is used, Cppcheck will only check the given\n"
+        -:  966:              "                         configuration when -D is used.\n"
+        -:  967:              "                         Example: '-DDEBUG=1 -D__cplusplus'.\n"
+        -:  968:              "    -U<ID>               Undefine preprocessor symbol. Use -U to explicitly\n"
+        -:  969:              "                         hide certain #ifdef <ID> code paths from checking.\n"
+        -:  970:              "                         Example: '-UDEBUG'\n"
+        -:  971:              "    -E                   Print preprocessor output on stdout and don't do any\n"
+        -:  972:              "                         further processing.\n"
+        -:  973:              "    --enable=<id>        Enable additional checks. The available ids are:\n"
+        -:  974:              "                          * all\n"
+        -:  975:              "                                  Enable all checks. It is recommended to only\n"
+        -:  976:              "                                  use --enable=all when the whole program is\n"
+        -:  977:              "                                  scanned, because this enables unusedFunction.\n"
+        -:  978:              "                          * warning\n"
+        -:  979:              "                                  Enable warning messages\n"
+        -:  980:              "                          * style\n"
+        -:  981:              "                                  Enable all coding style checks. All messages\n"
+        -:  982:              "                                  with the severities 'style', 'performance' and\n"
+        -:  983:              "                                  'portability' are enabled.\n"
+        -:  984:              "                          * performance\n"
+        -:  985:              "                                  Enable performance messages\n"
+        -:  986:              "                          * portability\n"
+        -:  987:              "                                  Enable portability messages\n"
+        -:  988:              "                          * information\n"
+        -:  989:              "                                  Enable information messages\n"
+        -:  990:              "                          * unusedFunction\n"
+        -:  991:              "                                  Check for unused functions. It is recommend\n"
+        -:  992:              "                                  to only enable this when the whole program is\n"
+        -:  993:              "                                  scanned.\n"
+        -:  994:              "                          * missingInclude\n"
+        -:  995:              "                                  Warn if there are missing includes. For\n"
+        -:  996:              "                                  detailed information, use '--check-config'.\n"
+        -:  997:              "                         Several ids can be given if you separate them with\n"
+        -:  998:              "                         commas. See also --std\n"
+        -:  999:              "    --error-exitcode=<n> If errors are found, integer [n] is returned instead of\n"
+    #####: 1000:              "                         the default '0'. '" << EXIT_FAILURE << "' is returned\n"
+call    0 never executed
+call    1 never executed
+        -: 1001:              "                         if arguments are not valid or if no input files are\n"
+        -: 1002:              "                         provided. Note that your operating system can modify\n"
+        -: 1003:              "                         this value, e.g. '256' can become '0'.\n"
+        -: 1004:              "    --errorlist          Print a list of all the error messages in XML format.\n"
+        -: 1005:              "    --exitcode-suppressions=<file>\n"
+        -: 1006:              "                         Used when certain messages should be displayed but\n"
+        -: 1007:              "                         should not cause a non-zero exitcode.\n"
+        -: 1008:              "    --file-list=<file>   Specify the files to check in a text file. Add one\n"
+        -: 1009:              "                         filename per line. When file is '-,' the file list will\n"
+        -: 1010:              "                         be read from standard input.\n"
+        -: 1011:              "    -f, --force          Force checking of all configurations in files. If used\n"
+        -: 1012:              "                         together with '--max-configs=', the last option is the\n"
+        -: 1013:              "                         one that is effective.\n"
+        -: 1014:              "    -h, --help           Print this help.\n"
+        -: 1015:              "    -I <dir>             Give path to search for include files. Give several -I\n"
+        -: 1016:              "                         parameters to give several paths. First given path is\n"
+        -: 1017:              "                         searched for contained header files first. If paths are\n"
+        -: 1018:              "                         relative to source files, this is not needed.\n"
+        -: 1019:              "    --includes-file=<file>\n"
+        -: 1020:              "                         Specify directory paths to search for included header\n"
+        -: 1021:              "                         files in a text file. Add one include path per line.\n"
+        -: 1022:              "                         First given path is searched for contained header\n"
+        -: 1023:              "                         files first. If paths are relative to source files,\n"
+        -: 1024:              "                         this is not needed.\n"
+        -: 1025:              "    --include=<file>\n"
+        -: 1026:              "                         Force inclusion of a file before the checked file. Can\n"
+        -: 1027:              "                         be used for example when checking the Linux kernel,\n"
+        -: 1028:              "                         where autoconf.h needs to be included for every file\n"
+        -: 1029:              "                         compiled. Works the same way as the GCC -include\n"
+        -: 1030:              "                         option.\n"
+        -: 1031:              "    -i <dir or file>     Give a source file or source file directory to exclude\n"
+        -: 1032:              "                         from the check. This applies only to source files so\n"
+        -: 1033:              "                         header files included by source files are not matched.\n"
+        -: 1034:              "                         Directory name is matched to all parts of the path.\n"
+        -: 1035:              "    --inconclusive       Allow that Cppcheck reports even though the analysis is\n"
+        -: 1036:              "                         inconclusive.\n"
+        -: 1037:              "                         There are false positives with this option. Each result\n"
+        -: 1038:              "                         must be carefully investigated before you know if it is\n"
+        -: 1039:              "                         good or bad.\n"
+        -: 1040:              "    --inline-suppr       Enable inline suppressions. Use them by placing one or\n"
+        -: 1041:              "                         more comments, like: '// cppcheck-suppress warningId'\n"
+        -: 1042:              "                         on the lines before the warning to suppress.\n"
+        -: 1043:              "    -j <jobs>            Start <jobs> threads to do the checking simultaneously.\n"
+        -: 1044:#ifdef THREADING_MODEL_FORK
+        -: 1045:              "    -l <load>            Specifies that no new threads should be started if\n"
+        -: 1046:              "                         there are other threads running and the load average is\n"
+        -: 1047:              "                         at least <load>.\n"
+        -: 1048:#endif
+        -: 1049:              "    --language=<language>, -x <language>\n"
+        -: 1050:              "                         Forces cppcheck to check all files as the given\n"
+        -: 1051:              "                         language. Valid values are: c, c++\n"
+        -: 1052:              "    --library=<cfg>      Load file <cfg> that contains information about types\n"
+        -: 1053:              "                         and functions. With such information Cppcheck\n"
+        -: 1054:              "                         understands your code better and therefore you\n"
+        -: 1055:              "                         get better results. The std.cfg file that is\n"
+        -: 1056:              "                         distributed with Cppcheck is loaded automatically.\n"
+        -: 1057:              "                         For more information about library files, read the\n"
+        -: 1058:              "                         manual.\n"
+        -: 1059:              "    --max-ctu-depth=N    Max depth in whole program analysis. The default value\n"
+        -: 1060:              "                         is 2. A larger value will mean more errors can be found\n"
+        -: 1061:              "                         but also means the analysis will be slower.\n"
+        -: 1062:              "    --output-file=<file> Write results to file, rather than standard error.\n"
+        -: 1063:              "    --project=<file>     Run Cppcheck on project. The <file> can be a Visual\n"
+        -: 1064:              "                         Studio Solution (*.sln), Visual Studio Project\n"
+        -: 1065:              "                         (*.vcxproj), compile database (compile_commands.json),\n"
+        -: 1066:              "                         or Borland C++ Builder 6 (*.bpr). The files to analyse,\n"
+        -: 1067:              "                         include paths, defines, platform and undefines in\n"
+        -: 1068:              "                         the specified file will be used.\n"
+        -: 1069:              "    --max-configs=<limit>\n"
+        -: 1070:              "                         Maximum number of configurations to check in a file\n"
+        -: 1071:              "                         before skipping it. Default is '12'. If used together\n"
+        -: 1072:              "                         with '--force', the last option is the one that is\n"
+        -: 1073:              "                         effective.\n"
+        -: 1074:              "    --platform=<type>, --platform=<file>\n"
+        -: 1075:              "                         Specifies platform specific types and sizes. The\n"
+        -: 1076:              "                         available builtin platforms are:\n"
+        -: 1077:              "                          * unix32\n"
+        -: 1078:              "                                 32 bit unix variant\n"
+        -: 1079:              "                          * unix64\n"
+        -: 1080:              "                                 64 bit unix variant\n"
+        -: 1081:              "                          * win32A\n"
+        -: 1082:              "                                 32 bit Windows ASCII character encoding\n"
+        -: 1083:              "                          * win32W\n"
+        -: 1084:              "                                 32 bit Windows UNICODE character encoding\n"
+        -: 1085:              "                          * win64\n"
+        -: 1086:              "                                 64 bit Windows\n"
+        -: 1087:              "                          * avr8\n"
+        -: 1088:              "                                 8 bit AVR microcontrollers\n"
+        -: 1089:              "                          * native\n"
+        -: 1090:              "                                 Type sizes of host system are assumed, but no\n"
+        -: 1091:              "                                 further assumptions.\n"
+        -: 1092:              "                          * unspecified\n"
+        -: 1093:              "                                 Unknown type sizes\n"
+        -: 1094:              "    --plist-output=<path>\n"
+        -: 1095:              "                         Generate Clang-plist output files in folder.\n"
+        -: 1096:              "    -q, --quiet          Do not show progress reports.\n"
+        -: 1097:              "    -rp, --relative-paths\n"
+        -: 1098:              "    -rp=<paths>, --relative-paths=<paths>\n"
+        -: 1099:              "                         Use relative paths in output. When given, <paths> are\n"
+        -: 1100:              "                         used as base. You can separate multiple paths by ';'.\n"
+        -: 1101:              "                         Otherwise path where source files are searched is used.\n"
+        -: 1102:              "                         We use string comparison to create relative paths, so\n"
+        -: 1103:              "                         using e.g. ~ for home folder does not work. It is\n"
+        -: 1104:              "                         currently only possible to apply the base paths to\n"
+        -: 1105:              "                         files that are on a lower level in the directory tree.\n"
+        -: 1106:              "    --report-progress    Report progress messages while checking a file.\n"
+        -: 1107:#ifdef HAVE_RULES
+        -: 1108:              "    --rule=<rule>        Match regular expression.\n"
+        -: 1109:              "    --rule-file=<file>   Use given rule file. For more information, see: \n"
+        -: 1110:              "                         http://sourceforge.net/projects/cppcheck/files/Articles/\n"
+        -: 1111:#endif
+        -: 1112:              "    --std=<id>           Set standard.\n"
+        -: 1113:              "                         The available options are:\n"
+        -: 1114:              "                          * c89\n"
+        -: 1115:              "                                 C code is C89 compatible\n"
+        -: 1116:              "                          * c99\n"
+        -: 1117:              "                                 C code is C99 compatible\n"
+        -: 1118:              "                          * c11\n"
+        -: 1119:              "                                 C code is C11 compatible (default)\n"
+        -: 1120:              "                          * c++03\n"
+        -: 1121:              "                                 C++ code is C++03 compatible\n"
+        -: 1122:              "                          * c++11\n"
+        -: 1123:              "                                 C++ code is C++11 compatible\n"
+        -: 1124:              "                          * c++14\n"
+        -: 1125:              "                                 C++ code is C++14 compatible\n"
+        -: 1126:              "                          * c++17\n"
+        -: 1127:              "                                 C++ code is C++17 compatible\n"
+        -: 1128:              "                          * c++20\n"
+        -: 1129:              "                                 C++ code is C++20 compatible (default)\n"
+        -: 1130:              "    --suppress=<spec>    Suppress warnings that match <spec>. The format of\n"
+        -: 1131:              "                         <spec> is:\n"
+        -: 1132:              "                         [error id]:[filename]:[line]\n"
+        -: 1133:              "                         The [filename] and [line] are optional. If [error id]\n"
+        -: 1134:              "                         is a wildcard '*', all error ids match.\n"
+        -: 1135:              "    --suppressions-list=<file>\n"
+        -: 1136:              "                         Suppress warnings listed in the file. Each suppression\n"
+        -: 1137:              "                         is in the same format as <spec> above.\n"
+        -: 1138:              "    --template='<text>'  Format the error messages. Available fields:\n"
+        -: 1139:              "                           {file}              file name\n"
+        -: 1140:              "                           {line}              line number\n"
+        -: 1141:              "                           {column}            column number\n"
+        -: 1142:              "                           {callstack}         show a callstack. Example:\n"
+        -: 1143:              "                                                 [file.c:1] -> [file.c:100]\n"
+        -: 1144:              "                           {inconclusive:text} if warning is inconclusive, text\n"
+        -: 1145:              "                                               is written\n"
+        -: 1146:              "                           {severity}          severity\n"
+        -: 1147:              "                           {message}           warning message\n"
+        -: 1148:              "                           {id}                warning id\n"
+        -: 1149:              "                           {cwe}               CWE id (Common Weakness Enumeration)\n"
+        -: 1150:              "                           {code}              show the real code\n"
+        -: 1151:              "                           \\t                 insert tab\n"
+        -: 1152:              "                           \\n                 insert newline\n"
+        -: 1153:              "                           \\r                 insert carriage return\n"
+        -: 1154:              "                         Example formats:\n"
+        -: 1155:              "                         '{file}:{line},{severity},{id},{message}' or\n"
+        -: 1156:              "                         '{file}({line}):({severity}) {message}' or\n"
+        -: 1157:              "                         '{callstack} {message}'\n"
+        -: 1158:              "                         Pre-defined templates: gcc, vs, edit, cppcheck1\n"
+        -: 1159:              "                         The default format is 'gcc'.\n"
+        -: 1160:              "    --template-location='<text>'\n"
+        -: 1161:              "                         Format error message location. If this is not provided\n"
+        -: 1162:              "                         then no extra location info is shown.\n"
+        -: 1163:              "                         Available fields:\n"
+        -: 1164:              "                           {file}      file name\n"
+        -: 1165:              "                           {line}      line number\n"
+        -: 1166:              "                           {column}    column number\n"
+        -: 1167:              "                           {info}      location info\n"
+        -: 1168:              "                           {code}      show the real code\n"
+        -: 1169:              "                           \\t         insert tab\n"
+        -: 1170:              "                           \\n         insert newline\n"
+        -: 1171:              "                           \\r         insert carriage return\n"
+        -: 1172:              "                         Example format (gcc-like):\n"
+        -: 1173:              "                         '{file}:{line}:{column}: note: {info}\\n{code}'\n"
+        -: 1174:              "    -v, --verbose        Output more detailed error information.\n"
+        -: 1175:              "    --version            Print out version number.\n"
+        -: 1176:              "    --xml                Write results in xml format to error stream (stderr).\n"
+        -: 1177:              "    --xml-version=<version>\n"
+        -: 1178:              "                         Select the XML file version. Currently only versions 2 is available."
+        -: 1179:              "\n"
+        -: 1180:              "Example usage:\n"
+        -: 1181:              "  # Recursively check the current folder. Print the progress on the screen and\n"
+        -: 1182:              "  # write errors to a file:\n"
+        -: 1183:              "  cppcheck . 2> err.txt\n"
+        -: 1184:              "\n"
+        -: 1185:              "  # Recursively check ../myproject/ and don't print progress:\n"
+        -: 1186:              "  cppcheck --quiet ../myproject/\n"
+        -: 1187:              "\n"
+        -: 1188:              "  # Check test.cpp, enable all checks:\n"
+        -: 1189:              "  cppcheck --enable=all --inconclusive --std=posix test.cpp\n"
+        -: 1190:              "\n"
+        -: 1191:              "  # Check f.cpp and search include files from inc1/ and inc2/:\n"
+        -: 1192:              "  cppcheck -I inc1/ -I inc2/ f.cpp\n"
+        -: 1193:              "\n"
+        -: 1194:              "For more information:\n"
+        -: 1195:              "    http://cppcheck.net/manual.pdf\n"
+        -: 1196:              "\n"
+        -: 1197:              "Many thanks to the 3rd party libraries we use:\n"
+        -: 1198:              " * tinyxml2 -- loading project/library/ctu files.\n"
+        -: 1199:              " * picojson -- loading compile database.\n"
+        -: 1200:              " * pcre -- rules.\n"
+    #####: 1201:              " * qt -- used in GUI\n";
+call    0 never executed
+function _GLOBAL__sub_I__ZN13CmdLineParserC2EP8Settings called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3: 1202:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

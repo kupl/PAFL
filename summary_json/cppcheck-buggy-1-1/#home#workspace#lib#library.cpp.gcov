@@ -1,0 +1,5309 @@
+        -:    0:Source:/home/workspace/lib/library.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/library.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/library.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#include "library.h"
+        -:   20:
+        -:   21:#include "astutils.h"
+        -:   22:#include "mathlib.h"
+        -:   23:#include "path.h"
+        -:   24:#include "symboldatabase.h"
+        -:   25:#include "tinyxml2.h"
+        -:   26:#include "token.h"
+        -:   27:#include "tokenlist.h"
+        -:   28:#include "utils.h"
+        -:   29:
+        -:   30:#include <cctype>
+        -:   31:#include <cstdlib>
+        -:   32:#include <cstring>
+        -:   33:#include <list>
+        -:   34:
+function _ZL8getnamesPKc called 0 returned 0% blocks executed 0%
+    #####:   35:static std::vector<std::string> getnames(const char *names)
+        -:   36:{
+    #####:   37:    std::vector<std::string> ret;
+call    0 never executed
+    #####:   38:    while (const char *p = std::strchr(names,',')) {
+branch  0 never executed
+branch  1 never executed
+    #####:   39:        ret.emplace_back(names, p-names);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   40:        names = p + 1;
+    #####:   41:    }
+    #####:   42:    ret.push_back(names);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:   43:    return ret;
+        -:   44:}
+        -:   45:
+function _ZL21gettokenlistfromvalidRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEER9TokenList called 0 returned 0% blocks executed 0%
+    #####:   46:static void gettokenlistfromvalid(const std::string& valid, TokenList& tokenList)
+        -:   47:{
+    #####:   48:    std::istringstream istr(valid + ',');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:   49:    tokenList.createTokens(istr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   50:    for (Token *tok = tokenList.front(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:   51:        if (Token::Match(tok,"- %num%")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   52:            tok->str("-" + tok->strAt(1));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   53:            tok->deleteNext();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   54:        }
+        -:   55:    }
+    #####:   56:}
+call    0 never executed
+        -:   57:
+function _ZN7LibraryC2Ev called 60 returned 100% blocks executed 100%
+       60:   58:Library::Library() : mAllocId(0)
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+call    3 returned 100%
+call    4 returned 100%
+call    5 returned 100%
+call    6 returned 100%
+call    7 returned 100%
+call    8 returned 100%
+call    9 returned 100%
+call   10 returned 100%
+call   11 returned 100%
+call   12 returned 100%
+call   13 returned 100%
+call   14 returned 100%
+call   15 returned 100%
+call   16 returned 100%
+call   17 returned 100%
+call   18 returned 100%
+call   19 returned 100%
+call   20 returned 100%
+call   21 returned 100%
+call   22 returned 100%
+call   23 returned 100%
+call   24 returned 100%
+call   25 returned 100%
+        -:   59:{
+       60:   60:}
+        -:   61:
+function _ZN7Library4loadEPKcS1_ called 0 returned 0% blocks executed 0%
+    #####:   62:Library::Error Library::load(const char exename[], const char path[])
+        -:   63:{
+    #####:   64:    if (std::strchr(path,',') != nullptr) {
+branch  0 never executed
+branch  1 never executed
+    #####:   65:        std::string p(path);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -:   66:        for (;;) {
+    #####:   67:            const std::string::size_type pos = p.find(',');
+call    0 never executed
+    #####:   68:            if (pos == std::string::npos)
+branch  0 never executed
+branch  1 never executed
+    #####:   69:                break;
+    #####:   70:            const Error &e = load(exename, p.substr(0,pos).c_str());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:   71:            if (e.errorcode != OK)
+branch  0 never executed
+branch  1 never executed
+    #####:   72:                return e;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   73:            p = p.substr(pos+1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   74:        }
+    #####:   75:        if (!p.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   76:            return load(exename, p.c_str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   77:        return Error();
+call    0 never executed
+        -:   78:    }
+        -:   79:
+    #####:   80:    std::string absolute_path;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:   81:    // open file..
+    #####:   82:    tinyxml2::XMLDocument doc;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   83:    tinyxml2::XMLError error = doc.LoadFile(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   84:    if (error == tinyxml2::XML_ERROR_FILE_READ_ERROR && Path::getFilenameExtension(path).empty())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+call   32 never executed
+        -:   85:        // Reading file failed, try again...
+    #####:   86:        error = tinyxml2::XML_ERROR_FILE_NOT_FOUND;
+    #####:   87:    if (error == tinyxml2::XML_ERROR_FILE_NOT_FOUND) {
+branch  0 never executed
+branch  1 never executed
+        -:   88:        // failed to open file.. is there no extension?
+    #####:   89:        std::string fullfilename(path);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:   90:        if (Path::getFilenameExtension(fullfilename).empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:   91:            fullfilename += ".cfg";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   92:            error = doc.LoadFile(fullfilename.c_str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   93:            if (error != tinyxml2::XML_ERROR_FILE_NOT_FOUND)
+branch  0 never executed
+branch  1 never executed
+    #####:   94:                absolute_path = Path::getAbsoluteFilePath(fullfilename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:   95:        }
+        -:   96:
+    #####:   97:        std::list<std::string> cfgfolders;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   98:#ifdef FILESDIR
+    #####:   99:        cfgfolders.push_back(FILESDIR "/cfg");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:  100:#endif
+    #####:  101:        if (exename) {
+branch  0 never executed
+branch  1 never executed
+    #####:  102:            const std::string exepath(Path::fromNativeSeparators(Path::getPathFromFilename(exename)));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  103:            cfgfolders.push_back(exepath + "cfg");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  104:            cfgfolders.push_back(exepath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  105:        }
+        -:  106:
+    #####:  107:        while (error == tinyxml2::XML_ERROR_FILE_NOT_FOUND && !cfgfolders.empty()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  108:            const std::string cfgfolder(cfgfolders.front());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  109:            cfgfolders.pop_front();
+call    0 never executed
+    #####:  110:            const char *sep = (!cfgfolder.empty() && endsWith(cfgfolder,'/') ? "" : "/");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  111:            const std::string filename(cfgfolder + sep + fullfilename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  112:            error = doc.LoadFile(filename.c_str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  113:            if (error != tinyxml2::XML_ERROR_FILE_NOT_FOUND)
+branch  0 never executed
+branch  1 never executed
+    #####:  114:                absolute_path = Path::getAbsoluteFilePath(filename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  115:        }
+        -:  116:    } else
+    #####:  117:        absolute_path = Path::getAbsoluteFilePath(path);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+        -:  118:
+    #####:  119:    if (error == tinyxml2::XML_SUCCESS) {
+branch  0 never executed
+branch  1 never executed
+    #####:  120:        if (mFiles.find(absolute_path) == mFiles.end()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+    #####:  121:            Error err = load(doc);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  122:            if (err.errorcode == OK)
+branch  0 never executed
+branch  1 never executed
+    #####:  123:                mFiles.insert(absolute_path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  124:            return err;
+call    0 never executed
+        -:  125:        }
+        -:  126:
+    #####:  127:        return Error(OK); // ignore duplicates
+call    0 never executed
+        -:  128:    }
+        -:  129:
+    #####:  130:    if (error == tinyxml2::XML_ERROR_FILE_NOT_FOUND)
+branch  0 never executed
+branch  1 never executed
+    #####:  131:        return Error(FILE_NOT_FOUND);
+call    0 never executed
+        -:  132:    else {
+    #####:  133:        doc.PrintError();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  134:        return Error(BAD_XML);
+call    0 never executed
+        -:  135:    }
+        -:  136:}
+        -:  137:
+function _ZN7Library11loadxmldataEPKcm called 0 returned 0% blocks executed 0%
+    #####:  138:bool Library::loadxmldata(const char xmldata[], std::size_t len)
+        -:  139:{
+    #####:  140:    tinyxml2::XMLDocument doc;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  141:    return (tinyxml2::XML_SUCCESS == doc.Parse(xmldata, len)) && (load(doc).errorcode == OK);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+        -:  142:}
+        -:  143:
+function _ZN7Library4loadERKN8tinyxml211XMLDocumentE called 0 returned 0% blocks executed 0%
+    #####:  144:Library::Error Library::load(const tinyxml2::XMLDocument &doc)
+        -:  145:{
+    #####:  146:    const tinyxml2::XMLElement * const rootnode = doc.FirstChildElement();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  147:
+    #####:  148:    if (rootnode == nullptr) {
+branch  0 never executed
+branch  1 never executed
+    #####:  149:        doc.PrintError();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  150:        return Error(BAD_XML);
+call    0 never executed
+        -:  151:    }
+        -:  152:
+    #####:  153:    if (strcmp(rootnode->Name(),"def") != 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  154:        return Error(UNSUPPORTED_FORMAT, rootnode->Name());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+        -:  155:
+    #####:  156:    const char* format_string = rootnode->Attribute("format");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  157:    int format = 1; // Assume format version 1 if nothing else is specified (very old .cfg files had no 'format' attribute)
+    #####:  158:    if (format_string)
+branch  0 never executed
+branch  1 never executed
+    #####:  159:        format = atoi(format_string);
+        -:  160:
+    #####:  161:    if (format > 2 || format <= 0)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  162:        return Error(UNSUPPORTED_FORMAT);
+call    0 never executed
+        -:  163:
+    #####:  164:    std::set<std::string> unknown_elements;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  165:
+    #####:  166:    for (const tinyxml2::XMLElement *node = rootnode->FirstChildElement(); node; node = node->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  167:        const std::string nodename = node->Name();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  168:        if (nodename == "memory" || nodename == "resource") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+        -:  169:            // get allocationId to use..
+    #####:  170:            int allocationId = 0;
+    #####:  171:            for (const tinyxml2::XMLElement *memorynode = node->FirstChildElement(); memorynode; memorynode = memorynode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  172:                if (strcmp(memorynode->Name(),"dealloc")==0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  173:                    const std::map<std::string, AllocFunc>::const_iterator it = mDealloc.find(memorynode->GetText());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  174:                    if (it != mDealloc.end()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  175:                        allocationId = it->second.groupId;
+call    0 never executed
+    #####:  176:                        break;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  177:                    }
+        -:  178:                }
+        -:  179:            }
+    #####:  180:            if (allocationId == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  181:                if (nodename == "memory")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  182:                    while (!ismemory(++mAllocId));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  183:                else
+    #####:  184:                    while (!isresource(++mAllocId));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  185:                allocationId = mAllocId;
+        -:  186:            }
+        -:  187:
+        -:  188:            // add alloc/dealloc/use functions..
+    #####:  189:            for (const tinyxml2::XMLElement *memorynode = node->FirstChildElement(); memorynode; memorynode = memorynode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  190:                const std::string memorynodename = memorynode->Name();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  191:                if (memorynodename == "alloc" || memorynodename == "realloc") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  192:                    AllocFunc temp = {0};
+    #####:  193:                    temp.groupId = allocationId;
+        -:  194:
+    #####:  195:                    if (memorynode->Attribute("init", "false"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  196:                        returnuninitdata.insert(memorynode->GetText());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+        -:  197:
+    #####:  198:                    const char *arg = memorynode->Attribute("arg");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  199:                    if (arg)
+branch  0 never executed
+branch  1 never executed
+    #####:  200:                        temp.arg = atoi(arg);
+        -:  201:                    else
+    #####:  202:                        temp.arg = -1;
+        -:  203:
+    #####:  204:                    const char *bufferSize = memorynode->Attribute("buffer-size");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  205:                    if (!bufferSize)
+branch  0 never executed
+branch  1 never executed
+    #####:  206:                        temp.bufferSize = AllocFunc::BufferSize::none;
+        -:  207:                    else {
+    #####:  208:                        if (std::strncmp(bufferSize, "malloc", 6) == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  209:                            temp.bufferSize = AllocFunc::BufferSize::malloc;
+    #####:  210:                        else if (std::strncmp(bufferSize, "calloc", 6) == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  211:                            temp.bufferSize = AllocFunc::BufferSize::calloc;
+    #####:  212:                        else if (std::strncmp(bufferSize, "strdup", 6) == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  213:                            temp.bufferSize = AllocFunc::BufferSize::strdup;
+        -:  214:                        else
+    #####:  215:                            return Error(BAD_ATTRIBUTE_VALUE, bufferSize);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  216:                        temp.bufferSizeArg1 = 1;
+    #####:  217:                        temp.bufferSizeArg2 = 2;
+    #####:  218:                        if (bufferSize[6] == 0) {
+branch  0 never executed
+branch  1 never executed
+        -:  219:                            // use default values
+    #####:  220:                        } else if (bufferSize[6] == ':' && bufferSize[7] >= '1' && bufferSize[7] <= '5') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  221:                            temp.bufferSizeArg1 = bufferSize[7] - '0';
+    #####:  222:                            if (bufferSize[8] == ',' && bufferSize[9] >= '1' && bufferSize[9] <= '5')
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  223:                                temp.bufferSizeArg2 = bufferSize[9] - '0';
+        -:  224:                        } else
+    #####:  225:                            return Error(BAD_ATTRIBUTE_VALUE, bufferSize);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  226:                    }
+        -:  227:
+    #####:  228:                    if (memorynodename == "realloc") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  229:                        const char *reallocArg =  memorynode->Attribute("realloc-arg");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  230:                        if (reallocArg)
+branch  0 never executed
+branch  1 never executed
+    #####:  231:                            temp.reallocArg = atoi(reallocArg);
+        -:  232:                        else
+    #####:  233:                            temp.reallocArg = 1;
+        -:  234:                    }
+        -:  235:
+    #####:  236:                    if (memorynodename != "realloc")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  237:                        mAlloc[memorynode->GetText()] = temp;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+        -:  238:                    else
+    #####:  239:                        mRealloc[memorynode->GetText()] = temp;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  240:                } else if (memorynodename == "dealloc") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  241:                    AllocFunc temp = {0};
+    #####:  242:                    temp.groupId = allocationId;
+    #####:  243:                    const char *arg = memorynode->Attribute("arg");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  244:                    if (arg)
+branch  0 never executed
+branch  1 never executed
+    #####:  245:                        temp.arg = atoi(arg);
+        -:  246:                    else
+    #####:  247:                        temp.arg = 1;
+    #####:  248:                    mDealloc[memorynode->GetText()] = temp;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  249:                } else if (memorynodename == "use")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  250:                    functions[memorynode->GetText()].use = true;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+        -:  251:                else
+    #####:  252:                    unknown_elements.insert(memorynodename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  253:            }
+        -:  254:        }
+        -:  255:
+    #####:  256:        else if (nodename == "define") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  257:            const char *name = node->Attribute("name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  258:            if (name == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  259:                return Error(MISSING_ATTRIBUTE, "name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  260:            const char *value = node->Attribute("value");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  261:            if (value == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  262:                return Error(MISSING_ATTRIBUTE, "value");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  263:            defines.push_back(std::string(name) +
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  264:                              " " +
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  265:                              value);
+        -:  266:        }
+        -:  267:
+    #####:  268:        else if (nodename == "function") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  269:            const char *name = node->Attribute("name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  270:            if (name == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  271:                return Error(MISSING_ATTRIBUTE, "name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  272:            for (const std::string &s : getnames(name)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+    #####:  273:                const Error &err = loadFunction(node, s, unknown_elements);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  274:                if (err.errorcode != ErrorCode::OK)
+branch  0 never executed
+branch  1 never executed
+    #####:  275:                    return err;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  276:            }
+        -:  277:        }
+        -:  278:
+    #####:  279:        else if (nodename == "reflection") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  280:            for (const tinyxml2::XMLElement *reflectionnode = node->FirstChildElement(); reflectionnode; reflectionnode = reflectionnode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  281:                if (strcmp(reflectionnode->Name(), "call") != 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  282:                    unknown_elements.insert(reflectionnode->Name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  283:                    continue;
+        -:  284:                }
+        -:  285:
+    #####:  286:                const char * const argString = reflectionnode->Attribute("arg");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  287:                if (!argString)
+branch  0 never executed
+branch  1 never executed
+    #####:  288:                    return Error(MISSING_ATTRIBUTE, "arg");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  289:
+    #####:  290:                mReflection[reflectionnode->GetText()] = atoi(argString);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+        -:  291:            }
+        -:  292:        }
+        -:  293:
+    #####:  294:        else if (nodename == "markup") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  295:            const char * const extension = node->Attribute("ext");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  296:            if (!extension)
+branch  0 never executed
+branch  1 never executed
+    #####:  297:                return Error(MISSING_ATTRIBUTE, "ext");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  298:            mMarkupExtensions.insert(extension);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:  299:
+    #####:  300:            mReportErrors[extension] = (node->Attribute("reporterrors", "true") != nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  301:            mProcessAfterCode[extension] = (node->Attribute("aftercode", "true") != nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+        -:  302:
+    #####:  303:            for (const tinyxml2::XMLElement *markupnode = node->FirstChildElement(); markupnode; markupnode = markupnode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  304:                const std::string markupnodename = markupnode->Name();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  305:                if (markupnodename == "keywords") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  306:                    for (const tinyxml2::XMLElement *librarynode = markupnode->FirstChildElement(); librarynode; librarynode = librarynode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  307:                        if (strcmp(librarynode->Name(), "keyword") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  308:                            const char* nodeName = librarynode->Attribute("name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  309:                            if (nodeName == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  310:                                return Error(MISSING_ATTRIBUTE, "name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  311:                            mKeywords[extension].insert(nodeName);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+        -:  312:                        } else
+    #####:  313:                            unknown_elements.insert(librarynode->Name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+        -:  314:                    }
+        -:  315:                }
+        -:  316:
+    #####:  317:                else if (markupnodename == "exported") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  318:                    for (const tinyxml2::XMLElement *exporter = markupnode->FirstChildElement(); exporter; exporter = exporter->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  319:                        if (strcmp(exporter->Name(), "exporter") != 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  320:                            unknown_elements.insert(exporter->Name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  321:                            continue;
+        -:  322:                        }
+        -:  323:
+    #####:  324:                        const char * const prefix = exporter->Attribute("prefix");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  325:                        if (!prefix)
+branch  0 never executed
+branch  1 never executed
+    #####:  326:                            return Error(MISSING_ATTRIBUTE, "prefix");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  327:
+    #####:  328:                        for (const tinyxml2::XMLElement *e = exporter->FirstChildElement(); e; e = e->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  329:                            const std::string ename = e->Name();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  330:                            if (ename == "prefix")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  331:                                mExporters[prefix].addPrefix(e->GetText());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+    #####:  332:                            else if (ename == "suffix")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  333:                                mExporters[prefix].addSuffix(e->GetText());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+        -:  334:                            else
+    #####:  335:                                unknown_elements.insert(ename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  336:                        }
+        -:  337:                    }
+        -:  338:                }
+        -:  339:
+    #####:  340:                else if (markupnodename == "imported") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  341:                    for (const tinyxml2::XMLElement *librarynode = markupnode->FirstChildElement(); librarynode; librarynode = librarynode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  342:                        if (strcmp(librarynode->Name(), "importer") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  343:                            mImporters[extension].insert(librarynode->GetText());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+        -:  344:                        else
+    #####:  345:                            unknown_elements.insert(librarynode->Name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+        -:  346:                    }
+        -:  347:                }
+        -:  348:
+    #####:  349:                else if (markupnodename == "codeblocks") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  350:                    for (const tinyxml2::XMLElement *blocknode = markupnode->FirstChildElement(); blocknode; blocknode = blocknode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  351:                        const std::string blocknodename = blocknode->Name();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  352:                        if (blocknodename == "block") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  353:                            const char * blockName = blocknode->Attribute("name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  354:                            if (blockName)
+branch  0 never executed
+branch  1 never executed
+    #####:  355:                                mExecutableBlocks[extension].addBlock(blockName);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  356:                        } else if (blocknodename == "structure") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  357:                            const char * start = blocknode->Attribute("start");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  358:                            if (start)
+branch  0 never executed
+branch  1 never executed
+    #####:  359:                                mExecutableBlocks[extension].setStart(start);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  360:                            const char * end = blocknode->Attribute("end");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  361:                            if (end)
+branch  0 never executed
+branch  1 never executed
+    #####:  362:                                mExecutableBlocks[extension].setEnd(end);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  363:                            const char * offset = blocknode->Attribute("offset");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  364:                            if (offset)
+branch  0 never executed
+branch  1 never executed
+    #####:  365:                                mExecutableBlocks[extension].setOffset(atoi(offset));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:  366:                        }
+        -:  367:
+        -:  368:                        else
+    #####:  369:                            unknown_elements.insert(blocknodename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  370:                    }
+        -:  371:                }
+        -:  372:
+        -:  373:                else
+    #####:  374:                    unknown_elements.insert(markupnodename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  375:            }
+        -:  376:        }
+        -:  377:
+    #####:  378:        else if (nodename == "container") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  379:            const char* const id = node->Attribute("id");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  380:            if (!id)
+branch  0 never executed
+branch  1 never executed
+    #####:  381:                return Error(MISSING_ATTRIBUTE, "id");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  382:
+    #####:  383:            Container& container = containers[id];
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:  384:
+    #####:  385:            const char* const inherits = node->Attribute("inherits");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  386:            if (inherits) {
+branch  0 never executed
+branch  1 never executed
+    #####:  387:                const std::map<std::string, Container>::const_iterator i = containers.find(inherits);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  388:                if (i != containers.end())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  389:                    container = i->second; // Take values from parent and overwrite them if necessary
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  390:                else
+    #####:  391:                    return Error(BAD_ATTRIBUTE_VALUE, inherits);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  392:            }
+        -:  393:
+    #####:  394:            const char* const startPattern = node->Attribute("startPattern");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  395:            if (startPattern) {
+branch  0 never executed
+branch  1 never executed
+    #####:  396:                container.startPattern = startPattern;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  397:                container.startPattern2 = container.startPattern + " !!::";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  398:            }
+    #####:  399:            const char* const endPattern = node->Attribute("endPattern");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  400:            if (endPattern)
+branch  0 never executed
+branch  1 never executed
+    #####:  401:                container.endPattern = endPattern;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  402:            const char* const itEndPattern = node->Attribute("itEndPattern");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  403:            if (itEndPattern)
+branch  0 never executed
+branch  1 never executed
+    #####:  404:                container.itEndPattern = itEndPattern;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  405:            const char* const opLessAllowed = node->Attribute("opLessAllowed");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  406:            if (opLessAllowed)
+branch  0 never executed
+branch  1 never executed
+    #####:  407:                container.opLessAllowed = std::string(opLessAllowed) == "true";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+        -:  408:
+    #####:  409:            for (const tinyxml2::XMLElement *containerNode = node->FirstChildElement(); containerNode; containerNode = containerNode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  410:                const std::string containerNodeName = containerNode->Name();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  411:                if (containerNodeName == "size" || containerNodeName == "access" || containerNodeName == "other") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  412:                    for (const tinyxml2::XMLElement *functionNode = containerNode->FirstChildElement(); functionNode; functionNode = functionNode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  413:                        if (std::string(functionNode->Name()) != "function") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+    #####:  414:                            unknown_elements.insert(functionNode->Name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  415:                            continue;
+        -:  416:                        }
+        -:  417:
+    #####:  418:                        const char* const functionName = functionNode->Attribute("name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  419:                        if (!functionName)
+branch  0 never executed
+branch  1 never executed
+    #####:  420:                            return Error(MISSING_ATTRIBUTE, "name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  421:
+    #####:  422:                        const char* const action_ptr = functionNode->Attribute("action");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  423:                        Container::Action action = Container::Action::NO_ACTION;
+    #####:  424:                        if (action_ptr) {
+branch  0 never executed
+branch  1 never executed
+    #####:  425:                            std::string actionName = action_ptr;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  426:                            if (actionName == "resize")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  427:                                action = Container::Action::RESIZE;
+    #####:  428:                            else if (actionName == "clear")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  429:                                action = Container::Action::CLEAR;
+    #####:  430:                            else if (actionName == "push")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  431:                                action = Container::Action::PUSH;
+    #####:  432:                            else if (actionName == "pop")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  433:                                action = Container::Action::POP;
+    #####:  434:                            else if (actionName == "find")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  435:                                action = Container::Action::FIND;
+    #####:  436:                            else if (actionName == "insert")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  437:                                action = Container::Action::INSERT;
+    #####:  438:                            else if (actionName == "erase")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  439:                                action = Container::Action::ERASE;
+    #####:  440:                            else if (actionName == "change-content")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  441:                                action = Container::Action::CHANGE_CONTENT;
+    #####:  442:                            else if (actionName == "change-internal")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  443:                                action = Container::Action::CHANGE_INTERNAL;
+    #####:  444:                            else if (actionName == "change")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  445:                                action = Container::Action::CHANGE;
+        -:  446:                            else
+    #####:  447:                                return Error(BAD_ATTRIBUTE_VALUE, actionName);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  448:                        }
+        -:  449:
+    #####:  450:                        const char* const yield_ptr = functionNode->Attribute("yields");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  451:                        Container::Yield yield = Container::Yield::NO_YIELD;
+    #####:  452:                        if (yield_ptr) {
+branch  0 never executed
+branch  1 never executed
+    #####:  453:                            std::string yieldName = yield_ptr;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  454:                            if (yieldName == "at_index")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  455:                                yield = Container::Yield::AT_INDEX;
+    #####:  456:                            else if (yieldName == "item")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  457:                                yield = Container::Yield::ITEM;
+    #####:  458:                            else if (yieldName == "buffer")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  459:                                yield = Container::Yield::BUFFER;
+    #####:  460:                            else if (yieldName == "buffer-nt")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  461:                                yield = Container::Yield::BUFFER_NT;
+    #####:  462:                            else if (yieldName == "start-iterator")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  463:                                yield = Container::Yield::START_ITERATOR;
+    #####:  464:                            else if (yieldName == "end-iterator")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  465:                                yield = Container::Yield::END_ITERATOR;
+    #####:  466:                            else if (yieldName == "iterator")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  467:                                yield = Container::Yield::ITERATOR;
+    #####:  468:                            else if (yieldName == "size")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  469:                                yield = Container::Yield::SIZE;
+    #####:  470:                            else if (yieldName == "empty")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  471:                                yield = Container::Yield::EMPTY;
+        -:  472:                            else
+    #####:  473:                                return Error(BAD_ATTRIBUTE_VALUE, yieldName);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  474:                        }
+        -:  475:
+    #####:  476:                        container.functions[functionName].action = action;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  477:                        container.functions[functionName].yield = yield;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  478:                    }
+        -:  479:
+    #####:  480:                    if (containerNodeName == "size") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  481:                        const char* const templateArg = containerNode->Attribute("templateParameter");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  482:                        if (templateArg)
+branch  0 never executed
+branch  1 never executed
+    #####:  483:                            container.size_templateArgNo = atoi(templateArg);
+    #####:  484:                    } else if (containerNodeName == "access") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  485:                        const char* const indexArg = containerNode->Attribute("indexOperator");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  486:                        if (indexArg)
+branch  0 never executed
+branch  1 never executed
+    #####:  487:                            container.arrayLike_indexOp = std::string(indexArg) == "array-like";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:  488:                    }
+    #####:  489:                } else if (containerNodeName == "type") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  490:                    const char* const templateArg = containerNode->Attribute("templateParameter");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  491:                    if (templateArg)
+branch  0 never executed
+branch  1 never executed
+    #####:  492:                        container.type_templateArgNo = atoi(templateArg);
+        -:  493:
+    #####:  494:                    const char* const string = containerNode->Attribute("string");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  495:                    if (string)
+branch  0 never executed
+branch  1 never executed
+    #####:  496:                        container.stdStringLike = std::string(string) == "std-like";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  497:                    const char* const associative = containerNode->Attribute("associative");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  498:                    if (associative)
+branch  0 never executed
+branch  1 never executed
+    #####:  499:                        container.stdAssociativeLike = std::string(associative) == "std-like";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:  500:                } else
+    #####:  501:                    unknown_elements.insert(containerNodeName);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  502:            }
+        -:  503:        }
+        -:  504:
+    #####:  505:        else if (nodename == "smart-pointer") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  506:            const char *className = node->Attribute("class-name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  507:            if (className)
+branch  0 never executed
+branch  1 never executed
+    #####:  508:                smartPointers.insert(className);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:  509:        }
+        -:  510:
+    #####:  511:        else if (nodename == "podtype") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  512:            const char * const name = node->Attribute("name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  513:            if (!name)
+branch  0 never executed
+branch  1 never executed
+    #####:  514:                return Error(MISSING_ATTRIBUTE, "name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  515:            PodType podType = {0};
+    #####:  516:            const char * const size = node->Attribute("size");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  517:            if (size)
+branch  0 never executed
+branch  1 never executed
+    #####:  518:                podType.size = atoi(size);
+    #####:  519:            const char * const sign = node->Attribute("sign");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  520:            if (sign)
+branch  0 never executed
+branch  1 never executed
+    #####:  521:                podType.sign = *sign;
+    #####:  522:            for (const std::string &s : getnames(name))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+    #####:  523:                mPodTypes[s] = podType;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  524:        }
+        -:  525:
+    #####:  526:        else if (nodename == "platformtype") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  527:            const char * const type_name = node->Attribute("name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  528:            if (type_name == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  529:                return Error(MISSING_ATTRIBUTE, "name");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  530:            const char *value = node->Attribute("value");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  531:            if (value == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  532:                return Error(MISSING_ATTRIBUTE, "value");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  533:            PlatformType type;
+call    0 never executed
+call    1 never executed
+    #####:  534:            type.mType = value;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  535:            std::set<std::string> platform;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  536:            for (const tinyxml2::XMLElement *typenode = node->FirstChildElement(); typenode; typenode = typenode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  537:                const std::string typenodename = typenode->Name();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  538:                if (typenodename == "platform") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  539:                    const char * const type_attribute = typenode->Attribute("type");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  540:                    if (type_attribute == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  541:                        return Error(MISSING_ATTRIBUTE, "type");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  542:                    platform.insert(type_attribute);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  543:                } else if (typenodename == "signed")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  544:                    type._signed = true;
+    #####:  545:                else if (typenodename == "unsigned")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  546:                    type._unsigned = true;
+    #####:  547:                else if (typenodename == "long")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  548:                    type._long = true;
+    #####:  549:                else if (typenodename == "pointer")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  550:                    type._pointer= true;
+    #####:  551:                else if (typenodename == "ptr_ptr")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  552:                    type._ptr_ptr = true;
+    #####:  553:                else if (typenodename == "const_ptr")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  554:                    type._const_ptr = true;
+        -:  555:                else
+    #####:  556:                    unknown_elements.insert(typenodename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  557:            }
+    #####:  558:            if (platform.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  559:                const PlatformType * const type_ptr = platform_type(type_name, emptyString);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  560:                if (type_ptr) {
+branch  0 never executed
+branch  1 never executed
+    #####:  561:                    if (*type_ptr == type)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  562:                        return Error(DUPLICATE_PLATFORM_TYPE, type_name);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  563:                    return Error(PLATFORM_TYPE_REDEFINED, type_name);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  564:                }
+    #####:  565:                mPlatformTypes[type_name] = type;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+        -:  566:            } else {
+    #####:  567:                for (const std::string &p : platform) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  568:                    const PlatformType * const type_ptr = platform_type(type_name, p);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  569:                    if (type_ptr) {
+branch  0 never executed
+branch  1 never executed
+    #####:  570:                        if (*type_ptr == type)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  571:                            return Error(DUPLICATE_PLATFORM_TYPE, type_name);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  572:                        return Error(PLATFORM_TYPE_REDEFINED, type_name);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  573:                    }
+    #####:  574:                    mPlatforms[p].mPlatformTypes[type_name] = type;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+        -:  575:                }
+        -:  576:            }
+        -:  577:        }
+        -:  578:
+        -:  579:        else
+    #####:  580:            unknown_elements.insert(nodename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  581:    }
+    #####:  582:    if (!unknown_elements.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  583:        std::string str;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  584:        for (std::set<std::string>::const_iterator i = unknown_elements.begin(); i != unknown_elements.end();) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  585:            str += *i;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  586:            if (++i != unknown_elements.end())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  587:                str += ", ";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  588:        }
+    #####:  589:        return Error(UNKNOWN_ELEMENT, str);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  590:    }
+    #####:  591:    return Error(OK);
+call    0 never executed
+        -:  592:}
+        -:  593:
+function _ZN7Library12loadFunctionEPKN8tinyxml210XMLElementERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERNSt7__debug3setIS9_St4lessIS9_ESaIS9_EEE called 0 returned 0% blocks executed 0%
+    #####:  594:Library::Error Library::loadFunction(const tinyxml2::XMLElement * const node, const std::string &name, std::set<std::string> &unknown_elements)
+        -:  595:{
+    #####:  596:    if (name.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  597:        return Error(OK);
+call    0 never executed
+        -:  598:
+    #####:  599:    Function& func = functions[name];
+call    0 never executed
+        -:  600:
+    #####:  601:    for (const tinyxml2::XMLElement *functionnode = node->FirstChildElement(); functionnode; functionnode = functionnode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  602:        const std::string functionnodename = functionnode->Name();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  603:        if (functionnodename == "noreturn")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  604:            mNoReturn[name] = (strcmp(functionnode->GetText(), "true") == 0);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  605:        else if (functionnodename == "pure")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  606:            func.ispure = true;
+    #####:  607:        else if (functionnodename == "const") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  608:            func.ispure = true;
+    #####:  609:            func.isconst = true; // a constant function is pure
+    #####:  610:        } else if (functionnodename == "leak-ignore")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  611:            func.leakignore = true;
+    #####:  612:        else if (functionnodename == "use-retval")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  613:            func.useretval = true;
+    #####:  614:        else if (functionnodename == "returnValue") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  615:            if (const char *expr = functionnode->GetText())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  616:                mReturnValue[name] = expr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  617:            if (const char *type = functionnode->Attribute("type"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  618:                mReturnValueType[name] = type;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  619:            if (const char *container = functionnode->Attribute("container"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  620:                mReturnValueContainer[name] = std::atoi(container);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  621:            if (const char *unknownReturnValues = functionnode->Attribute("unknownValues")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  622:                if (std::strcmp(unknownReturnValues, "all") == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  623:                    std::vector<MathLib::bigint> values{LLONG_MIN, LLONG_MAX};
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  624:                    mUnknownReturnValues[name] = values;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  625:                }
+        -:  626:            }
+    #####:  627:        } else if (functionnodename == "arg") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  628:            const char* argNrString = functionnode->Attribute("nr");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  629:            if (!argNrString)
+branch  0 never executed
+branch  1 never executed
+    #####:  630:                return Error(MISSING_ATTRIBUTE, "nr");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  631:            const bool bAnyArg = strcmp(argNrString, "any") == 0;
+    #####:  632:            const bool bVariadicArg = strcmp(argNrString, "variadic") == 0;
+    #####:  633:            const int nr = (bAnyArg || bVariadicArg) ? -1 : std::atoi(argNrString);
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  634:            ArgumentChecks &ac = func.argumentChecks[nr];
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  635:            ac.optional  = functionnode->Attribute("default") != nullptr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  636:            ac.variadic = bVariadicArg;
+    #####:  637:            const char * const argDirection = functionnode->Attribute("direction");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  638:            if (argDirection) {
+branch  0 never executed
+branch  1 never executed
+    #####:  639:                const size_t argDirLen = strlen(argDirection);
+    #####:  640:                if (!strncmp(argDirection, "in", argDirLen)) {
+branch  0 never executed
+branch  1 never executed
+    #####:  641:                    ac.direction = ArgumentChecks::Direction::DIR_IN;
+    #####:  642:                } else if (!strncmp(argDirection, "out", argDirLen)) {
+branch  0 never executed
+branch  1 never executed
+    #####:  643:                    ac.direction = ArgumentChecks::Direction::DIR_OUT;
+    #####:  644:                } else if (!strncmp(argDirection, "inout", argDirLen)) {
+branch  0 never executed
+branch  1 never executed
+    #####:  645:                    ac.direction = ArgumentChecks::Direction::DIR_INOUT;
+        -:  646:                }
+        -:  647:            }
+    #####:  648:            for (const tinyxml2::XMLElement *argnode = functionnode->FirstChildElement(); argnode; argnode = argnode->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  649:                const std::string argnodename = argnode->Name();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  650:                if (argnodename == "not-bool")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  651:                    ac.notbool = true;
+    #####:  652:                else if (argnodename == "not-null")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  653:                    ac.notnull = true;
+    #####:  654:                else if (argnodename == "not-uninit")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  655:                    ac.notuninit = true;
+    #####:  656:                else if (argnodename == "formatstr")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  657:                    ac.formatstr = true;
+    #####:  658:                else if (argnodename == "strz")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  659:                    ac.strz = true;
+    #####:  660:                else if (argnodename == "valid") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  661:                    // Validate the validation expression
+    #####:  662:                    const char *p = argnode->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  663:                    bool error = false;
+    #####:  664:                    bool range = false;
+    #####:  665:                    bool has_dot = false;
+        -:  666:
+    #####:  667:                    if (!p)
+branch  0 never executed
+branch  1 never executed
+    #####:  668:                        return Error(BAD_ATTRIBUTE_VALUE, "\"\"");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  669:
+    #####:  670:                    error = *p == '.';
+    #####:  671:                    for (; *p; p++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  672:                        if (std::isdigit(*p))
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  673:                            error |= (*(p+1) == '-');
+    #####:  674:                        else if (*p == ':') {
+branch  0 never executed
+branch  1 never executed
+    #####:  675:                            error |= range | (*(p+1) == '.');
+    #####:  676:                            range = true;
+    #####:  677:                            has_dot = false;
+    #####:  678:                        } else if (*p == '-')
+branch  0 never executed
+branch  1 never executed
+    #####:  679:                            error |= (!std::isdigit(*(p+1)));
+    #####:  680:                        else if (*p == ',') {
+branch  0 never executed
+branch  1 never executed
+    #####:  681:                            range = false;
+    #####:  682:                            error |= *(p+1) == '.';
+    #####:  683:                            has_dot = false;
+    #####:  684:                        } else if (*p == '.') {
+branch  0 never executed
+branch  1 never executed
+    #####:  685:                            error |= has_dot | (!std::isdigit(*(p+1)));
+    #####:  686:                            has_dot = true;
+        -:  687:                        } else
+    #####:  688:                            error = true;
+        -:  689:                    }
+    #####:  690:                    if (error)
+branch  0 never executed
+branch  1 never executed
+    #####:  691:                        return Error(BAD_ATTRIBUTE_VALUE, argnode->GetText());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  692:
+        -:  693:                    // Set validation expression
+    #####:  694:                    ac.valid = argnode->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  695:                }
+        -:  696:
+    #####:  697:                else if (argnodename == "minsize") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  698:                    const char *typeattr = argnode->Attribute("type");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  699:                    if (!typeattr)
+branch  0 never executed
+branch  1 never executed
+    #####:  700:                        return Error(MISSING_ATTRIBUTE, "type");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  701:
+        -:  702:                    ArgumentChecks::MinSize::Type type;
+    #####:  703:                    if (strcmp(typeattr,"strlen")==0)
+branch  0 never executed
+branch  1 never executed
+    #####:  704:                        type = ArgumentChecks::MinSize::Type::STRLEN;
+    #####:  705:                    else if (strcmp(typeattr,"argvalue")==0)
+branch  0 never executed
+branch  1 never executed
+    #####:  706:                        type = ArgumentChecks::MinSize::Type::ARGVALUE;
+    #####:  707:                    else if (strcmp(typeattr,"sizeof")==0)
+branch  0 never executed
+branch  1 never executed
+    #####:  708:                        type = ArgumentChecks::MinSize::Type::SIZEOF;
+    #####:  709:                    else if (strcmp(typeattr,"mul")==0)
+branch  0 never executed
+branch  1 never executed
+    #####:  710:                        type = ArgumentChecks::MinSize::Type::MUL;
+    #####:  711:                    else if (strcmp(typeattr,"value")==0)
+branch  0 never executed
+branch  1 never executed
+    #####:  712:                        type = ArgumentChecks::MinSize::Type::VALUE;
+        -:  713:                    else
+    #####:  714:                        return Error(BAD_ATTRIBUTE_VALUE, typeattr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  715:
+    #####:  716:                    if (type == ArgumentChecks::MinSize::Type::VALUE) {
+branch  0 never executed
+branch  1 never executed
+    #####:  717:                        const char *valueattr = argnode->Attribute("value");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  718:                        if (!valueattr)
+branch  0 never executed
+branch  1 never executed
+    #####:  719:                            return Error(MISSING_ATTRIBUTE, "value");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  720:                        long long minsizevalue = 0;
+        -:  721:                        try {
+    #####:  722:                            minsizevalue = MathLib::toLongNumber(valueattr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+    =====:  723:                        } catch (const InternalError&) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    =====:  724:                            return Error(BAD_ATTRIBUTE_VALUE, valueattr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  725:                        }
+    #####:  726:                        if (minsizevalue <= 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  727:                            return Error(BAD_ATTRIBUTE_VALUE, valueattr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  728:                        ac.minsizes.emplace_back(type, 0);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  729:                        ac.minsizes.back().value = minsizevalue;
+call    0 never executed
+        -:  730:                    } else {
+    #####:  731:                        const char *argattr = argnode->Attribute("arg");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  732:                        if (!argattr)
+branch  0 never executed
+branch  1 never executed
+    #####:  733:                            return Error(MISSING_ATTRIBUTE, "arg");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  734:                        if (strlen(argattr) != 1 || argattr[0]<'0' || argattr[0]>'9')
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  735:                            return Error(BAD_ATTRIBUTE_VALUE, argattr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  736:
+    #####:  737:                        ac.minsizes.reserve(type == ArgumentChecks::MinSize::Type::MUL ? 2 : 1);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  738:                        ac.minsizes.emplace_back(type, argattr[0] - '0');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  739:                        if (type == ArgumentChecks::MinSize::Type::MUL) {
+branch  0 never executed
+branch  1 never executed
+    #####:  740:                            const char *arg2attr = argnode->Attribute("arg2");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  741:                            if (!arg2attr)
+branch  0 never executed
+branch  1 never executed
+    #####:  742:                                return Error(MISSING_ATTRIBUTE, "arg2");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  743:                            if (strlen(arg2attr) != 1 || arg2attr[0]<'0' || arg2attr[0]>'9')
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  744:                                return Error(BAD_ATTRIBUTE_VALUE, arg2attr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  745:                            ac.minsizes.back().arg2 = arg2attr[0] - '0';
+call    0 never executed
+        -:  746:                        }
+        -:  747:                    }
+        -:  748:                }
+        -:  749:
+    #####:  750:                else if (argnodename == "iterator") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  751:                    ac.iteratorInfo.it = true;
+    #####:  752:                    const char* str = argnode->Attribute("type");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  753:                    ac.iteratorInfo.first = str ? (std::strcmp(str, "first") == 0) : false;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  754:                    ac.iteratorInfo.last = str ? (std::strcmp(str, "last") == 0) : false;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  755:                    str = argnode->Attribute("container");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  756:                    ac.iteratorInfo.container = str ? std::atoi(str) : 0;
+branch  0 never executed
+branch  1 never executed
+        -:  757:                }
+        -:  758:
+        -:  759:                else
+    #####:  760:                    unknown_elements.insert(argnodename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  761:            }
+    #####:  762:        } else if (functionnodename == "ignorefunction") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  763:            func.ignore = true;
+    #####:  764:        } else if (functionnodename == "formatstr") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  765:            func.formatstr = true;
+    #####:  766:            const tinyxml2::XMLAttribute* scan = functionnode->FindAttribute("scan");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  767:            const tinyxml2::XMLAttribute* secure = functionnode->FindAttribute("secure");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  768:            func.formatstr_scan = scan && scan->BoolValue();
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  769:            func.formatstr_secure = secure && secure->BoolValue();
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  770:        } else if (functionnodename == "warn") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  771:            WarnInfo wi;
+call    0 never executed
+call    1 never executed
+    #####:  772:            const char* const severity = functionnode->Attribute("severity");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  773:            if (severity == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  774:                return Error(MISSING_ATTRIBUTE, "severity");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  775:            wi.severity = Severity::fromString(severity);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  776:
+    #####:  777:            const char* const cstd = functionnode->Attribute("cstd");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  778:            if (cstd) {
+branch  0 never executed
+branch  1 never executed
+    #####:  779:                if (!wi.standards.setC(cstd))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  780:                    return Error(BAD_ATTRIBUTE_VALUE, cstd);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  781:            } else
+    #####:  782:                wi.standards.c = Standards::C89;
+        -:  783:
+    #####:  784:            const char* const cppstd = functionnode->Attribute("cppstd");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  785:            if (cppstd) {
+branch  0 never executed
+branch  1 never executed
+    #####:  786:                if (!wi.standards.setCPP(cppstd))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  787:                    return Error(BAD_ATTRIBUTE_VALUE, cppstd);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  788:            } else
+    #####:  789:                wi.standards.cpp = Standards::CPP03;
+        -:  790:
+    #####:  791:            const char* const reason = functionnode->Attribute("reason");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  792:            const char* const alternatives = functionnode->Attribute("alternatives");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  793:            if (reason && alternatives) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  794:                // Construct message
+    #####:  795:                wi.message = std::string(reason) + " function '" + name + "' called. It is recommended to use ";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+    #####:  796:                std::vector<std::string> alt = getnames(alternatives);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  797:                for (std::size_t i = 0; i < alt.size(); ++i) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  798:                    wi.message += "'" + alt[i] + "'";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  799:                    if (i == alt.size() - 1)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  800:                        wi.message += " instead.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  801:                    else if (i == alt.size() - 2)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  802:                        wi.message += " or ";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  803:                    else
+    #####:  804:                        wi.message += ", ";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  805:                }
+        -:  806:            } else {
+    #####:  807:                const char * const message = functionnode->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  808:                if (!message) {
+branch  0 never executed
+branch  1 never executed
+    #####:  809:                    return Error(MISSING_ATTRIBUTE, "\"reason\" and \"alternatives\" or some text.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  810:                } else
+    #####:  811:                    wi.message = message;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  812:            }
+        -:  813:
+    #####:  814:            functionwarn[name] = wi;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+        -:  815:        } else
+    #####:  816:            unknown_elements.insert(functionnodename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  817:    }
+    #####:  818:    return Error(OK);
+call    0 never executed
+call    1 never executed
+        -:  819:}
+        -:  820:
+function _ZNK7Library13isIntArgValidEPK5Tokenix called 0 returned 0% blocks executed 0%
+    #####:  821:bool Library::isIntArgValid(const Token *ftok, int argnr, const MathLib::bigint argvalue) const
+        -:  822:{
+    #####:  823:    const ArgumentChecks *ac = getarg(ftok, argnr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  824:    if (!ac || ac->valid.empty())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  825:        return true;
+    #####:  826:    else if (ac->valid.find('.') != std::string::npos)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  827:        return isFloatArgValid(ftok, argnr, argvalue);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  828:    TokenList tokenList(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  829:    gettokenlistfromvalid(ac->valid, tokenList);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  830:    for (const Token *tok = tokenList.front(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  831:        if (tok->isNumber() && argvalue == MathLib::toLongNumber(tok->str()))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  832:            return true;
+    #####:  833:        if (Token::Match(tok, "%num% : %num%") && argvalue >= MathLib::toLongNumber(tok->str()) && argvalue <= MathLib::toLongNumber(tok->strAt(2)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+    #####:  834:            return true;
+    #####:  835:        if (Token::Match(tok, "%num% : ,") && argvalue >= MathLib::toLongNumber(tok->str()))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  836:            return true;
+    #####:  837:        if ((!tok->previous() || tok->previous()->str() == ",") && Token::Match(tok,": %num%") && argvalue <= MathLib::toLongNumber(tok->strAt(1)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+    #####:  838:            return true;
+        -:  839:    }
+    #####:  840:    return false;
+        -:  841:}
+        -:  842:
+function _ZNK7Library15isFloatArgValidEPK5Tokenid called 0 returned 0% blocks executed 0%
+    #####:  843:bool Library::isFloatArgValid(const Token *ftok, int argnr, double argvalue) const
+        -:  844:{
+    #####:  845:    const ArgumentChecks *ac = getarg(ftok, argnr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  846:    if (!ac || ac->valid.empty())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  847:        return true;
+    #####:  848:    TokenList tokenList(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  849:    gettokenlistfromvalid(ac->valid, tokenList);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  850:    for (const Token *tok = tokenList.front(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  851:        if (Token::Match(tok, "%num% : %num%") && argvalue >= MathLib::toDoubleNumber(tok->str()) && argvalue <= MathLib::toDoubleNumber(tok->strAt(2)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+    #####:  852:            return true;
+    #####:  853:        if (Token::Match(tok, "%num% : ,") && argvalue >= MathLib::toDoubleNumber(tok->str()))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  854:            return true;
+    #####:  855:        if ((!tok->previous() || tok->previous()->str() == ",") && Token::Match(tok,": %num%") && argvalue <= MathLib::toDoubleNumber(tok->strAt(1)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+    #####:  856:            return true;
+        -:  857:    }
+    #####:  858:    return false;
+        -:  859:}
+        -:  860:
+function _ZNK7Library15getFunctionNameB5cxx11EPK5TokenPb called 15840 returned 100% blocks executed 47%
+    15840:  861:std::string Library::getFunctionName(const Token *ftok, bool *error) const
+        -:  862:{
+    15840:  863:    if (!ftok) {
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+       24:  864:        *error = true;
+       24:  865:        return "";
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:  866:    }
+    15816:  867:    if (ftok->isName()) {
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+  6050480:  868:        for (const Scope *scope = ftok->scope(); scope; scope = scope->nestedIn) {
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+  6034766:  869:            if (!scope->isClassOrStruct())
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+  6034724:  870:                continue;
+       42:  871:            const std::vector<Type::BaseInfo> &derivedFrom = scope->definedType->derivedFrom;
+       42:  872:            for (const Type::BaseInfo & baseInfo : derivedFrom) {
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+call    5 never executed
+call    6 never executed
+call    7 returned 100%
+branch  8 taken 100%
+branch  9 taken 0%
+call   10 returned 100%
+branch 11 taken 100%
+branch 12 taken 0%
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  873:                const std::string name(baseInfo.name + "::" + ftok->str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  874:                if (functions.find(name) != functions.end() && matchArguments(ftok, name))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+    #####:  875:                    return name;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  876:            }
+        -:  877:        }
+    15714:  878:        return ftok->str();
+call    0 returned 100%
+call    1 returned 100%
+        -:  879:    }
+      102:  880:    if (ftok->str() == "::") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 43% (fallthrough)
+branch  3 taken 57%
+       44:  881:        if (!ftok->astOperand2())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  882:            return getFunctionName(ftok->astOperand1(), error);
+call    0 never executed
+call    1 never executed
+       44:  883:        return getFunctionName(ftok->astOperand1(),error) + "::" + getFunctionName(ftok->astOperand2(),error);
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0% (throw)
+call    9 returned 100%
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0% (throw)
+call   12 returned 100%
+call   13 returned 100%
+call   14 returned 100%
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+        -:  884:    }
+       58:  885:    if (ftok->str() == "." && ftok->astOperand1()) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0%
+      116:  886:        const std::string type = astCanonicalType(ftok->astOperand1());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+call    6 never executed
+       58:  887:        if (type.empty()) {
+call    0 returned 100%
+branch  1 taken 43% (fallthrough)
+branch  2 taken 57%
+       25:  888:            *error = true;
+       25:  889:            return "";
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        -:  890:        }
+        -:  891:
+       33:  892:        return type + "::" + getFunctionName(ftok->astOperand2(),error);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+call    7 returned 100%
+branch  8 taken 100% (fallthrough)
+branch  9 taken 0% (throw)
+call   10 returned 100%
+call   11 returned 100%
+call   12 never executed
+call   13 never executed
+        -:  893:    }
+    #####:  894:    *error = true;
+    #####:  895:    return "";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  896:}
+        -:  897:
+function _ZNK7Library15getFunctionNameB5cxx11EPK5Token called 20477 returned 100% blocks executed 77%
+    20477:  898:std::string Library::getFunctionName(const Token *ftok) const
+        -:  899:{
+    20477:  900:    if (!Token::Match(ftok, "%name% (") && (ftok->strAt(-1) != "&" || ftok->previous()->astOperand2()))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+call    5 returned 100%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0% (throw)
+call    8 returned 100%
+branch  9 taken 5% (fallthrough)
+branch 10 taken 95%
+call   11 returned 100%
+call   12 returned 100%
+branch 13 taken 0% (fallthrough)
+branch 14 taken 100%
+branch 15 taken 1% (fallthrough)
+branch 16 taken 99%
+       84:  901:        return "";
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        -:  902:
+        -:  903:    // Lookup function name using AST..
+    20393:  904:    if (ftok->astParent()) {
+call    0 returned 100%
+branch  1 taken 77% (fallthrough)
+branch  2 taken 23%
+    15719:  905:        bool error = false;
+    15719:  906:        const Token * tok = ftok->astParent()->isUnaryOp("&") ? ftok->astParent()->astOperand1() : ftok->next()->astOperand1();
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+call    5 returned 100%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0% (throw)
+branch  8 taken 1% (fallthrough)
+branch  9 taken 99%
+call   10 returned 100%
+call   11 returned 100%
+call   12 returned 100%
+call   13 returned 100%
+call   14 returned 100%
+call   15 returned 100%
+call   16 never executed
+call   17 never executed
+    31438:  907:        const std::string ret = getFunctionName(tok, &error);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+    15719:  908:        return error ? std::string() : ret;
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+        -:  909:    }
+        -:  910:
+        -:  911:    // Lookup function name without using AST..
+     4674:  912:    if (Token::simpleMatch(ftok->previous(), "."))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+branch  4 taken 1% (fallthrough)
+branch  5 taken 99%
+        6:  913:        return "";
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+     4668:  914:    if (!Token::Match(ftok->tokAt(-2), "%name% ::"))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+branch  6 taken 99% (fallthrough)
+branch  7 taken 1%
+     4666:  915:        return ftok->str();
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+        4:  916:    std::string ret(ftok->str());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        2:  917:    ftok = ftok->tokAt(-2);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        8:  918:    while (Token::Match(ftok, "%name% ::")) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 60% (fallthrough)
+branch  4 taken 40%
+        3:  919:        ret = ftok->str() + "::" + ret;
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+call    7 returned 100%
+call    8 returned 100%
+call    9 returned 100%
+call   10 never executed
+        3:  920:        ftok = ftok->tokAt(-2);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  921:    }
+        2:  922:    return ret;
+call    0 returned 100%
+        -:  923:}
+        -:  924:
+function _ZNK7Library12isnullargbadEPK5Tokeni called 64 returned 100% blocks executed 68%
+       64:  925:bool Library::isnullargbad(const Token *ftok, int argnr) const
+        -:  926:{
+       64:  927:    const ArgumentChecks *arg = getarg(ftok, argnr);
+call    0 returned 100%
+       64:  928:    if (!arg) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        -:  929:        // scan format string argument should not be null
+      128:  930:        const std::string funcname = getFunctionName(ftok);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 never executed
+      128:  931:        const std::map<std::string, Function>::const_iterator it = functions.find(funcname);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100%
+branch  5 taken 0%
+       64:  932:        if (it != functions.cend() && it->second.formatstr && it->second.formatstr_scan)
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0%
+call   12 returned 100%
+branch 13 taken 0% (fallthrough)
+branch 14 taken 100%
+    #####:  933:            return true;
+call    0 returned 100%
+branch  1 taken 100%
+branch  2 taken 0%
+        -:  934:    }
+       64:  935:    return arg && arg->notnull;
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+branch  2 never executed
+branch  3 never executed
+        -:  936:}
+        -:  937:
+function _ZNK7Library14isuninitargbadEPK5Tokeni called 0 returned 0% blocks executed 0%
+    #####:  938:bool Library::isuninitargbad(const Token *ftok, int argnr) const
+        -:  939:{
+    #####:  940:    const ArgumentChecks *arg = getarg(ftok, argnr);
+call    0 never executed
+    #####:  941:    if (!arg) {
+branch  0 never executed
+branch  1 never executed
+        -:  942:        // non-scan format string argument should not be uninitialized
+    #####:  943:        const std::string funcname = getFunctionName(ftok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  944:        const std::map<std::string, Function>::const_iterator it = functions.find(funcname);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  945:        if (it != functions.cend() && it->second.formatstr && !it->second.formatstr_scan)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+    #####:  946:            return true;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  947:    }
+    #####:  948:    return arg && arg->notuninit;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  949:}
+        -:  950:
+        -:  951:
+        -:  952:/** get allocation info for function */
+function _ZNK7Library16getAllocFuncInfoEPK5Token called 204 returned 100% blocks executed 61%
+      204:  953:const Library::AllocFunc* Library::getAllocFuncInfo(const Token *tok) const
+        -:  954:{
+      408:  955:    const std::string funcname = getFunctionName(tok);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+      408:  956:    return isNotLibraryFunction(tok) && functions.find(funcname) != functions.end() ? nullptr : getAllocDealloc(mAlloc, funcname);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 97% (fallthrough)
+branch  4 taken 3%
+call    5 returned 100%
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0% (throw)
+call    9 returned 100%
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0%
+call   12 returned 100%
+branch 13 taken 100% (fallthrough)
+branch 14 taken 0% (throw)
+branch 15 taken 97% (fallthrough)
+branch 16 taken 3%
+call   17 returned 100%
+branch 18 taken 97% (fallthrough)
+branch 19 taken 3%
+call   20 returned 100%
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+call   26 never executed
+        -:  957:}
+        -:  958:
+        -:  959:/** get deallocation info for function */
+function _ZNK7Library18getDeallocFuncInfoEPK5Token called 292 returned 100% blocks executed 61%
+      292:  960:const Library::AllocFunc* Library::getDeallocFuncInfo(const Token *tok) const
+        -:  961:{
+      584:  962:    const std::string funcname = getFunctionName(tok);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+      584:  963:    return isNotLibraryFunction(tok) && functions.find(funcname) != functions.end() ? nullptr : getAllocDealloc(mDealloc, funcname);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 88% (fallthrough)
+branch  4 taken 12%
+call    5 returned 100%
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0% (throw)
+call    9 returned 100%
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0%
+call   12 returned 100%
+branch 13 taken 100% (fallthrough)
+branch 14 taken 0% (throw)
+branch 15 taken 88% (fallthrough)
+branch 16 taken 12%
+call   17 returned 100%
+branch 18 taken 88% (fallthrough)
+branch 19 taken 12%
+call   20 returned 100%
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+call   26 never executed
+        -:  964:}
+        -:  965:
+        -:  966:/** get reallocation info for function */
+function _ZNK7Library18getReallocFuncInfoEPK5Token called 403 returned 100% blocks executed 61%
+      403:  967:const Library::AllocFunc* Library::getReallocFuncInfo(const Token *tok) const
+        -:  968:{
+      806:  969:    const std::string funcname = getFunctionName(tok);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+      806:  970:    return isNotLibraryFunction(tok) && functions.find(funcname) != functions.end() ? nullptr : getAllocDealloc(mRealloc, funcname);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 92% (fallthrough)
+branch  4 taken 8%
+call    5 returned 100%
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0% (throw)
+call    9 returned 100%
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0%
+call   12 returned 100%
+branch 13 taken 100% (fallthrough)
+branch 14 taken 0% (throw)
+branch 15 taken 92% (fallthrough)
+branch 16 taken 8%
+call   17 returned 100%
+branch 18 taken 92% (fallthrough)
+branch 19 taken 8%
+call   20 returned 100%
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+call   26 never executed
+        -:  971:}
+        -:  972:
+        -:  973:/** get allocation id for function */
+function _ZNK7Library10getAllocIdEPK5Tokeni called 0 returned 0% blocks executed 0%
+    #####:  974:int Library::getAllocId(const Token *tok, int arg) const
+        -:  975:{
+    #####:  976:    const Library::AllocFunc* af = getAllocFuncInfo(tok);
+call    0 never executed
+    #####:  977:    return (af && af->arg == arg) ? af->groupId : 0;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  978:}
+        -:  979:
+        -:  980:/** get deallocation id for function */
+function _ZNK7Library12getDeallocIdEPK5Tokeni called 0 returned 0% blocks executed 0%
+    #####:  981:int Library::getDeallocId(const Token *tok, int arg) const
+        -:  982:{
+    #####:  983:    const Library::AllocFunc* af = getDeallocFuncInfo(tok);
+call    0 never executed
+    #####:  984:    return (af && af->arg == arg) ? af->groupId : 0;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  985:}
+        -:  986:
+        -:  987:/** get reallocation id for function */
+function _ZNK7Library12getReallocIdEPK5Tokeni called 0 returned 0% blocks executed 0%
+    #####:  988:int Library::getReallocId(const Token *tok, int arg) const
+        -:  989:{
+    #####:  990:    const Library::AllocFunc* af = getReallocFuncInfo(tok);
+call    0 never executed
+    #####:  991:    return (af && af->arg == arg) ? af->groupId : 0;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  992:}
+        -:  993:
+        -:  994:
+function _ZNK7Library6getargEPK5Tokeni called 128 returned 100% blocks executed 13%
+      128:  995:const Library::ArgumentChecks * Library::getarg(const Token *ftok, int argnr) const
+        -:  996:{
+      128:  997:    if (isNotLibraryFunction(ftok))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+      128:  998:        return nullptr;
+    #####:  999:    const std::map<std::string, Function>::const_iterator it1 = functions.find(getFunctionName(ftok));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####: 1000:    if (it1 == functions.cend())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1001:        return nullptr;
+    #####: 1002:    const std::map<int,ArgumentChecks>::const_iterator it2 = it1->second.argumentChecks.find(argnr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####: 1003:    if (it2 != it1->second.argumentChecks.cend())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1004:        return &it2->second;
+call    0 never executed
+    #####: 1005:    const std::map<int,ArgumentChecks>::const_iterator it3 = it1->second.argumentChecks.find(-1);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####: 1006:    if (it3 != it1->second.argumentChecks.cend())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1007:        return &it3->second;
+call    0 never executed
+    #####: 1008:    return nullptr;
+        -: 1009:}
+        -: 1010:
+function _ZNK7Library15isScopeNoReturnEPK5TokenPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 4135 returned 100% blocks executed 75%
+     4135: 1011:bool Library::isScopeNoReturn(const Token *end, std::string *unknownFunc) const
+        -: 1012:{
+     4135: 1013:    if (unknownFunc)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+     4135: 1014:        unknownFunc->clear();
+call    0 returned 100%
+        -: 1015:
+     4135: 1016:    if (Token::Match(end->tokAt(-2), "!!{ ; }")) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 3% (fallthrough)
+branch  3 taken 97%
+      107: 1017:        const Token *lastTop = end->tokAt(-2)->astTop();
+call    0 returned 100%
+call    1 returned 100%
+      214: 1018:        if (Token::simpleMatch(lastTop, "<<") &&
+call    0 returned 100%
+branch  1 never executed
+branch  2 never executed
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+      107: 1019:            Token::simpleMatch(lastTop->astOperand1(), "(") &&
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1020:            Token::Match(lastTop->astOperand1()->previous(), "%name% ("))
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####: 1021:            return isnoreturn(lastTop->astOperand1()->previous());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -: 1022:    }
+        -: 1023:
+     4135: 1024:    if (!Token::simpleMatch(end->tokAt(-2), ") ; }"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 99% (fallthrough)
+branch  3 taken 1%
+     4084: 1025:        return false;
+        -: 1026:
+       51: 1027:    const Token *funcname = end->linkAt(-2)->previous();
+call    0 returned 100%
+call    1 returned 100%
+       51: 1028:    const Token *start = funcname;
+       51: 1029:    if (Token::Match(funcname->tokAt(-3),"( * %name% )")) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####: 1030:        funcname = funcname->previous();
+call    0 never executed
+    #####: 1031:        start = funcname->tokAt(-3);
+call    0 never executed
+       51: 1032:    } else if (funcname->isName()) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+      173: 1033:        while (Token::Match(start, "%name%|.|::"))
+call    0 returned 100%
+branch  1 taken 54% (fallthrough)
+branch  2 taken 46%
+       61: 1034:            start = start->previous();
+call    0 returned 100%
+        -: 1035:    } else {
+    #####: 1036:        return false;
+        -: 1037:    }
+       51: 1038:    if (Token::Match(start,"[;{}]") && Token::Match(funcname, "%name% )| (")) {
+call    0 returned 100%
+branch  1 taken 75% (fallthrough)
+branch  2 taken 25%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+branch  6 taken 75% (fallthrough)
+branch  7 taken 25%
+       38: 1039:        if (funcname->str() == "exit")
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 26% (fallthrough)
+branch  3 taken 74%
+       10: 1040:            return true;
+       28: 1041:        if (!isnotnoreturn(funcname)) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+       28: 1042:            if (unknownFunc && !isnoreturn(funcname))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0%
+       28: 1043:                *unknownFunc = funcname->str();
+call    0 returned 100%
+call    1 returned 100%
+       28: 1044:            return true;
+        -: 1045:        }
+        -: 1046:    }
+       13: 1047:    return false;
+        -: 1048:}
+        -: 1049:
+function _ZNK7Library15detectContainerEPK5Tokenb called 4802 returned 100% blocks executed 24%
+     4802: 1050:const Library::Container* Library::detectContainer(const Token* typeStart, bool iterator) const
+        -: 1051:{
+     4802: 1052:    for (std::map<std::string, Container>::const_iterator i = containers.begin(); i != containers.end(); ++i) {
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+call    6 never executed
+call    7 returned 100%
+branch  8 taken 100%
+branch  9 taken 0%
+call   10 never executed
+    #####: 1053:        const Container& container = i->second;
+call    0 never executed
+    #####: 1054:        if (container.startPattern.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1055:            continue;
+        -: 1056:
+    #####: 1057:        if (!Token::Match(typeStart, container.startPattern2.c_str()))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1058:            continue;
+        -: 1059:
+    #####: 1060:        if (!iterator && container.endPattern.empty()) // If endPattern is undefined, it will always match, but itEndPattern has to be defined.
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####: 1061:            return &container;
+        -: 1062:
+    #####: 1063:        for (const Token* tok = typeStart; tok && !tok->varId(); tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+    #####: 1064:            if (tok->link()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1065:                const std::string& endPattern = iterator ? container.itEndPattern : container.endPattern;
+branch  0 never executed
+branch  1 never executed
+    #####: 1066:                if (Token::Match(tok->link(), endPattern.c_str()))
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####: 1067:                    return &container;
+    #####: 1068:                break;
+        -: 1069:            }
+        -: 1070:        }
+        -: 1071:    }
+     4802: 1072:    return nullptr;
+        -: 1073:}
+        -: 1074:
+function _ZN7Library16isContainerYieldEPK5TokenNS_9Container5YieldERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1075:bool Library::isContainerYield(const Token * const cond, Library::Container::Yield y, const std::string& fallback)
+        -: 1076:{
+    #####: 1077:    if (!cond)
+branch  0 never executed
+branch  1 never executed
+    #####: 1078:        return false;
+    #####: 1079:    if (cond->str() == "(") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1080:        const Token* tok = cond->astOperand1();
+call    0 never executed
+    #####: 1081:        if (tok && tok->str() == ".") {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1082:            if (tok->astOperand1() && tok->astOperand1()->valueType()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####: 1083:                if (const Library::Container *container = tok->astOperand1()->valueType()->container) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1084:                    return tok->astOperand2() && y == container->getYield(tok->astOperand2()->str());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+        -: 1085:                }
+    #####: 1086:            } else if (!fallback.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1087:                return Token::simpleMatch(cond, "( )") && cond->previous()->str() == fallback;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+        -: 1088:            }
+        -: 1089:        }
+        -: 1090:    }
+    #####: 1091:    return false;
+        -: 1092:}
+        -: 1093:
+        -: 1094:// returns true if ftok is not a library function
+function _ZNK7Library20isNotLibraryFunctionEPK5Token called 19363 returned 100% blocks executed 90%
+    19363: 1095:bool Library::isNotLibraryFunction(const Token *ftok) const
+        -: 1096:{
+    19363: 1097:    if (ftok->function() && ftok->function()->nestedIn && ftok->function()->nestedIn->type != Scope::eGlobal)
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+call    6 returned 100%
+branch  7 taken 75% (fallthrough)
+branch  8 taken 25%
+branch  9 taken 1% (fallthrough)
+branch 10 taken 99%
+       12: 1098:        return true;
+        -: 1099:
+        -: 1100:    // variables are not library functions.
+    19351: 1101:    if (ftok->varId())
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+       42: 1102:        return true;
+        -: 1103:
+    19309: 1104:    return !matchArguments(ftok, getFunctionName(ftok));
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        -: 1105:}
+        -: 1106:
+function _ZNK7Library14matchArgumentsEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 19309 returned 100% blocks executed 20%
+    19309: 1107:bool Library::matchArguments(const Token *ftok, const std::string &functionName) const
+        -: 1108:{
+    19309: 1109:    const int callargs = numberOfArguments(ftok);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+    38618: 1110:    const std::map<std::string, Function>::const_iterator it = functions.find(functionName);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+    19309: 1111:    if (it == functions.cend())
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+    19309: 1112:        return (callargs == 0);
+    #####: 1113:    int args = 0;
+    #####: 1114:    int firstOptionalArg = -1;
+    #####: 1115:    for (std::map<int, ArgumentChecks>::const_iterator it2 = it->second.argumentChecks.cbegin(); it2 != it->second.argumentChecks.cend(); ++it2) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####: 1116:        if (it2->first > args)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1117:            args = it2->first;
+call    0 never executed
+    #####: 1118:        if (it2->second.optional && (firstOptionalArg == -1 || firstOptionalArg > it2->first))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####: 1119:            firstOptionalArg = it2->first;
+call    0 never executed
+        -: 1120:
+    #####: 1121:        if (it2->second.formatstr || it2->second.variadic)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1122:            return args <= callargs;
+        -: 1123:    }
+    #####: 1124:    return (firstOptionalArg < 0) ? args == callargs : (callargs >= firstOptionalArg-1 && callargs <= args);
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+        -: 1125:}
+        -: 1126:
+function _ZNK7Library11getWarnInfoEPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1127:const Library::WarnInfo* Library::getWarnInfo(const Token* ftok) const
+        -: 1128:{
+    #####: 1129:    if (isNotLibraryFunction(ftok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1130:        return nullptr;
+    #####: 1131:    std::map<std::string, WarnInfo>::const_iterator i = functionwarn.find(getFunctionName(ftok));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1132:    if (i == functionwarn.cend())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1133:        return nullptr;
+    #####: 1134:    return &i->second;
+call    0 never executed
+        -: 1135:}
+        -: 1136:
+function _ZNK7Library18formatstr_functionEPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1137:bool Library::formatstr_function(const Token* ftok) const
+        -: 1138:{
+    #####: 1139:    if (isNotLibraryFunction(ftok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1140:        return false;
+        -: 1141:
+    #####: 1142:    const std::map<std::string, Function>::const_iterator it = functions.find(getFunctionName(ftok));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1143:    if (it != functions.cend())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1144:        return it->second.formatstr;
+call    0 never executed
+    #####: 1145:    return false;
+        -: 1146:}
+        -: 1147:
+function _ZNK7Library15formatstr_argnoEPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1148:int Library::formatstr_argno(const Token* ftok) const
+        -: 1149:{
+    #####: 1150:    const std::map<int, Library::ArgumentChecks>& argumentChecksFunc = functions.at(getFunctionName(ftok)).argumentChecks;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####: 1151:    for (std::map<int, Library::ArgumentChecks>::const_iterator i = argumentChecksFunc.cbegin(); i != argumentChecksFunc.cend(); ++i) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####: 1152:        if (i->second.formatstr) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1153:            return i->first - 1;
+call    0 never executed
+        -: 1154:        }
+        -: 1155:    }
+    #####: 1156:    return -1;
+        -: 1157:}
+        -: 1158:
+function _ZNK7Library14formatstr_scanEPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1159:bool Library::formatstr_scan(const Token* ftok) const
+        -: 1160:{
+    #####: 1161:    return functions.at(getFunctionName(ftok)).formatstr_scan;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -: 1162:}
+        -: 1163:
+function _ZNK7Library16formatstr_secureEPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1164:bool Library::formatstr_secure(const Token* ftok) const
+        -: 1165:{
+    #####: 1166:    return functions.at(getFunctionName(ftok)).formatstr_secure;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -: 1167:}
+        -: 1168:
+function _ZNK7Library11isUseRetValEPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1169:bool Library::isUseRetVal(const Token* ftok) const
+        -: 1170:{
+    #####: 1171:    if (isNotLibraryFunction(ftok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1172:        return false;
+    #####: 1173:    const std::map<std::string, Function>::const_iterator it = functions.find(getFunctionName(ftok));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1174:    if (it != functions.cend())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1175:        return it->second.useretval;
+call    0 never executed
+    #####: 1176:    return false;
+        -: 1177:}
+        -: 1178:
+function _ZNK7Library11returnValueB5cxx11EPK5Token called 4510 returned 100% blocks executed 75%
+     4510: 1179:const std::string& Library::returnValue(const Token *ftok) const
+        -: 1180:{
+     4510: 1181:    if (isNotLibraryFunction(ftok))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 99% (fallthrough)
+branch  4 taken 1%
+     4484: 1182:        return emptyString;
+       52: 1183:    const std::map<std::string, std::string>::const_iterator it = mReturnValue.find(getFunctionName(ftok));
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+call    6 returned 100%
+call    7 returned 100%
+call    8 never executed
+       26: 1184:    return it != mReturnValue.end() ? it->second : emptyString;
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+call    5 returned 100%
+        -: 1185:}
+        -: 1186:
+function _ZNK7Library15returnValueTypeB5cxx11EPK5Token called 9074 returned 100% blocks executed 75%
+     9074: 1187:const std::string& Library::returnValueType(const Token *ftok) const
+        -: 1188:{
+     9074: 1189:    if (isNotLibraryFunction(ftok))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 98% (fallthrough)
+branch  4 taken 2%
+     8900: 1190:        return emptyString;
+      348: 1191:    const std::map<std::string, std::string>::const_iterator it = mReturnValueType.find(getFunctionName(ftok));
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+call    6 returned 100%
+call    7 returned 100%
+call    8 never executed
+      174: 1192:    return it != mReturnValueType.end() ? it->second : emptyString;
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+call    5 returned 100%
+        -: 1193:}
+        -: 1194:
+function _ZNK7Library20returnValueContainerEPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1195:int Library::returnValueContainer(const Token *ftok) const
+        -: 1196:{
+    #####: 1197:    if (isNotLibraryFunction(ftok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1198:        return -1;
+    #####: 1199:    const std::map<std::string, int>::const_iterator it = mReturnValueContainer.find(getFunctionName(ftok));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1200:    return it != mReturnValueContainer.end() ? it->second : -1;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -: 1201:}
+        -: 1202:
+function _ZNK7Library19unknownReturnValuesEPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1203:std::vector<MathLib::bigint> Library::unknownReturnValues(const Token *ftok) const
+        -: 1204:{
+    #####: 1205:    if (isNotLibraryFunction(ftok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1206:        return std::vector<MathLib::bigint>();
+call    0 never executed
+    #####: 1207:    const std::map<std::string, std::vector<MathLib::bigint>>::const_iterator it = mUnknownReturnValues.find(getFunctionName(ftok));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####: 1208:    return (it == mUnknownReturnValues.end()) ? std::vector<MathLib::bigint>() : it->second;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+        -: 1209:}
+        -: 1210:
+function _ZNK7Library10hasminsizeEPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1211:bool Library::hasminsize(const Token *ftok) const
+        -: 1212:{
+    #####: 1213:    if (isNotLibraryFunction(ftok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1214:        return false;
+    #####: 1215:    const std::map<std::string, Function>::const_iterator it1 = functions.find(getFunctionName(ftok));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1216:    if (it1 == functions.cend())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1217:        return false;
+    #####: 1218:    for (std::map<int, ArgumentChecks>::const_iterator it2 = it1->second.argumentChecks.cbegin(); it2 != it1->second.argumentChecks.cend(); ++it2) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####: 1219:        if (!it2->second.minsizes.empty())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1220:            return true;
+        -: 1221:    }
+    #####: 1222:    return false;
+        -: 1223:}
+        -: 1224:
+function _ZNK7Library14ignorefunctionERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1225:bool Library::ignorefunction(const std::string& functionName) const
+        -: 1226:{
+    #####: 1227:    const std::map<std::string, Function>::const_iterator it = functions.find(functionName);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####: 1228:    if (it != functions.cend())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1229:        return it->second.ignore;
+call    0 never executed
+    #####: 1230:    return false;
+        -: 1231:}
+function _ZNK7Library5isUseERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 5 returned 100% blocks executed 83%
+        5: 1232:bool Library::isUse(const std::string& functionName) const
+        -: 1233:{
+       10: 1234:    const std::map<std::string, Function>::const_iterator it = functions.find(functionName);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+        5: 1235:    if (it != functions.cend())
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####: 1236:        return it->second.use;
+call    0 never executed
+        5: 1237:    return false;
+        -: 1238:}
+function _ZNK7Library12isLeakIgnoreERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 292 returned 100% blocks executed 83%
+      292: 1239:bool Library::isLeakIgnore(const std::string& functionName) const
+        -: 1240:{
+      584: 1241:    const  std::map<std::string, Function>::const_iterator it = functions.find(functionName);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+      292: 1242:    if (it != functions.cend())
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####: 1243:        return it->second.leakignore;
+call    0 never executed
+      292: 1244:    return false;
+        -: 1245:}
+function _ZNK7Library15isFunctionConstERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEb called 302 returned 100% blocks executed 63%
+      302: 1246:bool Library::isFunctionConst(const std::string& functionName, bool pure) const
+        -: 1247:{
+      604: 1248:    const std::map<std::string, Function>::const_iterator it = functions.find(functionName);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+      302: 1249:    if (it != functions.cend())
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####: 1250:        return pure ? it->second.ispure : it->second.isconst;
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+      302: 1251:    return false;
+        -: 1252:}
+function _ZNK7Library15isFunctionConstEPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1253:bool Library::isFunctionConst(const Token *ftok) const
+        -: 1254:{
+    #####: 1255:    if (ftok->function() && ftok->function()->isAttributeConst())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####: 1256:        return true;
+    #####: 1257:    if (isNotLibraryFunction(ftok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1258:        return false;
+    #####: 1259:    const std::map<std::string, Function>::const_iterator it = functions.find(getFunctionName(ftok));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1260:    return (it != functions.end() && it->second.isconst);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+        -: 1261:}
+function _ZNK7Library10isnoreturnEPK5Token called 97 returned 100% blocks executed 65%
+       97: 1262:bool Library::isnoreturn(const Token *ftok) const
+        -: 1263:{
+       97: 1264:    if (ftok->function() && ftok->function()->isAttributeNoreturn())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 taken 0% (fallthrough)
+branch 10 taken 100%
+    #####: 1265:        return true;
+       97: 1266:    if (isNotLibraryFunction(ftok))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 97% (fallthrough)
+branch  4 taken 3%
+       94: 1267:        return false;
+        6: 1268:    const std::map<std::string, bool>::const_iterator it = mNoReturn.find(getFunctionName(ftok));
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+call    6 returned 100%
+call    7 returned 100%
+call    8 never executed
+        3: 1269:    return (it != mNoReturn.end() && it->second);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0%
+call    9 returned 100%
+        -: 1270:}
+        -: 1271:
+function _ZNK7Library13isnotnoreturnEPK5Token called 28 returned 100% blocks executed 65%
+       28: 1272:bool Library::isnotnoreturn(const Token *ftok) const
+        -: 1273:{
+       28: 1274:    if (ftok->function() && ftok->function()->isAttributeNoreturn())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 taken 0% (fallthrough)
+branch 10 taken 100%
+    #####: 1275:        return false;
+       28: 1276:    if (isNotLibraryFunction(ftok))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 93% (fallthrough)
+branch  4 taken 7%
+       26: 1277:        return false;
+        4: 1278:    const std::map<std::string, bool>::const_iterator it = mNoReturn.find(getFunctionName(ftok));
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+call    6 returned 100%
+call    7 returned 100%
+call    8 never executed
+        2: 1279:    return (it != mNoReturn.end() && !it->second);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0%
+call    9 returned 100%
+        -: 1280:}
+        -: 1281:
+function _ZNK7Library10markupFileERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 83 returned 100% blocks executed 67%
+       83: 1282:bool Library::markupFile(const std::string &path) const
+        -: 1283:{
+       83: 1284:    return mMarkupExtensions.find(Path::getFilenameExtensionInLowerCase(path)) != mMarkupExtensions.end();
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+call    7 returned 100%
+call    8 returned 100%
+call    9 returned 100%
+call   10 returned 100%
+call   11 never executed
+call   12 never executed
+        -: 1285:}
+        -: 1286:
+function _ZNK7Library22processMarkupAfterCodeERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1287:bool Library::processMarkupAfterCode(const std::string &path) const
+        -: 1288:{
+    #####: 1289:    const std::map<std::string, bool>::const_iterator it = mProcessAfterCode.find(Path::getFilenameExtensionInLowerCase(path));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####: 1290:    return (it == mProcessAfterCode.end() || it->second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+        -: 1291:}
+        -: 1292:
+function _ZNK7Library12reportErrorsERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1293:bool Library::reportErrors(const std::string &path) const
+        -: 1294:{
+    #####: 1295:    const std::map<std::string, bool>::const_iterator it = mReportErrors.find(Path::getFilenameExtensionInLowerCase(path));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####: 1296:    return (it == mReportErrors.end() || it->second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+        -: 1297:}
+        -: 1298:
+function _ZNK7Library17isexecutableblockERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1299:bool Library::isexecutableblock(const std::string &file, const std::string &token) const
+        -: 1300:{
+    #####: 1301:    const std::map<std::string, CodeBlock>::const_iterator it = mExecutableBlocks.find(Path::getFilenameExtensionInLowerCase(file));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1302:    return (it != mExecutableBlocks.end() && it->second.isBlock(token));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+        -: 1303:}
+        -: 1304:
+function _ZNK7Library16blockstartoffsetERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1305:int Library::blockstartoffset(const std::string &file) const
+        -: 1306:{
+    #####: 1307:    int offset = -1;
+        -: 1308:    const std::map<std::string, CodeBlock>::const_iterator map_it
+    #####: 1309:        = mExecutableBlocks.find(Path::getFilenameExtensionInLowerCase(file));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+        -: 1310:
+    #####: 1311:    if (map_it != mExecutableBlocks.end()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1312:        offset = map_it->second.offset();
+call    0 never executed
+call    1 never executed
+        -: 1313:    }
+    #####: 1314:    return offset;
+call    0 never executed
+        -: 1315:}
+        -: 1316:
+function _ZNK7Library10blockstartERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1317:const std::string& Library::blockstart(const std::string &file) const
+        -: 1318:{
+        -: 1319:    const std::map<std::string, CodeBlock>::const_iterator map_it
+    #####: 1320:        = mExecutableBlocks.find(Path::getFilenameExtensionInLowerCase(file));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+        -: 1321:
+    #####: 1322:    if (map_it != mExecutableBlocks.end()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1323:        return map_it->second.start();
+call    0 never executed
+call    1 never executed
+        -: 1324:    }
+    #####: 1325:    return emptyString;
+        -: 1326:}
+        -: 1327:
+function _ZNK7Library8blockendERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1328:const std::string& Library::blockend(const std::string &file) const
+        -: 1329:{
+        -: 1330:    const std::map<std::string, CodeBlock>::const_iterator map_it
+    #####: 1331:        = mExecutableBlocks.find(Path::getFilenameExtensionInLowerCase(file));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+        -: 1332:
+    #####: 1333:    if (map_it != mExecutableBlocks.end()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1334:        return map_it->second.end();
+call    0 never executed
+call    1 never executed
+        -: 1335:    }
+    #####: 1336:    return emptyString;
+        -: 1337:}
+        -: 1338:
+function _ZNK7Library9iskeywordERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1339:bool Library::iskeyword(const std::string &file, const std::string &keyword) const
+        -: 1340:{
+        -: 1341:    const std::map<std::string, std::set<std::string> >::const_iterator it =
+    #####: 1342:        mKeywords.find(Path::getFilenameExtensionInLowerCase(file));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1343:    return (it != mKeywords.end() && it->second.count(keyword));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+        -: 1344:}
+        -: 1345:
+function _ZNK7Library10isimporterERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_ called 0 returned 0% blocks executed 0%
+    #####: 1346:bool Library::isimporter(const std::string& file, const std::string &importer) const
+        -: 1347:{
+        -: 1348:    const std::map<std::string, std::set<std::string> >::const_iterator it =
+    #####: 1349:        mImporters.find(Path::getFilenameExtensionInLowerCase(file));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####: 1350:    return (it != mImporters.end() && it->second.count(importer) > 0);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+        -: 1351:}
+        -: 1352:
+function _ZNK7Library14isSmartPointerEPK5Token called 305 returned 100% blocks executed 76%
+      305: 1353:bool Library::isSmartPointer(const Token *tok) const
+        -: 1354:{
+      610: 1355:    std::string typestr;
+call    0 returned 100%
+call    1 returned 100%
+call    2 never executed
+     1191: 1356:    while (Token::Match(tok, "%name%|::")) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 59% (fallthrough)
+branch  4 taken 41%
+      443: 1357:        typestr += tok->str();
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+      443: 1358:        tok = tok->next();
+call    0 returned 100%
+        -: 1359:    }
+      610: 1360:    return smartPointers.find(typestr) != smartPointers.end();
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+call    6 returned 100%
+call    7 never executed
+        -: 1361:}
+        -: 1362:
+function _Z19getLibraryContainerPK5Token called 37058 returned 100% blocks executed 62%
+    37058: 1363:CPPCHECKLIB const Library::Container * getLibraryContainer(const Token * tok)
+        -: 1364:{
+    37058: 1365:    if (!tok)
+branch  0 taken 5% (fallthrough)
+branch  1 taken 95%
+     2033: 1366:        return nullptr;
+        -: 1367:    // TODO: Support dereferencing iterators
+        -: 1368:    // TODO: Support dereferencing with ->
+    35025: 1369:    if (tok->isUnaryOp("*") && astIsPointer(tok->astOperand1())) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+branch  7 taken 1% (fallthrough)
+branch  8 taken 99%
+call    9 returned 100%
+call   10 returned 100%
+branch 11 taken 100% (fallthrough)
+branch 12 taken 0% (throw)
+branch 13 taken 92% (fallthrough)
+branch 14 taken 8%
+branch 15 taken 100% (fallthrough)
+branch 16 taken 0%
+call   17 returned 100%
+branch 18 taken 100% (fallthrough)
+branch 19 taken 0%
+call   20 returned 100%
+branch 21 taken 1% (fallthrough)
+branch 22 taken 99%
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+call   29 never executed
+       12: 1370:        for (const ValueFlow::Value& v:tok->astOperand1()->values()) {
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+call    7 never executed
+call    8 never executed
+call    9 returned 100%
+branch 10 taken 100%
+branch 11 taken 0%
+call   12 returned 100%
+branch 13 taken 100%
+branch 14 taken 0%
+call   15 never executed
+call   16 never executed
+    #####: 1371:            if (!v.isLocalLifetimeValue())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1372:                continue;
+    #####: 1373:            if (v.lifetimeKind != ValueFlow::Value::LifetimeKind::Address)
+branch  0 never executed
+branch  1 never executed
+    #####: 1374:                continue;
+    #####: 1375:            return getLibraryContainer(v.tokvalue);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -: 1376:        }
+        -: 1377:    }
+    35025: 1378:    if (!tok->valueType())
+call    0 returned 100%
+branch  1 taken 85% (fallthrough)
+branch  2 taken 15%
+    29765: 1379:        return nullptr;
+     5260: 1380:    return tok->valueType()->container;
+call    0 returned 100%
+function _GLOBAL__sub_I__ZN7LibraryC2Ev called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3: 1381:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+        -: 1382:

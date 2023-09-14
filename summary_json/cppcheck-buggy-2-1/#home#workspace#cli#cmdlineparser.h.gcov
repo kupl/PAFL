@@ -1,0 +1,134 @@
+        -:    0:Source:/home/workspace/cli/cmdlineparser.h
+        -:    0:Graph:/home/workspace/build/cli/CMakeFiles/cli_objs.dir/cppcheckexecutor.gcno
+        -:    0:Data:/home/workspace/build/cli/CMakeFiles/cli_objs.dir/cppcheckexecutor.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2018 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#ifndef CMDLINE_PARSER_H
+        -:   20:#define CMDLINE_PARSER_H
+        -:   21:
+        -:   22:#include <string>
+        -:   23:#include <vector>
+        -:   24:
+        -:   25:class Settings;
+        -:   26:
+        -:   27:/// @addtogroup CLI
+        -:   28:/// @{
+        -:   29:
+        -:   30:/**
+        -:   31: * @brief The command line parser.
+        -:   32: * The command line parser parses options and parameters user gives to
+        -:   33: * cppcheck command line.
+        -:   34: *
+        -:   35: * The parser takes a pointer to Settings instance which it will update
+        -:   36: * based on options user has given. Couple of options are handled as
+        -:   37: * class internal options.
+        -:   38: */
+function _ZN13CmdLineParserD2Ev called 0 returned 0% blocks executed 0%
+    #####:   39:class CmdLineParser {
+call    0 never executed
+call    1 never executed
+        -:   40:public:
+        -:   41:    /**
+        -:   42:     * The constructor.
+        -:   43:     * @param settings Settings instance that will be modified according to
+        -:   44:     * options user has given.
+        -:   45:     */
+        -:   46:    explicit CmdLineParser(Settings *settings);
+        -:   47:
+        -:   48:    /**
+        -:   49:     * Parse given command line.
+        -:   50:     * @return true if command line was ok, false if there was an error.
+        -:   51:     */
+        -:   52:    bool parseFromArgs(int argc, const char* const argv[]);
+        -:   53:
+        -:   54:    /**
+        -:   55:     * Return if user wanted to see program version.
+        -:   56:     */
+function _ZNK13CmdLineParser14getShowVersionEv called 0 returned 0% blocks executed 0%
+    #####:   57:    bool getShowVersion() const {
+    #####:   58:        return mShowVersion;
+        -:   59:    }
+        -:   60:
+        -:   61:    /**
+        -:   62:     * Return if user wanted to see list of error messages.
+        -:   63:     */
+function _ZNK13CmdLineParser20getShowErrorMessagesEv called 0 returned 0% blocks executed 0%
+    #####:   64:    bool getShowErrorMessages() const {
+    #####:   65:        return mShowErrorMessages;
+        -:   66:    }
+        -:   67:
+        -:   68:    /**
+        -:   69:     * Return the path names user gave to command line.
+        -:   70:     */
+function _ZNK13CmdLineParser12getPathNamesB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   71:    const std::vector<std::string>& getPathNames() const {
+    #####:   72:        return mPathNames;
+        -:   73:    }
+        -:   74:
+        -:   75:    /**
+        -:   76:     * Return if help is shown to user.
+        -:   77:     */
+        -:   78:    bool getShowHelp() const {
+        -:   79:        return mShowHelp;
+        -:   80:    }
+        -:   81:
+        -:   82:    /**
+        -:   83:     * Return if we should exit after printing version, help etc.
+        -:   84:     */
+function _ZNK13CmdLineParser17exitAfterPrintingEv called 0 returned 0% blocks executed 0%
+    #####:   85:    bool exitAfterPrinting() const {
+    #####:   86:        return mExitAfterPrint;
+        -:   87:    }
+        -:   88:
+        -:   89:    /**
+        -:   90:     * Return a list of paths user wants to ignore.
+        -:   91:     */
+function _ZNK13CmdLineParser15getIgnoredPathsB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   92:    const std::vector<std::string>& getIgnoredPaths() const {
+    #####:   93:        return mIgnoredPaths;
+        -:   94:    }
+        -:   95:
+        -:   96:protected:
+        -:   97:
+        -:   98:    /**
+        -:   99:     * Print help text to the console.
+        -:  100:     */
+        -:  101:    static void printHelp();
+        -:  102:
+        -:  103:    /**
+        -:  104:     * Print message (to console?).
+        -:  105:     */
+        -:  106:    static void printMessage(const std::string &message);
+        -:  107:    static void printMessage(const char* message);
+        -:  108:
+        -:  109:private:
+        -:  110:    std::vector<std::string> mPathNames;
+        -:  111:    std::vector<std::string> mIgnoredPaths;
+        -:  112:    Settings *mSettings;
+        -:  113:    bool mShowHelp;
+        -:  114:    bool mShowVersion;
+        -:  115:    bool mShowErrorMessages;
+        -:  116:    bool mExitAfterPrint;
+        -:  117:};
+        -:  118:
+        -:  119:/// @}
+        -:  120:
+        -:  121:#endif // CMDLINE_PARSER_H

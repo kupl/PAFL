@@ -1,0 +1,398 @@
+        -:    0:Source:/home/workspace/lib/checkio.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkio.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkio.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef checkioH
+        -:   21:#define checkioH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "check.h"
+        -:   25:#include "config.h"
+        -:   26:#include "errorlogger.h"
+        -:   27:
+        -:   28:#include <ostream>
+        -:   29:#include <string>
+        -:   30:
+        -:   31:class Function;
+        -:   32:class Settings;
+        -:   33:class Token;
+        -:   34:class Tokenizer;
+        -:   35:class Variable;
+        -:   36:
+        -:   37:/// @addtogroup Checks
+        -:   38:/// @{
+        -:   39:
+        -:   40:/** @brief %Check input output operations. */
+function _ZN7CheckIOD0Ev called 0 returned 0% blocks executed 0%
+function _ZN7CheckIOD2Ev called 0 returned 0% blocks executed 0%
+    #####:   41:class CPPCHECKLIB CheckIO : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   42:public:
+        -:   43:    /** @brief This constructor is used when registering CheckIO */
+function _ZN7CheckIOC2Ev called 1 returned 100% blocks executed 71%
+        1:   44:    CheckIO() : Check(myName()) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        1:   45:    }
+        -:   46:
+        -:   47:    /** @brief This constructor is used when running checks. */
+function _ZN7CheckIOC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   48:    CheckIO(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:   49:        : Check(myName(), tokenizer, settings, errorLogger) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   50:    }
+        -:   51:
+        -:   52:    /** @brief Run checks on the normal token list */
+function _ZN7CheckIO9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   53:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:   54:        CheckIO checkIO(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:   55:
+    #####:   56:        checkIO.checkWrongPrintfScanfArguments();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   57:        checkIO.checkCoutCerrMisusage();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   58:        checkIO.checkFileUsage();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   59:        checkIO.invalidScanf();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   60:    }
+        -:   61:
+        -:   62:    /** @brief %Check for missusage of std::cout */
+        -:   63:    void checkCoutCerrMisusage();
+        -:   64:
+        -:   65:    /** @brief %Check usage of files*/
+        -:   66:    void checkFileUsage();
+        -:   67:
+        -:   68:    /** @brief scanf can crash if width specifiers are not used */
+        -:   69:    void invalidScanf();
+        -:   70:
+        -:   71:    /** @brief %Checks type and number of arguments given to functions like printf or scanf*/
+        -:   72:    void checkWrongPrintfScanfArguments();
+        -:   73:
+        -:   74:private:
+        -:   75:    class ArgumentInfo {
+        -:   76:    public:
+        -:   77:        ArgumentInfo(const Token *arg, const Settings *settings, bool _isCPP);
+        -:   78:        ~ArgumentInfo();
+        -:   79:
+        -:   80:        bool isArrayOrPointer() const;
+        -:   81:        bool isComplexType() const;
+        -:   82:        bool isKnownType() const;
+        -:   83:        bool isStdVectorOrString();
+        -:   84:        bool isStdContainer(const Token *tok);
+        -:   85:        bool isLibraryType(const Settings *settings) const;
+        -:   86:
+        -:   87:        const Variable *variableInfo;
+        -:   88:        const Token *typeToken;
+        -:   89:        const Function *functionInfo;
+        -:   90:        Token *tempToken;
+        -:   91:        bool element;
+        -:   92:        bool _template;
+        -:   93:        bool address;
+        -:   94:        bool isCPP;
+        -:   95:
+        -:   96:    private:
+        -:   97:        ArgumentInfo(const ArgumentInfo &); // not implemented
+        -:   98:        ArgumentInfo operator = (const ArgumentInfo &); // not implemented
+        -:   99:    };
+        -:  100:
+        -:  101:    void checkFormatString(const Token * const tok,
+        -:  102:                           const Token * const formatStringTok,
+        -:  103:                           const Token *       argListTok,
+        -:  104:                           const bool scan,
+        -:  105:                           const bool scanf_s);
+        -:  106:
+        -:  107:    // Reporting errors..
+        -:  108:    void coutCerrMisusageError(const Token* tok, const std::string& streamName);
+        -:  109:    void fflushOnInputStreamError(const Token *tok, const std::string &varname);
+        -:  110:    void ioWithoutPositioningError(const Token *tok);
+        -:  111:    void readWriteOnlyFileError(const Token *tok);
+        -:  112:    void writeReadOnlyFileError(const Token *tok);
+        -:  113:    void useClosedFileError(const Token *tok);
+        -:  114:    void seekOnAppendedFileError(const Token *tok);
+        -:  115:    void invalidScanfError(const Token *tok);
+        -:  116:    void wrongPrintfScanfArgumentsError(const Token* tok,
+        -:  117:                                        const std::string &functionName,
+        -:  118:                                        nonneg int numFormat,
+        -:  119:                                        nonneg int numFunction);
+        -:  120:    void wrongPrintfScanfPosixParameterPositionError(const Token* tok, const std::string& functionName,
+        -:  121:            nonneg int index, nonneg int numFunction);
+        -:  122:    void invalidScanfArgTypeError_s(const Token* tok, nonneg int numFormat, const std::string& specifier, const ArgumentInfo* argInfo);
+        -:  123:    void invalidScanfArgTypeError_int(const Token* tok, nonneg int numFormat, const std::string& specifier, const ArgumentInfo* argInfo, bool isUnsigned);
+        -:  124:    void invalidScanfArgTypeError_float(const Token* tok, nonneg int numFormat, const std::string& specifier, const ArgumentInfo* argInfo);
+        -:  125:    void invalidPrintfArgTypeError_s(const Token* tok, nonneg int numFormat, const ArgumentInfo* argInfo);
+        -:  126:    void invalidPrintfArgTypeError_n(const Token* tok, nonneg int numFormat, const ArgumentInfo* argInfo);
+        -:  127:    void invalidPrintfArgTypeError_p(const Token* tok, nonneg int numFormat, const ArgumentInfo* argInfo);
+        -:  128:    void invalidPrintfArgTypeError_uint(const Token* tok, nonneg int numFormat, const std::string& specifier, const ArgumentInfo* argInfo);
+        -:  129:    void invalidPrintfArgTypeError_sint(const Token* tok, nonneg int numFormat, const std::string& specifier, const ArgumentInfo* argInfo);
+        -:  130:    void invalidPrintfArgTypeError_float(const Token* tok, nonneg int numFormat, const std::string& specifier, const ArgumentInfo* argInfo);
+        -:  131:    void invalidLengthModifierError(const Token* tok, nonneg int numFormat, const std::string& modifier);
+        -:  132:    void invalidScanfFormatWidthError(const Token* tok, nonneg int numFormat, int width, const Variable *var, char c);
+        -:  133:    static void argumentType(std::ostream & os, const ArgumentInfo * argInfo);
+        -:  134:    static Severity::SeverityType getSeverity(const ArgumentInfo *argInfo);
+        -:  135:
+function _ZNK7CheckIO16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  136:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:  137:        CheckIO c(nullptr, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  138:
+    #####:  139:        c.coutCerrMisusageError(nullptr,  "cout");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  140:        c.fflushOnInputStreamError(nullptr,  "stdin");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  141:        c.ioWithoutPositioningError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  142:        c.readWriteOnlyFileError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  143:        c.writeReadOnlyFileError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  144:        c.useClosedFileError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  145:        c.seekOnAppendedFileError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  146:        c.invalidScanfError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  147:        c.wrongPrintfScanfArgumentsError(nullptr, "printf",3,2);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  148:        c.invalidScanfArgTypeError_s(nullptr,  1, "s", nullptr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  149:        c.invalidScanfArgTypeError_int(nullptr,  1, "d", nullptr, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  150:        c.invalidScanfArgTypeError_float(nullptr,  1, "f", nullptr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  151:        c.invalidPrintfArgTypeError_s(nullptr,  1, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  152:        c.invalidPrintfArgTypeError_n(nullptr,  1, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  153:        c.invalidPrintfArgTypeError_p(nullptr,  1, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  154:        c.invalidPrintfArgTypeError_uint(nullptr,  1, "u", nullptr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  155:        c.invalidPrintfArgTypeError_sint(nullptr,  1, "i", nullptr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  156:        c.invalidPrintfArgTypeError_float(nullptr,  1, "f", nullptr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  157:        c.invalidLengthModifierError(nullptr,  1, "I");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  158:        c.invalidScanfFormatWidthError(nullptr,  10, 5, nullptr, 's');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  159:        c.invalidScanfFormatWidthError(nullptr,  99, -1, nullptr, 's');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  160:        c.wrongPrintfScanfPosixParameterPositionError(nullptr,  "printf", 2, 1);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  161:    }
+        -:  162:
+function _ZN7CheckIO6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  163:    static std::string myName() {
+    #####:  164:        return "IO using format string";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  165:    }
+        -:  166:
+function _ZNK7CheckIO9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  167:    std::string classInfo() const OVERRIDE {
+        -:  168:        return "Check format string input/output operations.\n"
+        -:  169:               "- Bad usage of the function 'sprintf' (overlapping data)\n"
+        -:  170:               "- Missing or wrong width specifiers in 'scanf' format string\n"
+        -:  171:               "- Use a file that has been closed\n"
+        -:  172:               "- File input/output without positioning results in undefined behaviour\n"
+        -:  173:               "- Read to a file that has only been opened for writing (or vice versa)\n"
+        -:  174:               "- Repositioning operation on a file opened in append mode\n"
+        -:  175:               "- Using fflush() on an input stream\n"
+        -:  176:               "- Invalid usage of output stream. For example: 'std::cout << std::cout;'\n"
+    #####:  177:               "- Wrong number of arguments given to 'printf' or 'scanf;'\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  178:    }
+        -:  179:};
+        -:  180:/// @}
+        -:  181://---------------------------------------------------------------------------
+        -:  182:#endif // checkioH

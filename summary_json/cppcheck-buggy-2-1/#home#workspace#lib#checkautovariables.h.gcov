@@ -1,0 +1,249 @@
+        -:    0:Source:/home/workspace/lib/checkautovariables.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkautovariables.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkautovariables.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#ifndef checkautovariablesH
+        -:   22:#define checkautovariablesH
+        -:   23://---------------------------------------------------------------------------
+        -:   24:
+        -:   25:#include "check.h"
+        -:   26:#include "config.h"
+        -:   27:
+        -:   28:#include <string>
+        -:   29:
+        -:   30:class ErrorLogger;
+        -:   31:class Settings;
+        -:   32:class Token;
+        -:   33:class Tokenizer;
+        -:   34:
+        -:   35:/// @addtogroup Checks
+        -:   36:/** @brief Various small checks for automatic variables */
+        -:   37:/// @{
+        -:   38:
+        -:   39:
+function _ZN18CheckAutoVariablesD0Ev called 0 returned 0% blocks executed 0%
+function _ZN18CheckAutoVariablesD2Ev called 0 returned 0% blocks executed 0%
+    #####:   40:class CPPCHECKLIB CheckAutoVariables : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   41:public:
+        -:   42:    /** This constructor is used when registering the CheckClass */
+function _ZN18CheckAutoVariablesC2Ev called 0 returned 0% blocks executed 0%
+    #####:   43:    CheckAutoVariables() : Check(myName()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   44:    }
+        -:   45:
+        -:   46:    /** This constructor is used when running checks. */
+function _ZN18CheckAutoVariablesC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   47:    CheckAutoVariables(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:   48:        : Check(myName(), tokenizer, settings, errorLogger) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   49:    }
+        -:   50:
+        -:   51:    /** @brief Run checks against the normal token list */
+function _ZN18CheckAutoVariables9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   52:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:   53:        CheckAutoVariables checkAutoVariables(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   54:        checkAutoVariables.assignFunctionArg();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   55:        checkAutoVariables.checkVarLifetime();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   56:        checkAutoVariables.autoVariables();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   57:    }
+        -:   58:
+        -:   59:    /** assign function argument */
+        -:   60:    void assignFunctionArg();
+        -:   61:
+        -:   62:    /** Check auto variables */
+        -:   63:    void autoVariables();
+        -:   64:
+        -:   65:    void checkVarLifetime();
+        -:   66:
+        -:   67:    void checkVarLifetimeScope(const Token * start, const Token * end);
+        -:   68:
+        -:   69:private:
+        -:   70:    void errorReturnAddressToAutoVariable(const Token *tok);
+        -:   71:    void errorReturnAddressToAutoVariable(const Token *tok, const ValueFlow::Value *value);
+        -:   72:    void errorReturnPointerToLocalArray(const Token *tok);
+        -:   73:    void errorAutoVariableAssignment(const Token *tok, bool inconclusive);
+        -:   74:    void errorReturnDanglingLifetime(const Token *tok, const ValueFlow::Value* val);
+        -:   75:    void errorInvalidLifetime(const Token *tok, const ValueFlow::Value* val);
+        -:   76:    void errorDanglngLifetime(const Token *tok, const ValueFlow::Value *val);
+        -:   77:    void errorDanglingTemporaryLifetime(const Token* tok, const ValueFlow::Value* val);
+        -:   78:    void errorReturnReference(const Token* tok, ErrorPath errorPath, bool inconclusive);
+        -:   79:    void errorDanglingReference(const Token *tok, const Variable *var, ErrorPath errorPath);
+        -:   80:    void errorReturnTempReference(const Token* tok, ErrorPath errorPath, bool inconclusive);
+        -:   81:    void errorInvalidDeallocation(const Token *tok, const ValueFlow::Value *val);
+        -:   82:    void errorReturnAddressOfFunctionParameter(const Token *tok, const std::string &varname);
+        -:   83:    void errorUselessAssignmentArg(const Token *tok);
+        -:   84:    void errorUselessAssignmentPtrArg(const Token *tok);
+        -:   85:
+function _ZNK18CheckAutoVariables16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:   86:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:   87:        ErrorPath errorPath;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   88:        CheckAutoVariables c(nullptr,settings,errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   89:        c.errorAutoVariableAssignment(nullptr, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   90:        c.errorReturnAddressToAutoVariable(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   91:        c.errorReturnPointerToLocalArray(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   92:        c.errorReturnReference(nullptr, errorPath, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:   93:        c.errorDanglingReference(nullptr, nullptr, errorPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:   94:        c.errorReturnTempReference(nullptr, errorPath, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:   95:        c.errorInvalidDeallocation(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   96:        c.errorReturnAddressOfFunctionParameter(nullptr, "parameter");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   97:        c.errorUselessAssignmentArg(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   98:        c.errorUselessAssignmentPtrArg(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   99:        c.errorReturnDanglingLifetime(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  100:        c.errorInvalidLifetime(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  101:        c.errorDanglngLifetime(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  102:        c.errorDanglingTemporaryLifetime(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  103:    }
+        -:  104:
+function _ZN18CheckAutoVariables6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  105:    static std::string myName() {
+    #####:  106:        return "Auto Variables";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  107:    }
+        -:  108:
+function _ZNK18CheckAutoVariables9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  109:    std::string classInfo() const OVERRIDE {
+        -:  110:        return "A pointer to a variable is only valid as long as the variable is in scope.\n"
+        -:  111:               "Check:\n"
+        -:  112:               "- returning a pointer to auto or temporary variable\n"
+        -:  113:               "- assigning address of an variable to an effective parameter of a function\n"
+        -:  114:               "- returning reference to local/temporary variable\n"
+        -:  115:               "- returning address of function parameter\n"
+        -:  116:               "- suspicious assignment of pointer argument\n"
+    #####:  117:               "- useless assignment of function argument\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  118:    }
+        -:  119:};
+        -:  120:/// @}
+        -:  121://---------------------------------------------------------------------------
+        -:  122:#endif // checkautovariablesH

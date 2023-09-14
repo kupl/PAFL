@@ -1,0 +1,143 @@
+        -:    0:Source:/home/workspace/cli/main.cpp
+        -:    0:Graph:/home/workspace/build/cli/CMakeFiles/cppcheck.dir/main.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20:/**
+        -:   21: *
+        -:   22: * @mainpage Cppcheck
+        -:   23: * @version 1.89.99
+        -:   24: *
+        -:   25: * @section overview_sec Overview
+        -:   26: * Cppcheck is a simple tool for static analysis of C/C++ code.
+        -:   27: *
+        -:   28: * When you write a checker you have access to:
+        -:   29: *  - %Token list - the tokenized code
+        -:   30: *  - Syntax tree - Syntax tree of each expression
+        -:   31: *  - %SymbolDatabase - Information about all types/variables/functions/etc
+        -:   32: *    in the current translation unit
+        -:   33: *  - Library - Configuration of functions/types
+        -:   34: *  - Value flow analysis - Data flow analysis that determine possible values for each token
+        -:   35: *
+        -:   36: * Use --debug-normal on the command line to see debug output for the token list
+        -:   37: * and the syntax tree. If both --debug-normal and --verbose is used, the symbol
+        -:   38: * database is also written.
+        -:   39: *
+        -:   40: * The checks are written in C++.
+        -:   41: *
+        -:   42: * @section detailed_overview_sec Detailed overview
+        -:   43: * This happens when you execute cppcheck from the command line:
+        -:   44: * -# CppCheckExecutor::check this function executes the Cppcheck
+        -:   45: * -# CmdLineParser::parseFromArgs parse command line arguments
+        -:   46: *   - The Settings class is used to maintain settings
+        -:   47: *   - Use FileLister and command line arguments to get files to check
+        -:   48: * -# ThreadExecutor create more instances of CppCheck if needed
+        -:   49: * -# CppCheck::check is called for each file. It checks a single file
+        -:   50: * -# Preprocess the file (through Preprocessor)
+        -:   51: *   - Comments are removed
+        -:   52: *   - Macros are expanded
+        -:   53: * -# Tokenize the file (see Tokenizer)
+        -:   54: * -# Run the runChecks of all check classes.
+        -:   55: * -# Simplify the tokenlist (Tokenizer::simplifyTokenList2)
+        -:   56: * -# Run the runSimplifiedChecks of all check classes
+        -:   57: *
+        -:   58: * When errors are found, they are reported back to the CppCheckExecutor through the ErrorLogger interface.
+        -:   59: */
+        -:   60:
+        -:   61:
+        -:   62:#include "cppcheckexecutor.h"
+        -:   63:
+        -:   64:#include <iostream>
+        -:   65:
+        -:   66:#ifdef _WIN32
+        -:   67:#include <windows.h>
+        -:   68:
+        -:   69:static char exename[1024] = {0};
+        -:   70:#endif
+        -:   71:
+        -:   72:/**
+        -:   73: * Main function of cppcheck
+        -:   74: *
+        -:   75: * @param argc Passed to CppCheck::parseFromArgs()
+        -:   76: * @param argv Passed to CppCheck::parseFromArgs()
+        -:   77: * @return What CppCheckExecutor::check() returns.
+        -:   78: */
+function main called 0 returned 0% blocks executed 0%
+    #####:   79:int main(int argc, char* argv[])
+        -:   80:{
+        -:   81:    // MS Visual C++ memory leak debug tracing
+        -:   82:#if defined(_MSC_VER) && defined(_DEBUG)
+        -:   83:    _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
+        -:   84:#endif
+        -:   85:
+    #####:   86:    CppCheckExecutor exec;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:   87:#ifdef _WIN32
+        -:   88:    GetModuleFileNameA(nullptr, exename, sizeof(exename)/sizeof(exename[0])-1);
+        -:   89:    argv[0] = exename;
+        -:   90:#endif
+        -:   91:
+        -:   92:#ifdef NDEBUG
+        -:   93:    try {
+        -:   94:#endif
+    #####:   95:        return exec.check(argc, argv);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   96:#ifdef NDEBUG
+        -:   97:    } catch (const InternalError& e) {
+        -:   98:        std::cout << e.errorMessage << std::endl;
+        -:   99:    } catch (const std::exception& error) {
+        -:  100:        std::cout << error.what() << std::endl;
+        -:  101:    } catch (...) {
+        -:  102:        std::cout << "Unknown exception" << std::endl;
+        -:  103:    }
+        -:  104:    return EXIT_FAILURE;
+        -:  105:#endif
+function _GLOBAL__sub_I_main called 0 returned 0% blocks executed 0%
+function _Z41__static_initialization_and_destruction_0ii called 0 returned 0% blocks executed 0%
+    #####:  106:}
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  107:
+        -:  108:
+        -:  109:// Warn about deprecated compilers
+        -:  110:#ifdef __clang__
+        -:  111:#   if ( __clang_major__ < 2 || ( __clang_major__  == 2 && __clang_minor__ < 9))
+        -:  112:#       warning "Using Clang 2.8 or earlier. Support for this version has been removed."
+        -:  113:#   endif
+        -:  114:#elif defined(__GNUC__)
+        -:  115:#   if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6))
+        -:  116:#       warning "Using GCC 4.5 or earlier. Support for this version has been removed."
+        -:  117:#   endif
+        -:  118:#elif defined(_MSC_VER)
+        -:  119:#   if (_MSC_VER < 1800)
+        -:  120:#       pragma message("WARNING: Using Visual Studio 2012 or earlier. Support for this version has been removed.")
+        -:  121:#   endif
+        -:  122:#endif

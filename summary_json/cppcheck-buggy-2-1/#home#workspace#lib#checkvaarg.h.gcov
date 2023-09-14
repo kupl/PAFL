@@ -1,0 +1,212 @@
+        -:    0:Source:/home/workspace/lib/checkvaarg.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkvaarg.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkvaarg.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#ifndef checkvaargtH
+        -:   22:#define checkvaargtH
+        -:   23://---------------------------------------------------------------------------
+        -:   24:
+        -:   25:#include "check.h"
+        -:   26:#include "config.h"
+        -:   27:
+        -:   28:#include <string>
+        -:   29:
+        -:   30:class ErrorLogger;
+        -:   31:class Settings;
+        -:   32:class Token;
+        -:   33:class Tokenizer;
+        -:   34:
+        -:   35:/// @addtogroup Checks
+        -:   36:/// @{
+        -:   37:
+        -:   38:/**
+        -:   39: * @brief Checking for misusage of variable argument lists
+        -:   40: */
+        -:   41:
+function _ZN10CheckVaargD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10CheckVaargD2Ev called 0 returned 0% blocks executed 0%
+    #####:   42:class CPPCHECKLIB CheckVaarg : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   43:public:
+function _ZN10CheckVaargC2Ev called 0 returned 0% blocks executed 0%
+    #####:   44:    CheckVaarg() : Check(myName()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   45:    }
+        -:   46:
+function _ZN10CheckVaargC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   47:    CheckVaarg(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:   48:        : Check(myName(), tokenizer, settings, errorLogger) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   49:    }
+        -:   50:
+function _ZN10CheckVaarg9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   51:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:   52:        CheckVaarg check(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   53:        check.va_start_argument();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   54:        check.va_list_usage();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   55:    }
+        -:   56:
+        -:   57:    void va_start_argument();
+        -:   58:    void va_list_usage();
+        -:   59:
+        -:   60:private:
+        -:   61:    void wrongParameterTo_va_start_error(const Token *tok, const std::string& paramIsName, const std::string& paramShouldName);
+        -:   62:    void referenceAs_va_start_error(const Token *tok, const std::string& paramName);
+        -:   63:    void va_end_missingError(const Token *tok, const std::string& varname);
+        -:   64:    void va_list_usedBeforeStartedError(const Token *tok, const std::string& varname);
+        -:   65:    void va_start_subsequentCallsError(const Token *tok, const std::string& varname);
+        -:   66:
+function _ZNK10CheckVaarg16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:   67:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:   68:        CheckVaarg c(nullptr, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   69:        c.wrongParameterTo_va_start_error(nullptr, "arg1", "arg2");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:   70:        c.referenceAs_va_start_error(nullptr, "arg1");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   71:        c.va_end_missingError(nullptr, "vl");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   72:        c.va_list_usedBeforeStartedError(nullptr, "vl");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   73:        c.va_start_subsequentCallsError(nullptr, "vl");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   74:    }
+        -:   75:
+function _ZN10CheckVaarg6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   76:    static std::string myName() {
+    #####:   77:        return "Vaarg";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:   78:    }
+        -:   79:
+function _ZNK10CheckVaarg9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   80:    std::string classInfo() const OVERRIDE {
+        -:   81:        return "Check for misusage of variable argument lists:\n"
+        -:   82:               "- Wrong parameter passed to va_start()\n"
+        -:   83:               "- Reference passed to va_start()\n"
+        -:   84:               "- Missing va_end()\n"
+        -:   85:               "- Using va_list before it is opened\n"
+    #####:   86:               "- Subsequent calls to va_start/va_copy()\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:   87:    }
+        -:   88:};
+        -:   89:
+        -:   90:/// @}
+        -:   91:
+        -:   92://---------------------------------------------------------------------------
+        -:   93:#endif // checkvaargtH

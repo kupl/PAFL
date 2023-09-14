@@ -1,0 +1,700 @@
+        -:    0:Source:/usr/include/c++/7/debug/set.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:// Debugging set implementation -*- C++ -*-
+        -:    2:
+        -:    3:// Copyright (C) 2003-2017 Free Software Foundation, Inc.
+        -:    4://
+        -:    5:// This file is part of the GNU ISO C++ Library.  This library is free
+        -:    6:// software; you can redistribute it and/or modify it under the
+        -:    7:// terms of the GNU General Public License as published by the
+        -:    8:// Free Software Foundation; either version 3, or (at your option)
+        -:    9:// any later version.
+        -:   10:
+        -:   11:// This library is distributed in the hope that it will be useful,
+        -:   12:// but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   13:// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   14:// GNU General Public License for more details.
+        -:   15:
+        -:   16:// Under Section 7 of GPL version 3, you are granted additional
+        -:   17:// permissions described in the GCC Runtime Library Exception, version
+        -:   18:// 3.1, as published by the Free Software Foundation.
+        -:   19:
+        -:   20:// You should have received a copy of the GNU General Public License and
+        -:   21:// a copy of the GCC Runtime Library Exception along with this program;
+        -:   22:// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+        -:   23:// <http://www.gnu.org/licenses/>.
+        -:   24:
+        -:   25:/** @file debug/set.h
+        -:   26: *  This file is a GNU debug extension to the Standard C++ Library.
+        -:   27: */
+        -:   28:
+        -:   29:#ifndef _GLIBCXX_DEBUG_SET_H
+        -:   30:#define _GLIBCXX_DEBUG_SET_H 1
+        -:   31:
+        -:   32:#include <debug/safe_sequence.h>
+        -:   33:#include <debug/safe_container.h>
+        -:   34:#include <debug/safe_iterator.h>
+        -:   35:#include <utility>
+        -:   36:
+        -:   37:namespace std _GLIBCXX_VISIBILITY(default)
+        -:   38:{
+        -:   39:namespace __debug
+        -:   40:{
+        -:   41:  /// Class std::set with safety/checking/debug instrumentation.
+        -:   42:  template<typename _Key, typename _Compare = std::less<_Key>,
+        -:   43:	   typename _Allocator = std::allocator<_Key> >
+        -:   44:    class set
+        -:   45:    : public __gnu_debug::_Safe_container<
+        -:   46:	set<_Key, _Compare, _Allocator>, _Allocator,
+        -:   47:	__gnu_debug::_Safe_node_sequence>,
+        -:   48:      public _GLIBCXX_STD_C::set<_Key,_Compare,_Allocator>
+        -:   49:    {
+        -:   50:      typedef _GLIBCXX_STD_C::set<_Key, _Compare, _Allocator>	_Base;
+        -:   51:      typedef __gnu_debug::_Safe_container<
+        -:   52:	set, _Allocator, __gnu_debug::_Safe_node_sequence>	_Safe;
+        -:   53:
+        -:   54:      typedef typename _Base::const_iterator	_Base_const_iterator;
+        -:   55:      typedef typename _Base::iterator		_Base_iterator;
+        -:   56:      typedef __gnu_debug::_Equal_to<_Base_const_iterator> _Equal;
+        -:   57:
+        -:   58:    public:
+        -:   59:      // types:
+        -:   60:      typedef _Key					key_type;
+        -:   61:      typedef _Key					value_type;
+        -:   62:      typedef _Compare					key_compare;
+        -:   63:      typedef _Compare					value_compare;
+        -:   64:      typedef _Allocator				allocator_type;
+        -:   65:      typedef typename _Base::reference			reference;
+        -:   66:      typedef typename _Base::const_reference		const_reference;
+        -:   67:
+        -:   68:      typedef __gnu_debug::_Safe_iterator<_Base_iterator, set>
+        -:   69:							iterator;
+        -:   70:      typedef __gnu_debug::_Safe_iterator<_Base_const_iterator, set>
+        -:   71:							const_iterator;
+        -:   72:
+        -:   73:      typedef typename _Base::size_type			size_type;
+        -:   74:      typedef typename _Base::difference_type		difference_type;
+        -:   75:      typedef typename _Base::pointer			pointer;
+        -:   76:      typedef typename _Base::const_pointer		const_pointer;
+        -:   77:      typedef std::reverse_iterator<iterator>		reverse_iterator;
+        -:   78:      typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
+        -:   79:
+        -:   80:      // 23.3.3.1 construct/copy/destroy:
+        -:   81:
+        -:   82:#if __cplusplus < 201103L
+        -:   83:      set() : _Base() { }
+        -:   84:
+        -:   85:      set(const set& __x)
+        -:   86:      : _Base(__x) { }
+        -:   87:
+        -:   88:      ~set() { }
+        -:   89:#else
+function _ZNSt7__debug3setIjSt4lessIjESaIjEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug3setIPK5ScopeSt4lessIS3_ESaIS3_EEC2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug3setIiSt4lessIiESaIiEEC2Ev called 0 returned 0% blocks executed 0%
+    #####:   90:      set() = default;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:   91:      set(const set&) = default;
+        -:   92:      set(set&&) = default;
+        -:   93:
+        -:   94:      set(initializer_list<value_type> __l,
+        -:   95:	  const _Compare& __comp = _Compare(),
+        -:   96:	  const allocator_type& __a = allocator_type())
+        -:   97:      : _Base(__l, __comp, __a) { }
+        -:   98:
+        -:   99:      explicit
+        -:  100:      set(const allocator_type& __a)
+        -:  101:      : _Base(__a) { }
+        -:  102:
+        -:  103:      set(const set& __x, const allocator_type& __a)
+        -:  104:      : _Base(__x, __a) { }
+        -:  105:
+        -:  106:      set(set&& __x, const allocator_type& __a)
+        -:  107:      : _Safe(std::move(__x._M_safe()), __a),
+        -:  108:	_Base(std::move(__x._M_base()), __a) { }
+        -:  109:
+        -:  110:      set(initializer_list<value_type> __l, const allocator_type& __a)
+        -:  111:      : _Base(__l, __a) { }
+        -:  112:
+        -:  113:      template<typename _InputIterator>
+        -:  114:	set(_InputIterator __first, _InputIterator __last,
+        -:  115:	    const allocator_type& __a)
+        -:  116:	: _Base(__gnu_debug::__base(__gnu_debug::__check_valid_range(__first,
+        -:  117:								     __last)),
+        -:  118:		__gnu_debug::__base(__last), __a) { }
+        -:  119:
+function _ZNSt7__debug3setIjSt4lessIjESaIjEED2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug3setIPK5ScopeSt4lessIS3_ESaIS3_EED2Ev called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug3setIiSt4lessIiESaIiEED2Ev called 0 returned 0% blocks executed 0%
+    #####:  120:      ~set() = default;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  121:#endif
+        -:  122:
+        -:  123:      explicit set(const _Compare& __comp,
+        -:  124:		   const _Allocator& __a = _Allocator())
+        -:  125:      : _Base(__comp, __a) { }
+        -:  126:
+        -:  127:      template<typename _InputIterator>
+        -:  128:	set(_InputIterator __first, _InputIterator __last,
+        -:  129:	    const _Compare& __comp = _Compare(),
+        -:  130:	    const _Allocator& __a = _Allocator())
+        -:  131:	: _Base(__gnu_debug::__base(__gnu_debug::__check_valid_range(__first,
+        -:  132:								     __last)),
+        -:  133:		__gnu_debug::__base(__last),
+        -:  134:		__comp, __a) { }
+        -:  135:
+        -:  136:      set(const _Base& __x)
+        -:  137:      : _Base(__x) { }
+        -:  138:
+        -:  139:#if __cplusplus < 201103L
+        -:  140:      set&
+        -:  141:      operator=(const set& __x)
+        -:  142:      {
+        -:  143:	this->_M_safe() = __x;
+        -:  144:	_M_base() = __x;
+        -:  145:	return *this;
+        -:  146:      }
+        -:  147:#else
+        -:  148:      set&
+        -:  149:      operator=(const set&) = default;
+        -:  150:
+        -:  151:      set&
+        -:  152:      operator=(set&&) = default;
+        -:  153:
+        -:  154:      set&
+        -:  155:      operator=(initializer_list<value_type> __l)
+        -:  156:      {
+        -:  157:	_M_base() = __l;
+        -:  158:	this->_M_invalidate_all();
+        -:  159:	return *this;
+        -:  160:      }
+        -:  161:#endif
+        -:  162:
+        -:  163:      using _Base::get_allocator;
+        -:  164:
+        -:  165:      // iterators:
+        -:  166:      iterator
+function _ZNSt7__debug3setIiSt4lessIiESaIiEE5beginEv called 0 returned 0% blocks executed 0%
+    #####:  167:      begin() _GLIBCXX_NOEXCEPT
+    #####:  168:      { return iterator(_Base::begin(), this); }
+call    0 never executed
+call    1 never executed
+        -:  169:
+        -:  170:      const_iterator
+        -:  171:      begin() const _GLIBCXX_NOEXCEPT
+        -:  172:      { return const_iterator(_Base::begin(), this); }
+        -:  173:
+        -:  174:      iterator
+function _ZNSt7__debug3setIjSt4lessIjESaIjEE3endEv called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug3setIiSt4lessIiESaIiEE3endEv called 0 returned 0% blocks executed 0%
+    #####:  175:      end() _GLIBCXX_NOEXCEPT
+    #####:  176:      { return iterator(_Base::end(), this); }
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:  177:
+        -:  178:      const_iterator
+function _ZNKSt7__debug3setINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4lessIS6_ESaIS6_EE3endEv called 0 returned 0% blocks executed 0%
+    #####:  179:      end() const _GLIBCXX_NOEXCEPT
+    #####:  180:      { return const_iterator(_Base::end(), this); }
+call    0 never executed
+call    1 never executed
+        -:  181:
+        -:  182:      reverse_iterator
+        -:  183:      rbegin() _GLIBCXX_NOEXCEPT
+        -:  184:      { return reverse_iterator(end()); }
+        -:  185:
+        -:  186:      const_reverse_iterator
+        -:  187:      rbegin() const _GLIBCXX_NOEXCEPT
+        -:  188:      { return const_reverse_iterator(end()); }
+        -:  189:
+        -:  190:      reverse_iterator
+        -:  191:      rend() _GLIBCXX_NOEXCEPT
+        -:  192:      { return reverse_iterator(begin()); }
+        -:  193:
+        -:  194:      const_reverse_iterator
+        -:  195:      rend() const _GLIBCXX_NOEXCEPT
+        -:  196:      { return const_reverse_iterator(begin()); }
+        -:  197:
+        -:  198:#if __cplusplus >= 201103L
+        -:  199:      const_iterator
+        -:  200:      cbegin() const noexcept
+        -:  201:      { return const_iterator(_Base::begin(), this); }
+        -:  202:
+        -:  203:      const_iterator
+        -:  204:      cend() const noexcept
+        -:  205:      { return const_iterator(_Base::end(), this); }
+        -:  206:
+        -:  207:      const_reverse_iterator
+        -:  208:      crbegin() const noexcept
+        -:  209:      { return const_reverse_iterator(end()); }
+        -:  210:
+        -:  211:      const_reverse_iterator
+        -:  212:      crend() const noexcept
+        -:  213:      { return const_reverse_iterator(begin()); }
+        -:  214:#endif
+        -:  215:
+        -:  216:      // capacity:
+        -:  217:      using _Base::empty;
+        -:  218:      using _Base::size;
+        -:  219:      using _Base::max_size;
+        -:  220:
+        -:  221:      // modifiers:
+        -:  222:#if __cplusplus >= 201103L
+        -:  223:      template<typename... _Args>
+        -:  224:	std::pair<iterator, bool>
+        -:  225:	emplace(_Args&&... __args)
+        -:  226:	{
+        -:  227:	  auto __res = _Base::emplace(std::forward<_Args>(__args)...);
+        -:  228:	  return std::pair<iterator, bool>(iterator(__res.first, this),
+        -:  229:					   __res.second);
+        -:  230:	}
+        -:  231:
+        -:  232:      template<typename... _Args>
+        -:  233:	iterator
+        -:  234:	emplace_hint(const_iterator __pos, _Args&&... __args)
+        -:  235:	{
+        -:  236:	  __glibcxx_check_insert(__pos);
+        -:  237:	  return iterator(_Base::emplace_hint(__pos.base(),
+        -:  238:					      std::forward<_Args>(__args)...),
+        -:  239:			  this);
+        -:  240:	}
+        -:  241:#endif
+        -:  242:
+        -:  243:      std::pair<iterator, bool>
+function _ZNSt7__debug3setIPK5ScopeSt4lessIS3_ESaIS3_EE6insertERKS3_ called 0 returned 0% blocks executed 0%
+    #####:  244:      insert(const value_type& __x)
+        -:  245:      {
+    #####:  246:	std::pair<_Base_iterator, bool> __res = _Base::insert(__x);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  247:	return std::pair<iterator, bool>(iterator(__res.first, this),
+    #####:  248:					 __res.second);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  249:      }
+        -:  250:
+        -:  251:#if __cplusplus >= 201103L
+        -:  252:      std::pair<iterator, bool>
+function _ZNSt7__debug3setIjSt4lessIjESaIjEE6insertEOj called 0 returned 0% blocks executed 0%
+function _ZNSt7__debug3setIiSt4lessIiESaIiEE6insertEOi called 0 returned 0% blocks executed 0%
+    #####:  253:      insert(value_type&& __x)
+        -:  254:      {
+    #####:  255:	std::pair<_Base_iterator, bool> __res
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  256:	  = _Base::insert(std::move(__x));
+call    0 never executed
+call    1 never executed
+        -:  257:	return std::pair<iterator, bool>(iterator(__res.first, this),
+    #####:  258:					 __res.second);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  259:      }
+        -:  260:#endif
+        -:  261:
+        -:  262:      iterator
+        -:  263:      insert(const_iterator __position, const value_type& __x)
+        -:  264:      {
+        -:  265:	__glibcxx_check_insert(__position);
+        -:  266:	return iterator(_Base::insert(__position.base(), __x), this);
+        -:  267:      }
+        -:  268:
+        -:  269:#if __cplusplus >= 201103L
+        -:  270:      iterator
+function _ZNSt7__debug3setIiSt4lessIiESaIiEE6insertEN11__gnu_debug14_Safe_iteratorISt23_Rb_tree_const_iteratorIiES4_EEOi called 125 returned 100% blocks executed 47%
+      125:  271:      insert(const_iterator __position, value_type&& __x)
+        -:  272:      {
+      125:  273:	__glibcxx_check_insert(__position);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 returned 100%
+branch  8 taken 0% (fallthrough)
+branch  9 taken 100%
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+      250:  274:	return iterator(_Base::insert(__position.base(), std::move(__x)),
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+      375:  275:			this);
+call    0 returned 100%
+        -:  276:      }
+        -:  277:#endif
+        -:  278:
+        -:  279:      template <typename _InputIterator>
+        -:  280:	void
+        -:  281:	insert(_InputIterator __first, _InputIterator __last)
+        -:  282:	{
+        -:  283:	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+        -:  284:	  __glibcxx_check_valid_range2(__first, __last, __dist);
+        -:  285:
+        -:  286:	  if (__dist.second >= __gnu_debug::__dp_sign)
+        -:  287:	    _Base::insert(__gnu_debug::__unsafe(__first),
+        -:  288:			  __gnu_debug::__unsafe(__last));
+        -:  289:	  else
+        -:  290:	    _Base::insert(__first, __last);
+        -:  291:	}
+        -:  292:
+        -:  293:#if __cplusplus >= 201103L
+        -:  294:      void
+        -:  295:      insert(initializer_list<value_type> __l)
+        -:  296:      { _Base::insert(__l); }
+        -:  297:#endif
+        -:  298:
+        -:  299:#if __cplusplus > 201402L
+        -:  300:      using node_type = typename _Base::node_type;
+        -:  301:
+        -:  302:      struct insert_return_type
+        -:  303:      {
+        -:  304:	bool inserted;
+        -:  305:	iterator position;
+        -:  306:	node_type node;
+        -:  307:      };
+        -:  308:
+        -:  309:      node_type
+        -:  310:      extract(const_iterator __position)
+        -:  311:      {
+        -:  312:	__glibcxx_check_erase(__position);
+        -:  313:	this->_M_invalidate_if(_Equal(__position.base()));
+        -:  314:	return _Base::extract(__position.base());
+        -:  315:      }
+        -:  316:
+        -:  317:      node_type
+        -:  318:      extract(const key_type& __key)
+        -:  319:      {
+        -:  320:	const auto __position = find(__key);
+        -:  321:	if (__position != end())
+        -:  322:	  return extract(__position);
+        -:  323:	return {};
+        -:  324:      }
+        -:  325:
+        -:  326:      insert_return_type
+        -:  327:      insert(node_type&& __nh)
+        -:  328:      {
+        -:  329:	auto __ret = _Base::insert(std::move(__nh));
+        -:  330:	iterator __pos = iterator(__ret.position, this);
+        -:  331:	return { __ret.inserted, __pos, std::move(__ret.node) };
+        -:  332:      }
+        -:  333:
+        -:  334:      iterator
+        -:  335:      insert(const_iterator __hint, node_type&& __nh)
+        -:  336:      {
+        -:  337:	__glibcxx_check_insert(__hint);
+        -:  338:	return iterator(_Base::insert(__hint.base(), std::move(__nh)), this);
+        -:  339:      }
+        -:  340:
+        -:  341:      using _Base::merge;
+        -:  342:#endif // C++17
+        -:  343:
+        -:  344:#if __cplusplus >= 201103L
+        -:  345:      iterator
+        -:  346:      erase(const_iterator __position)
+        -:  347:      {
+        -:  348:	__glibcxx_check_erase(__position);
+        -:  349:	this->_M_invalidate_if(_Equal(__position.base()));
+        -:  350:	return iterator(_Base::erase(__position.base()), this);
+        -:  351:      }
+        -:  352:#else
+        -:  353:      void
+        -:  354:      erase(iterator __position)
+        -:  355:      {
+        -:  356:	__glibcxx_check_erase(__position);
+        -:  357:	this->_M_invalidate_if(_Equal(__position.base()));
+        -:  358:	_Base::erase(__position.base());
+        -:  359:      }
+        -:  360:#endif
+        -:  361:
+        -:  362:      size_type
+        -:  363:      erase(const key_type& __x)
+        -:  364:      {
+        -:  365:	_Base_iterator __victim = _Base::find(__x);
+        -:  366:	if (__victim == _Base::end())
+        -:  367:	  return 0;
+        -:  368:	else
+        -:  369:	  {
+        -:  370:	    this->_M_invalidate_if(_Equal(__victim));
+        -:  371:	    _Base::erase(__victim);
+        -:  372:	    return 1;
+        -:  373:	  }
+        -:  374:      }
+        -:  375:
+        -:  376:#if __cplusplus >= 201103L
+        -:  377:      iterator
+        -:  378:      erase(const_iterator __first, const_iterator __last)
+        -:  379:      {
+        -:  380:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  381:	// 151. can't currently clear() empty container
+        -:  382:	__glibcxx_check_erase_range(__first, __last);
+        -:  383:	for (_Base_const_iterator __victim = __first.base();
+        -:  384:	     __victim != __last.base(); ++__victim)
+        -:  385:	  {
+        -:  386:	    _GLIBCXX_DEBUG_VERIFY(__victim != _Base::end(),
+        -:  387:				  _M_message(__gnu_debug::__msg_valid_range)
+        -:  388:				  ._M_iterator(__first, "first")
+        -:  389:				  ._M_iterator(__last, "last"));
+        -:  390:	    this->_M_invalidate_if(_Equal(__victim));
+        -:  391:	  }
+        -:  392:	return iterator(_Base::erase(__first.base(), __last.base()), this);
+        -:  393:      }
+        -:  394:#else
+        -:  395:      void
+        -:  396:      erase(iterator __first, iterator __last)
+        -:  397:      {
+        -:  398:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  399:	// 151. can't currently clear() empty container
+        -:  400:	__glibcxx_check_erase_range(__first, __last);
+        -:  401:	for (_Base_iterator __victim = __first.base();
+        -:  402:	     __victim != __last.base(); ++__victim)
+        -:  403:	  {
+        -:  404:	    _GLIBCXX_DEBUG_VERIFY(__victim != _Base::end(),
+        -:  405:				  _M_message(__gnu_debug::__msg_valid_range)
+        -:  406:				  ._M_iterator(__first, "first")
+        -:  407:				  ._M_iterator(__last, "last"));
+        -:  408:	    this->_M_invalidate_if(_Equal(__victim));
+        -:  409:	  }
+        -:  410:	_Base::erase(__first.base(), __last.base());
+        -:  411:      }
+        -:  412:#endif
+        -:  413:
+        -:  414:      void
+        -:  415:      swap(set& __x)
+        -:  416:      _GLIBCXX_NOEXCEPT_IF( noexcept(declval<_Base&>().swap(__x)) )
+        -:  417:      {
+        -:  418:	_Safe::_M_swap(__x);
+        -:  419:	_Base::swap(__x);
+        -:  420:      }
+        -:  421:
+        -:  422:      void
+        -:  423:      clear() _GLIBCXX_NOEXCEPT
+        -:  424:      {
+        -:  425:	this->_M_invalidate_all();
+        -:  426:	_Base::clear();
+        -:  427:      }
+        -:  428:
+        -:  429:      // observers:
+        -:  430:      using _Base::key_comp;
+        -:  431:      using _Base::value_comp;
+        -:  432:
+        -:  433:      // set operations:
+        -:  434:      iterator
+function _ZNSt7__debug3setIjSt4lessIjESaIjEE4findERKj called 83 returned 100% blocks executed 100%
+function _ZNSt7__debug3setIiSt4lessIiESaIiEE4findERKi called 0 returned 0% blocks executed 0%
+       83:  435:      find(const key_type& __x)
+       83:  436:      { return iterator(_Base::find(__x), this); }
+call    0 returned 100%
+call    1 returned 100%
+call    2 never executed
+call    3 never executed
+        -:  437:
+        -:  438:      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  439:      // 214. set::find() missing const overload
+        -:  440:      const_iterator
+function _ZNKSt7__debug3setINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4lessIS6_ESaIS6_EE4findERKS6_ called 0 returned 0% blocks executed 0%
+    #####:  441:      find(const key_type& __x) const
+    #####:  442:      { return const_iterator(_Base::find(__x), this); }
+call    0 never executed
+call    1 never executed
+        -:  443:
+        -:  444:#if __cplusplus > 201103L
+        -:  445:      template<typename _Kt,
+        -:  446:	       typename _Req =
+        -:  447:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  448:	iterator
+        -:  449:	find(const _Kt& __x)
+        -:  450:	{ return { _Base::find(__x), this }; }
+        -:  451:
+        -:  452:      template<typename _Kt,
+        -:  453:	       typename _Req =
+        -:  454:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  455:	const_iterator
+        -:  456:	find(const _Kt& __x) const
+        -:  457:	{ return { _Base::find(__x), this }; }
+        -:  458:#endif
+        -:  459:
+        -:  460:      using _Base::count;
+        -:  461:
+        -:  462:      iterator
+        -:  463:      lower_bound(const key_type& __x)
+        -:  464:      { return iterator(_Base::lower_bound(__x), this); }
+        -:  465:
+        -:  466:      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  467:      // 214. set::find() missing const overload
+        -:  468:      const_iterator
+        -:  469:      lower_bound(const key_type& __x) const
+        -:  470:      { return const_iterator(_Base::lower_bound(__x), this); }
+        -:  471:
+        -:  472:#if __cplusplus > 201103L
+        -:  473:      template<typename _Kt,
+        -:  474:	       typename _Req =
+        -:  475:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  476:	iterator
+        -:  477:	lower_bound(const _Kt& __x)
+        -:  478:	{ return { _Base::lower_bound(__x), this }; }
+        -:  479:
+        -:  480:      template<typename _Kt,
+        -:  481:	       typename _Req =
+        -:  482:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  483:	const_iterator
+        -:  484:	lower_bound(const _Kt& __x) const
+        -:  485:	{ return { _Base::lower_bound(__x), this }; }
+        -:  486:#endif
+        -:  487:
+        -:  488:      iterator
+        -:  489:      upper_bound(const key_type& __x)
+        -:  490:      { return iterator(_Base::upper_bound(__x), this); }
+        -:  491:
+        -:  492:      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  493:      // 214. set::find() missing const overload
+        -:  494:      const_iterator
+        -:  495:      upper_bound(const key_type& __x) const
+        -:  496:      { return const_iterator(_Base::upper_bound(__x), this); }
+        -:  497:
+        -:  498:#if __cplusplus > 201103L
+        -:  499:      template<typename _Kt,
+        -:  500:	       typename _Req =
+        -:  501:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  502:	iterator
+        -:  503:	upper_bound(const _Kt& __x)
+        -:  504:	{ return { _Base::upper_bound(__x), this }; }
+        -:  505:
+        -:  506:      template<typename _Kt,
+        -:  507:	       typename _Req =
+        -:  508:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  509:	const_iterator
+        -:  510:	upper_bound(const _Kt& __x) const
+        -:  511:	{ return { _Base::upper_bound(__x), this }; }
+        -:  512:#endif
+        -:  513:
+        -:  514:      std::pair<iterator, iterator>
+        -:  515:      equal_range(const key_type& __x)
+        -:  516:      {
+        -:  517:	std::pair<_Base_iterator, _Base_iterator> __res =
+        -:  518:	_Base::equal_range(__x);
+        -:  519:	return std::make_pair(iterator(__res.first, this),
+        -:  520:			      iterator(__res.second, this));
+        -:  521:      }
+        -:  522:
+        -:  523:      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  524:      // 214. set::find() missing const overload
+        -:  525:      std::pair<const_iterator, const_iterator>
+        -:  526:      equal_range(const key_type& __x) const
+        -:  527:      {
+        -:  528:	std::pair<_Base_const_iterator, _Base_const_iterator> __res =
+        -:  529:	_Base::equal_range(__x);
+        -:  530:	return std::make_pair(const_iterator(__res.first, this),
+        -:  531:			      const_iterator(__res.second, this));
+        -:  532:      }
+        -:  533:
+        -:  534:#if __cplusplus > 201103L
+        -:  535:      template<typename _Kt,
+        -:  536:	       typename _Req =
+        -:  537:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  538:	std::pair<iterator, iterator>
+        -:  539:	equal_range(const _Kt& __x)
+        -:  540:	{
+        -:  541:	  auto __res = _Base::equal_range(__x);
+        -:  542:	  return { { __res.first, this }, { __res.second, this } };
+        -:  543:	}
+        -:  544:
+        -:  545:      template<typename _Kt,
+        -:  546:	       typename _Req =
+        -:  547:		 typename __has_is_transparent<_Compare, _Kt>::type>
+        -:  548:	std::pair<const_iterator, const_iterator>
+        -:  549:	equal_range(const _Kt& __x) const
+        -:  550:	{
+        -:  551:	  auto __res = _Base::equal_range(__x);
+        -:  552:	  return { { __res.first, this }, { __res.second, this } };
+        -:  553:	}
+        -:  554:#endif
+        -:  555:
+        -:  556:      _Base&
+        -:  557:      _M_base() _GLIBCXX_NOEXCEPT	{ return *this; }
+        -:  558:
+        -:  559:      const _Base&
+function _ZNKSt7__debug3setIPK5ScopeSt4lessIS3_ESaIS3_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug3setIjSt4lessIjESaIjEE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug3setIiSt4lessIiESaIiEE7_M_baseEv called 0 returned 0% blocks executed 0%
+function _ZNKSt7__debug3setINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4lessIS6_ESaIS6_EE7_M_baseEv called 0 returned 0% blocks executed 0%
+    #####:  560:      _M_base() const _GLIBCXX_NOEXCEPT	{ return *this; }
+        -:  561:    };
+        -:  562:
+        -:  563:  template<typename _Key, typename _Compare, typename _Allocator>
+        -:  564:    inline bool
+        -:  565:    operator==(const set<_Key, _Compare, _Allocator>& __lhs,
+        -:  566:	       const set<_Key, _Compare, _Allocator>& __rhs)
+        -:  567:    { return __lhs._M_base() == __rhs._M_base(); }
+        -:  568:
+        -:  569:  template<typename _Key, typename _Compare, typename _Allocator>
+        -:  570:    inline bool
+        -:  571:    operator!=(const set<_Key, _Compare, _Allocator>& __lhs,
+        -:  572:	       const set<_Key, _Compare, _Allocator>& __rhs)
+        -:  573:    { return __lhs._M_base() != __rhs._M_base(); }
+        -:  574:
+        -:  575:  template<typename _Key, typename _Compare, typename _Allocator>
+        -:  576:    inline bool
+        -:  577:    operator<(const set<_Key, _Compare, _Allocator>& __lhs,
+        -:  578:	      const set<_Key, _Compare, _Allocator>& __rhs)
+        -:  579:    { return __lhs._M_base() < __rhs._M_base(); }
+        -:  580:
+        -:  581:  template<typename _Key, typename _Compare, typename _Allocator>
+        -:  582:    inline bool
+        -:  583:    operator<=(const set<_Key, _Compare, _Allocator>& __lhs,
+        -:  584:	       const set<_Key, _Compare, _Allocator>& __rhs)
+        -:  585:    { return __lhs._M_base() <= __rhs._M_base(); }
+        -:  586:
+        -:  587:  template<typename _Key, typename _Compare, typename _Allocator>
+        -:  588:    inline bool
+        -:  589:    operator>=(const set<_Key, _Compare, _Allocator>& __lhs,
+        -:  590:	       const set<_Key, _Compare, _Allocator>& __rhs)
+        -:  591:    { return __lhs._M_base() >= __rhs._M_base(); }
+        -:  592:
+        -:  593:  template<typename _Key, typename _Compare, typename _Allocator>
+        -:  594:    inline bool
+        -:  595:    operator>(const set<_Key, _Compare, _Allocator>& __lhs,
+        -:  596:	      const set<_Key, _Compare, _Allocator>& __rhs)
+        -:  597:    { return __lhs._M_base() > __rhs._M_base(); }
+        -:  598:
+        -:  599:  template<typename _Key, typename _Compare, typename _Allocator>
+        -:  600:    void
+        -:  601:    swap(set<_Key, _Compare, _Allocator>& __x,
+        -:  602:	 set<_Key, _Compare, _Allocator>& __y)
+        -:  603:    _GLIBCXX_NOEXCEPT_IF(noexcept(__x.swap(__y)))
+        -:  604:    { return __x.swap(__y); }
+        -:  605:
+        -:  606:} // namespace __debug
+        -:  607:} // namespace std
+        -:  608:
+        -:  609:#endif

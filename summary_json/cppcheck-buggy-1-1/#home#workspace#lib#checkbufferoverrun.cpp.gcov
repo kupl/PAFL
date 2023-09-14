@@ -1,0 +1,2979 @@
+        -:    0:Source:/home/workspace/lib/checkbufferoverrun.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkbufferoverrun.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkbufferoverrun.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:// Buffer overrun..
+        -:   21://---------------------------------------------------------------------------
+        -:   22:
+        -:   23:#include "checkbufferoverrun.h"
+        -:   24:
+        -:   25:#include "astutils.h"
+        -:   26:#include "library.h"
+        -:   27:#include "mathlib.h"
+        -:   28:#include "settings.h"
+        -:   29:#include "symboldatabase.h"
+        -:   30:#include "token.h"
+        -:   31:#include "tokenize.h"
+        -:   32:#include "tokenlist.h"
+        -:   33:#include "utils.h"
+        -:   34:#include "valueflow.h"
+        -:   35:
+        -:   36:#include <tinyxml2.h>
+        -:   37:#include <algorithm>
+        -:   38:#include <cstdlib>
+        -:   39:#include <numeric> // std::accumulate
+        -:   40:#include <sstream>
+        -:   41:#include <stack>
+        -:   42:#include <utility>
+        -:   43:
+        -:   44://---------------------------------------------------------------------------
+        -:   45:
+        -:   46:// Register this check class (by creating a static instance of it)
+        -:   47:namespace {
+        1:   48:    CheckBufferOverrun instance;
+call    0 returned 100%
+call    1 returned 100%
+        -:   49:}
+        -:   50:
+        -:   51://---------------------------------------------------------------------------
+        -:   52:
+        -:   53:// CWE ids used:
+        1:   54:static const CWE CWE131(131U);  // Incorrect Calculation of Buffer Size
+call    0 returned 100%
+        1:   55:static const CWE CWE170(170U);  // Improper Null Termination
+call    0 returned 100%
+        1:   56:static const CWE CWE_ARRAY_INDEX_THEN_CHECK(398U);  // Indicator of Poor Code Quality
+call    0 returned 100%
+        1:   57:static const CWE CWE682(682U);  // Incorrect Calculation
+call    0 returned 100%
+        1:   58:static const CWE CWE758(758U);  // Reliance on Undefined, Unspecified, or Implementation-Defined Behavior
+call    0 returned 100%
+        1:   59:static const CWE CWE_POINTER_ARITHMETIC_OVERFLOW(758U); // Reliance on Undefined, Unspecified, or Implementation-Defined Behavior
+call    0 returned 100%
+        1:   60:static const CWE CWE_BUFFER_UNDERRUN(786U);  // Access of Memory Location Before Start of Buffer
+call    0 returned 100%
+        1:   61:static const CWE CWE_BUFFER_OVERRUN(788U);   // Access of Memory Location After End of Buffer
+call    0 returned 100%
+        -:   62:
+        -:   63://---------------------------------------------------------------------------
+        -:   64:
+function _ZL18getBufferSizeValuePK5Token called 0 returned 0% blocks executed 0%
+    #####:   65:static const ValueFlow::Value *getBufferSizeValue(const Token *tok)
+        -:   66:{
+    #####:   67:    const std::list<ValueFlow::Value> &tokenValues = tok->values();
+call    0 never executed
+    #####:   68:    const auto it = std::find_if(tokenValues.begin(), tokenValues.end(), std::mem_fn(&ValueFlow::Value::isBufferSizeValue));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:   69:    return it == tokenValues.end() ? nullptr : &*it;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -:   70:}
+        -:   71:
+function _ZL30getMinFormatStringOutputLengthRKNSt7__debug6vectorIPK5TokenSaIS3_EEEi called 0 returned 0% blocks executed 0%
+    #####:   72:static int getMinFormatStringOutputLength(const std::vector<const Token*> &parameters, nonneg int formatStringArgNr)
+        -:   73:{
+    #####:   74:    if (formatStringArgNr <= 0 || formatStringArgNr > parameters.size())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:   75:        return 0;
+    #####:   76:    if (parameters[formatStringArgNr - 1]->tokType() != Token::eString)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   77:        return 0;
+    #####:   78:    const std::string &formatString = parameters[formatStringArgNr - 1]->str();
+call    0 never executed
+call    1 never executed
+    #####:   79:    bool percentCharFound = false;
+    #####:   80:    int outputStringSize = 0;
+    #####:   81:    bool handleNextParameter = false;
+    #####:   82:    std::string digits_string;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   83:    bool i_d_x_f_found = false;
+    #####:   84:    int parameterLength = 0;
+    #####:   85:    int inputArgNr = formatStringArgNr;
+    #####:   86:    for (int i = 1; i + 1 < formatString.length(); ++i) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   87:        if (formatString[i] == '\\') {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   88:            if (i < formatString.length() - 1 && formatString[i + 1] == '0')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   89:                break;
+        -:   90:
+    #####:   91:            ++outputStringSize;
+    #####:   92:            ++i;
+    #####:   93:            continue;
+        -:   94:        }
+        -:   95:
+    #####:   96:        if (percentCharFound) {
+branch  0 never executed
+branch  1 never executed
+    #####:   97:            switch (formatString[i]) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:   98:            case 'f':
+        -:   99:            case 'x':
+        -:  100:            case 'X':
+        -:  101:            case 'i':
+    #####:  102:                i_d_x_f_found = true;
+    #####:  103:                handleNextParameter = true;
+    #####:  104:                parameterLength = 1; // TODO
+    #####:  105:                break;
+    #####:  106:            case 'c':
+        -:  107:            case 'e':
+        -:  108:            case 'E':
+        -:  109:            case 'g':
+        -:  110:            case 'o':
+        -:  111:            case 'u':
+        -:  112:            case 'p':
+        -:  113:            case 'n':
+    #####:  114:                handleNextParameter = true;
+    #####:  115:                parameterLength = 1; // TODO
+    #####:  116:                break;
+    #####:  117:            case 'd':
+    #####:  118:                i_d_x_f_found = true;
+    #####:  119:                parameterLength = 1;
+    #####:  120:                if (inputArgNr < parameters.size() && parameters[inputArgNr]->hasKnownIntValue())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  121:                    parameterLength = MathLib::toString(parameters[inputArgNr]->getKnownIntValue()).length();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+        -:  122:
+    #####:  123:                handleNextParameter = true;
+    #####:  124:                break;
+    #####:  125:            case 's':
+    #####:  126:                parameterLength = 0;
+    #####:  127:                if (inputArgNr < parameters.size() && parameters[inputArgNr]->tokType() == Token::eString)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  128:                    parameterLength = Token::getStrLength(parameters[inputArgNr]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  129:
+    #####:  130:                handleNextParameter = true;
+    #####:  131:                break;
+        -:  132:            }
+        -:  133:        }
+        -:  134:
+    #####:  135:        if (formatString[i] == '%')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  136:            percentCharFound = !percentCharFound;
+    #####:  137:        else if (percentCharFound) {
+branch  0 never executed
+branch  1 never executed
+    #####:  138:            digits_string.append(1, formatString[i]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  139:        }
+        -:  140:
+    #####:  141:        if (!percentCharFound)
+branch  0 never executed
+branch  1 never executed
+    #####:  142:            outputStringSize++;
+        -:  143:
+    #####:  144:        if (handleNextParameter) {
+branch  0 never executed
+branch  1 never executed
+    #####:  145:            int tempDigits = std::abs(std::atoi(digits_string.c_str()));
+call    0 never executed
+    #####:  146:            if (i_d_x_f_found)
+branch  0 never executed
+branch  1 never executed
+    #####:  147:                tempDigits = std::max(tempDigits, 1);
+call    0 never executed
+        -:  148:
+    #####:  149:            if (digits_string.find('.') != std::string::npos) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  150:                const std::string endStr = digits_string.substr(digits_string.find('.') + 1);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  151:                const int maxLen = std::max(std::abs(std::atoi(endStr.c_str())), 1);
+call    0 never executed
+call    1 never executed
+        -:  152:
+    #####:  153:                if (formatString[i] == 's') {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  154:                    // For strings, the length after the dot "%.2s" will limit
+        -:  155:                    // the length of the string.
+    #####:  156:                    if (parameterLength > maxLen)
+branch  0 never executed
+branch  1 never executed
+    #####:  157:                        parameterLength = maxLen;
+        -:  158:                } else {
+        -:  159:                    // For integers, the length after the dot "%.2d" can
+        -:  160:                    // increase required length
+    #####:  161:                    if (tempDigits < maxLen)
+branch  0 never executed
+branch  1 never executed
+    #####:  162:                        tempDigits = maxLen;
+        -:  163:                }
+        -:  164:            }
+        -:  165:
+    #####:  166:            if (tempDigits < parameterLength)
+branch  0 never executed
+branch  1 never executed
+    #####:  167:                outputStringSize += parameterLength;
+        -:  168:            else
+    #####:  169:                outputStringSize += tempDigits;
+        -:  170:
+    #####:  171:            parameterLength = 0;
+    #####:  172:            digits_string.clear();
+call    0 never executed
+    #####:  173:            i_d_x_f_found = false;
+    #####:  174:            percentCharFound = false;
+    #####:  175:            handleNextParameter = false;
+    #####:  176:            ++inputArgNr;
+        -:  177:        }
+        -:  178:    }
+        -:  179:
+    #####:  180:    return outputStringSize;
+        -:  181:}
+        -:  182:
+        -:  183://---------------------------------------------------------------------------
+        -:  184:
+function _ZL16getDimensionsEtcPK5TokenPK8SettingsPNSt7__debug6vectorI9DimensionSaIS7_EEEPNS5_4listISt4pairIS1_NSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISJ_EEEPb called 0 returned 0% blocks executed 0%
+    #####:  185:static bool getDimensionsEtc(const Token * const arrayToken, const Settings *settings, std::vector<Dimension> * const dimensions, ErrorPath * const errorPath, bool * const mightBeLarger)
+        -:  186:{
+    #####:  187:    const Token *array = arrayToken;
+    #####:  188:    while (Token::Match(array, ".|::"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  189:        array = array->astOperand2();
+call    0 never executed
+        -:  190:
+    #####:  191:    if (!array->variable())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  192:        return false;
+        -:  193:
+    #####:  194:    if (array->variable()->isArray() && !array->variable()->dimensions().empty()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  195:        *dimensions = array->variable()->dimensions();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  196:        if (dimensions->size() >= 1 && ((*dimensions)[0].num <= 1 || !(*dimensions)[0].tok)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  197:            visitAstNodes(arrayToken,
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+function _ZZL16getDimensionsEtcPK5TokenPK8SettingsPNSt7__debug6vectorI9DimensionSaIS7_EEEPNS5_4listISt4pairIS1_NSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISJ_EEEPbENKUlS1_E_clES1_ called 0 returned 0% blocks executed 0%
+    #####:  198:            [&](const Token *child) {
+    #####:  199:                if (child->originalName() == "->") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  200:                    *mightBeLarger = true;
+    #####:  201:                    return ChildrenToVisit::none;
+        -:  202:                }
+    #####:  203:                return ChildrenToVisit::op1_and_op2;
+        -:  204:            });
+        -:  205:        }
+    #####:  206:    } else if (const Token *stringLiteral = array->getValueTokenMinStrSize()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  207:        Dimension dim;
+call    0 never executed
+    #####:  208:        dim.tok = nullptr;
+    #####:  209:        dim.num = Token::getStrSize(stringLiteral);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  210:        dim.known = array->hasKnownValue();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  211:        dimensions->emplace_back(dim);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  212:    } else if (array->valueType() && array->valueType()->pointer >= 1 && array->valueType()->isIntegral()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  213:        const ValueFlow::Value *value = getBufferSizeValue(array);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  214:        if (!value)
+branch  0 never executed
+branch  1 never executed
+    #####:  215:            return false;
+    #####:  216:        *errorPath = value->errorPath;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  217:        Dimension dim;
+call    0 never executed
+    #####:  218:        dim.known = value->isKnown();
+call    0 never executed
+    #####:  219:        dim.tok = nullptr;
+    #####:  220:        dim.num = value->intvalue / array->valueType()->typeSize(*settings);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  221:        dimensions->emplace_back(dim);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  222:    }
+    #####:  223:    return !dimensions->empty();
+call    0 never executed
+        -:  224:}
+        -:  225:
+function _ZL21getOverrunIndexValuesPK5TokenS1_RKNSt7__debug6vectorI9DimensionSaIS4_EEERKNS3_IS1_SaIS1_EEE called 0 returned 0% blocks executed 0%
+    #####:  226:static std::vector<const ValueFlow::Value *> getOverrunIndexValues(const Token *tok, const Token *arrayToken, const std::vector<Dimension> &dimensions, const std::vector<const Token *> &indexTokens)
+        -:  227:{
+    #####:  228:    const Token *array = arrayToken;
+    #####:  229:    while (Token::Match(array, ".|::"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  230:        array = array->astOperand2();
+call    0 never executed
+        -:  231:
+    #####:  232:    for (int cond = 0; cond < 2; cond++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  233:        bool equal = false;
+    #####:  234:        bool overflow = false;
+    #####:  235:        bool allKnown = true;
+    #####:  236:        std::vector<const ValueFlow::Value *> indexValues;
+call    0 never executed
+call    1 never executed
+    #####:  237:        for (int i = 0; i < dimensions.size() && i < indexTokens.size(); ++i) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  238:            const ValueFlow::Value *value = indexTokens[i]->getMaxValue(cond == 1);
+call    0 never executed
+call    1 never executed
+    #####:  239:            indexValues.push_back(value);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  240:            if (!value)
+branch  0 never executed
+branch  1 never executed
+    #####:  241:                continue;
+    #####:  242:            if (!value->isKnown()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  243:                if (!allKnown)
+branch  0 never executed
+branch  1 never executed
+    #####:  244:                    continue;
+    #####:  245:                allKnown = false;
+        -:  246:            }
+    #####:  247:            if (array->variable()->isArray() && dimensions[i].num == 0)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  248:                continue;
+    #####:  249:            if (value->intvalue == dimensions[i].num)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  250:                equal = true;
+    #####:  251:            else if (value->intvalue > dimensions[i].num)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  252:                overflow = true;
+        -:  253:        }
+    #####:  254:        if (equal && tok->str() != "[")
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  255:            continue;
+    #####:  256:        if (!overflow && equal) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  257:            const Token *parent = tok;
+    #####:  258:            while (Token::simpleMatch(parent, "["))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  259:                parent = parent->astParent();
+call    0 never executed
+    #####:  260:            if (!parent || parent->isUnaryOp("&"))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+    #####:  261:                continue;
+        -:  262:        }
+    #####:  263:        if (overflow || equal)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  264:            return indexValues;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  265:    }
+        -:  266:
+    #####:  267:    return std::vector<const ValueFlow::Value *>();
+call    0 never executed
+        -:  268:}
+        -:  269:
+function _ZN18CheckBufferOverrun10arrayIndexEv called 0 returned 0% blocks executed 0%
+    #####:  270:void CheckBufferOverrun::arrayIndex()
+        -:  271:{
+    #####:  272:    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  273:        if (tok->str() != "[")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  274:            continue;
+    #####:  275:        const Token *array = tok->astOperand1();
+call    0 never executed
+    #####:  276:        while (Token::Match(array, ".|::"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  277:            array = array->astOperand2();
+call    0 never executed
+    #####:  278:        if (!array|| !array->variable() || array->variable()->nameToken() == array)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  279:            continue;
+    #####:  280:        if (!array->scope()->isExecutable()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  281:            // LHS in non-executable scope => This is just a definition
+    #####:  282:            const Token *parent = tok;
+    #####:  283:            while (parent && !Token::simpleMatch(parent->astParent(), "="))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  284:                parent = parent->astParent();
+call    0 never executed
+    #####:  285:            if (!parent || parent == parent->astParent()->astOperand1())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  286:                continue;
+        -:  287:        }
+        -:  288:
+    #####:  289:        std::vector<const Token *> indexTokens;
+call    0 never executed
+call    1 never executed
+    #####:  290:        for (const Token *tok2 = tok; tok2 && tok2->str() == "["; tok2 = tok2->link()->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  291:            if (!tok2->astOperand2()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  292:                indexTokens.clear();
+call    0 never executed
+    #####:  293:                break;
+        -:  294:            }
+    #####:  295:            indexTokens.emplace_back(tok2->astOperand2());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  296:        }
+    #####:  297:        if (indexTokens.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  298:            continue;
+        -:  299:
+    #####:  300:        std::vector<Dimension> dimensions;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  301:        ErrorPath errorPath;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  302:        bool mightBeLarger = false;
+    #####:  303:        if (!getDimensionsEtc(tok->astOperand1(), mSettings, &dimensions, &errorPath, &mightBeLarger))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  304:            continue;
+        -:  305:
+        -:  306:        // Positive index
+    #####:  307:        if (!mightBeLarger) { // TODO check arrays with dim 1 also
+branch  0 never executed
+branch  1 never executed
+    #####:  308:            const std::vector<const ValueFlow::Value *> &indexValues = getOverrunIndexValues(tok, tok->astOperand1(), dimensions, indexTokens);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  309:            if (!indexValues.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  310:                arrayIndexError(tok, dimensions, indexValues);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  311:        }
+        -:  312:
+        -:  313:        // Negative index
+    #####:  314:        bool neg = false;
+    #####:  315:        std::vector<const ValueFlow::Value *> negativeIndexes;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+    #####:  316:        for (const Token * indexToken : indexTokens) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  317:            const ValueFlow::Value *negativeValue = indexToken->getValueLE(-1, mSettings);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  318:            negativeIndexes.emplace_back(negativeValue);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  319:            if (negativeValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  320:                neg = true;
+        -:  321:        }
+    #####:  322:        if (neg) {
+branch  0 never executed
+branch  1 never executed
+    #####:  323:            negativeIndexError(tok, dimensions, negativeIndexes);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  324:        }
+        -:  325:    }
+    #####:  326:}
+        -:  327:
+function _ZL16stringifyIndexesRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNSt7__debug6vectorIPKN9ValueFlow5ValueESaISC_EEE called 0 returned 0% blocks executed 0%
+    #####:  328:static std::string stringifyIndexes(const std::string &array, const std::vector<const ValueFlow::Value *> &indexValues)
+        -:  329:{
+    #####:  330:    if (indexValues.size() == 1)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  331:        return MathLib::toString(indexValues[0]->intvalue);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  332:
+    #####:  333:    std::ostringstream ret;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  334:    ret << array;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  335:    for (const ValueFlow::Value *index : indexValues) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  336:        ret << "[";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  337:        if (index)
+branch  0 never executed
+branch  1 never executed
+    #####:  338:            ret << index->intvalue;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  339:        else
+    #####:  340:            ret << "*";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  341:        ret << "]";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  342:    }
+    #####:  343:    return ret.str();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  344:}
+        -:  345:
+function _ZL17arrayIndexMessagePK5TokenRKNSt7__debug6vectorI9DimensionSaIS4_EEERKNS3_IPKN9ValueFlow5ValueESaISC_EEES1_ called 0 returned 0% blocks executed 0%
+    #####:  346:static std::string arrayIndexMessage(const Token *tok, const std::vector<Dimension> &dimensions, const std::vector<const ValueFlow::Value *> &indexValues, const Token *condition)
+        -:  347:{
+function _ZZL17arrayIndexMessagePK5TokenRKNSt7__debug6vectorI9DimensionSaIS4_EEERKNS3_IPKN9ValueFlow5ValueESaISC_EEES1_ENKUlRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKS4_E_clESO_SQ_ called 0 returned 0% blocks executed 0%
+    #####:  348:    auto add_dim = [](const std::string &s, const Dimension &dim) {
+    #####:  349:        return s + "[" + MathLib::toString(dim.num) + "]";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  350:    };
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  351:    const std::string array = std::accumulate(dimensions.begin(), dimensions.end(), tok->astOperand1()->expressionString(), add_dim);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+        -:  352:
+    #####:  353:    std::ostringstream errmsg;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  354:    if (condition)
+branch  0 never executed
+branch  1 never executed
+    #####:  355:        errmsg << ValueFlow::eitherTheConditionIsRedundant(condition)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  356:               << " or the array '" + array + "' is accessed at index " << stringifyIndexes(tok->astOperand1()->expressionString(), indexValues) << ", which is out of bounds.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+call   30 never executed
+call   31 never executed
+call   32 never executed
+        -:  357:    else
+    #####:  358:        errmsg << "Array '" << array << "' accessed at index " << stringifyIndexes(tok->astOperand1()->expressionString(), indexValues) <<  ", which is out of bounds.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+        -:  359:
+    #####:  360:    return errmsg.str();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  361:}
+        -:  362:
+function _ZN18CheckBufferOverrun15arrayIndexErrorEPK5TokenRKNSt7__debug6vectorI9DimensionSaIS5_EEERKNS4_IPKN9ValueFlow5ValueESaISD_EEE called 0 returned 0% blocks executed 0%
+    #####:  363:void CheckBufferOverrun::arrayIndexError(const Token *tok, const std::vector<Dimension> &dimensions, const std::vector<const ValueFlow::Value *> &indexes)
+        -:  364:{
+    #####:  365:    if (!tok) {
+branch  0 never executed
+branch  1 never executed
+    #####:  366:        reportError(tok, Severity::error, "arrayIndexOutOfBounds", "Array 'arr[16]' accessed at index 16, which is out of bounds.", CWE_BUFFER_OVERRUN, false);
+call    0 never executed
+    #####:  367:        reportError(tok, Severity::warning, "arrayIndexOutOfBoundsCond", "Array 'arr[16]' accessed at index 16, which is out of bounds.", CWE_BUFFER_OVERRUN, false);
+call    0 never executed
+    #####:  368:        return;
+        -:  369:    }
+        -:  370:
+    #####:  371:    const Token *condition = nullptr;
+    #####:  372:    const ValueFlow::Value *index = nullptr;
+    #####:  373:    for (const ValueFlow::Value *indexValue: indexes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  374:        if (!indexValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  375:            continue;
+    #####:  376:        if (!indexValue->errorSeverity() && !mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  377:            return;
+    #####:  378:        if (indexValue->condition)
+branch  0 never executed
+branch  1 never executed
+    #####:  379:            condition = indexValue->condition;
+    #####:  380:        if (!index || !indexValue->errorPath.empty())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  381:            index = indexValue;
+        -:  382:    }
+        -:  383:
+    #####:  384:    reportError(getErrorPath(tok, index, "Array index out of bounds"),
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  385:                index->errorSeverity() ? Severity::error : Severity::warning,
+call    0 never executed
+    #####:  386:                index->condition ? "arrayIndexOutOfBoundsCond" : "arrayIndexOutOfBounds",
+    #####:  387:                arrayIndexMessage(tok, dimensions, indexes, condition),
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  388:                CWE_BUFFER_OVERRUN,
+    #####:  389:                index->isInconclusive());
+call    0 never executed
+        -:  390:}
+        -:  391:
+function _ZN18CheckBufferOverrun18negativeIndexErrorEPK5TokenRKNSt7__debug6vectorI9DimensionSaIS5_EEERKNS4_IPKN9ValueFlow5ValueESaISD_EEE called 0 returned 0% blocks executed 0%
+    #####:  392:void CheckBufferOverrun::negativeIndexError(const Token *tok, const std::vector<Dimension> &dimensions, const std::vector<const ValueFlow::Value *> &indexes)
+        -:  393:{
+    #####:  394:    if (!tok) {
+branch  0 never executed
+branch  1 never executed
+    #####:  395:        reportError(tok, Severity::error, "negativeIndex", "Negative array index", CWE_BUFFER_UNDERRUN, false);
+call    0 never executed
+    #####:  396:        return;
+        -:  397:    }
+        -:  398:
+    #####:  399:    const Token *condition = nullptr;
+    #####:  400:    const ValueFlow::Value *negativeValue = nullptr;
+    #####:  401:    for (const ValueFlow::Value *indexValue: indexes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  402:        if (!indexValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  403:            continue;
+    #####:  404:        if (!indexValue->errorSeverity() && !mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  405:            return;
+    #####:  406:        if (indexValue->condition)
+branch  0 never executed
+branch  1 never executed
+    #####:  407:            condition = indexValue->condition;
+    #####:  408:        if (!negativeValue || !indexValue->errorPath.empty())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  409:            negativeValue = indexValue;
+        -:  410:    }
+        -:  411:
+    #####:  412:    reportError(getErrorPath(tok, negativeValue, "Negative array index"),
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  413:                negativeValue->errorSeverity() ? Severity::error : Severity::warning,
+call    0 never executed
+        -:  414:                "negativeIndex",
+    #####:  415:                arrayIndexMessage(tok, dimensions, indexes, condition),
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  416:                CWE_BUFFER_UNDERRUN,
+    #####:  417:                negativeValue->isInconclusive());
+call    0 never executed
+        -:  418:}
+        -:  419:
+        -:  420://---------------------------------------------------------------------------
+        -:  421:
+function _ZN18CheckBufferOverrun17pointerArithmeticEv called 0 returned 0% blocks executed 0%
+    #####:  422:void CheckBufferOverrun::pointerArithmetic()
+        -:  423:{
+    #####:  424:    if (!mSettings->isEnabled(Settings::PORTABILITY))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  425:        return;
+        -:  426:
+    #####:  427:    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  428:        if (!Token::Match(tok, "+|-"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  429:            continue;
+    #####:  430:        if (!tok->valueType() || tok->valueType()->pointer == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  431:            continue;
+    #####:  432:        if (!tok->astOperand1() || !tok->astOperand2())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  433:            continue;
+    #####:  434:        if (!tok->astOperand1()->valueType() || !tok->astOperand2()->valueType())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  435:            continue;
+        -:  436:
+        -:  437:        const Token *arrayToken, *indexToken;
+    #####:  438:        if (tok->astOperand1()->valueType()->pointer > 0) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  439:            arrayToken = tok->astOperand1();
+call    0 never executed
+    #####:  440:            indexToken = tok->astOperand2();
+call    0 never executed
+        -:  441:        } else {
+    #####:  442:            arrayToken = tok->astOperand2();
+call    0 never executed
+    #####:  443:            indexToken = tok->astOperand1();
+call    0 never executed
+        -:  444:        }
+        -:  445:
+    #####:  446:        if (!indexToken || !indexToken->valueType() || indexToken->valueType()->pointer > 0 || !indexToken->valueType()->isIntegral())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  447:            continue;
+        -:  448:
+    #####:  449:        std::vector<Dimension> dimensions;
+call    0 never executed
+call    1 never executed
+    #####:  450:        ErrorPath errorPath;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  451:        bool mightBeLarger = false;
+    #####:  452:        if (!getDimensionsEtc(arrayToken, mSettings, &dimensions, &errorPath, &mightBeLarger))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  453:            continue;
+        -:  454:
+    #####:  455:        if (tok->str() == "+") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  456:            // Positive index
+    #####:  457:            if (!mightBeLarger) { // TODO check arrays with dim 1 also
+branch  0 never executed
+branch  1 never executed
+    #####:  458:                const std::vector<const Token *> indexTokens{indexToken};
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  459:                const std::vector<const ValueFlow::Value *> &indexValues = getOverrunIndexValues(tok, arrayToken, dimensions, indexTokens);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  460:                if (!indexValues.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  461:                    pointerArithmeticError(tok, indexToken, indexValues.front());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  462:            }
+        -:  463:
+    #####:  464:            if (const ValueFlow::Value *neg = indexToken->getValueLE(-1, mSettings))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  465:                pointerArithmeticError(tok, indexToken, neg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  466:        } else if (tok->str() == "-") {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  467:            // TODO
+        -:  468:        }
+        -:  469:    }
+        -:  470:}
+        -:  471:
+function _ZN18CheckBufferOverrun22pointerArithmeticErrorEPK5TokenS2_PKN9ValueFlow5ValueE called 0 returned 0% blocks executed 0%
+    #####:  472:void CheckBufferOverrun::pointerArithmeticError(const Token *tok, const Token *indexToken, const ValueFlow::Value *indexValue)
+        -:  473:{
+    #####:  474:    if (!tok) {
+branch  0 never executed
+branch  1 never executed
+    #####:  475:        reportError(tok, Severity::portability, "pointerOutOfBounds", "Pointer arithmetic overflow.", CWE_POINTER_ARITHMETIC_OVERFLOW, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  476:        reportError(tok, Severity::portability, "pointerOutOfBoundsCond", "Pointer arithmetic overflow.", CWE_POINTER_ARITHMETIC_OVERFLOW, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  477:        return;
+        -:  478:    }
+        -:  479:
+    #####:  480:    std::string errmsg;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  481:    if (indexValue->condition)
+branch  0 never executed
+branch  1 never executed
+    #####:  482:        errmsg = "Undefined behaviour, when '" + indexToken->expressionString() + "' is " + MathLib::toString(indexValue->intvalue) + " the pointer arithmetic '" + tok->expressionString() + "' is out of bounds.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+call   30 never executed
+call   31 never executed
+call   32 never executed
+call   33 never executed
+call   34 never executed
+call   35 never executed
+call   36 never executed
+call   37 never executed
+call   38 never executed
+call   39 never executed
+call   40 never executed
+call   41 never executed
+call   42 never executed
+call   43 never executed
+call   44 never executed
+        -:  483:    else
+    #####:  484:        errmsg = "Undefined behaviour, pointer arithmetic '" + tok->expressionString() + "' is out of bounds.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+        -:  485:
+    #####:  486:    reportError(getErrorPath(tok, indexValue, "Pointer arithmetic overflow"),
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -:  487:                Severity::portability,
+    #####:  488:                indexValue->condition ? "pointerOutOfBoundsCond" : "pointerOutOfBounds",
+        -:  489:                errmsg,
+        -:  490:                CWE_POINTER_ARITHMETIC_OVERFLOW,
+    #####:  491:                indexValue->isInconclusive());
+call    0 never executed
+        -:  492:}
+        -:  493:
+        -:  494://---------------------------------------------------------------------------
+        -:  495:
+function _ZNK18CheckBufferOverrun13getBufferSizeEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  496:ValueFlow::Value CheckBufferOverrun::getBufferSize(const Token *bufTok) const
+        -:  497:{
+    #####:  498:    if (!bufTok->valueType())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  499:        return ValueFlow::Value(-1);
+call    0 never executed
+    #####:  500:    const Variable *var = bufTok->variable();
+call    0 never executed
+        -:  501:
+    #####:  502:    if (!var || var->dimensions().empty()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  503:        const ValueFlow::Value *value = getBufferSizeValue(bufTok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  504:        if (value)
+branch  0 never executed
+branch  1 never executed
+    #####:  505:            return *value;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  506:    }
+        -:  507:
+    #####:  508:    if (!var)
+branch  0 never executed
+branch  1 never executed
+    #####:  509:        return ValueFlow::Value(-1);
+call    0 never executed
+        -:  510:
+function _ZZNK18CheckBufferOverrun13getBufferSizeEPK5TokenENKUlxRK9DimensionE_clExS5_ called 0 returned 0% blocks executed 0%
+    #####:  511:    MathLib::bigint dim = std::accumulate(var->dimensions().begin(), var->dimensions().end(), 1LL, [](MathLib::bigint i1, const Dimension &dim) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  512:        return i1 * dim.num;
+    #####:  513:    });
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  514:
+    #####:  515:    ValueFlow::Value v;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  516:    v.setKnown();
+call    0 never executed
+    #####:  517:    v.valueType = ValueFlow::Value::ValueType::BUFFER_SIZE;
+        -:  518:
+    #####:  519:    if (var->isPointerArray())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  520:        v.intvalue = dim * mSettings->sizeof_pointer;
+    #####:  521:    else if (var->isPointer())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  522:        return ValueFlow::Value(-1);
+call    0 never executed
+        -:  523:    else {
+    #####:  524:        const MathLib::bigint typeSize = bufTok->valueType()->typeSize(*mSettings);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  525:        v.intvalue = dim * typeSize;
+        -:  526:    }
+        -:  527:
+    #####:  528:    return v;
+call    0 never executed
+        -:  529:}
+        -:  530://---------------------------------------------------------------------------
+        -:  531:
+function _ZL15checkBufferSizePK5TokenRKN7Library14ArgumentChecks7MinSizeERKNSt7__debug6vectorIS1_SaIS1_EEExPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  532:static bool checkBufferSize(const Token *ftok, const Library::ArgumentChecks::MinSize &minsize, const std::vector<const Token *> &args, const MathLib::bigint bufferSize, const Settings *settings)
+        -:  533:{
+    #####:  534:    const Token * const arg = (minsize.arg > 0 && minsize.arg - 1 < args.size()) ? args[minsize.arg - 1] : nullptr;
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+    #####:  535:    const Token * const arg2 = (minsize.arg2 > 0 && minsize.arg2 - 1 < args.size()) ? args[minsize.arg2 - 1] : nullptr;
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+        -:  536:
+    #####:  537:    switch (minsize.type) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  538:    case Library::ArgumentChecks::MinSize::Type::STRLEN:
+    #####:  539:        if (settings->library.isargformatstr(ftok, minsize.arg)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  540:            return getMinFormatStringOutputLength(args, minsize.arg) < bufferSize;
+call    0 never executed
+    #####:  541:        } else if (arg) {
+branch  0 never executed
+branch  1 never executed
+    #####:  542:            const Token *strtoken = arg->getValueTokenMaxStrLength();
+call    0 never executed
+    #####:  543:            if (strtoken)
+branch  0 never executed
+branch  1 never executed
+    #####:  544:                return Token::getStrLength(strtoken) < bufferSize;
+call    0 never executed
+        -:  545:        }
+    #####:  546:        break;
+    #####:  547:    case Library::ArgumentChecks::MinSize::Type::ARGVALUE:
+    #####:  548:        if (arg && arg->hasKnownIntValue())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  549:            return arg->getKnownIntValue() <= bufferSize;
+call    0 never executed
+    #####:  550:        break;
+    #####:  551:    case Library::ArgumentChecks::MinSize::Type::SIZEOF:
+        -:  552:        // TODO
+    #####:  553:        break;
+    #####:  554:    case Library::ArgumentChecks::MinSize::Type::MUL:
+    #####:  555:        if (arg && arg2 && arg->hasKnownIntValue() && arg2->hasKnownIntValue())
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  556:            return (arg->getKnownIntValue() * arg2->getKnownIntValue()) <= bufferSize;
+call    0 never executed
+call    1 never executed
+    #####:  557:        break;
+    #####:  558:    case Library::ArgumentChecks::MinSize::Type::VALUE:
+    #####:  559:        return minsize.value <= bufferSize;
+    #####:  560:    case Library::ArgumentChecks::MinSize::Type::NONE:
+    #####:  561:        break;
+        -:  562:    };
+    #####:  563:    return true;
+        -:  564:}
+        -:  565:
+        -:  566:
+function _ZN18CheckBufferOverrun14bufferOverflowEv called 0 returned 0% blocks executed 0%
+    #####:  567:void CheckBufferOverrun::bufferOverflow()
+        -:  568:{
+    #####:  569:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  570:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  571:        for (const Token *tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  572:            if (!Token::Match(tok, "%name% (") || Token::simpleMatch(tok, ") {"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  573:                continue;
+    #####:  574:            if (!mSettings->library.hasminsize(tok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  575:                continue;
+    #####:  576:            const std::vector<const Token *> args = getArguments(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  577:            for (int argnr = 0; argnr < args.size(); ++argnr) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  578:                if (!args[argnr]->valueType() || args[argnr]->valueType()->pointer == 0)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  579:                    continue;
+    #####:  580:                const std::vector<Library::ArgumentChecks::MinSize> *minsizes = mSettings->library.argminsizes(tok, argnr + 1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  581:                if (!minsizes || minsizes->empty())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  582:                    continue;
+        -:  583:                // Get buffer size..
+    #####:  584:                const Token *argtok = args[argnr];
+call    0 never executed
+    #####:  585:                while (argtok && argtok->isCast())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  586:                    argtok = argtok->astOperand2() ? argtok->astOperand2() : argtok->astOperand1();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  587:                while (Token::Match(argtok, ".|::"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  588:                    argtok = argtok->astOperand2();
+call    0 never executed
+    #####:  589:                if (!argtok || !argtok->variable())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  590:                    continue;
+        -:  591:                // TODO: strcpy(buf+10, "hello");
+    #####:  592:                const ValueFlow::Value bufferSize = getBufferSize(argtok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  593:                if (bufferSize.intvalue <= 1)
+branch  0 never executed
+branch  1 never executed
+    #####:  594:                    continue;
+function _ZZN18CheckBufferOverrun14bufferOverflowEvENUlRKN7Library14ArgumentChecks7MinSizeEE_C2ERKS5_ called 0 returned 0% blocks executed 0%
+function _ZZN18CheckBufferOverrun14bufferOverflowEvENUlRKN7Library14ArgumentChecks7MinSizeEE_C2EOS5_ called 0 returned 0% blocks executed 0%
+function _ZZN18CheckBufferOverrun14bufferOverflowEvENUlRKN7Library14ArgumentChecks7MinSizeEE_D2Ev called 0 returned 0% blocks executed 0%
+function _ZZN18CheckBufferOverrun14bufferOverflowEvENKUlRKN7Library14ArgumentChecks7MinSizeEE_clES4_ called 0 returned 0% blocks executed 0%
+    #####:  595:                bool error = std::none_of(minsizes->begin(), minsizes->end(), [=](const Library::ArgumentChecks::MinSize &minsize) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+    #####:  596:                    return checkBufferSize(tok, minsize, args, bufferSize.intvalue, mSettings);
+    #####:  597:                });
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  598:                if (error)
+branch  0 never executed
+branch  1 never executed
+    #####:  599:                    bufferOverflowError(args[argnr], &bufferSize);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  600:            }
+        -:  601:        }
+        -:  602:    }
+    #####:  603:}
+        -:  604:
+function _ZN18CheckBufferOverrun19bufferOverflowErrorEPK5TokenPKN9ValueFlow5ValueE called 0 returned 0% blocks executed 0%
+    #####:  605:void CheckBufferOverrun::bufferOverflowError(const Token *tok, const ValueFlow::Value *value)
+        -:  606:{
+    #####:  607:    reportError(getErrorPath(tok, value, "Buffer overrun"), Severity::error, "bufferAccessOutOfBounds", "Buffer is accessed out of bounds: " + (tok ? tok->expressionString() : "buf"), CWE_BUFFER_OVERRUN, false);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+branch 27 never executed
+branch 28 never executed
+call   29 never executed
+call   30 never executed
+call   31 never executed
+call   32 never executed
+call   33 never executed
+call   34 never executed
+branch 35 never executed
+branch 36 never executed
+call   37 never executed
+    #####:  608:}
+        -:  609:
+        -:  610://---------------------------------------------------------------------------
+        -:  611:
+function _ZN18CheckBufferOverrun19arrayIndexThenCheckEv called 0 returned 0% blocks executed 0%
+    #####:  612:void CheckBufferOverrun::arrayIndexThenCheck()
+        -:  613:{
+    #####:  614:    if (!mSettings->isEnabled(Settings::PORTABILITY))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  615:        return;
+        -:  616:
+    #####:  617:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  618:    for (const Scope * const scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  619:        for (const Token *tok = scope->bodyStart; tok && tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  620:            if (Token::simpleMatch(tok, "sizeof (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  621:                tok = tok->linkAt(1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  622:                continue;
+        -:  623:            }
+        -:  624:
+    #####:  625:            if (Token::Match(tok, "%name% [ %var% ]")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  626:                tok = tok->next();
+call    0 never executed
+        -:  627:
+    #####:  628:                const int indexID = tok->next()->varId();
+call    0 never executed
+call    1 never executed
+    #####:  629:                const std::string& indexName(tok->strAt(1));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  630:
+        -:  631:                // Iterate AST upwards
+    #####:  632:                const Token* tok2 = tok;
+    #####:  633:                const Token* tok3 = tok2;
+    #####:  634:                while (tok2->astParent() && tok2->tokType() != Token::eLogicalOp) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  635:                    tok3 = tok2;
+    #####:  636:                    tok2 = tok2->astParent();
+call    0 never executed
+        -:  637:                }
+        -:  638:
+        -:  639:                // Ensure that we ended at a logical operator and that we came from its left side
+    #####:  640:                if (tok2->tokType() != Token::eLogicalOp || tok2->astOperand1() != tok3)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  641:                    continue;
+        -:  642:
+        -:  643:                // check if array index is ok
+        -:  644:                // statement can be closed in parentheses, so "(| " is using
+    #####:  645:                if (Token::Match(tok2, "&& (| %varid% <|<=", indexID))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  646:                    arrayIndexThenCheckError(tok, indexName);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  647:                else if (Token::Match(tok2, "&& (| %any% >|>= %varid% !!+", indexID))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  648:                    arrayIndexThenCheckError(tok, indexName);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  649:            }
+        -:  650:        }
+        -:  651:    }
+        -:  652:}
+        -:  653:
+function _ZN18CheckBufferOverrun24arrayIndexThenCheckErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  654:void CheckBufferOverrun::arrayIndexThenCheckError(const Token *tok, const std::string &indexName)
+        -:  655:{
+    #####:  656:    reportError(tok, Severity::style, "arrayIndexThenCheck",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  657:                "$symbol:" + indexName + "\n"
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:  658:                "Array index '$symbol' is used before limits check.\n"
+        -:  659:                "Defensive programming: The variable '$symbol' is used as an array index before it "
+        -:  660:                "is checked that is within limits. This can mean that the array might be accessed out of bounds. "
+        -:  661:                "Reorder conditions such as '(a[i] && i < 10)' to '(i < 10 && a[i])'. That way the array will "
+        -:  662:                "not be accessed if the index is out of limits.", CWE_ARRAY_INDEX_THEN_CHECK, false);
+    #####:  663:}
+        -:  664:
+        -:  665://---------------------------------------------------------------------------
+        -:  666:
+function _ZN18CheckBufferOverrun23stringNotZeroTerminatedEv called 0 returned 0% blocks executed 0%
+    #####:  667:void CheckBufferOverrun::stringNotZeroTerminated()
+        -:  668:{
+        -:  669:    // this is currently 'inconclusive'. See TestBufferOverrun::terminateStrncpy3
+    #####:  670:    if (!mSettings->isEnabled(Settings::WARNING) || !mSettings->inconclusive)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  671:        return;
+    #####:  672:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  673:    for (const Scope * const scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  674:        for (const Token *tok = scope->bodyStart; tok && tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  675:            if (!Token::simpleMatch(tok, "strncpy ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  676:                continue;
+    #####:  677:            const std::vector<const Token *> args = getArguments(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  678:            if (args.size() != 3)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  679:                continue;
+    #####:  680:            const Token *sizeToken = args[2];
+call    0 never executed
+    #####:  681:            if (!sizeToken->hasKnownIntValue())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  682:                continue;
+    #####:  683:            const ValueFlow::Value &bufferSize = getBufferSize(args[0]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+    #####:  684:            if (bufferSize.intvalue < 0 || sizeToken->getKnownIntValue() < bufferSize.intvalue)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  685:                continue;
+    #####:  686:            const Token *srcValue = args[1]->getValueTokenMaxStrLength();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  687:            if (srcValue && Token::getStrLength(srcValue) < sizeToken->getKnownIntValue())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  688:                continue;
+        -:  689:            // Is the buffer zero terminated after the call?
+    #####:  690:            bool isZeroTerminated = false;
+    #####:  691:            for (const Token *tok2 = tok->next()->link(); tok2 != scope->bodyEnd; tok2 = tok2->next()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  692:                if (!Token::simpleMatch(tok2, "] ="))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  693:                    continue;
+    #####:  694:                const Token *rhs = tok2->next()->astOperand2();
+call    0 never executed
+call    1 never executed
+    #####:  695:                if (!rhs || !rhs->hasKnownIntValue() || rhs->getKnownIntValue() != 0)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  696:                    continue;
+    #####:  697:                if (isSameExpression(mTokenizer->isCPP(), false, args[0], tok2->link()->astOperand1(), mSettings->library, false, false))
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  698:                    isZeroTerminated = true;
+        -:  699:            }
+    #####:  700:            if (isZeroTerminated)
+branch  0 never executed
+branch  1 never executed
+    #####:  701:                continue;
+        -:  702:            // TODO: Locate unsafe string usage..
+    #####:  703:            terminateStrncpyError(tok, args[0]->expressionString());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+        -:  704:        }
+        -:  705:    }
+        -:  706:}
+        -:  707:
+function _ZN18CheckBufferOverrun21terminateStrncpyErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  708:void CheckBufferOverrun::terminateStrncpyError(const Token *tok, const std::string &varname)
+        -:  709:{
+    #####:  710:    const std::string shortMessage = "The buffer '$symbol' may not be null-terminated after the call to strncpy().";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  711:    reportError(tok, Severity::warning, "terminateStrncpy",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  712:                "$symbol:" + varname + '\n' +
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  713:                shortMessage + '\n' +
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  714:                shortMessage + ' ' +
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  715:                "If the source string's size fits or exceeds the given size, strncpy() does not add a "
+        -:  716:                "zero at the end of the buffer. This causes bugs later in the code if the code "
+        -:  717:                "assumes buffer is null-terminated.", CWE170, true);
+    #####:  718:}
+call    0 never executed
+        -:  719:
+function _ZN18CheckBufferOverrun28bufferNotZeroTerminatedErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####:  720:void CheckBufferOverrun::bufferNotZeroTerminatedError(const Token *tok, const std::string &varname, const std::string &function)
+        -:  721:{
+    #####:  722:    const std::string errmsg = "$symbol:" + varname + '\n' +
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  723:                               "$symbol:" + function + '\n' +
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  724:                               "The buffer '" + varname + "' is not null-terminated after the call to " + function + "().\n"
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  725:                               "The buffer '" + varname + "' is not null-terminated after the call to " + function + "(). "
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  726:                               "This will cause bugs later in the code if the code assumes the buffer is null-terminated.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  727:
+    #####:  728:    reportError(tok, Severity::warning, "bufferNotZeroTerminated", errmsg, CWE170, true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  729:}
+call    0 never executed
+        -:  730:
+        -:  731:
+        -:  732:
+        -:  733://---------------------------------------------------------------------------
+        -:  734:// CTU..
+        -:  735://---------------------------------------------------------------------------
+        -:  736:
+function _ZNK18CheckBufferOverrun10MyFileInfo8toStringB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  737:std::string CheckBufferOverrun::MyFileInfo::toString() const
+        -:  738:{
+    #####:  739:    std::string xml;
+call    0 never executed
+    #####:  740:    if (!unsafeArrayIndex.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  741:        xml = "    <array-index>\n" + CTU::toString(unsafeArrayIndex) + "    </array-index>\n";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  742:    if (!unsafePointerArith.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  743:        xml += "    <pointer-arith>\n" + CTU::toString(unsafePointerArith) + "    </pointer-arith>\n";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  744:    return xml;
+        -:  745:}
+        -:  746:
+function _ZN18CheckBufferOverrun22isCtuUnsafeBufferUsageEPK5CheckPK5TokenPxi called 0 returned 0% blocks executed 0%
+    #####:  747:bool CheckBufferOverrun::isCtuUnsafeBufferUsage(const Check *check, const Token *argtok, MathLib::bigint *offset, int type)
+        -:  748:{
+    #####:  749:    const CheckBufferOverrun *c = dynamic_cast<const CheckBufferOverrun *>(check);
+branch  0 never executed
+branch  1 never executed
+    #####:  750:    if (!c)
+branch  0 never executed
+branch  1 never executed
+    #####:  751:        return false;
+    #####:  752:    if (!argtok->valueType() || argtok->valueType()->typeSize(*c->mSettings) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  753:        return false;
+    #####:  754:    const Token *indexTok = nullptr;
+    #####:  755:    if (type == 1 && Token::Match(argtok, "%name% [") && argtok->astParent() == argtok->next() && !Token::simpleMatch(argtok->linkAt(1), "] ["))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+    #####:  756:        indexTok = argtok->next()->astOperand2();
+call    0 never executed
+call    1 never executed
+    #####:  757:    else if (type == 2 && Token::simpleMatch(argtok->astParent(), "+"))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  758:        indexTok = (argtok == argtok->astParent()->astOperand1()) ?
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  759:                   argtok->astParent()->astOperand2() :
+call    0 never executed
+    #####:  760:                   argtok->astParent()->astOperand1();
+call    0 never executed
+    #####:  761:    if (!indexTok)
+branch  0 never executed
+branch  1 never executed
+    #####:  762:        return false;
+    #####:  763:    if (!indexTok->hasKnownIntValue())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  764:        return false;
+    #####:  765:    if (!offset)
+branch  0 never executed
+branch  1 never executed
+    #####:  766:        return false;
+    #####:  767:    *offset = indexTok->getKnownIntValue() * argtok->valueType()->typeSize(*c->mSettings);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  768:    return true;
+        -:  769:}
+        -:  770:
+function _ZN18CheckBufferOverrun21isCtuUnsafeArrayIndexEPK5CheckPK5TokenPx called 0 returned 0% blocks executed 0%
+    #####:  771:bool CheckBufferOverrun::isCtuUnsafeArrayIndex(const Check *check, const Token *argtok, MathLib::bigint *offset)
+        -:  772:{
+    #####:  773:    return CheckBufferOverrun::isCtuUnsafeBufferUsage(check, argtok, offset, 1);
+call    0 never executed
+        -:  774:}
+        -:  775:
+function _ZN18CheckBufferOverrun23isCtuUnsafePointerArithEPK5CheckPK5TokenPx called 0 returned 0% blocks executed 0%
+    #####:  776:bool CheckBufferOverrun::isCtuUnsafePointerArith(const Check *check, const Token *argtok, MathLib::bigint *offset)
+        -:  777:{
+    #####:  778:    return CheckBufferOverrun::isCtuUnsafeBufferUsage(check, argtok, offset, 2);
+call    0 never executed
+        -:  779:}
+        -:  780:
+        -:  781:/** @brief Parse current TU and extract file info */
+function _ZNK18CheckBufferOverrun11getFileInfoEPK9TokenizerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  782:Check::FileInfo *CheckBufferOverrun::getFileInfo(const Tokenizer *tokenizer, const Settings *settings) const
+        -:  783:{
+    #####:  784:    CheckBufferOverrun checkBufferOverrun(tokenizer, settings, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  785:    MyFileInfo *fileInfo = new MyFileInfo;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  786:    fileInfo->unsafeArrayIndex = CTU::getUnsafeUsage(tokenizer, settings, &checkBufferOverrun, isCtuUnsafeArrayIndex);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  787:    fileInfo->unsafePointerArith = CTU::getUnsafeUsage(tokenizer, settings, &checkBufferOverrun, isCtuUnsafePointerArith);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  788:    if (fileInfo->unsafeArrayIndex.empty() && fileInfo->unsafePointerArith.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  789:        delete fileInfo;
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  790:        return nullptr;
+        -:  791:    }
+    #####:  792:    return fileInfo;
+        -:  793:}
+        -:  794:
+function _ZNK18CheckBufferOverrun19loadFileInfoFromXmlEPKN8tinyxml210XMLElementE called 0 returned 0% blocks executed 0%
+    #####:  795:Check::FileInfo * CheckBufferOverrun::loadFileInfoFromXml(const tinyxml2::XMLElement *xmlElement) const
+        -:  796:{
+    #####:  797:    const std::string arrayIndex("array-index");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  798:    const std::string pointerArith("pointer-arith");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -:  799:
+    #####:  800:    MyFileInfo *fileInfo = new MyFileInfo;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  801:    for (const tinyxml2::XMLElement *e = xmlElement->FirstChildElement(); e; e = e->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  802:        if (e->Name() == arrayIndex)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  803:            fileInfo->unsafeArrayIndex = CTU::loadUnsafeUsageListFromXml(e);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  804:        else if (e->Name() == pointerArith)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  805:            fileInfo->unsafePointerArith = CTU::loadUnsafeUsageListFromXml(e);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  806:    }
+        -:  807:
+    #####:  808:    if (fileInfo->unsafeArrayIndex.empty() && fileInfo->unsafePointerArith.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  809:        delete fileInfo;
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  810:        return nullptr;
+        -:  811:    }
+        -:  812:
+    #####:  813:    return fileInfo;
+        -:  814:}
+        -:  815:
+        -:  816:/** @brief Analyse all file infos for all TU */
+function _ZN18CheckBufferOverrun19analyseWholeProgramEPKN3CTU8FileInfoERKNSt7__debug4listIPN5Check8FileInfoESaIS8_EEERK8SettingsR11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  817:bool CheckBufferOverrun::analyseWholeProgram(const CTU::FileInfo *ctu, const std::list<Check::FileInfo*> &fileInfo, const Settings& settings, ErrorLogger &errorLogger)
+        -:  818:{
+    #####:  819:    if (!ctu)
+branch  0 never executed
+branch  1 never executed
+    #####:  820:        return false;
+    #####:  821:    bool foundErrors = false;
+        -:  822:    (void)settings; // This argument is unused
+        -:  823:
+    #####:  824:    const std::map<std::string, std::list<const CTU::FileInfo::CallBase *>> callsMap = ctu->getCallsMap();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  825:
+    #####:  826:    for (Check::FileInfo *fi1 : fileInfo) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  827:        const MyFileInfo *fi = dynamic_cast<MyFileInfo*>(fi1);
+branch  0 never executed
+branch  1 never executed
+    #####:  828:        if (!fi)
+branch  0 never executed
+branch  1 never executed
+    #####:  829:            continue;
+    #####:  830:        for (const CTU::FileInfo::UnsafeUsage &unsafeUsage : fi->unsafeArrayIndex)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  831:            foundErrors |= analyseWholeProgram1(ctu, callsMap, unsafeUsage, 1, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  832:        for (const CTU::FileInfo::UnsafeUsage &unsafeUsage : fi->unsafePointerArith)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  833:            foundErrors |= analyseWholeProgram1(ctu, callsMap, unsafeUsage, 2, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  834:    }
+    #####:  835:    return foundErrors;
+        -:  836:}
+        -:  837:
+function _ZN18CheckBufferOverrun20analyseWholeProgram1EPKN3CTU8FileInfoERKNSt7__debug3mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEENS4_4listIPKNS1_8CallBaseESaISF_EEESt4lessISB_ESaISt4pairIKSB_SH_EEEERKNS1_11UnsafeUsageEiR11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  838:bool CheckBufferOverrun::analyseWholeProgram1(const CTU::FileInfo *ctu, const std::map<std::string, std::list<const CTU::FileInfo::CallBase *>> &callsMap, const CTU::FileInfo::UnsafeUsage &unsafeUsage, int type, ErrorLogger &errorLogger)
+        -:  839:{
+    #####:  840:    const CTU::FileInfo::FunctionCall *functionCall = nullptr;
+        -:  841:
+        -:  842:    const std::list<ErrorLogger::ErrorMessage::FileLocation> &locationList =
+        -:  843:        ctu->getErrorPath(CTU::FileInfo::InvalidValueType::bufferOverflow,
+        -:  844:                          unsafeUsage,
+        -:  845:                          callsMap,
+        -:  846:                          "Using argument ARG",
+        -:  847:                          &functionCall,
+    #####:  848:                          false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  849:    if (locationList.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  850:        return false;
+        -:  851:
+    #####:  852:    const char *errorId = nullptr;
+    #####:  853:    std::string errmsg;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  854:    CWE cwe(0);
+call    0 never executed
+        -:  855:
+    #####:  856:    if (type == 1) {
+branch  0 never executed
+branch  1 never executed
+    #####:  857:        errorId = "ctuArrayIndex";
+    #####:  858:        if (unsafeUsage.value > 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  859:            errmsg = "Array index out of bounds; '" + unsafeUsage.myArgumentName + "' buffer size is " + MathLib::toString(functionCall->callArgValue) + " and it is accessed at offset " + MathLib::toString(unsafeUsage.value) + ".";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+call   30 never executed
+call   31 never executed
+call   32 never executed
+call   33 never executed
+call   34 never executed
+call   35 never executed
+call   36 never executed
+call   37 never executed
+call   38 never executed
+call   39 never executed
+        -:  860:        else
+    #####:  861:            errmsg = "Array index out of bounds; buffer '" + unsafeUsage.myArgumentName + "' is accessed at offset " + MathLib::toString(unsafeUsage.value) + ".";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+    #####:  862:        cwe = (unsafeUsage.value > 0) ? CWE_BUFFER_OVERRUN : CWE_BUFFER_UNDERRUN;
+branch  0 never executed
+branch  1 never executed
+        -:  863:    } else {
+    #####:  864:        errorId = "ctuPointerArith";
+    #####:  865:        errmsg = "Pointer arithmetic overflow; '" + unsafeUsage.myArgumentName + "' buffer size is " + MathLib::toString(functionCall->callArgValue);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+    #####:  866:        cwe = CWE_POINTER_ARITHMETIC_OVERFLOW;
+        -:  867:    }
+        -:  868:
+        -:  869:    const ErrorLogger::ErrorMessage errorMessage(locationList,
+        -:  870:            emptyString,
+        -:  871:            Severity::error,
+        -:  872:            errmsg,
+        -:  873:            errorId,
+    #####:  874:            cwe, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  875:    errorLogger.reportErr(errorMessage);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  876:
+    #####:  877:    return true;
+        -:  878:}
+        -:  879:
+function _ZN18CheckBufferOverrun11objectIndexEv called 0 returned 0% blocks executed 0%
+    #####:  880:void CheckBufferOverrun::objectIndex()
+        -:  881:{
+    #####:  882:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  883:    for (const Scope *functionScope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  884:        for (const Token *tok = functionScope->bodyStart; tok != functionScope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  885:            if (!Token::simpleMatch(tok, "["))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  886:                continue;
+    #####:  887:            const Token *obj = tok->astOperand1();
+call    0 never executed
+    #####:  888:            const Token *idx = tok->astOperand2();
+call    0 never executed
+    #####:  889:            if (!idx || !obj)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  890:                continue;
+    #####:  891:            if (idx->hasKnownIntValue() && idx->getKnownIntValue() == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  892:                continue;
+        -:  893:
+    #####:  894:            ValueFlow::Value v = getLifetimeObjValue(obj);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  895:            if (!v.isLocalLifetimeValue())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  896:                continue;
+    #####:  897:            if (v.lifetimeKind != ValueFlow::Value::LifetimeKind::Address)
+branch  0 never executed
+branch  1 never executed
+    #####:  898:                continue;
+    #####:  899:            const Variable *var = v.tokvalue->variable();
+call    0 never executed
+    #####:  900:            if (var->isReference())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  901:                continue;
+    #####:  902:            if (var->isRValueReference())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  903:                continue;
+    #####:  904:            if (var->isArray())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  905:                continue;
+    #####:  906:            if (var->isPointer())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  907:                continue;
+    #####:  908:            objectIndexError(tok, &v, idx->hasKnownIntValue());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+        -:  909:        }
+        -:  910:    }
+    #####:  911:}
+        -:  912:
+function _ZN18CheckBufferOverrun16objectIndexErrorEPK5TokenPKN9ValueFlow5ValueEb called 0 returned 0% blocks executed 0%
+    #####:  913:void CheckBufferOverrun::objectIndexError(const Token *tok, const ValueFlow::Value *v, bool known)
+        -:  914:{
+    #####:  915:    ErrorPath errorPath;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  916:    std::string name;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  917:    if (v) {
+branch  0 never executed
+branch  1 never executed
+    #####:  918:        name = v->tokvalue->variable()->name();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  919:        errorPath = v->errorPath;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  920:    }
+    #####:  921:    errorPath.emplace_back(tok, "");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  922:    std::string verb = known ? "is" : "might be";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  923:    reportError(errorPath,
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  924:                known ? Severity::error : Severity::warning,
+        -:  925:                "objectIndex",
+    #####:  926:                "The address of local variable '" + name + "' " + verb + " accessed at non-zero index.",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+        -:  927:                CWE758,
+        -:  928:                false);
+function _GLOBAL__sub_I__ZN18CheckBufferOverrun10arrayIndexEv called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  929:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+call    5 never executed

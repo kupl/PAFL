@@ -1,0 +1,1777 @@
+        -:    0:Source:/home/workspace/lib/checkfunctions.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkfunctions.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkfunctions.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:// Check functions
+        -:   21://---------------------------------------------------------------------------
+        -:   22:
+        -:   23:#include "checkfunctions.h"
+        -:   24:
+        -:   25:#include "astutils.h"
+        -:   26:#include "mathlib.h"
+        -:   27:#include "standards.h"
+        -:   28:#include "symboldatabase.h"
+        -:   29:#include "token.h"
+        -:   30:#include "tokenize.h"
+        -:   31:#include "valueflow.h"
+        -:   32:
+        -:   33:#include <cmath>
+        -:   34:#include <cstddef>
+        -:   35:#include <iomanip>
+        -:   36:#include <ostream>
+        -:   37:#include <vector>
+        -:   38:
+        -:   39://---------------------------------------------------------------------------
+        -:   40:
+        -:   41:
+        -:   42:// Register this check class (by creating a static instance of it)
+        -:   43:namespace {
+        1:   44:    CheckFunctions instance;
+call    0 returned 100%
+call    1 returned 100%
+        -:   45:}
+        -:   46:
+        1:   47:static const CWE CWE252(252U);  // Unchecked Return Value
+call    0 returned 100%
+        1:   48:static const CWE CWE477(477U);  // Use of Obsolete Functions
+call    0 returned 100%
+        1:   49:static const CWE CWE758(758U);  // Reliance on Undefined, Unspecified, or Implementation-Defined Behavior
+call    0 returned 100%
+        1:   50:static const CWE CWE628(628U);  // Function Call with Incorrectly Specified Arguments
+call    0 returned 100%
+        1:   51:static const CWE CWE686(686U);  // Function Call With Incorrect Argument Type
+call    0 returned 100%
+        1:   52:static const CWE CWE687(687U);  // Function Call With Incorrectly Specified Argument Value
+call    0 returned 100%
+        1:   53:static const CWE CWE688(688U);  // Function Call With Incorrect Variable or Reference as Argument
+call    0 returned 100%
+        -:   54:
+function _ZN14CheckFunctions24checkProhibitedFunctionsEv called 0 returned 0% blocks executed 0%
+    #####:   55:void CheckFunctions::checkProhibitedFunctions()
+        -:   56:{
+    #####:   57:    const bool checkAlloca = mSettings->isEnabled(Settings::WARNING) && ((mSettings->standards.c >= Standards::C99 && mTokenizer->isC()) || mSettings->standards.cpp >= Standards::CPP11);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+        -:   58:
+    #####:   59:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:   60:    for (const Scope *scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   61:        for (const Token* tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:   62:            if (!Token::Match(tok, "%name% (") && tok->varId() == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:   63:                continue;
+        -:   64:            // alloca() is special as it depends on the code being C or C++, so it is not in Library
+    #####:   65:            if (checkAlloca && Token::simpleMatch(tok, "alloca (") && (!tok->function() || tok->function()->nestedIn->type == Scope::eGlobal)) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+    #####:   66:                if (mTokenizer->isC()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   67:                    if (mSettings->standards.c > Standards::C89)
+branch  0 never executed
+branch  1 never executed
+    #####:   68:                        reportError(tok, Severity::warning, "allocaCalled",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   69:                                    "$symbol:alloca\n"
+        -:   70:                                    "Obsolete function 'alloca' called. In C99 and later it is recommended to use a variable length array instead.\n"
+        -:   71:                                    "The obsolete function 'alloca' is called. In C99 and later it is recommended to use a variable length array or "
+        -:   72:                                    "a dynamically allocated array instead. The function 'alloca' is dangerous for many reasons "
+        -:   73:                                    "(http://stackoverflow.com/questions/1018853/why-is-alloca-not-considered-good-practice and http://linux.die.net/man/3/alloca).");
+        -:   74:                } else
+    #####:   75:                    reportError(tok, Severity::warning, "allocaCalled",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   76:                                "$symbol:alloca\n"
+        -:   77:                                "Obsolete function 'alloca' called.\n"
+        -:   78:                                "The obsolete function 'alloca' is called. In C++11 and later it is recommended to use std::array<> or "
+        -:   79:                                "a dynamically allocated array instead. The function 'alloca' is dangerous for many reasons "
+        -:   80:                                "(http://stackoverflow.com/questions/1018853/why-is-alloca-not-considered-good-practice and http://linux.die.net/man/3/alloca).");
+        -:   81:            } else {
+    #####:   82:                if (tok->function() && tok->function()->hasBody())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:   83:                    continue;
+        -:   84:
+    #####:   85:                const Library::WarnInfo* wi = mSettings->library.getWarnInfo(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   86:                if (wi) {
+branch  0 never executed
+branch  1 never executed
+    #####:   87:                    if (mSettings->isEnabled(wi->severity) && mSettings->standards.c >= wi->standards.c && mSettings->standards.cpp >= wi->standards.cpp) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:   88:                        reportError(tok, wi->severity, tok->str() + "Called", wi->message, CWE477, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+        -:   89:                    }
+        -:   90:                }
+        -:   91:            }
+        -:   92:        }
+        -:   93:    }
+    #####:   94:}
+        -:   95:
+        -:   96://---------------------------------------------------------------------------
+        -:   97:// Check <valid> and <not-bool>
+        -:   98://---------------------------------------------------------------------------
+function _ZN14CheckFunctions20invalidFunctionUsageEv called 0 returned 0% blocks executed 0%
+    #####:   99:void CheckFunctions::invalidFunctionUsage()
+        -:  100:{
+    #####:  101:    const SymbolDatabase* symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  102:    for (const Scope *scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  103:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  104:            if (!Token::Match(tok, "%name% ( !!)"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  105:                continue;
+    #####:  106:            const Token * const functionToken = tok;
+    #####:  107:            const std::vector<const Token *> arguments = getArguments(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  108:            for (int argnr = 1; argnr <= arguments.size(); ++argnr) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  109:                const Token * const argtok = arguments[argnr-1];
+call    0 never executed
+        -:  110:
+        -:  111:                // check <valid>...</valid>
+    #####:  112:                const ValueFlow::Value *invalidValue = argtok->getInvalidValue(functionToken,argnr,mSettings);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  113:                if (invalidValue) {
+branch  0 never executed
+branch  1 never executed
+    #####:  114:                    invalidFunctionArgError(argtok, functionToken->next()->astOperand1()->expressionString(), argnr, invalidValue, mSettings->library.validarg(functionToken, argnr));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+        -:  115:                }
+        -:  116:
+    #####:  117:                if (astIsBool(argtok)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  118:                    // check <not-bool>
+    #####:  119:                    if (mSettings->library.isboolargbad(functionToken, argnr))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  120:                        invalidFunctionArgBoolError(argtok, functionToken->str(), argnr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  121:
+        -:  122:                    // Are the values 0 and 1 valid?
+    #####:  123:                    else if (!mSettings->library.isIntArgValid(functionToken, argnr, 0))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  124:                        invalidFunctionArgError(argtok, functionToken->str(), argnr, nullptr, mSettings->library.validarg(functionToken, argnr));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  125:                    else if (!mSettings->library.isIntArgValid(functionToken, argnr, 1))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  126:                        invalidFunctionArgError(argtok, functionToken->str(), argnr, nullptr, mSettings->library.validarg(functionToken, argnr));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  127:                }
+        -:  128:
+    #####:  129:                if (mSettings->library.isargstrz(functionToken, argnr)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  130:                    if (Token::Match(argtok, "& %var% !![") && argtok->next() && argtok->next()->valueType()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  131:                        const ValueType * valueType = argtok->next()->valueType();
+call    0 never executed
+call    1 never executed
+    #####:  132:                        const Variable * variable = argtok->next()->variable();
+call    0 never executed
+call    1 never executed
+    #####:  133:                        if (valueType->type == ValueType::Type::CHAR && !variable->isArray() && !variable->isGlobal() &&
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  134:                            (!argtok->next()->hasKnownValue() || argtok->next()->getValue(0) == nullptr)) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  135:                            invalidFunctionArgStrError(argtok, functionToken->str(), argnr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  136:                        }
+        -:  137:                    }
+        -:  138:                }
+        -:  139:            }
+        -:  140:        }
+        -:  141:    }
+    #####:  142:}
+        -:  143:
+function _ZN14CheckFunctions23invalidFunctionArgErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEiPKN9ValueFlow5ValueESA_ called 0 returned 0% blocks executed 0%
+    #####:  144:void CheckFunctions::invalidFunctionArgError(const Token *tok, const std::string &functionName, int argnr, const ValueFlow::Value *invalidValue, const std::string &validstr)
+        -:  145:{
+    #####:  146:    std::ostringstream errmsg;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  147:    errmsg << "$symbol:" << functionName << '\n';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  148:    if (invalidValue && invalidValue->condition)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  149:        errmsg << ValueFlow::eitherTheConditionIsRedundant(invalidValue->condition)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  150:               << " or $symbol() argument nr " << argnr << " can have invalid value.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+        -:  151:    else
+    #####:  152:        errmsg << "Invalid $symbol() argument nr " << argnr << '.';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  153:    if (invalidValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  154:        errmsg << " The value is " << std::setprecision(10) << (invalidValue->isIntValue() ? invalidValue->intvalue : invalidValue->floatValue) << " but the valid values are '" << validstr << "'.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+        -:  155:    else
+    #####:  156:        errmsg << " The value is 0 or 1 (boolean) but the valid values are '" << validstr << "'.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  157:    if (invalidValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  158:        reportError(getErrorPath(tok, invalidValue, "Invalid argument"),
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  159:                    invalidValue->errorSeverity() ? Severity::error : Severity::warning,
+call    0 never executed
+        -:  160:                    "invalidFunctionArg",
+    #####:  161:                    errmsg.str(),
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  162:                    CWE628,
+    #####:  163:                    invalidValue->isInconclusive());
+call    0 never executed
+        -:  164:    else
+    #####:  165:        reportError(tok,
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  166:                    Severity::error,
+        -:  167:                    "invalidFunctionArg",
+    #####:  168:                    errmsg.str(),
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  169:                    CWE628,
+        -:  170:                    false);
+    #####:  171:}
+        -:  172:
+function _ZN14CheckFunctions27invalidFunctionArgBoolErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi called 0 returned 0% blocks executed 0%
+    #####:  173:void CheckFunctions::invalidFunctionArgBoolError(const Token *tok, const std::string &functionName, int argnr)
+        -:  174:{
+    #####:  175:    std::ostringstream errmsg;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  176:    errmsg << "$symbol:" << functionName << '\n';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  177:    errmsg << "Invalid $symbol() argument nr " << argnr << ". A non-boolean value is required.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  178:    reportError(tok, Severity::error, "invalidFunctionArgBool", errmsg.str(), CWE628, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  179:}
+        -:  180:
+function _ZN14CheckFunctions26invalidFunctionArgStrErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi called 0 returned 0% blocks executed 0%
+    #####:  181:void CheckFunctions::invalidFunctionArgStrError(const Token *tok, const std::string &functionName, nonneg int argnr)
+        -:  182:{
+    #####:  183:    std::ostringstream errmsg;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  184:    errmsg << "$symbol:" << functionName << '\n';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  185:    errmsg << "Invalid $symbol() argument nr " << argnr << ". A nul-terminated string is required.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  186:    reportError(tok, Severity::error, "invalidFunctionArgStr", errmsg.str(), CWE628, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  187:}
+        -:  188:
+        -:  189://---------------------------------------------------------------------------
+        -:  190:// Check for ignored return values.
+        -:  191://---------------------------------------------------------------------------
+function _ZN14CheckFunctions23checkIgnoredReturnValueEv called 0 returned 0% blocks executed 0%
+    #####:  192:void CheckFunctions::checkIgnoredReturnValue()
+        -:  193:{
+    #####:  194:    if (!mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  195:        return;
+        -:  196:
+    #####:  197:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  198:    for (const Scope *scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  199:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  200:            // skip c++11 initialization, ({...})
+    #####:  201:            if (Token::Match(tok, "%var%|(|,|return {"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  202:                tok = tok->linkAt(1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  203:            else if (Token::Match(tok, "[(<]") && tok->link())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  204:                tok = tok->link();
+call    0 never executed
+        -:  205:
+    #####:  206:            if (tok->varId() || !Token::Match(tok, "%name% ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  207:                continue;
+        -:  208:
+    #####:  209:            if (tok->next()->astParent())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  210:                continue;
+        -:  211:
+    #####:  212:            if (!tok->scope()->isExecutable()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  213:                tok = tok->scope()->bodyEnd;
+call    0 never executed
+    #####:  214:                continue;
+        -:  215:            }
+        -:  216:
+    #####:  217:            if ((!tok->function() || !Token::Match(tok->function()->retDef, "void %name%")) &&
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  218:                (mSettings->library.isUseRetVal(tok) || (tok->function() && tok->function()->isAttributeNodiscard())) &&
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+    #####:  219:                !WRONG_DATA(!tok->next()->astOperand1(), tok)) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  220:                ignoredReturnValueError(tok, tok->next()->astOperand1()->expressionString());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+        -:  221:            }
+        -:  222:        }
+        -:  223:    }
+        -:  224:}
+        -:  225:
+function _ZN14CheckFunctions23ignoredReturnValueErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  226:void CheckFunctions::ignoredReturnValueError(const Token* tok, const std::string& function)
+        -:  227:{
+    #####:  228:    reportError(tok, Severity::warning, "ignoredReturnValue",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  229:                "$symbol:" + function + "\nReturn value of function $symbol() is not used.", CWE252, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  230:}
+        -:  231:
+        -:  232:
+        -:  233://---------------------------------------------------------------------------
+        -:  234:// Detect passing wrong values to <cmath> functions like atan(0, x);
+        -:  235://---------------------------------------------------------------------------
+function _ZN14CheckFunctions18checkMathFunctionsEv called 0 returned 0% blocks executed 0%
+    #####:  236:void CheckFunctions::checkMathFunctions()
+        -:  237:{
+    #####:  238:    const bool styleC99 = mSettings->isEnabled(Settings::STYLE) && mSettings->standards.c != Standards::C89 && mSettings->standards.cpp != Standards::CPP03;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  239:    const bool printWarnings = mSettings->isEnabled(Settings::WARNING);
+call    0 never executed
+        -:  240:
+    #####:  241:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  242:    for (const Scope *scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  243:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  244:            if (tok->varId())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  245:                continue;
+    #####:  246:            if (printWarnings && Token::Match(tok, "%name% ( !!)")) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  247:                if (tok->strAt(-1) != "."
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  248:                    && Token::Match(tok, "log|logf|logl|log10|log10f|log10l|log2|log2f|log2l ( %num% )")) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  249:                    const std::string& number = tok->strAt(2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  250:                    if ((MathLib::isInt(number) && MathLib::toLongNumber(number) <= 0) ||
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  251:                        (MathLib::isFloat(number) && MathLib::toDoubleNumber(number) <= 0.))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  252:                        mathfunctionCallWarning(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  253:                } else if (Token::Match(tok, "log1p|log1pf|log1pl ( %num% )")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  254:                    const std::string& number = tok->strAt(2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  255:                    if ((MathLib::isInt(number) && MathLib::toLongNumber(number) <= -1) ||
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  256:                        (MathLib::isFloat(number) && MathLib::toDoubleNumber(number) <= -1.))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  257:                        mathfunctionCallWarning(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  258:                }
+        -:  259:                // atan2 ( x , y): x and y can not be zero, because this is mathematically not defined
+    #####:  260:                else if (Token::Match(tok, "atan2|atan2f|atan2l ( %num% , %num% )")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  261:                    if (MathLib::isNullValue(tok->strAt(2)) && MathLib::isNullValue(tok->strAt(4)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+    #####:  262:                        mathfunctionCallWarning(tok, 2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  263:                }
+        -:  264:                // fmod ( x , y) If y is zero, then either a range error will occur or the function will return zero (implementation-defined).
+    #####:  265:                else if (Token::Match(tok, "fmod|fmodf|fmodl (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  266:                    const Token* nextArg = tok->tokAt(2)->nextArgument();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  267:                    if (nextArg && nextArg->isNumber() && MathLib::isNullValue(nextArg->str()))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  268:                        mathfunctionCallWarning(tok, 2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  269:                }
+        -:  270:                // pow ( x , y) If x is zero, and y is negative --> division by zero
+    #####:  271:                else if (Token::Match(tok, "pow|powf|powl ( %num% , %num% )")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  272:                    if (MathLib::isNullValue(tok->strAt(2)) && MathLib::isNegative(tok->strAt(4)))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+    #####:  273:                        mathfunctionCallWarning(tok, 2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  274:                }
+        -:  275:            }
+        -:  276:
+    #####:  277:            if (styleC99) {
+branch  0 never executed
+branch  1 never executed
+    #####:  278:                if (Token::Match(tok, "%num% - erf (") && Tokenizer::isOneNumber(tok->str()) && tok->next()->astOperand2() == tok->tokAt(3)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+    #####:  279:                    mathfunctionCallWarning(tok, "1 - erf(x)", "erfc(x)");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  280:                } else if (Token::simpleMatch(tok, "exp (") && Token::Match(tok->linkAt(1), ") - %num%") && Tokenizer::isOneNumber(tok->linkAt(1)->strAt(2)) && tok->linkAt(1)->next()->astOperand1() == tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+branch 30 never executed
+branch 31 never executed
+branch 32 never executed
+branch 33 never executed
+    #####:  281:                    mathfunctionCallWarning(tok, "exp(x) - 1", "expm1(x)");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  282:                } else if (Token::simpleMatch(tok, "log (") && tok->next()->astOperand2()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  283:                    const Token* plus = tok->next()->astOperand2();
+call    0 never executed
+call    1 never executed
+    #####:  284:                    if (plus->str() == "+" && ((plus->astOperand1() && Tokenizer::isOneNumber(plus->astOperand1()->str())) || (plus->astOperand2() && Tokenizer::isOneNumber(plus->astOperand2()->str()))))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+branch 23 never executed
+branch 24 never executed
+branch 25 never executed
+    #####:  285:                        mathfunctionCallWarning(tok, "log(1 + x)", "log1p(x)");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+        -:  286:                }
+        -:  287:            }
+        -:  288:        }
+        -:  289:    }
+    #####:  290:}
+        -:  291:
+function _ZN14CheckFunctions23mathfunctionCallWarningEPK5Tokeni called 0 returned 0% blocks executed 0%
+    #####:  292:void CheckFunctions::mathfunctionCallWarning(const Token *tok, const nonneg int numParam)
+        -:  293:{
+    #####:  294:    if (tok) {
+branch  0 never executed
+branch  1 never executed
+    #####:  295:        if (numParam == 1)
+branch  0 never executed
+branch  1 never executed
+    #####:  296:            reportError(tok, Severity::warning, "wrongmathcall", "$symbol:" + tok->str() + "\nPassing value " + tok->strAt(2) + " to $symbol() leads to implementation-defined result.", CWE758, false);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+    #####:  297:        else if (numParam == 2)
+branch  0 never executed
+branch  1 never executed
+    #####:  298:            reportError(tok, Severity::warning, "wrongmathcall", "$symbol:" + tok->str() + "\nPassing values " + tok->strAt(2) + " and " + tok->strAt(4) + " to $symbol() leads to implementation-defined result.", CWE758, false);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+call   30 never executed
+call   31 never executed
+call   32 never executed
+call   33 never executed
+        -:  299:    } else
+    #####:  300:        reportError(tok, Severity::warning, "wrongmathcall", "Passing value '#' to #() leads to implementation-defined result.", CWE758, false);
+call    0 never executed
+    #####:  301:}
+        -:  302:
+function _ZN14CheckFunctions23mathfunctionCallWarningEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####:  303:void CheckFunctions::mathfunctionCallWarning(const Token *tok, const std::string& oldexp, const std::string& newexp)
+        -:  304:{
+    #####:  305:    reportError(tok, Severity::style, "unpreciseMathCall", "Expression '" + oldexp + "' can be replaced by '" + newexp + "' to avoid loss of precision.", CWE758, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+    #####:  306:}
+        -:  307:
+        -:  308://---------------------------------------------------------------------------
+        -:  309:// memset(p, y, 0 /* bytes to fill */) <- 2nd and 3rd arguments inverted
+        -:  310://---------------------------------------------------------------------------
+function _ZN14CheckFunctions15memsetZeroBytesEv called 0 returned 0% blocks executed 0%
+    #####:  311:void CheckFunctions::memsetZeroBytes()
+        -:  312:{
+        -:  313:// FIXME:
+        -:  314://  Replace this with library configuration.
+        -:  315://  For instance:
+        -:  316://     <arg nr="3">
+        -:  317://       <warn knownIntValue="0" severity="warning" msg="..."/>
+        -:  318://     </arg>
+        -:  319:
+    #####:  320:    if (!mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  321:        return;
+        -:  322:
+    #####:  323:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  324:    for (const Scope *scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  325:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  326:            if (Token::Match(tok, "memset|wmemset (") && (numberOfArguments(tok)==3)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  327:                const std::vector<const Token *> &arguments = getArguments(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  328:                if (WRONG_DATA(arguments.size() != 3U, tok))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  329:                    continue;
+    #####:  330:                const Token* lastParamTok = arguments[2];
+call    0 never executed
+    #####:  331:                if (lastParamTok->str() == "0")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  332:                    memsetZeroBytesError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  333:            }
+        -:  334:        }
+        -:  335:    }
+        -:  336:}
+        -:  337:
+function _ZN14CheckFunctions20memsetZeroBytesErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  338:void CheckFunctions::memsetZeroBytesError(const Token *tok)
+        -:  339:{
+    #####:  340:    const std::string summary("memset() called to fill 0 bytes.");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -:  341:    const std::string verbose(summary + " The second and third arguments might be inverted."
+        -:  342:                              " The function memset ( void * ptr, int value, size_t num ) sets the"
+    #####:  343:                              " first num bytes of the block of memory pointed by ptr to the specified value.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  344:    reportError(tok, Severity::warning, "memsetZeroBytes", summary + "\n" + verbose, CWE687, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  345:}
+call    0 never executed
+        -:  346:
+function _ZN14CheckFunctions21memsetInvalid2ndParamEv called 0 returned 0% blocks executed 0%
+    #####:  347:void CheckFunctions::memsetInvalid2ndParam()
+        -:  348:{
+        -:  349:// FIXME:
+        -:  350://  Replace this with library configuration.
+        -:  351://  For instance:
+        -:  352://     <arg nr="2">
+        -:  353://       <not-float/>
+        -:  354://       <warn possibleIntValue=":-129,256:" severity="warning" msg="..."/>
+        -:  355://     </arg>
+        -:  356:
+    #####:  357:    const bool printPortability = mSettings->isEnabled(Settings::PORTABILITY);
+call    0 never executed
+    #####:  358:    const bool printWarning = mSettings->isEnabled(Settings::WARNING);
+call    0 never executed
+    #####:  359:    if (!printWarning && !printPortability)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  360:        return;
+        -:  361:
+    #####:  362:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  363:    for (const Scope *scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  364:        for (const Token* tok = scope->bodyStart->next(); tok && (tok != scope->bodyEnd); tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+    #####:  365:            if (!Token::simpleMatch(tok, "memset ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  366:                continue;
+        -:  367:
+    #####:  368:            const std::vector<const Token *> args = getArguments(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  369:            if (args.size() != 3)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  370:                continue;
+        -:  371:
+        -:  372:            // Second parameter is zero literal, i.e. 0.0f
+    #####:  373:            const Token * const secondParamTok = args[1];
+call    0 never executed
+    #####:  374:            if (Token::Match(secondParamTok, "%num% ,") && MathLib::isNullValue(secondParamTok->str()))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  375:                continue;
+        -:  376:
+        -:  377:            // Check if second parameter is a float variable or a float literal != 0.0f
+    #####:  378:            if (printPortability && astIsFloat(secondParamTok,false)) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  379:                memsetFloatError(secondParamTok, secondParamTok->expressionString());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+        -:  380:            }
+        -:  381:
+    #####:  382:            if (printWarning && secondParamTok->isNumber()) { // Check if the second parameter is a literal and is out of range
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  383:                const long long int value = MathLib::toLongNumber(secondParamTok->str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  384:                const long long sCharMin = mSettings->signedCharMin();
+call    0 never executed
+    #####:  385:                const long long uCharMax = mSettings->unsignedCharMax();
+call    0 never executed
+    #####:  386:                if (value < sCharMin || value > uCharMax)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  387:                    memsetValueOutOfRangeError(secondParamTok, secondParamTok->str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  388:            }
+        -:  389:        }
+        -:  390:    }
+        -:  391:}
+        -:  392:
+function _ZN14CheckFunctions16memsetFloatErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  393:void CheckFunctions::memsetFloatError(const Token *tok, const std::string &var_value)
+        -:  394:{
+    #####:  395:    const std::string message("The 2nd memset() argument '" + var_value +
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  396:                              "' is a float, its representation is implementation defined.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  397:    const std::string verbose(message + " memset() is used to set each byte of a block of memory to a specific value and"
+    #####:  398:                              " the actual representation of a floating-point value is implementation defined.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  399:    reportError(tok, Severity::portability, "memsetFloat", message + "\n" + verbose, CWE688, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  400:}
+call    0 never executed
+        -:  401:
+function _ZN14CheckFunctions26memsetValueOutOfRangeErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  402:void CheckFunctions::memsetValueOutOfRangeError(const Token *tok, const std::string &value)
+        -:  403:{
+    #####:  404:    const std::string message("The 2nd memset() argument '" + value + "' doesn't fit into an 'unsigned char'.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  405:    const std::string verbose(message + " The 2nd parameter is passed as an 'int', but the function fills the block of memory using the 'unsigned char' conversion of this value.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  406:    reportError(tok, Severity::warning, "memsetValueOutOfRange", message + "\n" + verbose, CWE686, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  407:}
+call    0 never executed
+        -:  408:
+        -:  409://---------------------------------------------------------------------------
+        -:  410:// --check-library => warn for unconfigured functions
+        -:  411://---------------------------------------------------------------------------
+        -:  412:
+function _ZN14CheckFunctions26checkLibraryMatchFunctionsEv called 0 returned 0% blocks executed 0%
+    #####:  413:void CheckFunctions::checkLibraryMatchFunctions()
+        -:  414:{
+    #####:  415:    if (!mSettings->checkLibrary || !mSettings->isEnabled(Settings::INFORMATION))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  416:        return;
+        -:  417:
+    #####:  418:    bool New = false;
+    #####:  419:    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  420:        if (!tok->scope() || !tok->scope()->isExecutable())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  421:            continue;
+        -:  422:
+    #####:  423:        if (tok->str() == "new")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  424:            New = true;
+    #####:  425:        else if (tok->str() == ";")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  426:            New = false;
+    #####:  427:        else if (New)
+branch  0 never executed
+branch  1 never executed
+    #####:  428:            continue;
+        -:  429:
+    #####:  430:        if (!Token::Match(tok, "%name% (") || Token::Match(tok, "asm|sizeof|catch"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  431:            continue;
+        -:  432:
+    #####:  433:        if (tok->varId() != 0 || tok->type() || tok->isStandardType() || tok->isControlFlowKeyword())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+    #####:  434:            continue;
+        -:  435:
+    #####:  436:        if (tok->linkAt(1)->strAt(1) == "(")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  437:            continue;
+        -:  438:
+    #####:  439:        if (!mSettings->library.isNotLibraryFunction(tok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  440:            continue;
+        -:  441:
+    #####:  442:        const std::string &functionName = mSettings->library.getFunctionName(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  443:        if (functionName.empty() || mSettings->library.functions.find(functionName) != mSettings->library.functions.end())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+    #####:  444:            continue;
+        -:  445:
+    #####:  446:        reportError(tok,
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  447:                    Severity::information,
+        -:  448:                    "checkLibraryFunction",
+    #####:  449:                    "--check-library: There is no matching configuration for function " + functionName + "()");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+        -:  450:    }
+function _GLOBAL__sub_I__ZN14CheckFunctions24checkProhibitedFunctionsEv called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  451:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

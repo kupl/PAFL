@@ -1,0 +1,1034 @@
+        -:    0:Source:/home/workspace/lib/checkother.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkother.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkother.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#ifndef checkotherH
+        -:   22:#define checkotherH
+        -:   23://---------------------------------------------------------------------------
+        -:   24:
+        -:   25:#include "check.h"
+        -:   26:#include "config.h"
+        -:   27:#include "valueflow.h"
+        -:   28:
+        -:   29:#include <cstddef>
+        -:   30:#include <string>
+        -:   31:#include <vector>
+        -:   32:
+        -:   33:class ErrorLogger;
+        -:   34:class Settings;
+        -:   35:class Token;
+        -:   36:class Tokenizer;
+        -:   37:class Variable;
+        -:   38:
+        -:   39:/// @addtogroup Checks
+        -:   40:/// @{
+        -:   41:
+        -:   42:
+        -:   43:/** @brief Various small checks */
+        -:   44:
+function _ZN10CheckOtherD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10CheckOtherD2Ev called 0 returned 0% blocks executed 0%
+    #####:   45:class CPPCHECKLIB CheckOther : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   46:public:
+        -:   47:    /** @brief This constructor is used when registering the CheckClass */
+function _ZN10CheckOtherC2Ev called 1 returned 100% blocks executed 71%
+        1:   48:    CheckOther() : Check(myName()) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        1:   49:    }
+        -:   50:
+        -:   51:    /** @brief This constructor is used when running checks. */
+function _ZN10CheckOtherC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   52:    CheckOther(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:   53:        : Check(myName(), tokenizer, settings, errorLogger) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   54:    }
+        -:   55:
+        -:   56:    /** @brief Run checks against the normal token list */
+function _ZN10CheckOther9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   57:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:   58:        CheckOther checkOther(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:   59:
+        -:   60:        // Checks
+    #####:   61:        checkOther.warningOldStylePointerCast();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   62:        checkOther.invalidPointerCast();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   63:        checkOther.checkCharVariable();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   64:        checkOther.checkRedundantAssignment();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   65:        checkOther.checkRedundantAssignmentInSwitch();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   66:        checkOther.checkSuspiciousCaseInSwitch();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   67:        checkOther.checkDuplicateBranch();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   68:        checkOther.checkDuplicateExpression();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   69:        checkOther.checkUnreachableCode();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   70:        checkOther.checkSuspiciousSemicolon();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   71:        checkOther.checkVariableScope();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   72:        checkOther.checkSignOfUnsignedVariable();  // don't ignore casts (#3574)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   73:        checkOther.checkIncompleteArrayFill();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   74:        checkOther.checkVarFuncNullUB();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   75:        checkOther.checkNanInArithmeticExpression();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   76:        checkOther.checkCommaSeparatedReturn();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   77:        checkOther.checkRedundantPointerOp();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   78:        checkOther.checkZeroDivision();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   79:        checkOther.checkNegativeBitwiseShift();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   80:        checkOther.checkInterlockedDecrement();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   81:        checkOther.checkUnusedLabel();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   82:        checkOther.checkEvaluationOrder();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   83:        checkOther.checkFuncArgNamesDifferent();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   84:        checkOther.checkShadowVariables();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   85:        checkOther.checkConstArgument();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   86:        checkOther.checkComparePointers();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   87:        checkOther.checkIncompleteStatement();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   88:        checkOther.checkPipeParameterSize();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   89:        checkOther.checkRedundantCopy();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   90:        checkOther.clarifyCalculation();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   91:        checkOther.checkPassByReference();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   92:        checkOther.checkConstVariable();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   93:        checkOther.checkComparisonFunctionIsAlwaysTrueOrFalse();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   94:        checkOther.checkInvalidFree();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   95:        checkOther.clarifyStatement();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   96:        checkOther.checkCastIntToCharAndBack();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   97:        checkOther.checkMisusedScopedObject();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   98:        checkOther.checkAccessOfMovedVariable();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   99:    }
+        -:  100:
+        -:  101:    /** @brief Clarify calculation for ".. a * b ? .." */
+        -:  102:    void clarifyCalculation();
+        -:  103:
+        -:  104:    /** @brief Suspicious statement like '*A++;' */
+        -:  105:    void clarifyStatement();
+        -:  106:
+        -:  107:    /** @brief Are there C-style pointer casts in a c++ file? */
+        -:  108:    void warningOldStylePointerCast();
+        -:  109:
+        -:  110:    /** @brief Check for pointer casts to a type with an incompatible binary data representation */
+        -:  111:    void invalidPointerCast();
+        -:  112:
+        -:  113:    /** @brief %Check scope of variables */
+        -:  114:    void checkVariableScope();
+        -:  115:    static bool checkInnerScope(const Token *tok, const Variable* var, bool& used);
+        -:  116:
+        -:  117:    /** @brief %Check for comma separated statements in return */
+        -:  118:    void checkCommaSeparatedReturn();
+        -:  119:
+        -:  120:    /** @brief %Check for function parameters that should be passed by reference */
+        -:  121:    void checkPassByReference();
+        -:  122:
+        -:  123:    void checkConstVariable();
+        -:  124:
+        -:  125:    /** @brief Using char variable as array index / as operand in bit operation */
+        -:  126:    void checkCharVariable();
+        -:  127:
+        -:  128:    /** @brief Incomplete statement. A statement that only contains a constant or variable */
+        -:  129:    void checkIncompleteStatement();
+        -:  130:
+        -:  131:    /** @brief %Check zero division*/
+        -:  132:    void checkZeroDivision();
+        -:  133:
+        -:  134:    /** @brief Check for NaN (not-a-number) in an arithmetic expression */
+        -:  135:    void checkNanInArithmeticExpression();
+        -:  136:
+        -:  137:    /** @brief copying to memory or assigning to a variable twice */
+        -:  138:    void checkRedundantAssignment();
+        -:  139:
+        -:  140:    /** @brief %Check for assigning to the same variable twice in a switch statement*/
+        -:  141:    void checkRedundantAssignmentInSwitch();
+        -:  142:
+        -:  143:    /** @brief %Check for code like 'case A||B:'*/
+        -:  144:    void checkSuspiciousCaseInSwitch();
+        -:  145:
+        -:  146:    /** @brief %Check for objects that are destroyed immediately */
+        -:  147:    void checkMisusedScopedObject();
+        -:  148:
+        -:  149:    /** @brief %Check for suspicious code where if and else branch are the same (e.g "if (a) b = true; else b = true;") */
+        -:  150:    void checkDuplicateBranch();
+        -:  151:
+        -:  152:    /** @brief %Check for suspicious code with the same expression on both sides of operator (e.g "if (a && a)") */
+        -:  153:    void checkDuplicateExpression();
+        -:  154:
+        -:  155:    /** @brief %Check for code that gets never executed, such as duplicate break statements */
+        -:  156:    void checkUnreachableCode();
+        -:  157:
+        -:  158:    /** @brief %Check for testing sign of unsigned variable */
+        -:  159:    void checkSignOfUnsignedVariable();
+        -:  160:
+        -:  161:    /** @brief %Check for suspicious use of semicolon */
+        -:  162:    void checkSuspiciousSemicolon();
+        -:  163:
+        -:  164:    /** @brief %Check for free() operations on invalid memory locations */
+        -:  165:    void checkInvalidFree();
+        -:  166:    void invalidFreeError(const Token *tok, const std::string &allocation, bool inconclusive);
+        -:  167:
+        -:  168:    /** @brief %Check for code creating redundant copies */
+        -:  169:    void checkRedundantCopy();
+        -:  170:
+        -:  171:    /** @brief %Check for bitwise shift with negative right operand */
+        -:  172:    void checkNegativeBitwiseShift();
+        -:  173:
+        -:  174:    /** @brief %Check for buffers that are filled incompletely with memset and similar functions */
+        -:  175:    void checkIncompleteArrayFill();
+        -:  176:
+        -:  177:    /** @brief %Check that variadic function calls don't use NULL. If NULL is \#defined as 0 and the function expects a pointer, the behaviour is undefined. */
+        -:  178:    void checkVarFuncNullUB();
+        -:  179:
+        -:  180:    /** @brief %Check that calling the POSIX pipe() system call is called with an integer array of size two. */
+        -:  181:    void checkPipeParameterSize();
+        -:  182:
+        -:  183:    /** @brief %Check to avoid casting a return value to unsigned char and then back to integer type.  */
+        -:  184:    void checkCastIntToCharAndBack();
+        -:  185:
+        -:  186:    /** @brief %Check for using of comparison functions evaluating always to true or false. */
+        -:  187:    void checkComparisonFunctionIsAlwaysTrueOrFalse();
+        -:  188:
+        -:  189:    /** @brief %Check for redundant pointer operations */
+        -:  190:    void checkRedundantPointerOp();
+        -:  191:
+        -:  192:    /** @brief %Check for race condition with non-interlocked access after InterlockedDecrement() */
+        -:  193:    void checkInterlockedDecrement();
+        -:  194:
+        -:  195:    /** @brief %Check for unused labels */
+        -:  196:    void checkUnusedLabel();
+        -:  197:
+        -:  198:    /** @brief %Check for expression that depends on order of evaluation of side effects */
+        -:  199:    void checkEvaluationOrder();
+        -:  200:
+        -:  201:    /** @brief %Check for access of moved or forwarded variable */
+        -:  202:    void checkAccessOfMovedVariable();
+        -:  203:
+        -:  204:    /** @brief %Check if function declaration and definition argument names different */
+        -:  205:    void checkFuncArgNamesDifferent();
+        -:  206:
+        -:  207:    /** @brief %Check for shadow variables. Less noisy than gcc/clang -Wshadow. */
+        -:  208:    void checkShadowVariables();
+        -:  209:
+        -:  210:    void checkConstArgument();
+        -:  211:
+        -:  212:    void checkComparePointers();
+        -:  213:
+        -:  214:private:
+        -:  215:    // Error messages..
+        -:  216:    void checkComparisonFunctionIsAlwaysTrueOrFalseError(const Token* tok, const std::string &functionName, const std::string &varName, const bool result);
+        -:  217:    void checkCastIntToCharAndBackError(const Token *tok, const std::string &strFunctionName);
+        -:  218:    void checkPipeParameterSizeError(const Token *tok, const std::string &strVarName, const std::string &strDim);
+        -:  219:    void clarifyCalculationError(const Token *tok, const std::string &op);
+        -:  220:    void clarifyStatementError(const Token* tok);
+        -:  221:    void cstyleCastError(const Token *tok);
+        -:  222:    void invalidPointerCastError(const Token* tok, const std::string& from, const std::string& to, bool inconclusive);
+        -:  223:    void passedByValueError(const Token *tok, const std::string &parname, bool inconclusive);
+        -:  224:    void constVariableError(const Variable *var);
+        -:  225:    void constStatementError(const Token *tok, const std::string &type, bool inconclusive);
+        -:  226:    void signedCharArrayIndexError(const Token *tok);
+        -:  227:    void unknownSignCharArrayIndexError(const Token *tok);
+        -:  228:    void charBitOpError(const Token *tok);
+        -:  229:    void variableScopeError(const Token *tok, const std::string &varname);
+        -:  230:    void zerodivError(const Token *tok, const ValueFlow::Value *value);
+        -:  231:    void nanInArithmeticExpressionError(const Token *tok);
+        -:  232:    void redundantAssignmentError(const Token *tok1, const Token* tok2, const std::string& var, bool inconclusive);
+        -:  233:    void redundantInitializationError(const Token *tok1, const Token* tok2, const std::string& var, bool inconclusive);
+        -:  234:    void redundantAssignmentInSwitchError(const Token *tok1, const Token *tok2, const std::string &var);
+        -:  235:    void redundantCopyError(const Token *tok1, const Token* tok2, const std::string& var);
+        -:  236:    void redundantCopyInSwitchError(const Token *tok1, const Token* tok2, const std::string &var);
+        -:  237:    void redundantBitwiseOperationInSwitchError(const Token *tok, const std::string &varname);
+        -:  238:    void suspiciousCaseInSwitchError(const Token* tok, const std::string& operatorString);
+        -:  239:    void selfAssignmentError(const Token *tok, const std::string &varname);
+        -:  240:    void misusedScopeObjectError(const Token *tok, const std::string &varname);
+        -:  241:    void duplicateBranchError(const Token *tok1, const Token *tok2, ErrorPath errors);
+        -:  242:    void duplicateAssignExpressionError(const Token *tok1, const Token *tok2, bool inconclusive);
+        -:  243:    void oppositeExpressionError(const Token *opTok, ErrorPath errors);
+        -:  244:    void duplicateExpressionError(const Token *tok1, const Token *tok2, const Token *opTok, ErrorPath errors);
+        -:  245:    void duplicateValueTernaryError(const Token *tok);
+        -:  246:    void duplicateExpressionTernaryError(const Token *tok, ErrorPath errors);
+        -:  247:    void duplicateBreakError(const Token *tok, bool inconclusive);
+        -:  248:    void unreachableCodeError(const Token* tok, bool inconclusive);
+        -:  249:    void unsignedLessThanZeroError(const Token *tok, const ValueFlow::Value *v, const std::string &varname);
+        -:  250:    void pointerLessThanZeroError(const Token *tok, const ValueFlow::Value *v);
+        -:  251:    void unsignedPositiveError(const Token *tok, const ValueFlow::Value *v, const std::string &varname);
+        -:  252:    void pointerPositiveError(const Token *tok, const ValueFlow::Value *v);
+        -:  253:    void SuspiciousSemicolonError(const Token *tok);
+        -:  254:    void negativeBitwiseShiftError(const Token *tok, int op);
+        -:  255:    void redundantCopyError(const Token *tok, const std::string &varname);
+        -:  256:    void incompleteArrayFillError(const Token* tok, const std::string& buffer, const std::string& function, bool boolean);
+        -:  257:    void varFuncNullUBError(const Token *tok);
+        -:  258:    void commaSeparatedReturnError(const Token *tok);
+        -:  259:    void redundantPointerOpError(const Token* tok, const std::string& varname, bool inconclusive);
+        -:  260:    void raceAfterInterlockedDecrementError(const Token* tok);
+        -:  261:    void unusedLabelError(const Token* tok, bool inSwitch);
+        -:  262:    void unknownEvaluationOrder(const Token* tok);
+        -:  263:    static bool isMovedParameterAllowedForInconclusiveFunction(const Token * tok);
+        -:  264:    void accessMovedError(const Token *tok, const std::string &varname, const ValueFlow::Value *value, bool inconclusive);
+        -:  265:    void funcArgNamesDifferent(const std::string & functionName, nonneg int index, const Token* declaration, const Token* definition);
+        -:  266:    void funcArgOrderDifferent(const std::string & functionName, const Token * declaration, const Token * definition, const std::vector<const Token*> & declarations, const std::vector<const Token*> & definitions);
+        -:  267:    void shadowError(const Token *var, const Token *shadowed, std::string type);
+        -:  268:    void constArgumentError(const Token *tok, const Token *ftok, const ValueFlow::Value *value);
+        -:  269:    void comparePointersError(const Token *tok, const ValueFlow::Value *v1, const ValueFlow::Value *v2);
+        -:  270:
+function _ZNK10CheckOther16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  271:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:  272:        CheckOther c(nullptr, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  273:
+    #####:  274:        ErrorPath errorPath;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  275:
+        -:  276:        // error
+    #####:  277:        c.zerodivError(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  278:        c.misusedScopeObjectError(nullptr, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  279:        c.invalidPointerCastError(nullptr,  "float", "double", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  280:        c.negativeBitwiseShiftError(nullptr, 1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  281:        c.negativeBitwiseShiftError(nullptr, 2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  282:        c.checkPipeParameterSizeError(nullptr,  "varname", "dimension");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  283:        c.raceAfterInterlockedDecrementError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  284:        c.invalidFreeError(nullptr, "malloc", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  285:
+        -:  286:        //performance
+    #####:  287:        c.redundantCopyError(nullptr,  "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  288:        c.redundantCopyError(nullptr, nullptr, "var");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  289:
+        -:  290:        // style/warning
+    #####:  291:        c.checkComparisonFunctionIsAlwaysTrueOrFalseError(nullptr, "isless","varName",false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  292:        c.checkCastIntToCharAndBackError(nullptr, "func_name");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  293:        c.cstyleCastError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  294:        c.passedByValueError(nullptr, "parametername", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  295:        c.constVariableError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  296:        c.constStatementError(nullptr, "type", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  297:        c.signedCharArrayIndexError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  298:        c.unknownSignCharArrayIndexError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  299:        c.charBitOpError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  300:        c.variableScopeError(nullptr,  "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  301:        c.redundantAssignmentInSwitchError(nullptr, nullptr, "var");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  302:        c.redundantCopyInSwitchError(nullptr, nullptr, "var");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  303:        c.suspiciousCaseInSwitchError(nullptr,  "||");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  304:        c.selfAssignmentError(nullptr,  "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  305:        c.clarifyCalculationError(nullptr,  "+");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  306:        c.clarifyStatementError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  307:        c.duplicateBranchError(nullptr, nullptr, errorPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  308:        c.duplicateAssignExpressionError(nullptr, nullptr, true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  309:        c.oppositeExpressionError(nullptr, errorPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  310:        c.duplicateExpressionError(nullptr, nullptr, nullptr, errorPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  311:        c.duplicateValueTernaryError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  312:        c.duplicateExpressionTernaryError(nullptr, errorPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  313:        c.duplicateBreakError(nullptr,  false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  314:        c.unreachableCodeError(nullptr,  false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  315:        c.unsignedLessThanZeroError(nullptr, nullptr, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  316:        c.unsignedPositiveError(nullptr, nullptr, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  317:        c.pointerLessThanZeroError(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  318:        c.pointerPositiveError(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  319:        c.SuspiciousSemicolonError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  320:        c.incompleteArrayFillError(nullptr,  "buffer", "memset", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  321:        c.varFuncNullUBError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  322:        c.nanInArithmeticExpressionError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  323:        c.commaSeparatedReturnError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  324:        c.redundantPointerOpError(nullptr,  "varname", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  325:        c.unusedLabelError(nullptr,  true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  326:        c.unusedLabelError(nullptr,  false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  327:        c.unknownEvaluationOrder(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  328:        c.accessMovedError(nullptr, "v", nullptr, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  329:        c.funcArgNamesDifferent("function", 1, nullptr, nullptr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  330:        c.redundantBitwiseOperationInSwitchError(nullptr, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  331:        c.shadowError(nullptr, nullptr, "variable");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  332:        c.shadowError(nullptr, nullptr, "function");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  333:        c.shadowError(nullptr, nullptr, "argument");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  334:        c.constArgumentError(nullptr, nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  335:        c.comparePointersError(nullptr, nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  336:        c.redundantAssignmentError(nullptr, nullptr, "var", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  337:        c.redundantInitializationError(nullptr, nullptr, "var", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  338:
+    #####:  339:        const std::vector<const Token *> nullvec;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  340:        c.funcArgOrderDifferent("function", nullptr, nullptr, nullvec, nullvec);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  341:    }
+        -:  342:
+function _ZN10CheckOther6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  343:    static std::string myName() {
+    #####:  344:        return "Other";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  345:    }
+        -:  346:
+function _ZNK10CheckOther9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  347:    std::string classInfo() const OVERRIDE {
+        -:  348:        return "Other checks\n"
+        -:  349:
+        -:  350:               // error
+        -:  351:               "- division with zero\n"
+        -:  352:               "- scoped object destroyed immediately after construction\n"
+        -:  353:               "- assignment in an assert statement\n"
+        -:  354:               "- free() or delete of an invalid memory location\n"
+        -:  355:               "- bitwise operation with negative right operand\n"
+        -:  356:               "- provide wrong dimensioned array to pipe() system command (--std=posix)\n"
+        -:  357:               "- cast the return values of getc(),fgetc() and getchar() to character and compare it to EOF\n"
+        -:  358:               "- race condition with non-interlocked access after InterlockedDecrement() call\n"
+        -:  359:               "- expression 'x = x++;' depends on order of evaluation of side effects\n"
+        -:  360:
+        -:  361:               // warning
+        -:  362:               "- either division by zero or useless condition\n"
+        -:  363:               "- access of moved or forwarded variable.\n"
+        -:  364:
+        -:  365:               // performance
+        -:  366:               "- redundant data copying for const variable\n"
+        -:  367:               "- subsequent assignment or copying to a variable or buffer\n"
+        -:  368:               "- passing parameter by value\n"
+        -:  369:
+        -:  370:               // portability
+        -:  371:               "- Passing NULL pointer to function with variable number of arguments leads to UB.\n"
+        -:  372:
+        -:  373:               // style
+        -:  374:               "- C-style pointer cast in C++ code\n"
+        -:  375:               "- casting between incompatible pointer types\n"
+        -:  376:               "- [Incomplete statement](IncompleteStatement)\n"
+        -:  377:               "- [check how signed char variables are used](CharVar)\n"
+        -:  378:               "- variable scope can be limited\n"
+        -:  379:               "- unusual pointer arithmetic. For example: \"abc\" + 'd'\n"
+        -:  380:               "- redundant assignment, increment, or bitwise operation in a switch statement\n"
+        -:  381:               "- redundant strcpy in a switch statement\n"
+        -:  382:               "- Suspicious case labels in switch()\n"
+        -:  383:               "- assignment of a variable to itself\n"
+        -:  384:               "- Comparison of values leading always to true or false\n"
+        -:  385:               "- Clarify calculation with parentheses\n"
+        -:  386:               "- suspicious comparison of '\\0' with a char\\* variable\n"
+        -:  387:               "- duplicate break statement\n"
+        -:  388:               "- unreachable code\n"
+        -:  389:               "- testing if unsigned variable is negative/positive\n"
+        -:  390:               "- Suspicious use of ; at the end of 'if/for/while' statement.\n"
+        -:  391:               "- Array filled incompletely using memset/memcpy/memmove.\n"
+        -:  392:               "- NaN (not a number) value used in arithmetic expression.\n"
+        -:  393:               "- comma in return statement (the comma can easily be misread as a semicolon).\n"
+        -:  394:               "- prefer erfc, expm1 or log1p to avoid loss of precision.\n"
+        -:  395:               "- identical code in both branches of if/else or ternary operator.\n"
+        -:  396:               "- redundant pointer operation on pointer like &\\*some_ptr.\n"
+        -:  397:               "- find unused 'goto' labels.\n"
+        -:  398:               "- function declaration and definition argument names different.\n"
+        -:  399:               "- function declaration and definition argument order different.\n"
+        -:  400:               "- shadow variable.\n"
+    #####:  401:               "- variable can be declared const.\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  402:    }
+        -:  403:};
+        -:  404:/// @}
+        -:  405://---------------------------------------------------------------------------
+        -:  406:#endif // checkotherH

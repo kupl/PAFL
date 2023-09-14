@@ -1,0 +1,247 @@
+        -:    0:Source:/home/workspace/lib/ctu.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/ctu.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/ctu.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#ifndef ctuH
+        -:   22:#define ctuH
+        -:   23://---------------------------------------------------------------------------
+        -:   24:
+        -:   25:#include "check.h"
+        -:   26:#include "valueflow.h"
+        -:   27:
+        -:   28:/// @addtogroup Core
+        -:   29:/// @{
+        -:   30:
+        -:   31:
+        -:   32:/** @brief Whole program analysis (ctu=Cross Translation Unit) */
+        -:   33:namespace CTU {
+function _ZN3CTU8FileInfoD0Ev called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfoD2Ev called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfoC2Ev called 0 returned 0% blocks executed 0%
+    #####:   34:    class CPPCHECKLIB FileInfo : public Check::FileInfo {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:   35:    public:
+        -:   36:        enum class InvalidValueType { null, uninit, bufferOverflow };
+        -:   37:
+        -:   38:        std::string toString() const OVERRIDE;
+        -:   39:
+function _ZN3CTU8FileInfo8LocationaSEOS1_ called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfo8LocationD2Ev called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfo8LocationC2ERKS1_ called 0 returned 0% blocks executed 0%
+    #####:   40:        struct Location {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+function _ZN3CTU8FileInfo8LocationC2Ev called 0 returned 0% blocks executed 0%
+    #####:   41:            Location() = default;
+call    0 never executed
+        -:   42:            Location(const Tokenizer *tokenizer, const Token *tok);
+        -:   43:            Location(const std::string &fileName, nonneg int lineNumber, nonneg int column) : fileName(fileName), lineNumber(lineNumber), column(column) {}
+        -:   44:            std::string fileName;
+        -:   45:            nonneg int lineNumber;
+        -:   46:            nonneg int column;
+        -:   47:        };
+        -:   48:
+function _ZN3CTU8FileInfo11UnsafeUsageC2ERKS1_ called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfo11UnsafeUsageD2Ev called 0 returned 0% blocks executed 0%
+    #####:   49:        struct UnsafeUsage {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+function _ZN3CTU8FileInfo11UnsafeUsageC2Ev called 0 returned 0% blocks executed 0%
+    #####:   50:            UnsafeUsage() = default;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+function _ZN3CTU8FileInfo11UnsafeUsageC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEiS9_RKNS0_8LocationEx called 0 returned 0% blocks executed 0%
+    #####:   51:            UnsafeUsage(const std::string &myId, nonneg int myArgNr, const std::string &myArgumentName, const Location &location, MathLib::bigint value) : myId(myId), myArgNr(myArgNr), myArgumentName(myArgumentName), location(location), value(value) {}
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+        -:   52:            std::string myId;
+        -:   53:            nonneg int myArgNr;
+        -:   54:            std::string myArgumentName;
+        -:   55:            Location location;
+        -:   56:            MathLib::bigint value;
+        -:   57:            std::string toString() const;
+        -:   58:        };
+        -:   59:
+function _ZN3CTU8FileInfo8CallBaseC2ERKS1_ called 0 returned 0% blocks executed 0%
+    #####:   60:        class CallBase {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+        -:   61:        public:
+function _ZN3CTU8FileInfo8CallBaseC2Ev called 0 returned 0% blocks executed 0%
+    #####:   62:            CallBase() = default;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   63:            CallBase(const std::string &callId, int callArgNr, const std::string &callFunctionName, const Location &loc)
+        -:   64:                : callId(callId), callArgNr(callArgNr), callFunctionName(callFunctionName), location(loc)
+        -:   65:            {}
+        -:   66:            CallBase(const Tokenizer *tokenizer, const Token *callToken);
+function _ZN3CTU8FileInfo8CallBaseD0Ev called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfo8CallBaseD2Ev called 0 returned 0% blocks executed 0%
+    #####:   67:            virtual ~CallBase() {}
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+        -:   68:            std::string callId;
+        -:   69:            int callArgNr;
+        -:   70:            std::string callFunctionName;
+        -:   71:            Location location;
+        -:   72:        protected:
+        -:   73:            std::string toBaseXmlString() const;
+        -:   74:            bool loadBaseFromXml(const tinyxml2::XMLElement *xmlElement);
+        -:   75:        };
+        -:   76:
+function _ZN3CTU8FileInfo12FunctionCallD0Ev called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfo12FunctionCallD2Ev called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfo12FunctionCallC2ERKS1_ called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfo12FunctionCallC2Ev called 0 returned 0% blocks executed 0%
+    #####:   77:        class FunctionCall : public CallBase {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+        -:   78:        public:
+        -:   79:            std::string callArgumentExpression;
+        -:   80:            MathLib::bigint callArgValue;
+        -:   81:            ValueFlow::Value::ValueType callValueType;
+        -:   82:            std::vector<ErrorLogger::ErrorMessage::FileLocation> callValuePath;
+        -:   83:            bool warning;
+        -:   84:
+        -:   85:            std::string toXmlString() const;
+        -:   86:            bool loadFromXml(const tinyxml2::XMLElement *xmlElement);
+        -:   87:        };
+        -:   88:
+function _ZN3CTU8FileInfo10NestedCallD0Ev called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfo10NestedCallD2Ev called 0 returned 0% blocks executed 0%
+function _ZN3CTU8FileInfo10NestedCallC2ERKS1_ called 0 returned 0% blocks executed 0%
+    #####:   89:        class NestedCall : public CallBase {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+        -:   90:        public:
+function _ZN3CTU8FileInfo10NestedCallC2Ev called 0 returned 0% blocks executed 0%
+    #####:   91:            NestedCall() = default;
+call    0 never executed
+call    1 never executed
+        -:   92:
+        -:   93:            NestedCall(const std::string &myId, nonneg int myArgNr, const std::string &callId, nonneg int callArgnr, const std::string &callFunctionName, const Location &location)
+        -:   94:                : CallBase(callId, callArgnr, callFunctionName, location),
+        -:   95:                  myId(myId),
+        -:   96:                  myArgNr(myArgNr) {
+        -:   97:            }
+        -:   98:
+        -:   99:            NestedCall(const Tokenizer *tokenizer, const Function *myFunction, const Token *callToken);
+        -:  100:
+        -:  101:            std::string toXmlString() const;
+        -:  102:            bool loadFromXml(const tinyxml2::XMLElement *xmlElement);
+        -:  103:
+        -:  104:            std::string myId;
+        -:  105:            nonneg int myArgNr;
+        -:  106:        };
+        -:  107:
+        -:  108:        std::list<FunctionCall> functionCalls;
+        -:  109:        std::list<NestedCall> nestedCalls;
+        -:  110:
+        -:  111:        void loadFromXml(const tinyxml2::XMLElement *xmlElement);
+        -:  112:        std::map<std::string, std::list<const CallBase *>> getCallsMap() const;
+        -:  113:
+        -:  114:        std::list<ErrorLogger::ErrorMessage::FileLocation> getErrorPath(InvalidValueType invalidValue,
+        -:  115:                const UnsafeUsage &unsafeUsage,
+        -:  116:                const std::map<std::string, std::list<const CallBase *>> &callsMap,
+        -:  117:                const char info[],
+        -:  118:                const FunctionCall * * const functionCallPtr,
+        -:  119:                bool warning) const;
+        -:  120:    };
+        -:  121:
+        -:  122:    extern int maxCtuDepth;
+        -:  123:
+        -:  124:    CPPCHECKLIB std::string toString(const std::list<FileInfo::UnsafeUsage> &unsafeUsage);
+        -:  125:
+        -:  126:    CPPCHECKLIB std::string getFunctionId(const Tokenizer *tokenizer, const Function *function);
+        -:  127:
+        -:  128:    /** @brief Parse current TU and extract file info */
+        -:  129:    CPPCHECKLIB FileInfo *getFileInfo(const Tokenizer *tokenizer);
+        -:  130:
+        -:  131:    CPPCHECKLIB std::list<FileInfo::UnsafeUsage> getUnsafeUsage(const Tokenizer *tokenizer, const Settings *settings, const Check *check, bool (*isUnsafeUsage)(const Check *check, const Token *argtok, MathLib::bigint *value));
+        -:  132:
+        -:  133:    CPPCHECKLIB std::list<FileInfo::UnsafeUsage> loadUnsafeUsageListFromXml(const tinyxml2::XMLElement *xmlElement);
+        -:  134:}
+        -:  135:
+        -:  136:/// @}
+        -:  137://---------------------------------------------------------------------------
+        -:  138:#endif // ctuH

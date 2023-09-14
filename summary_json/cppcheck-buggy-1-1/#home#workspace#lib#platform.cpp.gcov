@@ -1,0 +1,533 @@
+        -:    0:Source:/home/workspace/lib/platform.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/platform.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/platform.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2:* Cppcheck - A tool for static C/C++ code analysis
+        -:    3:* Copyright (C) 2007-2019 Cppcheck team.
+        -:    4:*
+        -:    5:* This program is free software: you can redistribute it and/or modify
+        -:    6:* it under the terms of the GNU General Public License as published by
+        -:    7:* the Free Software Foundation, either version 3 of the License, or
+        -:    8:* (at your option) any later version.
+        -:    9:*
+        -:   10:* This program is distributed in the hope that it will be useful,
+        -:   11:* but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12:* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13:* GNU General Public License for more details.
+        -:   14:*
+        -:   15:* You should have received a copy of the GNU General Public License
+        -:   16:* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17:*/
+        -:   18:
+        -:   19:#include "platform.h"
+        -:   20:#include "path.h"
+        -:   21:#include "tinyxml2.h"
+        -:   22:#include <cstdlib>
+        -:   23:#include <cstring>
+        -:   24:#include <limits>
+        -:   25:#include <vector>
+        -:   26:
+function _ZN8cppcheck8PlatformC2Ev called 60 returned 100% blocks executed 100%
+       60:   27:cppcheck::Platform::Platform()
+        -:   28:{
+        -:   29:    // This assumes the code you are checking is for the same architecture this is compiled on.
+        -:   30:#if defined(_WIN64)
+        -:   31:    platform(Win64);
+        -:   32:#elif defined(_WIN32)
+        -:   33:    platform(Win32A);
+        -:   34:#else
+       60:   35:    platform(Native);
+call    0 returned 100%
+        -:   36:#endif
+       60:   37:}
+        -:   38:
+        -:   39:
+function _ZN8cppcheck8Platform8platformENS0_12PlatformTypeE called 60 returned 100% blocks executed 42%
+       60:   40:bool cppcheck::Platform::platform(cppcheck::Platform::PlatformType type)
+        -:   41:{
+       60:   42:    switch (type) {
+branch  0 taken 100%
+branch  1 taken 0%
+branch  2 taken 0%
+branch  3 taken 0%
+branch  4 taken 0%
+branch  5 taken 0%
+branch  6 taken 0%
+       60:   43:    case Unspecified: // unknown type sizes (sizes etc are set but are not known)
+        -:   44:    case Native: // same as system this code was compile on
+       60:   45:        platformType = type;
+       60:   46:        sizeof_bool = sizeof(bool);
+       60:   47:        sizeof_short = sizeof(short);
+       60:   48:        sizeof_int = sizeof(int);
+       60:   49:        sizeof_long = sizeof(long);
+       60:   50:        sizeof_long_long = sizeof(long long);
+       60:   51:        sizeof_float = sizeof(float);
+       60:   52:        sizeof_double = sizeof(double);
+       60:   53:        sizeof_long_double = sizeof(long double);
+       60:   54:        sizeof_wchar_t = sizeof(wchar_t);
+       60:   55:        sizeof_size_t = sizeof(std::size_t);
+       60:   56:        sizeof_pointer = sizeof(void *);
+       60:   57:        if (type == Unspecified) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:   58:            defaultSign = '\0';
+        -:   59:        } else {
+       60:   60:            defaultSign = (std::numeric_limits<char>::is_signed) ? 's' : 'u';
+        -:   61:        }
+       60:   62:        char_bit = 8;
+       60:   63:        short_bit = char_bit * sizeof_short;
+       60:   64:        int_bit = char_bit * sizeof_int;
+       60:   65:        long_bit = char_bit * sizeof_long;
+       60:   66:        long_long_bit = char_bit * sizeof_long_long;
+       60:   67:        return true;
+    #####:   68:    case Win32W:
+        -:   69:    case Win32A:
+    #####:   70:        platformType = type;
+    #####:   71:        sizeof_bool = 1; // 4 in Visual C++ 4.2
+    #####:   72:        sizeof_short = 2;
+    #####:   73:        sizeof_int = 4;
+    #####:   74:        sizeof_long = 4;
+    #####:   75:        sizeof_long_long = 8;
+    #####:   76:        sizeof_float = 4;
+    #####:   77:        sizeof_double = 8;
+    #####:   78:        sizeof_long_double = 8;
+    #####:   79:        sizeof_wchar_t = 2;
+    #####:   80:        sizeof_size_t = 4;
+    #####:   81:        sizeof_pointer = 4;
+    #####:   82:        defaultSign = '\0';
+    #####:   83:        char_bit = 8;
+    #####:   84:        short_bit = char_bit * sizeof_short;
+    #####:   85:        int_bit = char_bit * sizeof_int;
+    #####:   86:        long_bit = char_bit * sizeof_long;
+    #####:   87:        long_long_bit = char_bit * sizeof_long_long;
+    #####:   88:        return true;
+    #####:   89:    case Win64:
+    #####:   90:        platformType = type;
+    #####:   91:        sizeof_bool = 1;
+    #####:   92:        sizeof_short = 2;
+    #####:   93:        sizeof_int = 4;
+    #####:   94:        sizeof_long = 4;
+    #####:   95:        sizeof_long_long = 8;
+    #####:   96:        sizeof_float = 4;
+    #####:   97:        sizeof_double = 8;
+    #####:   98:        sizeof_long_double = 8;
+    #####:   99:        sizeof_wchar_t = 2;
+    #####:  100:        sizeof_size_t = 8;
+    #####:  101:        sizeof_pointer = 8;
+    #####:  102:        defaultSign = '\0';
+    #####:  103:        char_bit = 8;
+    #####:  104:        short_bit = char_bit * sizeof_short;
+    #####:  105:        int_bit = char_bit * sizeof_int;
+    #####:  106:        long_bit = char_bit * sizeof_long;
+    #####:  107:        long_long_bit = char_bit * sizeof_long_long;
+    #####:  108:        return true;
+    #####:  109:    case Unix32:
+    #####:  110:        platformType = type;
+    #####:  111:        sizeof_bool = 1;
+    #####:  112:        sizeof_short = 2;
+    #####:  113:        sizeof_int = 4;
+    #####:  114:        sizeof_long = 4;
+    #####:  115:        sizeof_long_long = 8;
+    #####:  116:        sizeof_float = 4;
+    #####:  117:        sizeof_double = 8;
+    #####:  118:        sizeof_long_double = 12;
+    #####:  119:        sizeof_wchar_t = 4;
+    #####:  120:        sizeof_size_t = 4;
+    #####:  121:        sizeof_pointer = 4;
+    #####:  122:        defaultSign = '\0';
+    #####:  123:        char_bit = 8;
+    #####:  124:        short_bit = char_bit * sizeof_short;
+    #####:  125:        int_bit = char_bit * sizeof_int;
+    #####:  126:        long_bit = char_bit * sizeof_long;
+    #####:  127:        long_long_bit = char_bit * sizeof_long_long;
+    #####:  128:        return true;
+    #####:  129:    case Unix64:
+    #####:  130:        platformType = type;
+    #####:  131:        sizeof_bool = 1;
+    #####:  132:        sizeof_short = 2;
+    #####:  133:        sizeof_int = 4;
+    #####:  134:        sizeof_long = 8;
+    #####:  135:        sizeof_long_long = 8;
+    #####:  136:        sizeof_float = 4;
+    #####:  137:        sizeof_double = 8;
+    #####:  138:        sizeof_long_double = 16;
+    #####:  139:        sizeof_wchar_t = 4;
+    #####:  140:        sizeof_size_t = 8;
+    #####:  141:        sizeof_pointer = 8;
+    #####:  142:        defaultSign = '\0';
+    #####:  143:        char_bit = 8;
+    #####:  144:        short_bit = char_bit * sizeof_short;
+    #####:  145:        int_bit = char_bit * sizeof_int;
+    #####:  146:        long_bit = char_bit * sizeof_long;
+    #####:  147:        long_long_bit = char_bit * sizeof_long_long;
+    #####:  148:        return true;
+    #####:  149:    case PlatformFile:
+        -:  150:        // sizes are not set.
+    #####:  151:        return false;
+        -:  152:    }
+        -:  153:    // unsupported platform
+    #####:  154:    return false;
+        -:  155:}
+        -:  156:
+function _ZN8cppcheck8Platform16loadPlatformFileEPKcRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  157:bool cppcheck::Platform::loadPlatformFile(const char exename[], const std::string &filename)
+        -:  158:{
+        -:  159:    // open file..
+    #####:  160:    tinyxml2::XMLDocument doc;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  161:    if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  162:        std::vector<std::string> filenames;
+call    0 never executed
+call    1 never executed
+    #####:  163:        filenames.push_back(filename + ".xml");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  164:        if (exename && (std::string::npos != Path::fromNativeSeparators(exename).find('/'))) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+    #####:  165:            filenames.push_back(Path::getPathFromFilename(Path::fromNativeSeparators(exename)) + "platforms/" + filename);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+call   30 never executed
+    #####:  166:            filenames.push_back(Path::getPathFromFilename(Path::fromNativeSeparators(exename)) + "platforms/" + filename + ".xml");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+call   30 never executed
+call   31 never executed
+call   32 never executed
+call   33 never executed
+call   34 never executed
+call   35 never executed
+call   36 never executed
+        -:  167:        }
+        -:  168:#ifdef FILESDIR
+    #####:  169:        std::string filesdir = FILESDIR;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+    #####:  170:        if (!filesdir.empty() && filesdir[filesdir.size()-1] != '/')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  171:            filesdir += '/';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  172:        filenames.push_back(filesdir + ("platforms/" + filename));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  173:        filenames.push_back(filesdir + ("platforms/" + filename + ".xml"));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -:  174:#endif
+    #####:  175:        bool success = false;
+    #####:  176:        for (const std::string & f : filenames) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  177:            if (doc.LoadFile(f.c_str()) == tinyxml2::XML_SUCCESS) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  178:                success = true;
+    #####:  179:                break;
+        -:  180:            }
+        -:  181:        }
+    #####:  182:        if (!success)
+branch  0 never executed
+branch  1 never executed
+    #####:  183:            return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  184:    }
+        -:  185:
+    #####:  186:    return loadFromXmlDocument(&doc);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  187:}
+        -:  188:
+function _ZN8cppcheck8Platform19loadFromXmlDocumentEPKN8tinyxml211XMLDocumentE called 0 returned 0% blocks executed 0%
+    #####:  189:bool cppcheck::Platform::loadFromXmlDocument(const tinyxml2::XMLDocument *doc)
+        -:  190:{
+    #####:  191:    const tinyxml2::XMLElement * const rootnode = doc->FirstChildElement();
+call    0 never executed
+        -:  192:
+    #####:  193:    if (!rootnode || std::strcmp(rootnode->Name(), "platform") != 0)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  194:        return false;
+        -:  195:
+    #####:  196:    for (const tinyxml2::XMLElement *node = rootnode->FirstChildElement(); node; node = node->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  197:        if (std::strcmp(node->Name(), "default-sign") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  198:            defaultSign = *node->GetText();
+call    0 never executed
+    #####:  199:        else if (std::strcmp(node->Name(), "char_bit") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  200:            char_bit = std::atoi(node->GetText());
+call    0 never executed
+    #####:  201:        else if (std::strcmp(node->Name(), "sizeof") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  202:            for (const tinyxml2::XMLElement *sz = node->FirstChildElement(); sz; sz = sz->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  203:                if (std::strcmp(sz->Name(), "short") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  204:                    sizeof_short = std::atoi(sz->GetText());
+call    0 never executed
+    #####:  205:                else if (std::strcmp(sz->Name(), "bool") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  206:                    sizeof_bool = std::atoi(sz->GetText());
+call    0 never executed
+    #####:  207:                else if (std::strcmp(sz->Name(), "int") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  208:                    sizeof_int = std::atoi(sz->GetText());
+call    0 never executed
+    #####:  209:                else if (std::strcmp(sz->Name(), "long") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  210:                    sizeof_long = std::atoi(sz->GetText());
+call    0 never executed
+    #####:  211:                else if (std::strcmp(sz->Name(), "long-long") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  212:                    sizeof_long_long = std::atoi(sz->GetText());
+call    0 never executed
+    #####:  213:                else if (std::strcmp(sz->Name(), "float") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  214:                    sizeof_float = std::atoi(sz->GetText());
+call    0 never executed
+    #####:  215:                else if (std::strcmp(sz->Name(), "double") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  216:                    sizeof_double = std::atoi(sz->GetText());
+call    0 never executed
+    #####:  217:                else if (std::strcmp(sz->Name(), "long-double") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  218:                    sizeof_long_double = std::atoi(sz->GetText());
+call    0 never executed
+    #####:  219:                else if (std::strcmp(sz->Name(), "pointer") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  220:                    sizeof_pointer = std::atoi(sz->GetText());
+call    0 never executed
+    #####:  221:                else if (std::strcmp(sz->Name(), "size_t") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  222:                    sizeof_size_t = std::atoi(sz->GetText());
+call    0 never executed
+    #####:  223:                else if (std::strcmp(sz->Name(), "wchar_t") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  224:                    sizeof_wchar_t = std::atoi(sz->GetText());
+call    0 never executed
+        -:  225:            }
+        -:  226:        }
+        -:  227:    }
+        -:  228:
+    #####:  229:    short_bit = char_bit * sizeof_short;
+    #####:  230:    int_bit = char_bit * sizeof_int;
+    #####:  231:    long_bit = char_bit * sizeof_long;
+    #####:  232:    long_long_bit = char_bit * sizeof_long_long;
+        -:  233:
+    #####:  234:    platformType = PlatformFile;
+    #####:  235:    return true;
+function _GLOBAL__sub_I__ZN8cppcheck8PlatformC2Ev called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  236:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

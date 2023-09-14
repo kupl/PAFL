@@ -1,0 +1,378 @@
+        -:    0:Source:/home/workspace/lib/settings.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/tokenize.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/tokenize.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef settingsH
+        -:   21:#define settingsH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "config.h"
+        -:   25:#include "errorlogger.h"
+        -:   26:#include "importproject.h"
+        -:   27:#include "library.h"
+        -:   28:#include "platform.h"
+        -:   29:#include "standards.h"
+        -:   30:#include "suppressions.h"
+        -:   31:#include "timer.h"
+        -:   32:
+        -:   33:#include <list>
+        -:   34:#include <set>
+        -:   35:#include <string>
+        -:   36:#include <vector>
+        -:   37:
+        -:   38:namespace ValueFlow {
+        -:   39:    class Value;
+        -:   40:}
+        -:   41:
+        -:   42:/// @addtogroup Core
+        -:   43:/// @{
+        -:   44:
+        -:   45:/**
+        -:   46: * @brief This is just a container for general settings so that we don't need
+        -:   47: * to pass individual values to functions or constructors now or in the
+        -:   48: * future when we might have even more detailed settings.
+        -:   49: */
+        -:   50:class CPPCHECKLIB Settings : public cppcheck::Platform {
+        -:   51:public:
+        -:   52:    enum EnabledGroup {
+        -:   53:        WARNING = 0x1,
+        -:   54:        STYLE = 0x2,
+        -:   55:        PERFORMANCE = 0x4,
+        -:   56:        PORTABILITY = 0x8,
+        -:   57:        INFORMATION = 0x10,
+        -:   58:        UNUSED_FUNCTION = 0x20,
+        -:   59:        MISSING_INCLUDE = 0x40,
+        -:   60:        INTERNAL = 0x80
+        -:   61:    };
+        -:   62:
+        -:   63:private:
+        -:   64:    /** @brief enable extra checks by id */
+        -:   65:    int mEnabled;
+        -:   66:
+        -:   67:    /** @brief terminate checking */
+        -:   68:    static bool mTerminated;
+        -:   69:
+        -:   70:public:
+        -:   71:    Settings();
+        -:   72:
+        -:   73:    std::list<std::string> addons;
+        -:   74:
+        -:   75:    /** @brief Paths used as base for conversion to relative paths. */
+        -:   76:    std::vector<std::string> basePaths;
+        -:   77:
+        -:   78:    /** @brief --cppcheck-build-dir */
+        -:   79:    std::string buildDir;
+        -:   80:
+        -:   81:    /** Is the 'configuration checking' wanted? */
+        -:   82:    bool checkConfiguration;
+        -:   83:
+        -:   84:    /** Check for incomplete info in library files? */
+        -:   85:    bool checkLibrary;
+        -:   86:
+        -:   87:    /**
+        -:   88:     * Check code in the headers, this is on by default but can
+        -:   89:     * be turned off to save CPU */
+        -:   90:    bool checkHeaders;
+        -:   91:
+        -:   92:    /** Check unused templates */
+        -:   93:    bool checkUnusedTemplates;
+        -:   94:
+        -:   95:    /** @brief include paths excluded from checking the configuration */
+        -:   96:    std::set<std::string> configExcludePaths;
+        -:   97:
+        -:   98:    /** @brief Is --debug-simplified given? */
+        -:   99:    bool debugSimplified;
+        -:  100:
+        -:  101:    /** @brief Is --debug-normal given? */
+        -:  102:    bool debugnormal;
+        -:  103:
+        -:  104:    /** @brief Is --debug-warnings given? */
+        -:  105:    bool debugwarnings;
+        -:  106:
+        -:  107:    /** @brief Is --debug-template given? */
+        -:  108:    bool debugtemplate;
+        -:  109:
+        -:  110:    /** @brief Is --dump given? */
+        -:  111:    bool dump;
+        -:  112:    std::string dumpFile;
+        -:  113:
+        -:  114:    enum Language {
+        -:  115:        None, C, CPP
+        -:  116:    };
+        -:  117:
+        -:  118:    /** @brief Name of the language that is enforced. Empty per default. */
+        -:  119:    Language enforcedLang;
+        -:  120:
+        -:  121:    /** @brief Is --exception-handling given */
+        -:  122:    bool exceptionHandling;
+        -:  123:
+        -:  124:    // argv[0]
+        -:  125:    std::string exename;
+        -:  126:
+        -:  127:    /** @brief If errors are found, this value is returned from main().
+        -:  128:        Default value is 0. */
+        -:  129:    int exitCode;
+        -:  130:
+        -:  131:    /**
+        -:  132:     * When this flag is false (default) then experimental
+        -:  133:     * heuristics and checks are disabled.
+        -:  134:     *
+        -:  135:     * It should not be possible to enable this from any client.
+        -:  136:     */
+        -:  137:    bool experimental;
+        -:  138:
+        -:  139:    /** @brief Force checking the files with "too many" configurations (--force). */
+        -:  140:    bool force;
+        -:  141:
+        -:  142:    /** @brief List of include paths, e.g. "my/includes/" which should be used
+        -:  143:        for finding include files inside source files. (-I) */
+        -:  144:    std::list<std::string> includePaths;
+        -:  145:
+        -:  146:    /** @brief Inconclusive checks */
+        -:  147:    bool inconclusive;
+        -:  148:
+        -:  149:    /** Do not only check how interface is used. Also check that interface is safe. */
+        -:  150:    class CPPCHECKLIB SafeChecks {
+        -:  151:    public:
+        -:  152:        SafeChecks() : classes(false), externalFunctions(false), internalFunctions(false), externalVariables(false) {}
+        -:  153:
+        -:  154:        static const char XmlRootName[];
+        -:  155:        static const char XmlClasses[];
+        -:  156:        static const char XmlExternalFunctions[];
+        -:  157:        static const char XmlInternalFunctions[];
+        -:  158:        static const char XmlExternalVariables[];
+        -:  159:
+        -:  160:        /**
+        -:  161:         * Public interface of classes
+        -:  162:         * - public function parameters can have any value
+        -:  163:         * - public functions can be called in any order
+        -:  164:         * - public variables can have any value
+        -:  165:         */
+        -:  166:        bool classes;
+        -:  167:
+        -:  168:        /**
+        -:  169:         * External functions
+        -:  170:         * - external functions can be called in any order
+        -:  171:         * - function parameters can have any values
+        -:  172:         */
+        -:  173:        bool externalFunctions;
+        -:  174:
+        -:  175:        /**
+        -:  176:         * Experimental: assume that internal functions can be used in any way
+        -:  177:         * This is only available in the GUI.
+        -:  178:         */
+        -:  179:        bool internalFunctions;
+        -:  180:
+        -:  181:        /**
+        -:  182:         * Global variables that can be modified outside the TU.
+        -:  183:         * - Such variable can have "any" value
+        -:  184:         */
+        -:  185:        bool externalVariables;
+        -:  186:    };
+        -:  187:
+        -:  188:    SafeChecks safeChecks;
+        -:  189:
+        -:  190:    /** @brief Enable verification analysis */
+        -:  191:    bool verification;
+        -:  192:
+        -:  193:    /** @brief check unknown function return values */
+        -:  194:    std::set<std::string> checkUnknownFunctionReturn;
+        -:  195:
+        -:  196:    /** @brief Is --inline-suppr given? */
+        -:  197:    bool inlineSuppressions;
+        -:  198:
+        -:  199:    /** @brief How many processes/threads should do checking at the same
+        -:  200:        time. Default is 1. (-j N) */
+        -:  201:    unsigned int jobs;
+        -:  202:
+        -:  203:    /** @brief Collect unmatched suppressions in one run.
+        -:  204:      * This delays the reporting until all files are checked.
+        -:  205:      * It is needed by checks that analyse the whole code base. */
+        -:  206:    bool jointSuppressionReport;
+        -:  207:
+        -:  208:    /** @brief --library= */
+        -:  209:    std::list<std::string> libraries;
+        -:  210:
+        -:  211:    /** Library */
+        -:  212:    Library library;
+        -:  213:
+        -:  214:    /** @brief Load average value */
+        -:  215:    unsigned int loadAverage;
+        -:  216:
+        -:  217:    /** @brief Maximum number of configurations to check before bailing.
+        -:  218:        Default is 12. (--max-configs=N) */
+        -:  219:    unsigned int maxConfigs;
+        -:  220:
+        -:  221:    /** @brief --max-ctu-depth */
+        -:  222:    int maxCtuDepth;
+        -:  223:
+        -:  224:    /** @brief suppress exitcode */
+        -:  225:    Suppressions nofail;
+        -:  226:
+        -:  227:    /** @brief suppress message (--suppressions) */
+        -:  228:    Suppressions nomsg;
+        -:  229:
+        -:  230:    /** @brief write results (--output-file=&lt;file&gt;) */
+        -:  231:    std::string outputFile;
+        -:  232:
+        -:  233:    /** @brief plist output (--plist-output=&lt;dir&gt;) */
+        -:  234:    std::string plistOutput;
+        -:  235:
+        -:  236:    /** @brief Using -E for debugging purposes */
+        -:  237:    bool preprocessOnly;
+        -:  238:
+        -:  239:    ImportProject project;
+        -:  240:
+        -:  241:    /** @brief Is --quiet given? */
+        -:  242:    bool quiet;
+        -:  243:
+        -:  244:    /** @brief Use relative paths in output. */
+        -:  245:    bool relativePaths;
+        -:  246:
+        -:  247:    /** @brief --report-progress */
+        -:  248:    bool reportProgress;
+        -:  249:
+        -:  250:    /** Rule */
+        -:  251:    class CPPCHECKLIB Rule {
+        -:  252:    public:
+        -:  253:        Rule()
+        -:  254:            : tokenlist("simple")         // use simple tokenlist
+        -:  255:            , id("rule")                  // default id
+        -:  256:            , severity(Severity::style) { // default severity
+        -:  257:        }
+        -:  258:
+        -:  259:        std::string tokenlist;
+        -:  260:        std::string pattern;
+        -:  261:        std::string id;
+        -:  262:        std::string summary;
+        -:  263:        Severity::SeverityType severity;
+        -:  264:    };
+        -:  265:
+        -:  266:    /**
+        -:  267:     * @brief Extra rules
+        -:  268:     */
+        -:  269:    std::list<Rule> rules;
+        -:  270:
+        -:  271:    /** @brief show timing information (--showtime=file|summary|top5) */
+        -:  272:    SHOWTIME_MODES showtime;
+        -:  273:
+        -:  274:    /** Struct contains standards settings */
+        -:  275:    Standards standards;
+        -:  276:
+        -:  277:    /** @brief The output format in which the errors are printed in text mode,
+        -:  278:        e.g. "{severity} {file}:{line} {message} {id}" */
+        -:  279:    std::string templateFormat;
+        -:  280:
+        -:  281:    /** @brief The output format in which the error locations are printed in
+        -:  282:     *  text mode, e.g. "{file}:{line} {info}" */
+        -:  283:    std::string templateLocation;
+        -:  284:
+        -:  285:    /** @brief defines given by the user */
+        -:  286:    std::string userDefines;
+        -:  287:
+        -:  288:    /** @brief undefines given by the user */
+        -:  289:    std::set<std::string> userUndefs;
+        -:  290:
+        -:  291:    /** @brief forced includes given by the user */
+        -:  292:    std::list<std::string> userIncludes;
+        -:  293:
+        -:  294:    /** @brief Is --verbose given? */
+        -:  295:    bool verbose;
+        -:  296:
+        -:  297:    /** @brief write XML results (--xml) */
+        -:  298:    bool xml;
+        -:  299:
+        -:  300:    /** @brief XML version (--xml-version=..) */
+        -:  301:    int xml_version;
+        -:  302:
+        -:  303:    /**
+        -:  304:     * @brief return true if a included file is to be excluded in Preprocessor::getConfigs
+        -:  305:     * @return true for the file to be excluded.
+        -:  306:     */
+        -:  307:    bool configurationExcluded(const std::string &file) const {
+        -:  308:        for (const std::string & configExcludePath : configExcludePaths) {
+        -:  309:            if (file.length()>=configExcludePath.length() && file.compare(0,configExcludePath.length(),configExcludePath)==0) {
+        -:  310:                return true;
+        -:  311:            }
+        -:  312:        }
+        -:  313:        return false;
+        -:  314:    }
+        -:  315:
+        -:  316:    /**
+        -:  317:     * @brief Enable extra checks by id. See isEnabled()
+        -:  318:     * @param str single id or list of id values to be enabled
+        -:  319:     * or empty string to enable all. e.g. "style,possibleError"
+        -:  320:     * @return error message. empty upon success
+        -:  321:     */
+        -:  322:    std::string addEnabled(const std::string &str);
+        -:  323:
+        -:  324:    /**
+        -:  325:     * @brief Disables all severities, except from error.
+        -:  326:     */
+        -:  327:    void clearEnabled() {
+        -:  328:        mEnabled = 0;
+        -:  329:    }
+        -:  330:
+        -:  331:    /**
+        -:  332:     * @brief Returns true if given id is in the list of
+        -:  333:     * enabled extra checks (--enable)
+        -:  334:     * @param group group to be enabled
+        -:  335:     * @return true if the check is enabled.
+        -:  336:     */
+function _ZNK8Settings9isEnabledENS_12EnabledGroupE called 0 returned 0% blocks executed 0%
+    #####:  337:    bool isEnabled(EnabledGroup group) const {
+    #####:  338:        return (mEnabled & group) == group;
+        -:  339:    }
+        -:  340:
+        -:  341:    /**
+        -:  342:    * @brief Returns true if given severity is enabled
+        -:  343:    * @return true if the check is enabled.
+        -:  344:    */
+        -:  345:    bool isEnabled(Severity::SeverityType severity) const;
+        -:  346:
+        -:  347:    /**
+        -:  348:    * @brief Returns true if given value can be shown
+        -:  349:    * @return true if the value can be shown
+        -:  350:    */
+        -:  351:    bool isEnabled(const ValueFlow::Value *value, bool inconclusiveCheck=false) const;
+        -:  352:
+        -:  353:    /** Is posix library specified? */
+        -:  354:    bool posix() const {
+        -:  355:        return std::find(libraries.begin(), libraries.end(), "posix") != libraries.end();
+        -:  356:    }
+        -:  357:
+        -:  358:    /** @brief Request termination of checking */
+        -:  359:    static void terminate(bool t = true) {
+        -:  360:        Settings::mTerminated = t;
+        -:  361:    }
+        -:  362:
+        -:  363:    /** @brief termination requested? */
+function _ZN8Settings10terminatedEv called 0 returned 0% blocks executed 0%
+    #####:  364:    static bool terminated() {
+    #####:  365:        return Settings::mTerminated;
+        -:  366:    }
+        -:  367:};
+        -:  368:
+        -:  369:/// @}
+        -:  370://---------------------------------------------------------------------------
+        -:  371:#endif // settingsH

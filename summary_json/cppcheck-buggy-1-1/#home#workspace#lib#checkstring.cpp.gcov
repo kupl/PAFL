@@ -1,0 +1,1921 @@
+        -:    0:Source:/home/workspace/lib/checkstring.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkstring.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkstring.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#include "checkstring.h"
+        -:   22:
+        -:   23:#include "astutils.h"
+        -:   24:#include "errorlogger.h"
+        -:   25:#include "mathlib.h"
+        -:   26:#include "settings.h"
+        -:   27:#include "symboldatabase.h"
+        -:   28:#include "token.h"
+        -:   29:#include "tokenize.h"
+        -:   30:#include "utils.h"
+        -:   31:
+        -:   32:#include <cstddef>
+        -:   33:#include <list>
+        -:   34:#include <vector>
+        -:   35:#include <stack>
+        -:   36:#include <utility>
+        -:   37:
+        -:   38://---------------------------------------------------------------------------
+        -:   39:
+        -:   40:// Register this check class (by creating a static instance of it)
+        -:   41:namespace {
+        1:   42:    CheckString instance;
+call    0 returned 100%
+call    1 returned 100%
+        -:   43:}
+        -:   44:
+        -:   45:// CWE ids used:
+        1:   46:static const struct CWE CWE570(570U);   // Expression is Always False
+call    0 returned 100%
+        1:   47:static const struct CWE CWE571(571U);   // Expression is Always True
+call    0 returned 100%
+        1:   48:static const struct CWE CWE595(595U);   // Comparison of Object References Instead of Object Contents
+call    0 returned 100%
+        1:   49:static const struct CWE CWE628(628U);   // Function Call with Incorrectly Specified Arguments
+call    0 returned 100%
+        1:   50:static const struct CWE CWE665(665U);   // Improper Initialization
+call    0 returned 100%
+        1:   51:static const struct CWE CWE758(758U);   // Reliance on Undefined, Unspecified, or Implementation-Defined Behavior
+call    0 returned 100%
+        -:   52:
+        -:   53://---------------------------------------------------------------------------
+        -:   54:// Writing string literal is UB
+        -:   55://---------------------------------------------------------------------------
+function _ZN11CheckString18stringLiteralWriteEv called 0 returned 0% blocks executed 0%
+    #####:   56:void CheckString::stringLiteralWrite()
+        -:   57:{
+    #####:   58:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:   59:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   60:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:   61:            if (!tok->variable() || !tok->variable()->isPointer())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:   62:                continue;
+    #####:   63:            const Token *str = tok->getValueTokenMinStrSize();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   64:            if (!str)
+branch  0 never executed
+branch  1 never executed
+    #####:   65:                continue;
+    #####:   66:            if (Token::Match(tok, "%var% [") && Token::simpleMatch(tok->linkAt(1), "] ="))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+    #####:   67:                stringLiteralWriteError(tok, str);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   68:            else if (Token::Match(tok->previous(), "* %var% ="))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:   69:                stringLiteralWriteError(tok, str);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   70:        }
+        -:   71:    }
+    #####:   72:}
+        -:   73:
+function _ZN11CheckString23stringLiteralWriteErrorEPK5TokenS2_ called 0 returned 0% blocks executed 0%
+    #####:   74:void CheckString::stringLiteralWriteError(const Token *tok, const Token *strValue)
+        -:   75:{
+    #####:   76:    std::list<const Token *> callstack;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   77:    callstack.push_back(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   78:    if (strValue)
+branch  0 never executed
+branch  1 never executed
+    #####:   79:        callstack.push_back(strValue);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   80:
+    #####:   81:    std::string errmsg("Modifying string literal");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:   82:    if (strValue) {
+branch  0 never executed
+branch  1 never executed
+    #####:   83:        std::string s = strValue->strValue();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   84:        if (s.size() > 15U)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   85:            s = s.substr(0,13) + "..";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:   86:        errmsg += " \"" + s + "\"";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+        -:   87:    }
+    #####:   88:    errmsg += " directly or indirectly is undefined behaviour.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   89:
+    #####:   90:    reportError(callstack, Severity::error, "stringLiteralWrite", errmsg, CWE758, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:   91:}
+call    0 never executed
+        -:   92:
+        -:   93://---------------------------------------------------------------------------
+        -:   94:// Check for string comparison involving two static strings.
+        -:   95:// if(strcmp("00FF00","00FF00")==0) // <- statement is always true
+        -:   96://---------------------------------------------------------------------------
+function _ZN11CheckString35checkAlwaysTrueOrFalseStringCompareEv called 0 returned 0% blocks executed 0%
+    #####:   97:void CheckString::checkAlwaysTrueOrFalseStringCompare()
+        -:   98:{
+    #####:   99:    if (!mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  100:        return;
+        -:  101:
+    #####:  102:    for (const Token* tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  103:        if (tok->isName() && tok->strAt(1) == "(" && Token::Match(tok, "memcmp|strncmp|strcmp|stricmp|strverscmp|bcmp|strcmpi|strcasecmp|strncasecmp|strncasecmp_l|strcasecmp_l|wcsncasecmp|wcscasecmp|wmemcmp|wcscmp|wcscasecmp_l|wcsncasecmp_l|wcsncmp|_mbscmp|_memicmp|_memicmp_l|_stricmp|_wcsicmp|_mbsicmp|_stricmp_l|_wcsicmp_l|_mbsicmp_l")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  104:            if (Token::Match(tok->tokAt(2), "%str% , %str% ,|)")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  105:                const std::string &str1 = tok->strAt(2);
+call    0 never executed
+    #####:  106:                const std::string &str2 = tok->strAt(4);
+call    0 never executed
+    #####:  107:                if (!tok->isExpandedMacro() && !tok->tokAt(2)->isExpandedMacro() && !tok->tokAt(4)->isExpandedMacro())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  108:                    alwaysTrueFalseStringCompareError(tok, str1, str2);
+call    0 never executed
+    #####:  109:                tok = tok->tokAt(5);
+call    0 never executed
+    #####:  110:            } else if (Token::Match(tok->tokAt(2), "%name% , %name% ,|)")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  111:                const std::string &str1 = tok->strAt(2);
+call    0 never executed
+    #####:  112:                const std::string &str2 = tok->strAt(4);
+call    0 never executed
+    #####:  113:                if (str1 == str2)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  114:                    alwaysTrueStringVariableCompareError(tok, str1, str2);
+call    0 never executed
+    #####:  115:                tok = tok->tokAt(5);
+call    0 never executed
+    #####:  116:            } else if (Token::Match(tok->tokAt(2), "%name% . c_str ( ) , %name% . c_str ( ) ,|)")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  117:                const std::string &str1 = tok->strAt(2);
+call    0 never executed
+    #####:  118:                const std::string &str2 = tok->strAt(8);
+call    0 never executed
+    #####:  119:                if (str1 == str2)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  120:                    alwaysTrueStringVariableCompareError(tok, str1, str2);
+call    0 never executed
+    #####:  121:                tok = tok->tokAt(13);
+call    0 never executed
+        -:  122:            }
+    #####:  123:        } else if (tok->isName() && Token::Match(tok, "QString :: compare ( %str% , %str% )")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  124:            const std::string &str1 = tok->strAt(4);
+call    0 never executed
+    #####:  125:            const std::string &str2 = tok->strAt(6);
+call    0 never executed
+    #####:  126:            alwaysTrueFalseStringCompareError(tok, str1, str2);
+call    0 never executed
+    #####:  127:            tok = tok->tokAt(7);
+call    0 never executed
+    #####:  128:        } else if (Token::Match(tok, "!!+ %str% ==|!= %str% !!+")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  129:            const std::string &str1 = tok->strAt(1);
+call    0 never executed
+    #####:  130:            const std::string &str2 = tok->strAt(3);
+call    0 never executed
+    #####:  131:            alwaysTrueFalseStringCompareError(tok, str1, str2);
+call    0 never executed
+    #####:  132:            tok = tok->tokAt(5);
+call    0 never executed
+        -:  133:        }
+    #####:  134:        if (!tok)
+branch  0 never executed
+branch  1 never executed
+    #####:  135:            break;
+        -:  136:    }
+        -:  137:}
+        -:  138:
+function _ZN11CheckString33alwaysTrueFalseStringCompareErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####:  139:void CheckString::alwaysTrueFalseStringCompareError(const Token *tok, const std::string& str1, const std::string& str2)
+        -:  140:{
+    #####:  141:    const std::size_t stringLen = 10;
+    #####:  142:    const std::string string1 = (str1.size() < stringLen) ? str1 : (str1.substr(0, stringLen-2) + "..");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  143:    const std::string string2 = (str2.size() < stringLen) ? str2 : (str2.substr(0, stringLen-2) + "..");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+call   19 never executed
+        -:  144:
+    #####:  145:    reportError(tok, Severity::warning, "staticStringCompare",
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  146:                "Unnecessary comparison of static strings.\n"
+    #####:  147:                "The compared strings, '" + string1 + "' and '" + string2 + "', are always " + (str1==str2?"identical":"unequal") + ". "
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+call   30 never executed
+call   31 never executed
+call   32 never executed
+    #####:  148:                "Therefore the comparison is unnecessary and looks suspicious.", (str1==str2)?CWE571:CWE570, false);
+call    0 never executed
+    #####:  149:}
+        -:  150:
+function _ZN11CheckString36alwaysTrueStringVariableCompareErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####:  151:void CheckString::alwaysTrueStringVariableCompareError(const Token *tok, const std::string& str1, const std::string& str2)
+        -:  152:{
+    #####:  153:    reportError(tok, Severity::warning, "stringCompare",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  154:                "Comparison of identical string variables.\n"
+    #####:  155:                "The compared strings, '" + str1 + "' and '" + str2 + "', are identical. "
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -:  156:                "This could be a logic bug.", CWE571, false);
+    #####:  157:}
+        -:  158:
+        -:  159:
+        -:  160://-----------------------------------------------------------------------------
+        -:  161:// Detect "str == '\0'" where "*str == '\0'" is correct.
+        -:  162:// Comparing char* with each other instead of using strcmp()
+        -:  163://-----------------------------------------------------------------------------
+function _ZN11CheckString28checkSuspiciousStringCompareEv called 0 returned 0% blocks executed 0%
+    #####:  164:void CheckString::checkSuspiciousStringCompare()
+        -:  165:{
+    #####:  166:    if (!mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  167:        return;
+        -:  168:
+    #####:  169:    const SymbolDatabase* symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  170:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  171:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  172:            if (!tok->isComparisonOp())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  173:                continue;
+        -:  174:
+    #####:  175:            const Token* varTok = tok->astOperand1();
+call    0 never executed
+    #####:  176:            const Token* litTok = tok->astOperand2();
+call    0 never executed
+    #####:  177:            if (!varTok || !litTok)  // <- failed to create AST for comparison
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  178:                continue;
+    #####:  179:            if (Token::Match(varTok, "%char%|%num%|%str%"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  180:                std::swap(varTok, litTok);
+call    0 never executed
+    #####:  181:            else if (!Token::Match(litTok, "%char%|%num%|%str%"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  182:                continue;
+        -:  183:
+        -:  184:            // Pointer addition?
+    #####:  185:            if (varTok->str() == "+" && mTokenizer->isC()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  186:                const Token * const tokens[2] = { varTok->astOperand1(), varTok->astOperand2() };
+call    0 never executed
+call    1 never executed
+    #####:  187:                for (const Token * t : tokens) {
+branch  0 never executed
+branch  1 never executed
+    #####:  188:                    while (t && (t->str() == "." || t->str() == "::"))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  189:                        t = t->astOperand2();
+call    0 never executed
+    #####:  190:                    if (t && t->variable() && t->variable()->isPointer())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  191:                        varTok = t;
+        -:  192:                }
+        -:  193:            }
+        -:  194:
+    #####:  195:            if (varTok->str() == "*") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  196:                if (!mTokenizer->isC() || varTok->astOperand2() != nullptr || litTok->tokType() != Token::eString)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  197:                    continue;
+    #####:  198:                varTok = varTok->astOperand1();
+call    0 never executed
+        -:  199:            }
+        -:  200:
+    #####:  201:            while (varTok && (varTok->str() == "." || varTok->str() == "::"))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  202:                varTok = varTok->astOperand2();
+call    0 never executed
+    #####:  203:            if (!varTok || !varTok->isName())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  204:                continue;
+        -:  205:
+    #####:  206:            const Variable *var = varTok->variable();
+call    0 never executed
+        -:  207:
+    #####:  208:            while (Token::Match(varTok->astParent(), "[.*]"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  209:                varTok = varTok->astParent();
+call    0 never executed
+    #####:  210:            const std::string varname = varTok->expressionString();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  211:
+    #####:  212:            const bool ischar(litTok->tokType() == Token::eChar);
+call    0 never executed
+    #####:  213:            if (litTok->tokType() == Token::eString) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  214:                if (mTokenizer->isC() || (var && var->isArrayOrPointer()))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  215:                    suspiciousStringCompareError(tok, varname, litTok->isLong());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  216:            } else if (ischar && var && var->isPointer()) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  217:                suspiciousStringCompareError_char(tok, varname);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  218:            }
+        -:  219:        }
+        -:  220:    }
+        -:  221:}
+        -:  222:
+function _ZN11CheckString28suspiciousStringCompareErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEb called 0 returned 0% blocks executed 0%
+    #####:  223:void CheckString::suspiciousStringCompareError(const Token* tok, const std::string& var, bool isLong)
+        -:  224:{
+    #####:  225:    const std::string cmpFunc = isLong ? "wcscmp" : "strcmp";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  226:    reportError(tok, Severity::warning, "literalWithCharPtrCompare",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  227:                "$symbol:" + var + "\nString literal compared with variable '$symbol'. Did you intend to use " + cmpFunc + "() instead?", CWE595, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  228:}
+call    0 never executed
+        -:  229:
+function _ZN11CheckString33suspiciousStringCompareError_charEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  230:void CheckString::suspiciousStringCompareError_char(const Token* tok, const std::string& var)
+        -:  231:{
+    #####:  232:    reportError(tok, Severity::warning, "charLiteralWithCharPtrCompare",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  233:                "$symbol:" + var + "\nChar literal compared with pointer '$symbol'. Did you intend to dereference it?", CWE595, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  234:}
+        -:  235:
+        -:  236:
+        -:  237://---------------------------------------------------------------------------
+        -:  238:// Adding C-string and char with operator+
+        -:  239://---------------------------------------------------------------------------
+        -:  240:
+function _ZL6isCharPK8Variable called 0 returned 0% blocks executed 0%
+    #####:  241:static bool isChar(const Variable* var)
+        -:  242:{
+    #####:  243:    return (var && !var->isPointer() && !var->isArray() && (var->typeStartToken()->str() == "char" || var->typeStartToken()->str() == "wchar_t"));
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+        -:  244:}
+        -:  245:
+function _ZN11CheckString11strPlusCharEv called 0 returned 0% blocks executed 0%
+    #####:  246:void CheckString::strPlusChar()
+        -:  247:{
+    #####:  248:    const SymbolDatabase* symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  249:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  250:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  251:            if (tok->str() == "+") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  252:                if (tok->astOperand1() && (tok->astOperand1()->tokType() == Token::eString)) { // string literal...
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  253:                    if (tok->astOperand2() && (tok->astOperand2()->tokType() == Token::eChar || isChar(tok->astOperand2()->variable()))) // added to char variable or char constant
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+    #####:  254:                        strPlusCharError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  255:                }
+        -:  256:            }
+        -:  257:        }
+        -:  258:    }
+    #####:  259:}
+        -:  260:
+function _ZN11CheckString16strPlusCharErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  261:void CheckString::strPlusCharError(const Token *tok)
+        -:  262:{
+    #####:  263:    std::string charType = "char";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  264:    if (tok && tok->astOperand2() && tok->astOperand2()->variable())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  265:        charType = tok->astOperand2()->variable()->typeStartToken()->str();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  266:    else if (tok && tok->astOperand2() && tok->astOperand2()->tokType() == Token::eChar && tok->astOperand2()->isLong())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+    #####:  267:        charType = "wchar_t";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  268:    reportError(tok, Severity::error, "strPlusChar", "Unusual pointer arithmetic. A value of type '" + charType +"' is added to a string literal.", CWE665, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  269:}
+call    0 never executed
+        -:  270:
+        -:  271://---------------------------------------------------------------------------
+        -:  272:// Implicit casts of string literals to bool
+        -:  273:// Comparing string literal with strlen() with wrong length
+        -:  274://---------------------------------------------------------------------------
+function _ZN11CheckString27checkIncorrectStringCompareEv called 0 returned 0% blocks executed 0%
+    #####:  275:void CheckString::checkIncorrectStringCompare()
+        -:  276:{
+    #####:  277:    if (!mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  278:        return;
+        -:  279:
+    #####:  280:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  281:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  282:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  283:            // skip "assert(str && ..)" and "assert(.. && str)"
+    #####:  284:            if ((endsWith(tok->str(), "assert", 6) || endsWith(tok->str(), "ASSERT", 6)) &&
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  285:                Token::Match(tok, "%name% (") &&
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  286:                (Token::Match(tok->tokAt(2), "%str% &&") || Token::Match(tok->next()->link()->tokAt(-2), "&& %str% )")))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+    #####:  287:                tok = tok->next()->link();
+call    0 never executed
+call    1 never executed
+        -:  288:
+    #####:  289:            if (Token::simpleMatch(tok, ". substr (") && Token::Match(tok->tokAt(3)->nextArgument(), "%num% )")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+    #####:  290:                const MathLib::biguint clen = MathLib::toULongNumber(tok->linkAt(2)->strAt(-1));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  291:                const Token* begin = tok->previous();
+call    0 never executed
+    #####:  292:                for (;;) { // Find start of statement
+    #####:  293:                    while (begin->link() && Token::Match(begin, "]|)|>"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  294:                        begin = begin->link()->previous();
+call    0 never executed
+call    1 never executed
+    #####:  295:                    if (Token::Match(begin->previous(), ".|::"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  296:                        begin = begin->tokAt(-2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  297:                    else
+    #####:  298:                        break;
+        -:  299:                }
+    #####:  300:                begin = begin->previous();
+call    0 never executed
+    #####:  301:                const Token* end = tok->linkAt(2)->next();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  302:                if (Token::Match(begin->previous(), "%str% ==|!=") && begin->strAt(-2) != "+") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  303:                    const std::size_t slen = Token::getStrLength(begin->previous());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  304:                    if (clen != slen) {
+branch  0 never executed
+branch  1 never executed
+    #####:  305:                        incorrectStringCompareError(tok->next(), "substr", begin->strAt(-1));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+        -:  306:                    }
+    #####:  307:                } else if (Token::Match(end, "==|!= %str% !!+")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  308:                    const std::size_t slen = Token::getStrLength(end->next());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  309:                    if (clen != slen) {
+branch  0 never executed
+branch  1 never executed
+    #####:  310:                        incorrectStringCompareError(tok->next(), "substr", end->strAt(1));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+        -:  311:                    }
+        -:  312:                }
+    #####:  313:            } else if (Token::Match(tok, "&&|%oror%|( %str%|%char% &&|%oror%|)") && !Token::Match(tok, "( %str%|%char% )")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  314:                incorrectStringBooleanError(tok->next(), tok->strAt(1));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  315:            } else if (Token::Match(tok, "if|while ( %str%|%char% )") && !tok->tokAt(2)->getValue(0)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+    #####:  316:                incorrectStringBooleanError(tok->tokAt(2), tok->strAt(2));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  317:            } else if (tok->str() == "?" && Token::Match(tok->astOperand1(), "%str%|%char%"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  318:                incorrectStringBooleanError(tok->astOperand1(), tok->astOperand1()->str());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  319:        }
+        -:  320:    }
+        -:  321:}
+        -:  322:
+function _ZN11CheckString27incorrectStringCompareErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####:  323:void CheckString::incorrectStringCompareError(const Token *tok, const std::string& func, const std::string &string)
+        -:  324:{
+    #####:  325:    reportError(tok, Severity::warning, "incorrectStringCompare", "$symbol:" + func + "\nString literal " + string + " doesn't match length argument for $symbol().", CWE570, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+    #####:  326:}
+        -:  327:
+function _ZN11CheckString27incorrectStringBooleanErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  328:void CheckString::incorrectStringBooleanError(const Token *tok, const std::string& string)
+        -:  329:{
+    #####:  330:    const bool charLiteral = string[0] == '\'';
+call    0 never executed
+    #####:  331:    const std::string literalType = charLiteral ? "char" : "string";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  332:    const std::string result = (string == "\'\\0\'") ? "false" : "true";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  333:    reportError(tok,
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  334:                Severity::warning,
+        -:  335:                charLiteral ? "incorrectCharBooleanError" : "incorrectStringBooleanError",
+    #####:  336:                "Conversion of " + literalType + " literal " + string + " to bool always evaluates to " + result + '.', CWE571, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+    #####:  337:}
+call    0 never executed
+        -:  338:
+        -:  339://---------------------------------------------------------------------------
+        -:  340:// always true: strcmp(str,"a")==0 || strcmp(str,"b")
+        -:  341:// TODO: Library configuration for string comparison functions
+        -:  342://---------------------------------------------------------------------------
+function _ZN11CheckString17overlappingStrcmpEv called 0 returned 0% blocks executed 0%
+    #####:  343:void CheckString::overlappingStrcmp()
+        -:  344:{
+    #####:  345:    if (!mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  346:        return;
+        -:  347:
+    #####:  348:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  349:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  350:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  351:            if (tok->str() != "||")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  352:                continue;
+    #####:  353:            std::list<const Token *> equals0;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  354:            std::list<const Token *> notEquals0;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  355:            std::stack<const Token *> tokens;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  356:            tokens.push(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  357:            while (!tokens.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  358:                const Token * const t = tokens.top();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  359:                tokens.pop();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  360:                if (!t)
+branch  0 never executed
+branch  1 never executed
+    #####:  361:                    continue;
+    #####:  362:                if (t->str() == "||") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  363:                    tokens.push(t->astOperand1());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  364:                    tokens.push(t->astOperand2());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  365:                    continue;
+        -:  366:                }
+    #####:  367:                if (t->str() == "==") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  368:                    if (Token::simpleMatch(t->astOperand1(), "(") && Token::simpleMatch(t->astOperand2(), "0"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  369:                        equals0.push_back(t->astOperand1());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  370:                    else if (Token::simpleMatch(t->astOperand2(), "(") && Token::simpleMatch(t->astOperand1(), "0"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  371:                        equals0.push_back(t->astOperand2());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  372:                    continue;
+        -:  373:                }
+    #####:  374:                if (t->str() == "!=") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  375:                    if (Token::simpleMatch(t->astOperand1(), "(") && Token::simpleMatch(t->astOperand2(), "0"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  376:                        notEquals0.push_back(t->astOperand1());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  377:                    else if (Token::simpleMatch(t->astOperand2(), "(") && Token::simpleMatch(t->astOperand1(), "0"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  378:                        notEquals0.push_back(t->astOperand2());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  379:                    continue;
+        -:  380:                }
+    #####:  381:                if (t->str() == "!" && Token::simpleMatch(t->astOperand1(), "("))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  382:                    equals0.push_back(t->astOperand1());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  383:                else if (t->str() == "(")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  384:                    notEquals0.push_back(t);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  385:            }
+        -:  386:
+    #####:  387:            for (const Token *eq0 : equals0) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  388:                for (const Token * ne0 : notEquals0) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  389:                    if (!Token::Match(eq0->previous(), "strcmp|wcscmp ("))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  390:                        continue;
+    #####:  391:                    if (!Token::Match(ne0->previous(), "strcmp|wcscmp ("))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  392:                        continue;
+    #####:  393:                    const std::vector<const Token *> args1 = getArguments(eq0->previous());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  394:                    const std::vector<const Token *> args2 = getArguments(ne0->previous());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+    #####:  395:                    if (args1.size() != 2 || args2.size() != 2)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  396:                        continue;
+    #####:  397:                    if (args1[1]->isLiteral() &&
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  398:                        args2[1]->isLiteral() &&
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  399:                        args1[1]->str() != args2[1]->str() &&
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  400:                        isSameExpression(mTokenizer->isCPP(), true, args1[0], args2[0], mSettings->library, true, false))
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  401:                        overlappingStrcmpError(eq0, ne0);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  402:                }
+        -:  403:            }
+        -:  404:        }
+        -:  405:    }
+        -:  406:}
+        -:  407:
+function _ZN11CheckString22overlappingStrcmpErrorEPK5TokenS2_ called 0 returned 0% blocks executed 0%
+    #####:  408:void CheckString::overlappingStrcmpError(const Token *eq0, const Token *ne0)
+        -:  409:{
+    #####:  410:    std::string eq0Expr(eq0 ? eq0->expressionString() : std::string("strcmp(x,\"abc\")"));
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  411:    if (eq0 && eq0->astParent()->str() == "!")
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  412:        eq0Expr = "!" + eq0Expr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  413:    else
+    #####:  414:        eq0Expr += " == 0";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  415:
+    #####:  416:    const std::string ne0Expr = (ne0 ? ne0->expressionString() : std::string("strcmp(x,\"def\")")) + " != 0";
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+call   20 never executed
+        -:  417:
+    #####:  418:    reportError(ne0, Severity::warning, "overlappingStrcmp", "The expression '" + ne0Expr + "' is suspicious. It overlaps '" + eq0Expr + "'.");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+    #####:  419:}
+        -:  420:
+        -:  421://---------------------------------------------------------------------------
+        -:  422:// Overlapping source and destination passed to sprintf().
+        -:  423:// TODO: Library configuration for overlapping arguments
+        -:  424://---------------------------------------------------------------------------
+function _ZN11CheckString22sprintfOverlappingDataEv called 0 returned 0% blocks executed 0%
+    #####:  425:void CheckString::sprintfOverlappingData()
+        -:  426:{
+    #####:  427:    const SymbolDatabase* symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  428:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  429:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  430:            if (!Token::Match(tok, "sprintf|snprintf|swprintf ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  431:                continue;
+        -:  432:
+    #####:  433:            const std::vector<const Token *> args = getArguments(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  434:
+    #####:  435:            const int formatString = Token::simpleMatch(tok, "sprintf") ? 1 : 2;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  436:            for (unsigned int argnr = formatString + 1; argnr < args.size(); ++argnr) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  437:                const Token *dest = args[0];
+call    0 never executed
+    #####:  438:                while (dest->isCast())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  439:                    dest = dest->astOperand2() ? dest->astOperand2() : dest->astOperand1();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  440:                const Token *arg = args[argnr];
+call    0 never executed
+    #####:  441:                if (!arg->valueType() || arg->valueType()->pointer != 1)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  442:                    continue;
+    #####:  443:                while (arg->isCast())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  444:                    arg = arg->astOperand2() ? arg->astOperand2() : arg->astOperand1();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  445:
+    #####:  446:                const bool same = isSameExpression(mTokenizer->isCPP(),
+call    0 never executed
+        -:  447:                                                   false,
+        -:  448:                                                   dest,
+        -:  449:                                                   arg,
+    #####:  450:                                                   mSettings->library,
+        -:  451:                                                   true,
+    #####:  452:                                                   false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  453:                if (same) {
+branch  0 never executed
+branch  1 never executed
+    #####:  454:                    sprintfOverlappingDataError(tok, args[argnr], arg->expressionString());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+        -:  455:                }
+        -:  456:            }
+        -:  457:        }
+        -:  458:    }
+    #####:  459:}
+        -:  460:
+function _ZN11CheckString27sprintfOverlappingDataErrorEPK5TokenS2_RKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  461:void CheckString::sprintfOverlappingDataError(const Token *funcTok, const Token *tok, const std::string &varname)
+        -:  462:{
+    #####:  463:    const std::string func = funcTok ? funcTok->str() : "s[n]printf";
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+call   17 never executed
+        -:  464:
+    #####:  465:    reportError(tok, Severity::error, "sprintfOverlappingData",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  466:                "$symbol:" + varname + "\n"
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  467:                "Undefined behavior: Variable '$symbol' is used as parameter and destination in " + func + "().\n" +
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  468:                "The variable '$symbol' is used both as a parameter and as destination in " +
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  469:                func + "(). The origin and destination buffers overlap. Quote from glibc (C-library) "
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  470:                "documentation (http://www.gnu.org/software/libc/manual/html_mono/libc.html#Formatted-Output-Functions): "
+        -:  471:                "\"If copying takes place between objects that overlap as a result of a call "
+        -:  472:                "to sprintf() or snprintf(), the results are undefined.\"", CWE628, false);
+function _GLOBAL__sub_I__ZN11CheckString18stringLiteralWriteEv called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  473:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

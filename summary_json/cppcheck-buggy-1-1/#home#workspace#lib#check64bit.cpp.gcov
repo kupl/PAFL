@@ -1,0 +1,343 @@
+        -:    0:Source:/home/workspace/lib/check64bit.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/check64bit.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/check64bit.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2018 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:// 64-bit portability
+        -:   21://---------------------------------------------------------------------------
+        -:   22:
+        -:   23:#include "check64bit.h"
+        -:   24:
+        -:   25:#include "errorlogger.h"
+        -:   26:#include "settings.h"
+        -:   27:#include "symboldatabase.h"
+        -:   28:#include "token.h"
+        -:   29:#include "tokenize.h"
+        -:   30:
+        -:   31:#include <cstddef>
+        -:   32:
+        -:   33://---------------------------------------------------------------------------
+        -:   34:
+        -:   35:// CWE ids used
+        1:   36:static const struct CWE CWE398(398U);   // Indicator of Poor Code Quality
+call    0 returned 100%
+        1:   37:static const struct CWE CWE758(758U);   // Reliance on Undefined, Unspecified, or Implementation-Defined Behavior
+call    0 returned 100%
+        -:   38:
+        -:   39:// Register this check class (by creating a static instance of it)
+        -:   40:namespace {
+        1:   41:    Check64BitPortability instance;
+call    0 returned 100%
+call    1 returned 100%
+        -:   42:}
+        -:   43:
+function _ZN21Check64BitPortability17pointerassignmentEv called 0 returned 0% blocks executed 0%
+    #####:   44:void Check64BitPortability::pointerassignment()
+        -:   45:{
+    #####:   46:    if (!mSettings->isEnabled(Settings::PORTABILITY))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   47:        return;
+        -:   48:
+    #####:   49:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+        -:   50:
+        -:   51:    // Check return values
+    #####:   52:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:   53:        if (scope->function == nullptr || !scope->function->hasBody()) // We only look for functions with a body
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:   54:            continue;
+        -:   55:
+    #####:   56:        bool retPointer = false;
+    #####:   57:        if (scope->function->token->strAt(-1) == "*") // Function returns a pointer
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:   58:            retPointer = true;
+    #####:   59:        else if (Token::Match(scope->function->token->previous(), "int|long|DWORD")) // Function returns an integer
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:   60:            ;
+        -:   61:        else
+    #####:   62:            continue;
+        -:   63:
+    #####:   64:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:   65:            // skip nested functions
+    #####:   66:            if (tok->str() == "{") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   67:                if (tok->scope()->type == Scope::ScopeType::eFunction || tok->scope()->type == Scope::ScopeType::eLambda)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   68:                    tok = tok->link();
+call    0 never executed
+        -:   69:            }
+        -:   70:
+    #####:   71:            if (tok->str() != "return")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   72:                continue;
+        -:   73:
+    #####:   74:            if (!tok->astOperand1() || tok->astOperand1()->isNumber())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:   75:                continue;
+        -:   76:
+    #####:   77:            const ValueType * const returnType = tok->astOperand1()->valueType();
+call    0 never executed
+call    1 never executed
+    #####:   78:            if (!returnType)
+branch  0 never executed
+branch  1 never executed
+    #####:   79:                continue;
+        -:   80:
+    #####:   81:            if (retPointer && !returnType->typeScope && returnType->pointer == 0U)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:   82:                returnIntegerError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   83:
+    #####:   84:            if (!retPointer && returnType->pointer >= 1U)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   85:                returnPointerError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   86:        }
+        -:   87:    }
+        -:   88:
+        -:   89:    // Check assignments
+    #####:   90:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   91:        for (const Token *tok = scope->bodyStart; tok && tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:   92:            if (tok->str() != "=")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   93:                continue;
+        -:   94:
+    #####:   95:            const ValueType *lhstype = tok->astOperand1() ? tok->astOperand1()->valueType() : nullptr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   96:            const ValueType *rhstype = tok->astOperand2() ? tok->astOperand2()->valueType() : nullptr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   97:            if (!lhstype || !rhstype)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   98:                continue;
+        -:   99:
+        -:  100:            // Assign integer to pointer..
+    #####:  101:            if (lhstype->pointer >= 1U &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  102:                !tok->astOperand2()->isNumber() &&
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  103:                rhstype->pointer == 0U &&
+branch  0 never executed
+branch  1 never executed
+    #####:  104:                rhstype->originalTypeName.empty() &&
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  105:                rhstype->type == ValueType::Type::INT)
+    #####:  106:                assignmentIntegerToAddressError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  107:
+        -:  108:            // Assign pointer to integer..
+    #####:  109:            if (rhstype->pointer >= 1U &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  110:                lhstype->pointer == 0U &&
+branch  0 never executed
+branch  1 never executed
+    #####:  111:                lhstype->originalTypeName.empty() &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  112:                lhstype->isIntegral() &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  113:                lhstype->type >= ValueType::Type::CHAR &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  114:                lhstype->type <= ValueType::Type::INT)
+    #####:  115:                assignmentAddressToIntegerError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  116:        }
+        -:  117:    }
+        -:  118:}
+        -:  119:
+function _ZN21Check64BitPortability31assignmentAddressToIntegerErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  120:void Check64BitPortability::assignmentAddressToIntegerError(const Token *tok)
+        -:  121:{
+    #####:  122:    reportError(tok, Severity::portability,
+call    0 never executed
+        -:  123:                "AssignmentAddressToInteger",
+        -:  124:                "Assigning a pointer to an integer is not portable.\n"
+        -:  125:                "Assigning a pointer to an integer (int/long/etc) is not portable across different platforms and "
+        -:  126:                "compilers. For example in 32-bit Windows and linux they are same width, but in 64-bit Windows and linux "
+        -:  127:                "they are of different width. In worst case you end up assigning 64-bit address to 32-bit integer. The safe "
+        -:  128:                "way is to store addresses only in pointer types (or typedefs like uintptr_t).", CWE758, false);
+    #####:  129:}
+        -:  130:
+function _ZN21Check64BitPortability31assignmentIntegerToAddressErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  131:void Check64BitPortability::assignmentIntegerToAddressError(const Token *tok)
+        -:  132:{
+    #####:  133:    reportError(tok, Severity::portability,
+call    0 never executed
+        -:  134:                "AssignmentIntegerToAddress",
+        -:  135:                "Assigning an integer to a pointer is not portable.\n"
+        -:  136:                "Assigning an integer (int/long/etc) to a pointer is not portable across different platforms and "
+        -:  137:                "compilers. For example in 32-bit Windows and linux they are same width, but in 64-bit Windows and linux "
+        -:  138:                "they are of different width. In worst case you end up assigning 64-bit integer to 32-bit pointer. The safe "
+        -:  139:                "way is to store addresses only in pointer types (or typedefs like uintptr_t).", CWE758, false);
+    #####:  140:}
+        -:  141:
+function _ZN21Check64BitPortability18returnPointerErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  142:void Check64BitPortability::returnPointerError(const Token *tok)
+        -:  143:{
+    #####:  144:    reportError(tok, Severity::portability,
+call    0 never executed
+        -:  145:                "CastAddressToIntegerAtReturn",
+        -:  146:                "Returning an address value in a function with integer return type is not portable.\n"
+        -:  147:                "Returning an address value in a function with integer (int/long/etc) return type is not portable across "
+        -:  148:                "different platforms and compilers. For example in 32-bit Windows and Linux they are same width, but in "
+        -:  149:                "64-bit Windows and Linux they are of different width. In worst case you end up casting 64-bit address down "
+        -:  150:                "to 32-bit integer. The safe way is to always return an integer.", CWE758, false);
+    #####:  151:}
+        -:  152:
+function _ZN21Check64BitPortability18returnIntegerErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  153:void Check64BitPortability::returnIntegerError(const Token *tok)
+        -:  154:{
+    #####:  155:    reportError(tok, Severity::portability,
+call    0 never executed
+        -:  156:                "CastIntegerToAddressAtReturn",
+        -:  157:                "Returning an integer in a function with pointer return type is not portable.\n"
+        -:  158:                "Returning an integer (int/long/etc) in a function with pointer return type is not portable across different "
+        -:  159:                "platforms and compilers. For example in 32-bit Windows and Linux they are same width, but in 64-bit Windows "
+        -:  160:                "and Linux they are of different width. In worst case you end up casting 64-bit integer down to 32-bit pointer. "
+        -:  161:                "The safe way is to always return a pointer.", CWE758, false);
+function _GLOBAL__sub_I__ZN21Check64BitPortability17pointerassignmentEv called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  162:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

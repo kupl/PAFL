@@ -1,0 +1,141 @@
+        -:    0:Source:/home/workspace/lib/checkboost.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkboost.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkboost.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#ifndef checkboostH
+        -:   22:#define checkboostH
+        -:   23://---------------------------------------------------------------------------
+        -:   24:
+        -:   25:#include "check.h"
+        -:   26:#include "config.h"
+        -:   27:#include "tokenize.h"
+        -:   28:
+        -:   29:#include <string>
+        -:   30:
+        -:   31:class ErrorLogger;
+        -:   32:class Settings;
+        -:   33:class Token;
+        -:   34:
+        -:   35:/// @addtogroup Checks
+        -:   36:/// @{
+        -:   37:
+        -:   38:
+        -:   39:/** @brief %Check Boost usage */
+function _ZN10CheckBoostD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10CheckBoostD2Ev called 0 returned 0% blocks executed 0%
+    #####:   40:class CPPCHECKLIB CheckBoost : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   41:public:
+        -:   42:    /** This constructor is used when registering the CheckClass */
+function _ZN10CheckBoostC2Ev called 0 returned 0% blocks executed 0%
+    #####:   43:    CheckBoost() : Check(myName()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   44:    }
+        -:   45:
+        -:   46:    /** This constructor is used when running checks. */
+function _ZN10CheckBoostC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   47:    CheckBoost(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:   48:        : Check(myName(), tokenizer, settings, errorLogger) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   49:    }
+        -:   50:
+        -:   51:    /** @brief Run checks against the normal token list */
+function _ZN10CheckBoost9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   52:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:   53:        if (!tokenizer->isCPP())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   54:            return;
+        -:   55:
+    #####:   56:        CheckBoost checkBoost(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   57:        checkBoost.checkBoostForeachModification();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   58:    }
+        -:   59:
+        -:   60:    /** @brief %Check for container modification while using the BOOST_FOREACH macro */
+        -:   61:    void checkBoostForeachModification();
+        -:   62:
+        -:   63:private:
+        -:   64:    void boostForeachError(const Token *tok);
+        -:   65:
+function _ZNK10CheckBoost16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:   66:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:   67:        CheckBoost c(nullptr, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   68:        c.boostForeachError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   69:    }
+        -:   70:
+function _ZN10CheckBoost6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   71:    static std::string myName() {
+    #####:   72:        return "Boost usage";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:   73:    }
+        -:   74:
+function _ZNK10CheckBoost9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   75:    std::string classInfo() const OVERRIDE {
+        -:   76:        return "Check for invalid usage of Boost:\n"
+    #####:   77:               "- container modification during BOOST_FOREACH\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:   78:    }
+        -:   79:};
+        -:   80:/// @}
+        -:   81://---------------------------------------------------------------------------
+        -:   82:#endif // checkboostH

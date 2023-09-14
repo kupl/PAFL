@@ -1,0 +1,575 @@
+        -:    0:Source:/home/workspace/lib/exprengine.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/exprengine.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/exprengine.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef exprengineH
+        -:   21:#define exprengineH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "config.h"
+        -:   25:
+        -:   26:#include <functional>
+        -:   27:#include <map>
+        -:   28:#include <memory>
+        -:   29:#include <set>
+        -:   30:#include <string>
+        -:   31:#include <vector>
+        -:   32:#include <stdint.h>
+        -:   33:
+        -:   34:class ErrorLogger;
+        -:   35:class Tokenizer;
+        -:   36:class Scope;
+        -:   37:class Settings;
+        -:   38:class Token;
+        -:   39:class Variable;
+        -:   40:
+        -:   41:#if defined(__GNUC__) && defined (__SIZEOF_INT128__)
+        -:   42:typedef __int128_t   int128_t;
+        -:   43:#else
+        -:   44:typedef long long    int128_t;
+        -:   45:#ifdef _MSC_VER
+        -:   46:#pragma message(__FILE__ "(" _CRT_STRINGIZE(__LINE__) ")" ": warning: TODO No 128-bit integer type is available => Limited analysis of large integers...")
+        -:   47:#else
+        -:   48:#warning TODO No 128-bit integer type is available => Limited analysis of large integers
+        -:   49:#endif
+        -:   50:#endif
+        -:   51:
+        -:   52:namespace ExprEngine {
+        -:   53:    std::string str(int128_t);
+        -:   54:
+        -:   55:    // TODO we need to handle floats, containers, pointers, aliases and structs and stuff
+        -:   56:    enum class ValueType {
+        -:   57:        UninitValue,
+        -:   58:        IntRange,
+        -:   59:        FloatRange,
+        -:   60:        PointerValue,
+        -:   61:        ConditionalValue,
+        -:   62:        ArrayValue,
+        -:   63:        StringLiteralValue,
+        -:   64:        StructValue,
+        -:   65:        AddressOfValue,
+        -:   66:        BinOpResult,
+        -:   67:        IntegerTruncation
+        -:   68:    };
+        -:   69:
+        -:   70:    class Value;
+        -:   71:    typedef std::shared_ptr<Value> ValuePtr;
+        -:   72:
+function _ZN10ExprEngine8DataBaseC2ERKS0_ called 0 returned 0% blocks executed 0%
+    #####:   73:    class DataBase {
+        -:   74:    public:
+function _ZN10ExprEngine8DataBaseC2EPK8Settings called 0 returned 0% blocks executed 0%
+    #####:   75:        explicit DataBase(const Settings *settings) : settings(settings) {}
+        -:   76:        virtual std::string getNewSymbolName() = 0;
+        -:   77:        const Settings * const settings;
+        -:   78:    };
+        -:   79:
+        -:   80:    class Value {
+        -:   81:    public:
+function _ZN10ExprEngine5ValueC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEENS_9ValueTypeE called 0 returned 0% blocks executed 0%
+    #####:   82:        Value(const std::string &name, const ValueType type) : name(name), type(type) {}
+call    0 never executed
+function _ZN10ExprEngine5ValueD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine5ValueD2Ev called 0 returned 0% blocks executed 0%
+    #####:   83:        virtual ~Value() {}
+call    0 never executed
+call    1 never executed
+call    2 never executed
+function _ZNK10ExprEngine5Value8getRangeB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   84:        virtual std::string getRange() const {
+    #####:   85:            return name;
+call    0 never executed
+        -:   86:        }
+function _ZNK10ExprEngine5Value21getSymbolicExpressionB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   87:        virtual std::string getSymbolicExpression() const {
+    #####:   88:            return name;
+call    0 never executed
+        -:   89:        }
+function _ZNK10ExprEngine5Value7isEqualEPNS_8DataBaseEi called 0 returned 0% blocks executed 0%
+    #####:   90:        virtual bool isEqual(DataBase *dataBase, int value) const {
+        -:   91:            (void)dataBase;
+        -:   92:            (void)value;
+    #####:   93:            return false;
+        -:   94:        }
+function _ZNK10ExprEngine5Value13isGreaterThanEPNS_8DataBaseEi called 0 returned 0% blocks executed 0%
+    #####:   95:        virtual bool isGreaterThan(DataBase *dataBase, int value) const {
+        -:   96:            (void)dataBase;
+        -:   97:            (void)value;
+    #####:   98:            return false;
+        -:   99:        }
+function _ZNK10ExprEngine5Value10isLessThanEPNS_8DataBaseEi called 0 returned 0% blocks executed 0%
+    #####:  100:        virtual bool isLessThan(DataBase *dataBase, int value) const {
+        -:  101:            (void)dataBase;
+        -:  102:            (void)value;
+    #####:  103:            return false;
+        -:  104:        }
+        -:  105:
+        -:  106:        const std::string name;
+        -:  107:        ValueType type;
+        -:  108:    };
+        -:  109:
+function _ZN10ExprEngine11UninitValueD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine11UninitValueD2Ev called 0 returned 0% blocks executed 0%
+    #####:  110:    class UninitValue: public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  111:    public:
+function _ZN10ExprEngine11UninitValueC2Ev called 0 returned 0% blocks executed 0%
+    #####:  112:        UninitValue() : Value("?", ValueType::UninitValue) {}
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  113:    };
+        -:  114:
+function _ZN10ExprEngine8IntRangeD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine8IntRangeD2Ev called 0 returned 0% blocks executed 0%
+    #####:  115:    class IntRange : public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  116:    public:
+function _ZN10ExprEngine8IntRangeC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEnn called 0 returned 0% blocks executed 0%
+    #####:  117:        IntRange(const std::string &name, int128_t minValue, int128_t maxValue)
+    #####:  118:            : Value(name, ValueType::IntRange)
+        -:  119:            , minValue(minValue)
+    #####:  120:            , maxValue(maxValue) {
+call    0 never executed
+    #####:  121:        }
+function _ZNK10ExprEngine8IntRange8getRangeB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  122:        std::string getRange() const override {
+    #####:  123:            if (minValue == maxValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  124:                return str(minValue);
+call    0 never executed
+    #####:  125:            return str(minValue) + ":" + str(maxValue);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+        -:  126:        }
+        -:  127:        bool isEqual(DataBase *dataBase, int value) const override;
+        -:  128:
+        -:  129:        int128_t minValue;
+        -:  130:        int128_t maxValue;
+        -:  131:    };
+        -:  132:
+function _ZN10ExprEngine10FloatRangeD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine10FloatRangeD2Ev called 0 returned 0% blocks executed 0%
+    #####:  133:    class FloatRange : public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  134:    public:
+function _ZN10ExprEngine10FloatRangeC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEee called 0 returned 0% blocks executed 0%
+    #####:  135:        FloatRange(const std::string &name, long double minValue, long double maxValue)
+    #####:  136:            : Value(name, ValueType::FloatRange)
+        -:  137:            , minValue(minValue)
+    #####:  138:            , maxValue(maxValue) {
+call    0 never executed
+    #####:  139:        }
+        -:  140:
+function _ZNK10ExprEngine10FloatRange8getRangeB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  141:        std::string getRange() const override {
+    #####:  142:            return std::to_string(minValue) + ":" + std::to_string(maxValue);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+        -:  143:        }
+        -:  144:
+        -:  145:        long double minValue;
+        -:  146:        long double maxValue;
+        -:  147:    };
+        -:  148:
+function _ZN10ExprEngine12PointerValueD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine12PointerValueD2Ev called 0 returned 0% blocks executed 0%
+    #####:  149:    class PointerValue: public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:  150:    public:
+function _ZN10ExprEngine12PointerValueC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt10shared_ptrINS_5ValueEEbb called 0 returned 0% blocks executed 0%
+    #####:  151:        PointerValue(const std::string &name, ValuePtr data, bool null, bool uninitData)
+    #####:  152:            : Value(name, ValueType::PointerValue)
+        -:  153:            , data(data)
+        -:  154:            , null(null)
+    #####:  155:            , uninitData(uninitData) {
+call    0 never executed
+call    1 never executed
+    #####:  156:        }
+        -:  157:        std::string getRange() const override;
+        -:  158:        ValuePtr data;
+        -:  159:        bool null;
+        -:  160:        bool uninitData;
+        -:  161:    };
+        -:  162:
+function _ZN10ExprEngine16ConditionalValueD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine16ConditionalValueD2Ev called 0 returned 0% blocks executed 0%
+    #####:  163:    class ConditionalValue : public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:  164:    public:
+        -:  165:        typedef std::vector<std::pair<ValuePtr,ValuePtr>> Vector;
+        -:  166:
+function _ZN10ExprEngine16ConditionalValueC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNSt7__debug6vectorISt4pairISt10shared_ptrINS_5ValueEESE_ESaISF_EEE called 0 returned 0% blocks executed 0%
+    #####:  167:        ConditionalValue(const std::string &name, const Vector &values) : Value(name, ValueType::ConditionalValue), values(values) {}
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+        -:  168:
+        -:  169:        std::string getSymbolicExpression() const override;
+        -:  170:
+        -:  171:        Vector values;
+        -:  172:    };
+        -:  173:
+function _ZN10ExprEngine10ArrayValueD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine10ArrayValueD2Ev called 0 returned 0% blocks executed 0%
+    #####:  174:    class ArrayValue: public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+        -:  175:    public:
+        -:  176:        const int MAXSIZE = 0x100000;
+        -:  177:
+        -:  178:        ArrayValue(const std::string &name, ValuePtr size, ValuePtr value);
+        -:  179:        ArrayValue(DataBase *data, const Variable *var);
+        -:  180:
+        -:  181:        std::string getSymbolicExpression() const override;
+        -:  182:
+        -:  183:        void assign(ValuePtr index, ValuePtr value);
+        -:  184:        void clear();
+        -:  185:        ConditionalValue::Vector read(ValuePtr index) const;
+        -:  186:
+function _ZN10ExprEngine10ArrayValue13IndexAndValueC2EOS1_ called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine10ArrayValue13IndexAndValueC2ERKS1_ called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine10ArrayValue13IndexAndValueD2Ev called 0 returned 0% blocks executed 0%
+    #####:  187:        struct IndexAndValue {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  188:            ValuePtr index;
+        -:  189:            ValuePtr value;
+        -:  190:        };
+        -:  191:        std::vector<IndexAndValue> data;
+        -:  192:        ValuePtr size;
+        -:  193:    };
+        -:  194:
+function _ZN10ExprEngine18StringLiteralValueD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine18StringLiteralValueD2Ev called 0 returned 0% blocks executed 0%
+    #####:  195:    class StringLiteralValue: public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:  196:    public:
+function _ZN10ExprEngine18StringLiteralValueC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_ called 0 returned 0% blocks executed 0%
+    #####:  197:        StringLiteralValue(const std::string &name, const std::string &s) : Value(name, ValueType::StringLiteralValue), string(s) {}
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+        -:  198:
+function _ZNK10ExprEngine18StringLiteralValue8getRangeB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  199:        std::string getRange() const override {
+    #####:  200:            return "\"" + string + "\"";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  201:        }
+        -:  202:
+function _ZNK10ExprEngine18StringLiteralValue4sizeEv called 0 returned 0% blocks executed 0%
+    #####:  203:        int size() const {
+    #####:  204:            return string.size();
+call    0 never executed
+        -:  205:        }
+        -:  206:        const std::string string;
+        -:  207:    };
+        -:  208:
+function _ZN10ExprEngine11StructValueD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine11StructValueD2Ev called 0 returned 0% blocks executed 0%
+    #####:  209:    class StructValue: public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:  210:    public:
+function _ZN10ExprEngine11StructValueC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  211:        explicit StructValue(const std::string &name) : Value(name, ValueType::StructValue) {}
+call    0 never executed
+call    1 never executed
+        -:  212:
+        -:  213:        std::string getSymbolicExpression() const override;
+        -:  214:
+function _ZNK10ExprEngine11StructValue16getValueOfMemberERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  215:        ValuePtr getValueOfMember(const std::string &name) const {
+    #####:  216:            auto it = member.find(name);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  217:            return (it == member.end()) ? ValuePtr() : it->second;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+        -:  218:        }
+        -:  219:        std::map<std::string, ValuePtr> member;
+        -:  220:    };
+        -:  221:
+function _ZN10ExprEngine14AddressOfValueD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine14AddressOfValueD2Ev called 0 returned 0% blocks executed 0%
+    #####:  222:    class AddressOfValue: public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  223:    public:
+function _ZN10ExprEngine14AddressOfValueC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi called 0 returned 0% blocks executed 0%
+    #####:  224:        AddressOfValue(const std::string &name, int varId)
+    #####:  225:            : Value(name, ValueType::AddressOfValue)
+    #####:  226:            , varId(varId)
+call    0 never executed
+    #####:  227:        {}
+        -:  228:
+function _ZNK10ExprEngine14AddressOfValue8getRangeB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  229:        std::string getRange() const override {
+    #####:  230:            return "&@" + std::to_string(varId);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  231:        }
+        -:  232:
+        -:  233:        int varId;
+        -:  234:    };
+        -:  235:
+function _ZN10ExprEngine11BinOpResultD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine11BinOpResultD2Ev called 0 returned 0% blocks executed 0%
+    #####:  236:    class BinOpResult : public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  237:    public:
+function _ZN10ExprEngine11BinOpResultC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt10shared_ptrINS_5ValueEESB_ called 0 returned 0% blocks executed 0%
+    #####:  238:        BinOpResult(const std::string &binop, ValuePtr op1, ValuePtr op2)
+    #####:  239:            : Value(getName(binop, op1, op2), ValueType::BinOpResult)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:  240:            , binop(binop)
+        -:  241:            , op1(op1)
+    #####:  242:            , op2(op2) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  243:        }
+        -:  244:
+        -:  245:        bool isEqual(DataBase *dataBase, int value) const override;
+        -:  246:        bool isGreaterThan(DataBase *dataBase, int value) const override;
+        -:  247:        virtual bool isLessThan(DataBase *dataBase, int value) const override;
+        -:  248:
+        -:  249:        std::string getExpr(DataBase *dataBase) const;
+        -:  250:
+        -:  251:        std::string binop;
+        -:  252:        ValuePtr op1;
+        -:  253:        ValuePtr op2;
+        -:  254:    private:
+function _ZNK10ExprEngine11BinOpResult7getNameERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt10shared_ptrINS_5ValueEESB_ called 0 returned 0% blocks executed 0%
+    #####:  255:        std::string getName(const std::string &binop, ValuePtr op1, ValuePtr op2) const {
+    #####:  256:            std::string name1 = op1 ? op1->name : std::string("null");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  257:            std::string name2 = op2 ? op2->name : std::string("null");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  258:            return "(" + name1 + ")" + binop + "(" + name2 + ")";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+        -:  259:        }
+        -:  260:    };
+        -:  261:
+function _ZN10ExprEngine17IntegerTruncationD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10ExprEngine17IntegerTruncationD2Ev called 0 returned 0% blocks executed 0%
+    #####:  262:    class IntegerTruncation : public Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:  263:    public:
+function _ZN10ExprEngine17IntegerTruncationC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt10shared_ptrINS_5ValueEEic called 0 returned 0% blocks executed 0%
+    #####:  264:        IntegerTruncation(const std::string &name, ValuePtr inputValue, int bits, char sign)
+    #####:  265:            : Value(name, ValueType::IntegerTruncation)
+        -:  266:            , inputValue(inputValue)
+        -:  267:            , bits(bits)
+    #####:  268:            , sign(sign) {
+call    0 never executed
+call    1 never executed
+    #####:  269:        }
+        -:  270:
+        -:  271:        std::string getSymbolicExpression() const override;
+        -:  272:
+        -:  273:        ExprEngine::ValuePtr inputValue;
+        -:  274:        int bits;
+        -:  275:        char sign;
+        -:  276:    };
+        -:  277:
+        -:  278:    typedef std::function<void(const Token *, const ExprEngine::Value &, ExprEngine::DataBase *)> Callback;
+        -:  279:
+        -:  280:    /** Execute all functions */
+        -:  281:    void CPPCHECKLIB executeAllFunctions(const Tokenizer *tokenizer, const Settings *settings, const std::vector<Callback> &callbacks, std::ostream &trace);
+        -:  282:    void executeFunction(const Scope *functionScope, const Tokenizer *tokenizer, const Settings *settings, const std::vector<Callback> &callbacks, std::ostream &trace);
+        -:  283:
+        -:  284:    void runChecks(ErrorLogger *errorLogger, const Tokenizer *tokenizer, const Settings *settings);
+        -:  285:}
+        -:  286:#endif // exprengineH

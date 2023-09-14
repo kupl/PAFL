@@ -1,0 +1,208 @@
+        -:    0:Source:/home/workspace/lib/suppressions.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/suppressions.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/suppressions.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2018 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18://---------------------------------------------------------------------------
+        -:   19:#ifndef suppressionsH
+        -:   20:#define suppressionsH
+        -:   21://---------------------------------------------------------------------------
+        -:   22:
+        -:   23:#include "config.h"
+        -:   24:
+        -:   25:#include <istream>
+        -:   26:#include <list>
+        -:   27:#include <set>
+        -:   28:#include <string>
+        -:   29:
+        -:   30:/// @addtogroup Core
+        -:   31:/// @{
+        -:   32:
+        -:   33:/** @brief class for handling suppressions */
+        -:   34:class CPPCHECKLIB Suppressions {
+        -:   35:public:
+        -:   36:
+        -:   37:    struct CPPCHECKLIB ErrorMessage {
+        -:   38:        std::string errorId;
+        -:   39:        void setFileName(const std::string &s);
+function _ZNK12Suppressions12ErrorMessage11getFileNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   40:        const std::string &getFileName() const {
+    #####:   41:            return mFileName;
+        -:   42:        }
+        -:   43:        int lineNumber;
+        -:   44:        bool inconclusive;
+        -:   45:        std::string symbolNames;
+        -:   46:    private:
+        -:   47:        std::string mFileName;
+        -:   48:    };
+        -:   49:
+function _ZN12Suppressions11SuppressionD2Ev called 0 returned 0% blocks executed 0%
+    #####:   50:    struct CPPCHECKLIB Suppression {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+function _ZN12Suppressions11SuppressionC2Ev called 0 returned 0% blocks executed 0%
+    #####:   51:        Suppression() : lineNumber(NO_LINE), matched(false) {}
+call    0 never executed
+call    1 never executed
+call    2 never executed
+function _ZN12Suppressions11SuppressionC2ERKS0_ called 0 returned 0% blocks executed 0%
+    #####:   52:        Suppression(const Suppression &other) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   53:            *this = other;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   54:        }
+        -:   55:        Suppression(const std::string &id, const std::string &file, int line=NO_LINE) : errorId(id), fileName(file), lineNumber(line), matched(false) {}
+        -:   56:
+function _ZN12Suppressions11SuppressionaSERKS0_ called 0 returned 0% blocks executed 0%
+    #####:   57:        Suppression & operator=(const Suppression &other) {
+    #####:   58:            errorId = other.errorId;
+call    0 never executed
+    #####:   59:            fileName = other.fileName;
+call    0 never executed
+    #####:   60:            lineNumber = other.lineNumber;
+    #####:   61:            symbolName = other.symbolName;
+call    0 never executed
+    #####:   62:            matched = other.matched;
+    #####:   63:            return *this;
+        -:   64:        }
+        -:   65:
+        -:   66:        bool operator<(const Suppression &other) const {
+        -:   67:            if (errorId != other.errorId)
+        -:   68:                return errorId < other.errorId;
+        -:   69:            if (lineNumber < other.lineNumber)
+        -:   70:                return true;
+        -:   71:            if (fileName != other.fileName)
+        -:   72:                return fileName < other.fileName;
+        -:   73:            if (symbolName != other.symbolName)
+        -:   74:                return symbolName < other.symbolName;
+        -:   75:            return false;
+        -:   76:        }
+        -:   77:
+        -:   78:        /**
+        -:   79:         * Parse inline suppression in comment
+        -:   80:         * @param comment the full comment text
+        -:   81:         * @param errorMessage output parameter for error message (wrong suppression attribute)
+        -:   82:         * @return true if it is a inline comment.
+        -:   83:         */
+        -:   84:        bool parseComment(std::string comment, std::string *errorMessage);
+        -:   85:
+        -:   86:        bool isSuppressed(const ErrorMessage &errmsg) const;
+        -:   87:
+        -:   88:        bool isMatch(const ErrorMessage &errmsg);
+        -:   89:        std::string getText() const;
+        -:   90:
+function _ZNK12Suppressions11Suppression7isLocalEv called 0 returned 0% blocks executed 0%
+    #####:   91:        bool isLocal() const {
+    #####:   92:            return !fileName.empty() && fileName.find_first_of("?*") == std::string::npos;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:   93:        }
+        -:   94:
+        -:   95:        std::string errorId;
+        -:   96:        std::string fileName;
+        -:   97:        int lineNumber;
+        -:   98:        std::string symbolName;
+        -:   99:        bool matched;
+        -:  100:
+        -:  101:        enum { NO_LINE = -1 };
+        -:  102:    };
+        -:  103:
+        -:  104:    /**
+        -:  105:     * @brief Don't show errors listed in the file.
+        -:  106:     * @param istr Open file stream where errors can be read.
+        -:  107:     * @return error message. empty upon success
+        -:  108:     */
+        -:  109:    std::string parseFile(std::istream &istr);
+        -:  110:
+        -:  111:    /**
+        -:  112:     * @brief Don't show errors listed in the file.
+        -:  113:     * @param filename file name
+        -:  114:     * @return error message. empty upon success
+        -:  115:     */
+        -:  116:    std::string parseXmlFile(const char *filename);
+        -:  117:
+        -:  118:    /**
+        -:  119:     * @brief Don't show the given error.
+        -:  120:     * @param line Description of error to suppress (in id:file:line format).
+        -:  121:     * @return error message. empty upon success
+        -:  122:     */
+        -:  123:    std::string addSuppressionLine(const std::string &line);
+        -:  124:
+        -:  125:    /**
+        -:  126:     * @brief Don't show this error. File and/or line are optional. In which case
+        -:  127:     * the errorId alone is used for filtering.
+        -:  128:     * @param suppression suppression details
+        -:  129:     * @return error message. empty upon success
+        -:  130:     */
+        -:  131:    std::string addSuppression(const Suppression &suppression);
+        -:  132:
+        -:  133:    /**
+        -:  134:     * @brief Returns true if this message should not be shown to the user.
+        -:  135:     * @param errmsg error message
+        -:  136:     * @return true if this error is suppressed.
+        -:  137:     */
+        -:  138:    bool isSuppressed(const ErrorMessage &errmsg);
+        -:  139:
+        -:  140:    /**
+        -:  141:     * @brief Returns true if this message should not be shown to the user, only uses local suppressions.
+        -:  142:     * @param errmsg error message
+        -:  143:     * @return true if this error is suppressed.
+        -:  144:     */
+        -:  145:    bool isSuppressedLocal(const ErrorMessage &errmsg);
+        -:  146:
+        -:  147:    /**
+        -:  148:     * @brief Create an xml dump of suppressions
+        -:  149:     * @param out stream to write XML to
+        -:  150:    */
+        -:  151:    void dump(std::ostream &out) const;
+        -:  152:
+        -:  153:    /**
+        -:  154:     * @brief Returns list of unmatched local (per-file) suppressions.
+        -:  155:     * @return list of unmatched suppressions
+        -:  156:     */
+        -:  157:    std::list<Suppression> getUnmatchedLocalSuppressions(const std::string &file, const bool unusedFunctionChecking) const;
+        -:  158:
+        -:  159:    /**
+        -:  160:     * @brief Returns list of unmatched global (glob pattern) suppressions.
+        -:  161:     * @return list of unmatched suppressions
+        -:  162:     */
+        -:  163:    std::list<Suppression> getUnmatchedGlobalSuppressions(const bool unusedFunctionChecking) const;
+        -:  164:
+        -:  165:    static bool matchglob(const std::string &pattern, const std::string &name);
+        -:  166:private:
+        -:  167:    /** @brief List of error which the user doesn't want to see. */
+        -:  168:    std::list<Suppression> mSuppressions;
+        -:  169:};
+        -:  170:
+        -:  171:/// @}
+        -:  172://---------------------------------------------------------------------------
+        -:  173:#endif // suppressionsH

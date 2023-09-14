@@ -1,0 +1,324 @@
+        -:    0:Source:/home/workspace/lib/settings.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/settings.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/settings.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#include "settings.h"
+        -:   20:
+        -:   21:#include "valueflow.h"
+        -:   22:
+        -:   23:bool Settings::mTerminated;
+        -:   24:
+        -:   25:const char Settings::SafeChecks::XmlRootName[] = "safe-checks";
+        -:   26:const char Settings::SafeChecks::XmlClasses[] = "class-public";
+        -:   27:const char Settings::SafeChecks::XmlExternalFunctions[] = "external-functions";
+        -:   28:const char Settings::SafeChecks::XmlInternalFunctions[] = "internal-functions";
+        -:   29:const char Settings::SafeChecks::XmlExternalVariables[] = "external-variables";
+        -:   30:
+function _ZN8SettingsC2Ev called 60 returned 100% blocks executed 58%
+       60:   31:Settings::Settings()
+        -:   32:    : mEnabled(0),
+        -:   33:      checkConfiguration(false),
+        -:   34:      checkLibrary(false),
+        -:   35:      checkHeaders(true),
+        -:   36:      checkUnusedTemplates(false),
+        -:   37:      debugSimplified(false),
+        -:   38:      debugnormal(false),
+        -:   39:      debugwarnings(false),
+        -:   40:      debugtemplate(false),
+        -:   41:      dump(false),
+        -:   42:      enforcedLang(None),
+        -:   43:      exceptionHandling(false),
+        -:   44:      exitCode(0),
+        -:   45:      experimental(false),
+        -:   46:      force(false),
+        -:   47:      inconclusive(false),
+        -:   48:      verification(false),
+        -:   49:      inlineSuppressions(false),
+        -:   50:      jobs(1),
+        -:   51:      jointSuppressionReport(false),
+        -:   52:      loadAverage(0),
+        -:   53:      maxConfigs(12),
+        -:   54:      maxCtuDepth(2),
+        -:   55:      preprocessOnly(false),
+        -:   56:      quiet(false),
+        -:   57:      relativePaths(false),
+        -:   58:      reportProgress(false),
+        -:   59:      showtime(SHOWTIME_MODES::SHOWTIME_NONE),
+        -:   60:      verbose(false),
+        -:   61:      xml(false),
+       60:   62:      xml_version(2)
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+call    3 returned 100%
+call    4 returned 100%
+call    5 returned 100%
+call    6 returned 100%
+call    7 returned 100%
+call    8 returned 100%
+call    9 returned 100%
+call   10 returned 100%
+call   11 returned 100%
+branch 12 taken 100% (fallthrough)
+branch 13 taken 0% (throw)
+call   14 returned 100%
+call   15 returned 100%
+call   16 returned 100%
+call   17 returned 100%
+call   18 returned 100%
+call   19 returned 100%
+call   20 returned 100%
+call   21 returned 100%
+call   22 returned 100%
+call   23 returned 100%
+call   24 returned 100%
+call   25 returned 100%
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+call   30 never executed
+call   31 never executed
+call   32 never executed
+call   33 never executed
+call   34 never executed
+call   35 never executed
+        -:   63:{
+       60:   64:}
+        -:   65:
+function _ZN8Settings10addEnabledERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 195 returned 100% blocks executed 20%
+      195:   66:std::string Settings::addEnabled(const std::string &str)
+        -:   67:{
+        -:   68:    // Enable parameters may be comma separated...
+      195:   69:    if (str.find(',') != std::string::npos) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   70:        std::string::size_type prevPos = 0;
+    #####:   71:        std::string::size_type pos = 0;
+    #####:   72:        while ((pos = str.find(',', pos)) != std::string::npos) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   73:            if (pos == prevPos)
+branch  0 never executed
+branch  1 never executed
+    #####:   74:                return std::string("cppcheck: --enable parameter is empty");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:   75:            const std::string errmsg(addEnabled(str.substr(prevPos, pos - prevPos)));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:   76:            if (!errmsg.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   77:                return errmsg;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   78:            ++pos;
+    #####:   79:            prevPos = pos;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   80:        }
+    #####:   81:        if (prevPos >= str.length())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   82:            return std::string("cppcheck: --enable parameter is empty");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:   83:        return addEnabled(str.substr(prevPos));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -:   84:    }
+        -:   85:
+      195:   86:    if (str == "all") {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   87:        mEnabled |= WARNING | STYLE | PERFORMANCE | PORTABILITY | INFORMATION | UNUSED_FUNCTION | MISSING_INCLUDE;
+      195:   88:    } else if (str == "warning") {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   89:        mEnabled |= WARNING;
+      195:   90:    } else if (str == "style") {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   91:        mEnabled |= STYLE;
+      195:   92:    } else if (str == "performance") {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   93:        mEnabled |= PERFORMANCE;
+      195:   94:    } else if (str == "portability") {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   95:        mEnabled |= PORTABILITY;
+      195:   96:    } else if (str == "information") {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+      195:   97:        mEnabled |= INFORMATION | MISSING_INCLUDE;
+    #####:   98:    } else if (str == "unusedFunction") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   99:        mEnabled |= UNUSED_FUNCTION;
+    #####:  100:    } else if (str == "missingInclude") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  101:        mEnabled |= MISSING_INCLUDE;
+        -:  102:    }
+        -:  103:#ifdef CHECK_INTERNAL
+        -:  104:    else if (str == "internal") {
+        -:  105:        mEnabled |= INTERNAL;
+        -:  106:    }
+        -:  107:#endif
+        -:  108:    else {
+    #####:  109:        if (str.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  110:            return std::string("cppcheck: --enable parameter is empty");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -:  111:        else
+    #####:  112:            return std::string("cppcheck: there is no --enable parameter with the name '" + str + "'");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  113:    }
+        -:  114:
+      195:  115:    return std::string();
+call    0 returned 100%
+        -:  116:}
+        -:  117:
+function _ZNK8Settings9isEnabledEN8Severity12SeverityTypeE called 0 returned 0% blocks executed 0%
+    #####:  118:bool Settings::isEnabled(Severity::SeverityType severity) const
+        -:  119:{
+    #####:  120:    switch (severity) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  121:    case Severity::none:
+    #####:  122:        return true;
+    #####:  123:    case Severity::error:
+    #####:  124:        return true;
+    #####:  125:    case Severity::warning:
+    #####:  126:        return isEnabled(WARNING);
+call    0 never executed
+    #####:  127:    case Severity::style:
+    #####:  128:        return isEnabled(STYLE);
+call    0 never executed
+    #####:  129:    case Severity::performance:
+    #####:  130:        return isEnabled(PERFORMANCE);
+call    0 never executed
+    #####:  131:    case Severity::portability:
+    #####:  132:        return isEnabled(PORTABILITY);
+call    0 never executed
+    #####:  133:    case Severity::information:
+    #####:  134:        return isEnabled(INFORMATION);
+call    0 never executed
+    #####:  135:    case Severity::debug:
+    #####:  136:        return false;
+    #####:  137:    default:
+    #####:  138:        return false;
+        -:  139:    }
+        -:  140:}
+        -:  141:
+function _ZNK8Settings9isEnabledEPKN9ValueFlow5ValueEb called 0 returned 0% blocks executed 0%
+    #####:  142:bool Settings::isEnabled(const ValueFlow::Value *value, bool inconclusiveCheck) const
+        -:  143:{
+    #####:  144:    if (!isEnabled(Settings::WARNING) && (value->condition || value->defaultArg))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  145:        return false;
+    #####:  146:    if (!inconclusive && (inconclusiveCheck || value->isInconclusive()))
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  147:        return false;
+    #####:  148:    return true;
+function _GLOBAL__sub_I__ZN8Settings11mTerminatedE called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  149:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

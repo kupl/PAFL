@@ -1,0 +1,887 @@
+        -:    0:Source:/home/workspace/lib/checkclass.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkclass.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkclass.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef checkclassH
+        -:   21:#define checkclassH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "check.h"
+        -:   25:#include "config.h"
+        -:   26:#include "tokenize.h"
+        -:   27:
+        -:   28:#include <list>
+        -:   29:#include <map>
+        -:   30:#include <set>
+        -:   31:#include <string>
+        -:   32:#include <vector>
+        -:   33:
+        -:   34:class ErrorLogger;
+        -:   35:class Function;
+        -:   36:class Scope;
+        -:   37:class Settings;
+        -:   38:class SymbolDatabase;
+        -:   39:class Token;
+        -:   40:
+        -:   41:/// @addtogroup Checks
+        -:   42:/// @{
+        -:   43:
+        -:   44:
+        -:   45:/** @brief %Check classes. Uninitialized member variables, non-conforming operators, missing virtual destructor, etc */
+function _ZN10CheckClassD0Ev called 0 returned 0% blocks executed 0%
+function _ZN10CheckClassD2Ev called 0 returned 0% blocks executed 0%
+    #####:   46:class CPPCHECKLIB CheckClass : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   47:public:
+        -:   48:    /** @brief This constructor is used when registering the CheckClass */
+function _ZN10CheckClassC2Ev called 1 returned 100% blocks executed 71%
+        1:   49:    CheckClass() : Check(myName()), mSymbolDatabase(nullptr) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        1:   50:    }
+        -:   51:
+        -:   52:    /** @brief This constructor is used when running checks. */
+        -:   53:    CheckClass(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger);
+        -:   54:
+        -:   55:    /** @brief Run checks on the normal token list */
+function _ZN10CheckClass9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   56:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:   57:        if (tokenizer->isC())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   58:            return;
+        -:   59:
+    #####:   60:        CheckClass checkClass(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:   61:
+        -:   62:        // can't be a simplified check .. the 'sizeof' is used.
+    #####:   63:        checkClass.checkMemset();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   64:        checkClass.checkUnsafeClassDivZero();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   65:        checkClass.constructors();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   66:        checkClass.operatorEq();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   67:        checkClass.privateFunctions();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   68:        checkClass.operatorEqRetRefThis();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   69:        checkClass.thisSubtraction();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   70:        checkClass.operatorEqToSelf();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   71:        checkClass.initializerListOrder();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   72:        checkClass.initializationListUsage();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   73:        checkClass.checkSelfInitialization();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   74:        checkClass.virtualDestructor();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   75:        checkClass.checkConst();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   76:        checkClass.copyconstructors();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   77:        checkClass.checkVirtualFunctionCallInConstructor();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   78:        checkClass.checkDuplInheritedMembers();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   79:        checkClass.checkExplicitConstructors();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   80:        checkClass.checkCopyCtorAndEqOperator();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   81:        checkClass.checkOverride();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   82:        checkClass.checkUnsafeClassRefMember();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   83:    }
+        -:   84:
+        -:   85:    /** @brief %Check that all class constructors are ok */
+        -:   86:    void constructors();
+        -:   87:
+        -:   88:    /** @brief %Check that constructors with single parameter are explicit,
+        -:   89:     *  if they has to be.*/
+        -:   90:    void checkExplicitConstructors();
+        -:   91:
+        -:   92:    /** @brief %Check that all private functions are called */
+        -:   93:    void privateFunctions();
+        -:   94:
+        -:   95:    /**
+        -:   96:     * @brief %Check that the memsets are valid.
+        -:   97:     * The 'memset' function can do dangerous things if used wrong. If it
+        -:   98:     * is used on STL containers for instance it will clear all its data
+        -:   99:     * and then the STL container may leak memory or worse have an invalid state.
+        -:  100:     * It can also overwrite the virtual table.
+        -:  101:     * Important: The checking doesn't work on simplified tokens list.
+        -:  102:     */
+        -:  103:    void checkMemset();
+        -:  104:    void checkMemsetType(const Scope *start, const Token *tok, const Scope *type, bool allocation, std::set<const Scope *> parsedTypes);
+        -:  105:
+        -:  106:    /** @brief 'operator=' should return something and it should not be const. */
+        -:  107:    void operatorEq();
+        -:  108:
+        -:  109:    /** @brief 'operator=' should return reference to *this */
+        -:  110:    void operatorEqRetRefThis();    // Warning upon no "return *this;"
+        -:  111:
+        -:  112:    /** @brief 'operator=' should check for assignment to self */
+        -:  113:    void operatorEqToSelf();    // Warning upon no check for assignment to self
+        -:  114:
+        -:  115:    /** @brief The destructor in a base class should be virtual */
+        -:  116:    void virtualDestructor();
+        -:  117:
+        -:  118:    /** @brief warn for "this-x". The indented code may be "this->x"  */
+        -:  119:    void thisSubtraction();
+        -:  120:
+        -:  121:    /** @brief can member function be const? */
+        -:  122:    void checkConst();
+        -:  123:
+        -:  124:    /** @brief Check initializer list order */
+        -:  125:    void initializerListOrder();
+        -:  126:
+        -:  127:    /** @brief Suggest using initialization list */
+        -:  128:    void initializationListUsage();
+        -:  129:
+        -:  130:    /** @brief Check for initialization of a member with itself */
+        -:  131:    void checkSelfInitialization();
+        -:  132:
+        -:  133:    void copyconstructors();
+        -:  134:
+        -:  135:    /** @brief call of virtual function in constructor/destructor */
+        -:  136:    void checkVirtualFunctionCallInConstructor();
+        -:  137:
+        -:  138:    /** @brief Check duplicated inherited members */
+        -:  139:    void checkDuplInheritedMembers();
+        -:  140:
+        -:  141:    /** @brief Check that copy constructor and operator defined together */
+        -:  142:    void checkCopyCtorAndEqOperator();
+        -:  143:
+        -:  144:    /** @brief Check that arbitrary usage of the public interface does not result in division by zero */
+        -:  145:    void checkUnsafeClassDivZero(bool test=false);
+        -:  146:
+        -:  147:    /** @brief Check that the override keyword is used when overriding virtual functions */
+        -:  148:    void checkOverride();
+        -:  149:
+        -:  150:    /** @brief Unsafe class check - const reference member */
+        -:  151:    void checkUnsafeClassRefMember();
+        -:  152:
+        -:  153:private:
+        -:  154:    const SymbolDatabase *mSymbolDatabase;
+        -:  155:
+        -:  156:    // Reporting errors..
+        -:  157:    void noConstructorError(const Token *tok, const std::string &classname, bool isStruct);
+        -:  158:    void noExplicitConstructorError(const Token *tok, const std::string &classname, bool isStruct);
+        -:  159:    //void copyConstructorMallocError(const Token *cctor, const Token *alloc, const std::string& var_name);
+        -:  160:    void copyConstructorShallowCopyError(const Token *tok, const std::string& varname);
+        -:  161:    void noCopyConstructorError(const Scope *scope, bool isdefault, const Token *alloc, bool inconclusive);
+        -:  162:    void noOperatorEqError(const Scope *scope, bool isdefault, const Token *alloc, bool inconclusive);
+        -:  163:    void noDestructorError(const Scope *scope, bool isdefault, const Token *alloc);
+        -:  164:    void uninitVarError(const Token *tok, bool isprivate, const std::string &classname, const std::string &varname, bool inconclusive);
+        -:  165:    void operatorEqVarError(const Token *tok, const std::string &classname, const std::string &varname, bool inconclusive);
+        -:  166:    void unusedPrivateFunctionError(const Token *tok, const std::string &classname, const std::string &funcname);
+        -:  167:    void memsetError(const Token *tok, const std::string &memfunc, const std::string &classname, const std::string &type);
+        -:  168:    void memsetErrorReference(const Token *tok, const std::string &memfunc, const std::string &type);
+        -:  169:    void memsetErrorFloat(const Token *tok, const std::string &type);
+        -:  170:    void mallocOnClassError(const Token* tok, const std::string &memfunc, const Token* classTok, const std::string &classname);
+        -:  171:    void mallocOnClassWarning(const Token* tok, const std::string &memfunc, const Token* classTok);
+        -:  172:    void operatorEqReturnError(const Token *tok, const std::string &className);
+        -:  173:    void virtualDestructorError(const Token *tok, const std::string &Base, const std::string &Derived, bool inconclusive);
+        -:  174:    void thisSubtractionError(const Token *tok);
+        -:  175:    void operatorEqRetRefThisError(const Token *tok);
+        -:  176:    void operatorEqShouldBeLeftUnimplementedError(const Token *tok);
+        -:  177:    void operatorEqMissingReturnStatementError(const Token *tok, bool error);
+        -:  178:    void operatorEqToSelfError(const Token *tok);
+        -:  179:    void checkConstError(const Token *tok, const std::string &classname, const std::string &funcname, bool suggestStatic);
+        -:  180:    void checkConstError2(const Token *tok1, const Token *tok2, const std::string &classname, const std::string &funcname, bool suggestStatic);
+        -:  181:    void initializerListError(const Token *tok1,const Token *tok2, const std::string & classname, const std::string &varname);
+        -:  182:    void suggestInitializationList(const Token *tok, const std::string& varname);
+        -:  183:    void selfInitializationError(const Token* tok, const std::string& varname);
+        -:  184:    void pureVirtualFunctionCallInConstructorError(const Function * scopeFunction, const std::list<const Token *> & tokStack, const std::string &purefuncname);
+        -:  185:    void virtualFunctionCallInConstructorError(const Function * scopeFunction, const std::list<const Token *> & tokStack, const std::string &funcname);
+        -:  186:    void duplInheritedMembersError(const Token* tok1, const Token* tok2, const std::string &derivedName, const std::string &baseName, const std::string &variableName, bool derivedIsStruct, bool baseIsStruct);
+        -:  187:    void copyCtorAndEqOperatorError(const Token *tok, const std::string &classname, bool isStruct, bool hasCopyCtor);
+        -:  188:    void unsafeClassDivZeroError(const Token *tok, const std::string &className, const std::string &methodName, const std::string &varName);
+        -:  189:    void overrideError(const Function *funcInBase, const Function *funcInDerived);
+        -:  190:    void unsafeClassRefMemberError(const Token *tok, const std::string &varname);
+        -:  191:
+function _ZNK10CheckClass16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  192:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:  193:        CheckClass c(nullptr, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  194:        c.noConstructorError(nullptr, "classname", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  195:        c.noExplicitConstructorError(nullptr, "classname", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  196:        //c.copyConstructorMallocError(nullptr, 0, "var");
+    #####:  197:        c.copyConstructorShallowCopyError(nullptr, "var");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  198:        c.noCopyConstructorError(nullptr, false, nullptr, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  199:        c.noOperatorEqError(nullptr, false, nullptr, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  200:        c.noDestructorError(nullptr, false, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  201:        c.uninitVarError(nullptr, false, "classname", "varname", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  202:        c.uninitVarError(nullptr, true, "classname", "varnamepriv", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  203:        c.operatorEqVarError(nullptr, "classname", emptyString, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  204:        c.unusedPrivateFunctionError(nullptr, "classname", "funcname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  205:        c.memsetError(nullptr, "memfunc", "classname", "class");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+    #####:  206:        c.memsetErrorReference(nullptr, "memfunc", "class");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  207:        c.memsetErrorFloat(nullptr, "class");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  208:        c.mallocOnClassWarning(nullptr, "malloc", nullptr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  209:        c.mallocOnClassError(nullptr, "malloc", nullptr, "std::string");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  210:        c.operatorEqReturnError(nullptr, "class");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  211:        c.virtualDestructorError(nullptr, "Base", "Derived", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  212:        c.thisSubtractionError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  213:        c.operatorEqRetRefThisError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  214:        c.operatorEqMissingReturnStatementError(nullptr, true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  215:        c.operatorEqShouldBeLeftUnimplementedError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  216:        c.operatorEqToSelfError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  217:        c.checkConstError(nullptr, "class", "function", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  218:        c.checkConstError(nullptr, "class", "function", true);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  219:        c.initializerListError(nullptr, nullptr, "class", "variable");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  220:        c.suggestInitializationList(nullptr, "variable");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  221:        c.selfInitializationError(nullptr, "var");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  222:        c.duplInheritedMembersError(nullptr, nullptr, "class", "class", "variable", false, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+    #####:  223:        c.copyCtorAndEqOperatorError(nullptr, "class", false, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  224:        c.unsafeClassDivZeroError(nullptr, "Class", "dostuff", "x");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+    #####:  225:        c.pureVirtualFunctionCallInConstructorError(nullptr, std::list<const Token *>(), "f");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  226:        c.virtualFunctionCallInConstructorError(nullptr, std::list<const Token *>(), "f");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  227:        c.overrideError(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  228:        c.unsafeClassRefMemberError(nullptr, "UnsafeClass::var");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  229:    }
+        -:  230:
+function _ZN10CheckClass6myNameB5cxx11Ev called 1 returned 100% blocks executed 75%
+        1:  231:    static std::string myName() {
+        1:  232:        return "Class";
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        -:  233:    }
+        -:  234:
+function _ZNK10CheckClass9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  235:    std::string classInfo() const OVERRIDE {
+        -:  236:        return "Check the code for each class.\n"
+        -:  237:               "- Missing constructors and copy constructors\n"
+        -:  238:               //"- Missing allocation of memory in copy constructor\n"
+        -:  239:               "- Constructors which should be explicit\n"
+        -:  240:               "- Are all variables initialized by the constructors?\n"
+        -:  241:               "- Are all variables assigned by 'operator='?\n"
+        -:  242:               "- Warn if memset, memcpy etc are used on a class\n"
+        -:  243:               "- Warn if memory for classes is allocated with malloc()\n"
+        -:  244:               "- If it's a base class, check that the destructor is virtual\n"
+        -:  245:               "- Are there unused private functions?\n"
+        -:  246:               "- 'operator=' should return reference to self\n"
+        -:  247:               "- 'operator=' should check for assignment to self\n"
+        -:  248:               "- Constness for member functions\n"
+        -:  249:               "- Order of initializations\n"
+        -:  250:               "- Suggest usage of initialization list\n"
+        -:  251:               "- Initialization of a member with itself\n"
+        -:  252:               "- Suspicious subtraction from 'this'\n"
+        -:  253:               "- Call of pure virtual function in constructor/destructor\n"
+        -:  254:               "- Duplicated inherited data members\n"
+        -:  255:               // disabled for now "- If 'copy constructor' defined, 'operator=' also should be defined and vice versa\n"
+        -:  256:               "- Check that arbitrary usage of public interface does not result in division by zero\n"
+    #####:  257:               "- Check that the 'override' keyword is used when overriding virtual functions\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  258:    }
+        -:  259:
+        -:  260:    // operatorEqRetRefThis helper functions
+        -:  261:    void checkReturnPtrThis(const Scope *scope, const Function *func, const Token *tok, const Token *last);
+        -:  262:    void checkReturnPtrThis(const Scope *scope, const Function *func, const Token *tok, const Token *last, std::set<const Function*>& analyzedFunctions);
+        -:  263:
+        -:  264:    // operatorEqToSelf helper functions
+        -:  265:    bool hasAllocation(const Function *func, const Scope* scope) const;
+        -:  266:    static bool hasAssignSelf(const Function *func, const Token *rhs);
+        -:  267:
+        -:  268:    // checkConst helper functions
+        -:  269:    bool isMemberVar(const Scope *scope, const Token *tok) const;
+        -:  270:    bool isMemberFunc(const Scope *scope, const Token *tok) const;
+        -:  271:    bool isConstMemberFunc(const Scope *scope, const Token *tok) const;
+        -:  272:    bool checkConstFunc(const Scope *scope, const Function *func, bool& memberAccessed) const;
+        -:  273:
+        -:  274:    // constructors helper function
+        -:  275:    /** @brief Information about a member variable. Used when checking for uninitialized variables */
+        -:  276:    struct Usage {
+function _ZN10CheckClass5UsageC2Ev called 0 returned 0% blocks executed 0%
+    #####:  277:        Usage() : assign(false), init(false) { }
+        -:  278:
+        -:  279:        /** @brief has this variable been assigned? */
+        -:  280:        bool assign;
+        -:  281:
+        -:  282:        /** @brief has this variable been initialized? */
+        -:  283:        bool init;
+        -:  284:    };
+        -:  285:
+        -:  286:    static bool isBaseClassFunc(const Token *tok, const Scope *scope);
+        -:  287:
+        -:  288:    /**
+        -:  289:     * @brief assign a variable in the varlist
+        -:  290:     * @param varid id of variable to mark assigned
+        -:  291:     * @param scope pointer to variable Scope
+        -:  292:     * @param usage reference to usage vector
+        -:  293:     */
+        -:  294:    static void assignVar(nonneg int varid, const Scope *scope, std::vector<Usage> &usage);
+        -:  295:
+        -:  296:    /**
+        -:  297:     * @brief initialize a variable in the varlist
+        -:  298:     * @param varid id of variable to mark initialized
+        -:  299:     * @param scope pointer to variable Scope
+        -:  300:     * @param usage reference to usage vector
+        -:  301:     */
+        -:  302:    static void initVar(nonneg int varid, const Scope *scope, std::vector<Usage> &usage);
+        -:  303:
+        -:  304:    /**
+        -:  305:     * @brief set all variables in list assigned
+        -:  306:     * @param usage reference to usage vector
+        -:  307:     */
+        -:  308:    static void assignAllVar(std::vector<Usage> &usage);
+        -:  309:
+        -:  310:    /**
+        -:  311:     * @brief set all variables in list not assigned and not initialized
+        -:  312:     * @param usage reference to usage vector
+        -:  313:     */
+        -:  314:    static void clearAllVar(std::vector<Usage> &usage);
+        -:  315:
+        -:  316:    /**
+        -:  317:     * @brief parse a scope for a constructor or member function and set the "init" flags in the provided varlist
+        -:  318:     * @param func reference to the function that should be checked
+        -:  319:     * @param callstack the function doesn't look into recursive function calls.
+        -:  320:     * @param scope pointer to variable Scope
+        -:  321:     * @param usage reference to usage vector
+        -:  322:     */
+        -:  323:    void initializeVarList(const Function &func, std::list<const Function *> &callstack, const Scope *scope, std::vector<Usage> &usage);
+        -:  324:
+        -:  325:    /**
+        -:  326:     * @brief gives a list of tokens where virtual functions are called directly or indirectly
+        -:  327:     * @param function function to be checked
+        -:  328:     * @param virtualFunctionCallsMap map of results for already checked functions
+        -:  329:     * @return list of tokens where pure virtual functions are called
+        -:  330:     */
+        -:  331:    const std::list<const Token *> & getVirtualFunctionCalls(
+        -:  332:        const Function & function,
+        -:  333:        std::map<const Function *, std::list<const Token *> > & virtualFunctionCallsMap);
+        -:  334:
+        -:  335:    /**
+        -:  336:     * @brief looks for the first virtual function call stack
+        -:  337:     * @param virtualFunctionCallsMap map of results obtained from getVirtualFunctionCalls
+        -:  338:     * @param callToken token where pure virtual function is called directly or indirectly
+        -:  339:     * @param[in,out] pureFuncStack list to append the stack
+        -:  340:     */
+        -:  341:    void getFirstVirtualFunctionCallStack(
+        -:  342:        std::map<const Function *, std::list<const Token *> > & virtualFunctionCallsMap,
+        -:  343:        const Token *callToken,
+        -:  344:        std::list<const Token *> & pureFuncStack);
+        -:  345:
+        -:  346:    static bool canNotCopy(const Scope *scope);
+        -:  347:
+        -:  348:    static bool canNotMove(const Scope *scope);
+        -:  349:};
+        -:  350:/// @}
+        -:  351://---------------------------------------------------------------------------
+        -:  352:#endif // checkclassH

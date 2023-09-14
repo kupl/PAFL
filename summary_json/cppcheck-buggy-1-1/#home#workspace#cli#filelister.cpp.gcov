@@ -1,0 +1,391 @@
+        -:    0:Source:/home/workspace/cli/filelister.cpp
+        -:    0:Graph:/home/workspace/build/cli/CMakeFiles/cli_objs.dir/filelister.gcno
+        -:    0:Data:/home/workspace/build/cli/CMakeFiles/cli_objs.dir/filelister.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#include "filelister.h"
+        -:   20:
+        -:   21:#include "path.h"
+        -:   22:#include "pathmatch.h"
+        -:   23:#include "utils.h"
+        -:   24:
+        -:   25:#include <cstddef>
+        -:   26:#include <cstring>
+        -:   27:
+        -:   28:#ifdef _WIN32
+        -:   29:
+        -:   30:///////////////////////////////////////////////////////////////////////////////
+        -:   31:////// This code is WIN32 systems /////////////////////////////////////////////
+        -:   32:///////////////////////////////////////////////////////////////////////////////
+        -:   33:
+        -:   34:#include <windows.h>
+        -:   35:#ifndef __BORLANDC__
+        -:   36:#include <shlwapi.h>
+        -:   37:#endif
+        -:   38:
+        -:   39:// Here is the catch: cppcheck core is Ansi code (using char type).
+        -:   40:// When compiling Unicode targets WinAPI automatically uses *W Unicode versions
+        -:   41:// of called functions. Thus, we explicitly call *A versions of the functions.
+        -:   42:
+        -:   43:static BOOL MyIsDirectory(const std::string& path)
+        -:   44:{
+        -:   45:#ifdef __BORLANDC__
+        -:   46:    return (GetFileAttributes(path.c_str()) & FILE_ATTRIBUTE_DIRECTORY);
+        -:   47:#else
+        -:   48:// See http://msdn.microsoft.com/en-us/library/bb773621(VS.85).aspx
+        -:   49:    return PathIsDirectoryA(path.c_str());
+        -:   50:#endif
+        -:   51:}
+        -:   52:
+        -:   53:static HANDLE MyFindFirstFile(const std::string& path, LPWIN32_FIND_DATAA findData)
+        -:   54:{
+        -:   55:    HANDLE hFind = FindFirstFileA(path.c_str(), findData);
+        -:   56:    return hFind;
+        -:   57:}
+        -:   58:
+        -:   59:static BOOL MyFileExists(const std::string& path)
+        -:   60:{
+        -:   61:#ifdef __BORLANDC__
+        -:   62:    DWORD fa = GetFileAttributes(path.c_str());
+        -:   63:    BOOL result = FALSE;
+        -:   64:    if (fa != INVALID_FILE_ATTRIBUTES && !(fa & FILE_ATTRIBUTE_DIRECTORY))
+        -:   65:        result = TRUE;
+        -:   66:#else
+        -:   67:    const BOOL result = PathFileExistsA(path.c_str());
+        -:   68:#endif
+        -:   69:    return result;
+        -:   70:}
+        -:   71:
+        -:   72:void FileLister::recursiveAddFiles(std::map<std::string, std::size_t> &files, const std::string &path, const std::set<std::string> &extra, const PathMatch& ignored)
+        -:   73:{
+        -:   74:    addFiles(files, path, extra, true, ignored);
+        -:   75:}
+        -:   76:
+        -:   77:void FileLister::addFiles(std::map<std::string, std::size_t> &files, const std::string &path, const std::set<std::string> &extra, bool recursive, const PathMatch& ignored)
+        -:   78:{
+        -:   79:    const std::string cleanedPath = Path::toNativeSeparators(path);
+        -:   80:
+        -:   81:    // basedir is the base directory which is used to form pathnames.
+        -:   82:    // It always has a trailing backslash available for concatenation.
+        -:   83:    std::string basedir;
+        -:   84:
+        -:   85:    // searchPattern is the search string passed into FindFirst and FindNext.
+        -:   86:    std::string searchPattern = cleanedPath;
+        -:   87:
+        -:   88:    // The user wants to check all files in a dir
+        -:   89:    const bool checkAllFilesInDir = (MyIsDirectory(cleanedPath) != FALSE);
+        -:   90:
+        -:   91:    if (checkAllFilesInDir) {
+        -:   92:        const char c = cleanedPath.back();
+        -:   93:        switch (c) {
+        -:   94:        case '\\':
+        -:   95:            searchPattern += '*';
+        -:   96:            basedir = cleanedPath;
+        -:   97:            break;
+        -:   98:        case '*':
+        -:   99:            basedir = cleanedPath.substr(0, cleanedPath.length() - 1);
+        -:  100:            break;
+        -:  101:        default:
+        -:  102:            searchPattern += "\\*";
+        -:  103:            if (cleanedPath != ".")
+        -:  104:                basedir = cleanedPath + '\\';
+        -:  105:        }
+        -:  106:    } else {
+        -:  107:        const std::string::size_type pos = cleanedPath.find_last_of('\\');
+        -:  108:        if (std::string::npos != pos) {
+        -:  109:            basedir = cleanedPath.substr(0, pos + 1);
+        -:  110:        }
+        -:  111:    }
+        -:  112:
+        -:  113:    WIN32_FIND_DATAA ffd;
+        -:  114:    HANDLE hFind = MyFindFirstFile(searchPattern, &ffd);
+        -:  115:    if (INVALID_HANDLE_VALUE == hFind)
+        -:  116:        return;
+        -:  117:
+        -:  118:    do {
+        -:  119:        if (ffd.cFileName[0] == '.' || ffd.cFileName[0] == '\0')
+        -:  120:            continue;
+        -:  121:
+        -:  122:        const char* ansiFfd = ffd.cFileName;
+        -:  123:        if (std::strchr(ansiFfd,'?')) {
+        -:  124:            ansiFfd = ffd.cAlternateFileName;
+        -:  125:        }
+        -:  126:
+        -:  127:        const std::string fname(basedir + ansiFfd);
+        -:  128:
+        -:  129:        if ((ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
+        -:  130:            // File
+        -:  131:            if ((!checkAllFilesInDir || Path::acceptFile(fname, extra)) && !ignored.match(fname)) {
+        -:  132:                const std::string nativename = Path::fromNativeSeparators(fname);
+        -:  133:
+        -:  134:                // Limitation: file sizes are assumed to fit in a 'size_t'
+        -:  135:#ifdef _WIN64
+        -:  136:                files[nativename] = (static_cast<std::size_t>(ffd.nFileSizeHigh) << 32) | ffd.nFileSizeLow;
+        -:  137:#else
+        -:  138:                files[nativename] = ffd.nFileSizeLow;
+        -:  139:#endif
+        -:  140:            }
+        -:  141:        } else {
+        -:  142:            // Directory
+        -:  143:            if (recursive) {
+        -:  144:                if (!ignored.match(fname))
+        -:  145:                    FileLister::recursiveAddFiles(files, fname, extra, ignored);
+        -:  146:            }
+        -:  147:        }
+        -:  148:    } while (FindNextFileA(hFind, &ffd) != FALSE);
+        -:  149:
+        -:  150:    FindClose(hFind);
+        -:  151:}
+        -:  152:
+        -:  153:bool FileLister::isDirectory(const std::string &path)
+        -:  154:{
+        -:  155:    return (MyIsDirectory(path) != FALSE);
+        -:  156:}
+        -:  157:
+        -:  158:bool FileLister::fileExists(const std::string &path)
+        -:  159:{
+        -:  160:    return (MyFileExists(path) != FALSE);
+        -:  161:}
+        -:  162:
+        -:  163:
+        -:  164:#else
+        -:  165:
+        -:  166:///////////////////////////////////////////////////////////////////////////////
+        -:  167:////// This code is POSIX-style systems ///////////////////////////////////////
+        -:  168:///////////////////////////////////////////////////////////////////////////////
+        -:  169:
+        -:  170:#if defined(__CYGWIN__)
+        -:  171:#undef __STRICT_ANSI__
+        -:  172:#endif
+        -:  173:
+        -:  174:#include <dirent.h>
+        -:  175:#include <sys/stat.h>
+        -:  176:
+        -:  177:
+function _ZL9addFiles2RNSt7__debug3mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEmSt4lessIS6_ESaISt4pairIKS6_mEEEERSA_RKNS_3setIS6_S8_SaIS6_EEEbRK9PathMatch called 0 returned 0% blocks executed 0%
+    #####:  178:static void addFiles2(std::map<std::string, std::size_t> &files,
+        -:  179:                      const std::string &path,
+        -:  180:                      const std::set<std::string> &extra,
+        -:  181:                      bool recursive,
+        -:  182:                      const PathMatch& ignored
+        -:  183:                     )
+        -:  184:{
+        -:  185:    struct stat file_stat;
+    #####:  186:    if (stat(path.c_str(), &file_stat) != -1) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  187:        if ((file_stat.st_mode & S_IFMT) == S_IFDIR) {
+branch  0 never executed
+branch  1 never executed
+    #####:  188:            DIR * dir = opendir(path.c_str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  189:            if (!dir)
+branch  0 never executed
+branch  1 never executed
+    #####:  190:                return;
+        -:  191:
+        -:  192:            dirent entry;
+        -:  193:            dirent * dir_result;
+    #####:  194:            std::string new_path;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  195:            new_path.reserve(path.length() + 100);// prealloc some memory to avoid constant new/deletes in loop
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  196:
+    #####:  197:            while ((readdir_r(dir, &entry, &dir_result) == 0) && (dir_result != nullptr)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+        -:  198:
+    #####:  199:                if ((std::strcmp(dir_result->d_name, ".") == 0) ||
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  200:                    (std::strcmp(dir_result->d_name, "..") == 0))
+    #####:  201:                    continue;
+        -:  202:
+    #####:  203:                new_path = path + '/' + dir_result->d_name;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  204:
+        -:  205:#if defined(_DIRENT_HAVE_D_TYPE) || defined(_BSD_SOURCE)
+    #####:  206:                bool path_is_directory = (dir_result->d_type == DT_DIR || (dir_result->d_type == DT_UNKNOWN && FileLister::isDirectory(new_path)));
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  207:#else
+        -:  208:                bool path_is_directory = FileLister::isDirectory(new_path);
+        -:  209:#endif
+    #####:  210:                if (path_is_directory) {
+branch  0 never executed
+branch  1 never executed
+    #####:  211:                    if (recursive && !ignored.match(new_path)) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  212:                        addFiles2(files, new_path, extra, recursive, ignored);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  213:                    }
+        -:  214:                } else {
+    #####:  215:                    if (Path::acceptFile(new_path, extra) && !ignored.match(new_path)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  216:                        stat(new_path.c_str(), &file_stat);
+call    0 never executed
+call    1 never executed
+    #####:  217:                        files[new_path] = file_stat.st_size;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  218:                    }
+        -:  219:                }
+        -:  220:            }
+    #####:  221:            closedir(dir);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  222:        } else
+    #####:  223:            files[path] = file_stat.st_size;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  224:    }
+        -:  225:}
+        -:  226:
+function _ZN10FileLister17recursiveAddFilesERNSt7__debug3mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEmSt4lessIS7_ESaISt4pairIKS7_mEEEERSB_RKNS0_3setIS7_S9_SaIS7_EEERK9PathMatch called 0 returned 0% blocks executed 0%
+    #####:  227:void FileLister::recursiveAddFiles(std::map<std::string, std::size_t> &files, const std::string &path, const std::set<std::string> &extra, const PathMatch& ignored)
+        -:  228:{
+    #####:  229:    addFiles(files, path, extra, true, ignored);
+call    0 never executed
+    #####:  230:}
+        -:  231:
+function _ZN10FileLister8addFilesERNSt7__debug3mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEmSt4lessIS7_ESaISt4pairIKS7_mEEEERSB_RKNS0_3setIS7_S9_SaIS7_EEEbRK9PathMatch called 0 returned 0% blocks executed 0%
+    #####:  232:void FileLister::addFiles(std::map<std::string, std::size_t> &files, const std::string &path, const std::set<std::string> &extra, bool recursive, const PathMatch& ignored)
+        -:  233:{
+    #####:  234:    if (!path.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  235:        std::string corrected_path = path;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  236:        if (endsWith(corrected_path, '/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  237:            corrected_path.erase(corrected_path.end() - 1);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  238:
+    #####:  239:        addFiles2(files, corrected_path, extra, recursive, ignored);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  240:    }
+    #####:  241:}
+        -:  242:
+function _ZN10FileLister11isDirectoryERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  243:bool FileLister::isDirectory(const std::string &path)
+        -:  244:{
+        -:  245:    struct stat file_stat;
+    #####:  246:    return (stat(path.c_str(), &file_stat) != -1 && (file_stat.st_mode & S_IFMT) == S_IFDIR);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  247:}
+        -:  248:
+function _ZN10FileLister10fileExistsERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  249:bool FileLister::fileExists(const std::string &path)
+        -:  250:{
+        -:  251:    struct stat file_stat;
+    #####:  252:    return (stat(path.c_str(), &file_stat) != -1 && (file_stat.st_mode & S_IFMT) == S_IFREG);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+function _GLOBAL__sub_I__ZN10FileLister17recursiveAddFilesERNSt7__debug3mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEmSt4lessIS7_ESaISt4pairIKS7_mEEEERSB_RKNS0_3setIS7_S9_SaIS7_EEERK9PathMatch called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  253:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+        -:  254:
+        -:  255:#endif

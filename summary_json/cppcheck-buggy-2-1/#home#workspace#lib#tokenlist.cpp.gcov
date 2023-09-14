@@ -1,0 +1,4798 @@
+        -:    0:Source:/home/workspace/lib/tokenlist.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/tokenlist.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/tokenlist.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#include "tokenlist.h"
+        -:   21:
+        -:   22:#include "errorlogger.h"
+        -:   23:#include "mathlib.h"
+        -:   24:#include "path.h"
+        -:   25:#include "settings.h"
+        -:   26:#include "token.h"
+        -:   27:
+        -:   28:#include <simplecpp.h>
+        -:   29:#include <cctype>
+        -:   30:#include <cstring>
+        -:   31:#include <set>
+        -:   32:#include <stack>
+        -:   33:
+        -:   34:// How many compileExpression recursions are allowed?
+        -:   35:// For practical code this could be endless. But in some special torture test
+        -:   36:// there needs to be a limit.
+        -:   37:static const int AST_MAX_DEPTH = 50;
+        -:   38:
+        -:   39:
+function _ZN9TokenListC2EPK8Settings called 1142 returned 100% blocks executed 100%
+     1142:   40:TokenList::TokenList(const Settings* settings) :
+        -:   41:    mTokensFrontBack(),
+        -:   42:    mSettings(settings),
+        -:   43:    mIsC(false),
+     1142:   44:    mIsCpp(false)
+call    0 returned 100%
+call    1 returned 100%
+        -:   45:{
+     1142:   46:}
+        -:   47:
+function _ZN9TokenListD2Ev called 1142 returned 100% blocks executed 100%
+     2284:   48:TokenList::~TokenList()
+call    0 returned 100%
+call    1 returned 100%
+        -:   49:{
+     1142:   50:    deallocateTokens();
+call    0 returned 100%
+     1142:   51:}
+        -:   52:
+        -:   53://---------------------------------------------------------------------------
+        -:   54:
+function _ZNK9TokenList17getSourceFilePathB5cxx11Ev called 22706 returned 100% blocks executed 86%
+    22706:   55:const std::string& TokenList::getSourceFilePath() const
+        -:   56:{
+    22706:   57:    if (getFiles().empty()) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####:   58:        return emptyString;
+        -:   59:    }
+    22706:   60:    return getFiles()[0];
+call    0 returned 100%
+call    1 returned 100%
+        -:   61:}
+        -:   62:
+        -:   63://---------------------------------------------------------------------------
+        -:   64:
+        -:   65:// Deallocate lists..
+function _ZN9TokenList16deallocateTokensEv called 1142 returned 100% blocks executed 100%
+     1142:   66:void TokenList::deallocateTokens()
+        -:   67:{
+     1142:   68:    deleteTokens(mTokensFrontBack.front);
+call    0 returned 100%
+     1142:   69:    mTokensFrontBack.front = nullptr;
+     1142:   70:    mTokensFrontBack.back = nullptr;
+     1142:   71:    mFiles.clear();
+call    0 returned 100%
+     1142:   72:}
+        -:   73:
+function _ZN9TokenList15appendFileIfNewERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 1140 returned 100% blocks executed 72%
+     1140:   74:int TokenList::appendFileIfNew(const std::string &fileName)
+        -:   75:{
+        -:   76:    // Has this file been tokenized already?
+     1140:   77:    for (int i = 0; i < mFiles.size(); ++i)
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   78:        if (Path::sameFileName(mFiles[i], fileName))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   79:            return i;
+        -:   80:
+        -:   81:    // The "mFiles" vector remembers what files have been tokenized..
+     1140:   82:    mFiles.push_back(fileName);
+call    0 returned 100%
+        -:   83:
+        -:   84:    // Update mIsC and mIsCpp properties
+     1140:   85:    if (mFiles.size() == 1) { // Update only useful if first file added to _files
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+     1140:   86:        if (!mSettings) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:   87:            mIsC = Path::isC(getSourceFilePath());
+call    0 never executed
+call    1 never executed
+    #####:   88:            mIsCpp = Path::isCPP(getSourceFilePath());
+call    0 never executed
+call    1 never executed
+        -:   89:        } else {
+     1140:   90:            mIsC = mSettings->enforcedLang == Settings::C || (mSettings->enforcedLang == Settings::None && Path::isC(getSourceFilePath()));
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 2% (fallthrough)
+branch  7 taken 98%
+     1140:   91:            mIsCpp = mSettings->enforcedLang == Settings::CPP || (mSettings->enforcedLang == Settings::None && Path::isCPP(getSourceFilePath()));
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 82% (fallthrough)
+branch  7 taken 18%
+        -:   92:        }
+        -:   93:    }
+     1140:   94:    return mFiles.size() - 1;
+call    0 returned 100%
+        -:   95:}
+        -:   96:
+function _ZN9TokenList12deleteTokensEP5Token called 1142 returned 100% blocks executed 100%
+    30520:   97:void TokenList::deleteTokens(Token *tok)
+        -:   98:{
+    59898:   99:    while (tok) {
+branch  0 taken 96% (fallthrough)
+branch  1 taken 4%
+    29378:  100:        Token *next = tok->next();
+call    0 returned 100%
+    29378:  101:        delete tok;
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+    29378:  102:        tok = next;
+        -:  103:    }
+     1142:  104:}
+        -:  105:
+        -:  106://---------------------------------------------------------------------------
+        -:  107:// add a token.
+        -:  108://---------------------------------------------------------------------------
+        -:  109:
+function _ZN9TokenList8addtokenENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEiib called 0 returned 0% blocks executed 0%
+    #####:  110:void TokenList::addtoken(std::string str, const nonneg int lineno, const nonneg int fileno, bool split)
+        -:  111:{
+    #####:  112:    if (str.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  113:        return;
+        -:  114:
+        -:  115:    // If token contains # characters, split it up
+    #####:  116:    if (split) {
+branch  0 never executed
+branch  1 never executed
+    #####:  117:        size_t begin = 0;
+    #####:  118:        size_t end = 0;
+    #####:  119:        while ((end = str.find("##", begin)) != std::string::npos) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  120:            addtoken(str.substr(begin, end - begin), lineno, fileno, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  121:            addtoken("##", lineno, fileno, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  122:            begin = end+2;
+        -:  123:        }
+    #####:  124:        if (begin != 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  125:            addtoken(str.substr(begin), lineno, fileno, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  126:            return;
+        -:  127:        }
+        -:  128:    }
+        -:  129:
+        -:  130:    // Replace hexadecimal value with decimal
+    #####:  131:    const bool isHex = MathLib::isIntHex(str) ;
+call    0 never executed
+    #####:  132:    if (isHex || MathLib::isOct(str) || MathLib::isBin(str)) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+        -:  133:        // TODO: It would be better if TokenList didn't simplify hexadecimal numbers
+    #####:  134:        std::string suffix;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+    #####:  135:        if (isHex &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  136:            str.size() == (2 + mSettings->int_bit / 4) &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  137:            (str[2] >= '8') &&  // includes A-F and a-f
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  138:            MathLib::getSuffix(str).empty()
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+        -:  139:           )
+    #####:  140:            suffix = "U";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  141:        str = MathLib::value(str).str() + suffix;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+        -:  142:    }
+        -:  143:
+    #####:  144:    if (mTokensFrontBack.back) {
+branch  0 never executed
+branch  1 never executed
+    #####:  145:        mTokensFrontBack.back->insertToken(str);
+call    0 never executed
+        -:  146:    } else {
+    #####:  147:        mTokensFrontBack.front = new Token(&mTokensFrontBack);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  148:        mTokensFrontBack.back = mTokensFrontBack.front;
+    #####:  149:        mTokensFrontBack.back->str(str);
+call    0 never executed
+        -:  150:    }
+        -:  151:
+    #####:  152:    if (isCPP() && str == "delete")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  153:        mTokensFrontBack.back->isKeyword(true);
+call    0 never executed
+    #####:  154:    mTokensFrontBack.back->linenr(lineno);
+call    0 never executed
+    #####:  155:    mTokensFrontBack.back->fileIndex(fileno);
+call    0 never executed
+        -:  156:}
+        -:  157:
+function _ZN9TokenList8addtokenENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPK5Token called 4 returned 100% blocks executed 38%
+        4:  158:void TokenList::addtoken(std::string str, const Token *locationTok)
+        -:  159:{
+        4:  160:    if (str.empty())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  161:        return;
+        -:  162:
+        -:  163:    // Replace hexadecimal value with decimal
+        4:  164:    const bool isHex = MathLib::isIntHex(str) ;
+call    0 returned 100%
+        4:  165:    if (isHex || MathLib::isOct(str) || MathLib::isBin(str)) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+call    5 returned 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+branch  8 taken 0% (fallthrough)
+branch  9 taken 100%
+        -:  166:        // TODO: It would be better if TokenList didn't simplify hexadecimal numbers
+    #####:  167:        std::string suffix;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+    #####:  168:        if (isHex &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  169:            str.size() == (2 + mSettings->int_bit / 4) &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  170:            (str[2] >= '8') &&  // includes A-F and a-f
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  171:            MathLib::getSuffix(str).empty()
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+        -:  172:           )
+    #####:  173:            suffix = "U";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  174:        str = MathLib::value(str).str() + suffix;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+        -:  175:    }
+        -:  176:
+        4:  177:    if (mTokensFrontBack.back) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        4:  178:        mTokensFrontBack.back->insertToken(str);
+call    0 returned 100%
+        -:  179:    } else {
+    #####:  180:        mTokensFrontBack.front = new Token(&mTokensFrontBack);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  181:        mTokensFrontBack.back = mTokensFrontBack.front;
+    #####:  182:        mTokensFrontBack.back->str(str);
+call    0 never executed
+        -:  183:    }
+        -:  184:
+        4:  185:    if (isCPP() && str == "delete")
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  186:        mTokensFrontBack.back->isKeyword(true);
+call    0 never executed
+        4:  187:    mTokensFrontBack.back->linenr(locationTok->linenr());
+call    0 returned 100%
+call    1 returned 100%
+        4:  188:    mTokensFrontBack.back->column(locationTok->column());
+call    0 returned 100%
+call    1 returned 100%
+        4:  189:    mTokensFrontBack.back->fileIndex(locationTok->fileIndex());
+call    0 returned 100%
+call    1 returned 100%
+        -:  190:}
+        -:  191:
+function _ZN9TokenList8addtokenEPK5Tokenii called 0 returned 0% blocks executed 0%
+    #####:  192:void TokenList::addtoken(const Token * tok, const nonneg int lineno, const nonneg int fileno)
+        -:  193:{
+    #####:  194:    if (tok == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  195:        return;
+        -:  196:
+    #####:  197:    if (mTokensFrontBack.back) {
+branch  0 never executed
+branch  1 never executed
+    #####:  198:        mTokensFrontBack.back->insertToken(tok->str(), tok->originalName());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  199:    } else {
+    #####:  200:        mTokensFrontBack.front = new Token(&mTokensFrontBack);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  201:        mTokensFrontBack.back = mTokensFrontBack.front;
+    #####:  202:        mTokensFrontBack.back->str(tok->str());
+call    0 never executed
+call    1 never executed
+    #####:  203:        if (!tok->originalName().empty())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  204:            mTokensFrontBack.back->originalName(tok->originalName());
+call    0 never executed
+call    1 never executed
+        -:  205:    }
+        -:  206:
+    #####:  207:    mTokensFrontBack.back->linenr(lineno);
+call    0 never executed
+    #####:  208:    mTokensFrontBack.back->fileIndex(fileno);
+call    0 never executed
+    #####:  209:    mTokensFrontBack.back->flags(tok->flags());
+call    0 never executed
+call    1 never executed
+        -:  210:}
+        -:  211:
+function _ZN9TokenList8addtokenEPK5TokenS2_ called 10 returned 100% blocks executed 59%
+       10:  212:void TokenList::addtoken(const Token *tok, const Token *locationTok)
+        -:  213:{
+       10:  214:    if (tok == nullptr || locationTok == nullptr)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####:  215:        return;
+        -:  216:
+       10:  217:    if (mTokensFrontBack.back) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       10:  218:        mTokensFrontBack.back->insertToken(tok->str(), tok->originalName());
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+        -:  219:    } else {
+    #####:  220:        mTokensFrontBack.front = new Token(&mTokensFrontBack);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  221:        mTokensFrontBack.back = mTokensFrontBack.front;
+    #####:  222:        mTokensFrontBack.back->str(tok->str());
+call    0 never executed
+call    1 never executed
+    #####:  223:        if (!tok->originalName().empty())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  224:            mTokensFrontBack.back->originalName(tok->originalName());
+call    0 never executed
+call    1 never executed
+        -:  225:    }
+        -:  226:
+       10:  227:    mTokensFrontBack.back->flags(tok->flags());
+call    0 returned 100%
+call    1 returned 100%
+       10:  228:    mTokensFrontBack.back->linenr(locationTok->linenr());
+call    0 returned 100%
+call    1 returned 100%
+       10:  229:    mTokensFrontBack.back->column(locationTok->column());
+call    0 returned 100%
+call    1 returned 100%
+       10:  230:    mTokensFrontBack.back->fileIndex(locationTok->fileIndex());
+call    0 returned 100%
+call    1 returned 100%
+        -:  231:}
+        -:  232:
+function _ZN9TokenList8addtokenEPK5Token called 56 returned 100% blocks executed 58%
+       56:  233:void TokenList::addtoken(const Token *tok)
+        -:  234:{
+       56:  235:    if (tok == nullptr)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  236:        return;
+        -:  237:
+       56:  238:    if (mTokensFrontBack.back) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       56:  239:        mTokensFrontBack.back->insertToken(tok->str(), tok->originalName());
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+        -:  240:    } else {
+    #####:  241:        mTokensFrontBack.front = new Token(&mTokensFrontBack);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  242:        mTokensFrontBack.back = mTokensFrontBack.front;
+    #####:  243:        mTokensFrontBack.back->str(tok->str());
+call    0 never executed
+call    1 never executed
+    #####:  244:        if (!tok->originalName().empty())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  245:            mTokensFrontBack.back->originalName(tok->originalName());
+call    0 never executed
+call    1 never executed
+        -:  246:    }
+        -:  247:
+       56:  248:    mTokensFrontBack.back->flags(tok->flags());
+call    0 returned 100%
+call    1 returned 100%
+       56:  249:    mTokensFrontBack.back->linenr(tok->linenr());
+call    0 returned 100%
+call    1 returned 100%
+       56:  250:    mTokensFrontBack.back->column(tok->column());
+call    0 returned 100%
+call    1 returned 100%
+       56:  251:    mTokensFrontBack.back->fileIndex(tok->fileIndex());
+call    0 returned 100%
+call    1 returned 100%
+        -:  252:}
+        -:  253:
+        -:  254:
+        -:  255://---------------------------------------------------------------------------
+        -:  256:// copyTokens - Copy and insert tokens
+        -:  257://---------------------------------------------------------------------------
+        -:  258:
+function _ZN9TokenList10copyTokensEP5TokenPKS0_S3_b called 12 returned 100% blocks executed 61%
+       12:  259:Token *TokenList::copyTokens(Token *dest, const Token *first, const Token *last, bool one_line)
+        -:  260:{
+       24:  261:    std::stack<Token *> links;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+       12:  262:    Token *tok2 = dest;
+       12:  263:    int linenr = dest->linenr();
+call    0 returned 100%
+       12:  264:    const int commonFileIndex = dest->fileIndex();
+call    0 returned 100%
+       45:  265:    for (const Token *tok = first; tok != last->next(); tok = tok->next()) {
+call    0 returned 100%
+branch  1 taken 73% (fallthrough)
+branch  2 taken 27%
+call    3 returned 100%
+       33:  266:        tok2->insertToken(tok->str());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+       33:  267:        tok2 = tok2->next();
+call    0 returned 100%
+       33:  268:        tok2->fileIndex(commonFileIndex);
+call    0 returned 100%
+       33:  269:        tok2->linenr(linenr);
+call    0 returned 100%
+       33:  270:        tok2->tokType(tok->tokType());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+       33:  271:        tok2->flags(tok->flags());
+call    0 returned 100%
+call    1 returned 100%
+       33:  272:        tok2->varId(tok->varId());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+        -:  273:
+        -:  274:        // Check for links and fix them up
+       33:  275:        if (Token::Match(tok2, "(|[|{"))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####:  276:            links.push(tok2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+       33:  277:        else if (Token::Match(tok2, ")|]|}")) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####:  278:            if (links.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  279:                return tok2;
+        -:  280:
+    #####:  281:            Token * link = links.top();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  282:
+    #####:  283:            tok2->link(link);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  284:            link->link(tok2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  285:
+    #####:  286:            links.pop();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  287:        }
+       33:  288:        if (!one_line && tok->next())
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+    #####:  289:            linenr += tok->next()->linenr() - tok->linenr();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  290:    }
+       12:  291:    return tok2;
+        -:  292:}
+        -:  293:
+        -:  294://---------------------------------------------------------------------------
+        -:  295:// InsertTokens - Copy and insert tokens
+        -:  296://---------------------------------------------------------------------------
+        -:  297:
+function _ZN9TokenList12insertTokensEP5TokenPKS0_i called 409 returned 100% blocks executed 73%
+      409:  298:void TokenList::insertTokens(Token *dest, const Token *src, nonneg int n)
+        -:  299:{
+      818:  300:    std::stack<Token *> link;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+        -:  301:
+     2029:  302:    while (n > 0) {
+branch  0 taken 66% (fallthrough)
+branch  1 taken 34%
+      810:  303:        dest->insertToken(src->str(), src->originalName());
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+      810:  304:        dest = dest->next();
+call    0 returned 100%
+        -:  305:
+        -:  306:        // Set links
+      810:  307:        if (Token::Match(dest, "(|[|{"))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####:  308:            link.push(dest);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+      810:  309:        else if (!link.empty() && Token::Match(dest, ")|]|}")) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 taken 0% (fallthrough)
+branch  9 taken 100%
+    #####:  310:            Token::createMutualLinks(dest, link.top());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  311:            link.pop();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  312:        }
+        -:  313:
+      810:  314:        dest->fileIndex(src->fileIndex());
+call    0 returned 100%
+call    1 returned 100%
+      810:  315:        dest->linenr(src->linenr());
+call    0 returned 100%
+call    1 returned 100%
+      810:  316:        dest->column(src->column());
+call    0 returned 100%
+call    1 returned 100%
+      810:  317:        dest->varId(src->varId());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+      810:  318:        dest->tokType(src->tokType());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+      810:  319:        dest->flags(src->flags());
+call    0 returned 100%
+call    1 returned 100%
+      810:  320:        src  = src->next();
+call    0 returned 100%
+      810:  321:        --n;
+        -:  322:    }
+      409:  323:}
+        -:  324:
+        -:  325://---------------------------------------------------------------------------
+        -:  326:// Tokenize - tokenizes a given file.
+        -:  327://---------------------------------------------------------------------------
+        -:  328:
+function _ZN9TokenList12createTokensERSiRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 1140 returned 100% blocks executed 71%
+     1140:  329:bool TokenList::createTokens(std::istream &code, const std::string& file0)
+        -:  330:{
+     1140:  331:    appendFileIfNew(file0);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  332:
+     2280:  333:    simplecpp::OutputList outputList;
+call    0 returned 100%
+call    1 returned 100%
+call    2 never executed
+     2280:  334:    simplecpp::TokenList tokens(code, mFiles, file0, &outputList);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+        -:  335:
+     1140:  336:    createTokens(&tokens);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  337:
+     2280:  338:    return outputList.empty();
+call    0 returned 100%
+        -:  339:}
+        -:  340:
+        -:  341://---------------------------------------------------------------------------
+        -:  342:
+function _ZN9TokenList12createTokensEPKN9simplecpp9TokenListE called 1142 returned 100% blocks executed 64%
+     1142:  343:void TokenList::createTokens(const simplecpp::TokenList *tokenList)
+        -:  344:{
+     1142:  345:    if (tokenList->cfront())
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+     1142:  346:        mOrigFiles = mFiles = tokenList->cfront()->location.files;
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+        -:  347:    else
+    #####:  348:        mFiles.clear();
+call    0 never executed
+        -:  349:
+     1142:  350:    mIsC = mIsCpp = false;
+     1142:  351:    if (!mFiles.empty()) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+     1142:  352:        mIsC = Path::isC(getSourceFilePath());
+call    0 returned 100%
+call    1 returned 100%
+     1142:  353:        mIsCpp = Path::isCPP(getSourceFilePath());
+call    0 returned 100%
+call    1 returned 100%
+        -:  354:    }
+     1142:  355:    if (mSettings && mSettings->enforcedLang != Settings::None) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####:  356:        mIsC = (mSettings->enforcedLang == Settings::C);
+    #####:  357:        mIsCpp = (mSettings->enforcedLang == Settings::CPP);
+        -:  358:    }
+        -:  359:
+    29776:  360:    for (const simplecpp::Token *tok = tokenList->cfront(); tok; tok = tok->next) {
+call    0 returned 100%
+branch  1 taken 96% (fallthrough)
+branch  2 taken 4%
+        -:  361:
+    57268:  362:        std::string str = tok->str();
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+call    6 never executed
+        -:  363:
+        -:  364:        // Replace hexadecimal value with decimal
+        -:  365:        // TODO: Remove this
+    28634:  366:        const bool isHex = MathLib::isIntHex(str) ;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+    28634:  367:        if (isHex || MathLib::isOct(str) || MathLib::isBin(str)) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+branch  5 taken 99% (fallthrough)
+branch  6 taken 1%
+call    7 returned 100%
+branch  8 taken 100% (fallthrough)
+branch  9 taken 0% (throw)
+branch 10 taken 0% (fallthrough)
+branch 11 taken 100%
+branch 12 taken 1% (fallthrough)
+branch 13 taken 99%
+        -:  368:            // TODO: It would be better if TokenList didn't simplify hexadecimal numbers
+       32:  369:            std::string suffix;
+call    0 returned 100%
+call    1 returned 100%
+call    2 never executed
+       30:  370:            if (isHex &&
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+       28:  371:                mSettings &&
+branch  0 taken 7% (fallthrough)
+branch  1 taken 93%
+       15:  372:                str.size() == (2 + mSettings->int_bit / 4) &&
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+       17:  373:                (str[2] >= '8') &&  // includes A-F and a-f
+branch  0 taken 88% (fallthrough)
+branch  1 taken 13%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+branch  5 never executed
+branch  6 never executed
+       16:  374:                MathLib::getSuffix(str).empty()
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+        -:  375:               )
+    #####:  376:                suffix = "U";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+       16:  377:            str = MathLib::value(str).str() + suffix;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0% (throw)
+call    9 returned 100%
+call   10 returned 100%
+call   11 returned 100%
+call   12 never executed
+        -:  378:        }
+        -:  379:
+        -:  380:        // Float literal
+    28634:  381:        if (str.size() > 1 && str[0] == '.' && std::isdigit(str[1]))
+call    0 returned 100%
+branch  1 taken 30% (fallthrough)
+branch  2 taken 70%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+branch  6 taken 1% (fallthrough)
+branch  7 taken 99%
+call    8 returned 100%
+branch  9 taken 100% (fallthrough)
+branch 10 taken 0% (throw)
+branch 11 taken 0% (fallthrough)
+branch 12 taken 100%
+branch 13 taken 0% (fallthrough)
+branch 14 taken 100%
+    #####:  382:            str = '0' + str;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  383:
+    28634:  384:        if (mTokensFrontBack.back) {
+branch  0 taken 96% (fallthrough)
+branch  1 taken 4%
+    27492:  385:            mTokensFrontBack.back->insertToken(str);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  386:        } else {
+     1142:  387:            mTokensFrontBack.front = new Token(&mTokensFrontBack);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+call    6 never executed
+     1142:  388:            mTokensFrontBack.back = mTokensFrontBack.front;
+     1142:  389:            mTokensFrontBack.back->str(str);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  390:        }
+        -:  391:
+    28634:  392:        if (isCPP() && mTokensFrontBack.back->str() == "delete")
+call    0 returned 100%
+branch  1 taken 96% (fallthrough)
+branch  2 taken 4%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 1% (fallthrough)
+branch  6 taken 99%
+branch  7 taken 1% (fallthrough)
+branch  8 taken 99%
+       10:  393:            mTokensFrontBack.back->isKeyword(true);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+    28634:  394:        mTokensFrontBack.back->fileIndex(tok->location.fileIndex);
+call    0 returned 100%
+    28634:  395:        mTokensFrontBack.back->linenr(tok->location.line);
+call    0 returned 100%
+    28634:  396:        mTokensFrontBack.back->column(tok->location.col);
+call    0 returned 100%
+    28634:  397:        mTokensFrontBack.back->isExpandedMacro(!tok->macro.empty());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+        -:  398:    }
+        -:  399:
+     1142:  400:    if (mSettings && mSettings->relativePaths) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####:  401:        for (std::string & mFile : mFiles)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  402:            mFile = Path::getRelativePath(mFile, mSettings->basePaths);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  403:    }
+        -:  404:
+     1142:  405:    Token::assignProgressValues(mTokensFrontBack.front);
+call    0 returned 100%
+     1142:  406:}
+        -:  407:
+        -:  408://---------------------------------------------------------------------------
+        -:  409:
+function _ZNK9TokenList17calculateChecksumEv called 0 returned 0% blocks executed 0%
+    #####:  410:unsigned long long TokenList::calculateChecksum() const
+        -:  411:{
+    #####:  412:    unsigned long long checksum = 0;
+    #####:  413:    for (const Token* tok = front(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  414:        const unsigned int subchecksum1 = tok->flags() + tok->varId() + tok->tokType();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  415:        unsigned int subchecksum2 = 0;
+    #####:  416:        for (char i : tok->str())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  417:            subchecksum2 += (unsigned int)i;
+    #####:  418:        if (!tok->originalName().empty()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  419:            for (char i : tok->originalName())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  420:                subchecksum2 += (unsigned int) i;
+        -:  421:        }
+        -:  422:
+    #####:  423:        checksum ^= ((static_cast<unsigned long long>(subchecksum1) << 32) | subchecksum2);
+        -:  424:
+    #####:  425:        const bool bit1 = (checksum & 1) != 0;
+    #####:  426:        checksum >>= 1;
+    #####:  427:        if (bit1)
+branch  0 never executed
+branch  1 never executed
+    #####:  428:            checksum |= (1ULL << 63);
+        -:  429:    }
+    #####:  430:    return checksum;
+        -:  431:}
+        -:  432:
+        -:  433:
+        -:  434://---------------------------------------------------------------------------
+        -:  435:
+function _ZN9AST_stateD2Ev called 4528 returned 100% blocks executed 100%
+     4528:  436:struct AST_state {
+call    0 returned 100%
+        -:  437:    std::stack<Token*> op;
+        -:  438:    int depth;
+        -:  439:    int inArrayAssignment;
+        -:  440:    bool cpp;
+        -:  441:    int assign;
+        -:  442:    bool inCase; // true from case to :
+function _ZN9AST_stateC2Eb called 4528 returned 100% blocks executed 100%
+     4528:  443:    explicit AST_state(bool cpp) : depth(0), inArrayAssignment(0), cpp(cpp), assign(0), inCase(false) {}
+call    0 returned 100%
+        -:  444:};
+        -:  445:
+function _ZL8skipDeclP5Token called 7730 returned 100% blocks executed 100%
+     7730:  446:static Token * skipDecl(Token *tok)
+        -:  447:{
+     7730:  448:    if (!Token::Match(tok->previous(), "( %name%"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 81% (fallthrough)
+branch  3 taken 19%
+     6252:  449:        return tok;
+        -:  450:
+     1478:  451:    Token *vartok = tok;
+     6704:  452:    while (Token::Match(vartok, "%name%|*|&|::|<")) {
+call    0 returned 100%
+branch  1 taken 66% (fallthrough)
+branch  2 taken 34%
+     2690:  453:        if (vartok->str() == "<") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 3% (fallthrough)
+branch  3 taken 97%
+       79:  454:            if (vartok->link())
+call    0 returned 100%
+branch  1 taken 52% (fallthrough)
+branch  2 taken 48%
+       41:  455:                vartok = vartok->link();
+call    0 returned 100%
+        -:  456:            else
+       38:  457:                return tok;
+     2611:  458:        } else if (Token::Match(vartok, "%name% [:=]")) {
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+       39:  459:            return vartok;
+        -:  460:        }
+     2613:  461:        vartok = vartok->next();
+call    0 returned 100%
+        -:  462:    }
+     1401:  463:    return tok;
+        -:  464:}
+        -:  465:
+function _ZL6iscastPK5Token called 13417 returned 100% blocks executed 83%
+    13417:  466:static bool iscast(const Token *tok)
+        -:  467:{
+    13417:  468:    if (!Token::Match(tok, "( ::| %name%"))
+call    0 returned 100%
+branch  1 taken 87% (fallthrough)
+branch  2 taken 13%
+    11708:  469:        return false;
+        -:  470:
+     1709:  471:    if (Token::simpleMatch(tok->link(), ") ( )"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####:  472:        return false;
+        -:  473:
+     1709:  474:    if (tok->previous() && tok->previous()->isName() && tok->previous()->str() != "return")
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 80% (fallthrough)
+branch  6 taken 20%
+call    7 returned 100%
+call    8 returned 100%
+call    9 returned 100%
+branch 10 taken 98% (fallthrough)
+branch 11 taken 2%
+branch 12 taken 78% (fallthrough)
+branch 13 taken 22%
+     1333:  475:        return false;
+        -:  476:
+      376:  477:    if (Token::simpleMatch(tok->previous(), ">") && tok->previous()->link())
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 4% (fallthrough)
+branch  3 taken 96%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 87% (fallthrough)
+branch  7 taken 13%
+branch  8 taken 3% (fallthrough)
+branch  9 taken 97%
+       13:  478:        return false;
+        -:  479:
+      363:  480:    if (Token::Match(tok, "( (| typeof (") && Token::Match(tok->link(), ") %num%"))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+    #####:  481:        return true;
+        -:  482:
+      363:  483:    if (Token::Match(tok->link(), ") }|)|]|;"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 12% (fallthrough)
+branch  3 taken 88%
+       43:  484:        return false;
+        -:  485:
+      320:  486:    if (Token::Match(tok->link(), ") %cop%") && !Token::Match(tok->link(), ") [&*+-~]"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 17% (fallthrough)
+branch  3 taken 83%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 70% (fallthrough)
+branch  7 taken 30%
+branch  8 taken 12% (fallthrough)
+branch  9 taken 88%
+       38:  487:        return false;
+        -:  488:
+      282:  489:    if (Token::Match(tok->previous(), "= ( %name% ) {") && tok->next()->varId() == 0)
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 taken 0% (fallthrough)
+branch  9 taken 100%
+    #####:  490:        return true;
+        -:  491:
+      282:  492:    bool type = false;
+      695:  493:    for (const Token *tok2 = tok->next(); tok2; tok2 = tok2->next()) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+      695:  494:        if (tok2->varId() != 0)
+call    0 returned 100%
+branch  1 taken 3% (fallthrough)
+branch  2 taken 97%
+       19:  495:            return false;
+        -:  496:
+    #####:  497:        while (tok2->link() && Token::Match(tok2, "(|[|<"))
+call    0 returned 100%
+branch  1 taken 37% (fallthrough)
+branch  2 taken 63%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  498:            tok2 = tok2->link()->next();
+call    0 never executed
+call    1 never executed
+        -:  499:
+      676:  500:        if (tok2->str() == ")") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 37% (fallthrough)
+branch  3 taken 63%
+      252:  501:            if (Token::simpleMatch(tok2, ") (") && Token::simpleMatch(tok2->linkAt(1), ") ."))
+call    0 returned 100%
+branch  1 taken 17% (fallthrough)
+branch  2 taken 83%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+    #####:  502:                return true;
+      513:  503:            return type || tok2->strAt(-1) == "*" || Token::simpleMatch(tok2, ") ~") ||
+branch  0 taken 18% (fallthrough)
+branch  1 taken 82%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 24% (fallthrough)
+branch  5 taken 76%
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0%
+branch  9 taken 100% (fallthrough)
+branch 10 taken 0%
+       22:  504:                   (Token::Match(tok2, ") %any%") &&
+call    0 returned 100%
+branch  1 taken 82% (fallthrough)
+branch  2 taken 18%
+       20:  505:                    !tok2->next()->isOp() &&
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+      261:  506:                    !Token::Match(tok2->next(), "[[]);,?:.]"));
+call    0 returned 100%
+call    1 returned 100%
+        -:  507:        }
+      424:  508:        if (!Token::Match(tok2, "%name%|*|&|::"))
+call    0 returned 100%
+branch  1 taken 3% (fallthrough)
+branch  2 taken 97%
+       11:  509:            return false;
+        -:  510:
+      413:  511:        if (tok2->isStandardType() && (tok2->next()->str() != "(" || Token::Match(tok2->next(), "( * *| )")))
+call    0 returned 100%
+branch  1 taken 50% (fallthrough)
+branch  2 taken 50%
+call    3 returned 100%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 taken 50% (fallthrough)
+branch 13 taken 50%
+      207:  512:            type = true;
+        -:  513:    }
+        -:  514:
+    #####:  515:    return false;
+        -:  516:}
+        -:  517:
+        -:  518:// int(1), int*(2), ..
+function _ZL18findCppTypeInitParP5Token called 7571 returned 100% blocks executed 97%
+     7571:  519:static Token * findCppTypeInitPar(Token *tok)
+        -:  520:{
+     7571:  521:    if (!tok || !Token::Match(tok->previous(), "[,()] %name%"))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 77% (fallthrough)
+branch  5 taken 23%
+branch  6 taken 77% (fallthrough)
+branch  7 taken 23%
+     5853:  522:        return nullptr;
+     1718:  523:    bool istype = false;
+     6924:  524:    while (Token::Match(tok, "%name%|::|<")) {
+call    0 returned 100%
+branch  1 taken 61% (fallthrough)
+branch  2 taken 39%
+     2641:  525:        if (tok->str() == "<") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 3% (fallthrough)
+branch  3 taken 97%
+       80:  526:            tok = tok->link();
+call    0 returned 100%
+       80:  527:            if (!tok)
+branch  0 taken 48% (fallthrough)
+branch  1 taken 52%
+       38:  528:                return nullptr;
+        -:  529:        }
+     2603:  530:        istype |= tok->isStandardType();
+call    0 returned 100%
+     2603:  531:        tok = tok->next();
+call    0 returned 100%
+        -:  532:    }
+     1680:  533:    if (!istype)
+branch  0 taken 66% (fallthrough)
+branch  1 taken 34%
+     1117:  534:        return nullptr;
+      563:  535:    if (!Token::Match(tok, "[*&]"))
+call    0 returned 100%
+branch  1 taken 79% (fallthrough)
+branch  2 taken 21%
+      442:  536:        return nullptr;
+      130:  537:    while (Token::Match(tok, "[*&]"))
+call    0 returned 100%
+branch  1 taken 52% (fallthrough)
+branch  2 taken 48%
+      130:  538:        tok = tok->next();
+call    0 returned 100%
+      121:  539:    return (tok && tok->str() == "(") ? tok : nullptr;
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+        -:  540:}
+        -:  541:
+        -:  542:// X{} X<Y>{} etc
+        -:  543:static bool iscpp11init_impl(const Token * const tok);
+function _ZL11iscpp11initPK5Token called 10960 returned 100% blocks executed 100%
+    10960:  544:static bool iscpp11init(const Token * const tok)
+        -:  545:{
+    10960:  546:    if (tok->isCpp11init() == TokenImpl::Cpp11init::UNKNOWN)
+call    0 returned 100%
+branch  1 taken 85% (fallthrough)
+branch  2 taken 15%
+     9335:  547:        tok->setCpp11init(iscpp11init_impl(tok));
+call    0 returned 100%
+call    1 returned 100%
+    10960:  548:    return tok->isCpp11init() == TokenImpl::Cpp11init::CPP11INIT;
+call    0 returned 100%
+        -:  549:}
+        -:  550:
+function _ZL16iscpp11init_implPK5Token called 9335 returned 100% blocks executed 88%
+     9335:  551:static bool iscpp11init_impl(const Token * const tok)
+        -:  552:{
+     9335:  553:    const Token *nameToken = tok;
+    12865:  554:    while (nameToken && nameToken->str() == "{") {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 16% (fallthrough)
+branch  5 taken 84%
+branch  6 taken 16% (fallthrough)
+branch  7 taken 84%
+     1769:  555:        if (nameToken->isCpp11init() != TokenImpl::Cpp11init::UNKNOWN)
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+        4:  556:            return nameToken->isCpp11init() == TokenImpl::Cpp11init::CPP11INIT;
+call    0 returned 100%
+     1765:  557:        nameToken = nameToken->previous();
+call    0 returned 100%
+     1765:  558:        if (nameToken && nameToken->str() == "," && Token::simpleMatch(nameToken->previous(), "} ,"))
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 1% (fallthrough)
+branch  5 taken 99%
+call    6 returned 100%
+call    7 returned 100%
+branch  8 taken 100% (fallthrough)
+branch  9 taken 0%
+branch 10 taken 1% (fallthrough)
+branch 11 taken 99%
+        2:  559:            nameToken = nameToken->linkAt(-1);
+call    0 returned 100%
+        -:  560:    }
+     9331:  561:    if (!nameToken)
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+        1:  562:        return false;
+     9330:  563:    if (nameToken->str() == ">" && nameToken->link())
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+    #####:  564:        nameToken = nameToken->link()->previous();
+call    0 never executed
+call    1 never executed
+        -:  565:
+     9330:  566:    const Token *endtok = nullptr;
+     9330:  567:    if (Token::Match(nameToken, "%name% { !!["))
+call    0 returned 100%
+branch  1 taken 3% (fallthrough)
+branch  2 taken 97%
+      269:  568:        endtok = nameToken->linkAt(1);
+call    0 returned 100%
+     9061:  569:    else if (Token::Match(nameToken,"%name% <") && Token::simpleMatch(nameToken->linkAt(1),"> {"))
+call    0 returned 100%
+branch  1 taken 2% (fallthrough)
+branch  2 taken 98%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+    #####:  570:        endtok = nameToken->linkAt(1)->linkAt(1);
+call    0 never executed
+call    1 never executed
+        -:  571:    else
+     9061:  572:        return false;
+      269:  573:    if (Token::Match(nameToken, "else|try|do|const|override|volatile|&|&&"))
+call    0 returned 100%
+branch  1 taken 20% (fallthrough)
+branch  2 taken 80%
+       55:  574:        return false;
+      214:  575:    if (Token::simpleMatch(nameToken->previous(), "namespace"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+        2:  576:        return false;
+        -:  577:    // There is no initialisation for example here: 'class Fred {};'
+      212:  578:    if (!Token::simpleMatch(endtok, "} ;"))
+call    0 returned 100%
+branch  1 taken 10% (fallthrough)
+branch  2 taken 90%
+       21:  579:        return true;
+      191:  580:    const Token *prev = nameToken;
+      641:  581:    while (Token::Match(prev, "%name%|::|:|<|>")) {
+call    0 returned 100%
+branch  1 taken 92% (fallthrough)
+branch  2 taken 8%
+      381:  582:        if (Token::Match(prev, "class|struct"))
+call    0 returned 100%
+branch  1 taken 41% (fallthrough)
+branch  2 taken 59%
+      156:  583:            return false;
+        -:  584:
+      225:  585:        prev = prev->previous();
+call    0 returned 100%
+        -:  586:    }
+       35:  587:    return true;
+        -:  588:}
+        -:  589:
+function _ZL14compileUnaryOpRP5TokenR9AST_statePFvS1_S3_E called 1844 returned 100% blocks executed 100%
+     1844:  590:static void compileUnaryOp(Token *&tok, AST_state& state, void(*f)(Token *&tok, AST_state& state))
+        -:  591:{
+     1844:  592:    Token *unaryop = tok;
+     1844:  593:    if (f) {
+branch  0 taken 44% (fallthrough)
+branch  1 taken 56%
+      807:  594:        tok = tok->next();
+call    0 returned 100%
+      807:  595:        state.depth++;
+      807:  596:        if (tok && state.depth <= AST_MAX_DEPTH)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+      807:  597:            f(tok, state);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+      807:  598:        state.depth--;
+        -:  599:    }
+        -:  600:
+     1844:  601:    if (!state.op.empty()) {
+call    0 returned 100%
+branch  1 taken 98% (fallthrough)
+branch  2 taken 2%
+     1813:  602:        unaryop->astOperand1(state.op.top());
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+     1813:  603:        state.op.pop();
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  604:    }
+     1844:  605:    state.op.push(unaryop);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+     1844:  606:}
+        -:  607:
+function _ZL12compileBinOpRP5TokenR9AST_statePFvS1_S3_E called 4622 returned 100% blocks executed 100%
+     4622:  608:static void compileBinOp(Token *&tok, AST_state& state, void(*f)(Token *&tok, AST_state& state))
+        -:  609:{
+     4622:  610:    Token *binop = tok;
+     4622:  611:    if (f) {
+branch  0 taken 61% (fallthrough)
+branch  1 taken 39%
+     2819:  612:        tok = tok->next();
+call    0 returned 100%
+     2819:  613:        state.depth++;
+     2819:  614:        if (tok && state.depth <= AST_MAX_DEPTH)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+     2819:  615:            f(tok, state);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+     2819:  616:        state.depth--;
+        -:  617:    }
+        -:  618:
+        -:  619:    // TODO: Should we check if op is empty.
+        -:  620:    // * Is it better to add assertion that it isn't?
+        -:  621:    // * Write debug warning if it's empty?
+     4622:  622:    if (!state.op.empty()) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+     4622:  623:        binop->astOperand2(state.op.top());
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+     4622:  624:        state.op.pop();
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  625:    }
+     4622:  626:    if (!state.op.empty()) {
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+     4618:  627:        binop->astOperand1(state.op.top());
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+     4618:  628:        state.op.pop();
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  629:    }
+     4622:  630:    state.op.push(binop);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+     4622:  631:}
+        -:  632:
+        -:  633:static void compileExpression(Token *&tok, AST_state& state);
+        -:  634:
+function _ZL11compileTermRP5TokenR9AST_state called 11139 returned 100% blocks executed 82%
+    11139:  635:static void compileTerm(Token *&tok, AST_state& state)
+        -:  636:{
+    11139:  637:    if (!tok)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  638:        return;
+    11139:  639:    if (Token::Match(tok, "L %str%|%char%"))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  640:        tok = tok->next();
+call    0 never executed
+    11139:  641:    if (state.inArrayAssignment && Token::Match(tok->previous(), "[{,] . %name%")) { // Jump over . in C style struct initialization
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 3% (fallthrough)
+branch  5 taken 97%
+branch  6 taken 1% (fallthrough)
+branch  7 taken 99%
+        1:  642:        state.op.push(tok);
+call    0 returned 100%
+        1:  643:        tok->astOperand1(tok->next());
+call    0 returned 100%
+call    1 returned 100%
+        1:  644:        tok = tok->tokAt(2);
+call    0 returned 100%
+        -:  645:    }
+    11139:  646:    if (state.inArrayAssignment && Token::Match(tok->previous(), "[{,] [ %num%|%name% ]")) {
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  647:        state.op.push(tok);
+call    0 never executed
+    #####:  648:        tok->astOperand1(tok->next());
+call    0 never executed
+call    1 never executed
+    #####:  649:        tok = tok->tokAt(3);
+call    0 never executed
+        -:  650:    }
+    11139:  651:    if (tok->isLiteral()) {
+call    0 returned 100%
+branch  1 taken 12% (fallthrough)
+branch  2 taken 88%
+     1353:  652:        state.op.push(tok);
+call    0 returned 100%
+    #####:  653:        do {
+     1353:  654:            tok = tok->next();
+call    0 returned 100%
+     1353:  655:        } while (Token::Match(tok, "%name%|%str%"));
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+     9786:  656:    } else if (tok->isName()) {
+call    0 returned 100%
+branch  1 taken 83% (fallthrough)
+branch  2 taken 17%
+     8122:  657:        if (Token::Match(tok, "return|case") || (state.cpp && tok->str() == "throw")) {
+call    0 returned 100%
+branch  1 taken 95% (fallthrough)
+branch  2 taken 5%
+branch  3 taken 98% (fallthrough)
+branch  4 taken 2%
+call    5 returned 100%
+call    6 returned 100%
+branch  7 taken 1% (fallthrough)
+branch  8 taken 99%
+branch  9 taken 5% (fallthrough)
+branch 10 taken 95%
+      383:  658:            if (tok->str() == "case")
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 33% (fallthrough)
+branch  3 taken 67%
+      128:  659:                state.inCase = true;
+      383:  660:            compileUnaryOp(tok, state, compileExpression);
+call    0 returned 100%
+      383:  661:            state.op.pop();
+call    0 returned 100%
+      383:  662:            if (state.inCase && Token::simpleMatch(tok, ": ;")) {
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+call    2 returned 100%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+    #####:  663:                state.inCase = false;
+    #####:  664:                tok = tok->next();
+call    0 never executed
+        -:  665:            }
+     7739:  666:        } else if (Token::Match(tok, "sizeof !!(")) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  667:            compileUnaryOp(tok, state, compileExpression);
+call    0 never executed
+    #####:  668:            state.op.pop();
+call    0 never executed
+     7739:  669:        } else if (state.cpp && findCppTypeInitPar(tok))  { // int(0), int*(123), ..
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+call    2 returned 100%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+    #####:  670:            tok = findCppTypeInitPar(tok);
+call    0 never executed
+    #####:  671:            state.op.push(tok);
+call    0 never executed
+    #####:  672:            tok = tok->tokAt(2);
+call    0 never executed
+     7739:  673:        } else if (state.cpp && iscpp11init(tok)) { // X{} X<Y>{} etc
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+call    2 returned 100%
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+branch  5 taken 1% (fallthrough)
+branch  6 taken 99%
+       18:  674:            state.op.push(tok);
+call    0 returned 100%
+       18:  675:            tok = tok->next();
+call    0 returned 100%
+       18:  676:            if (tok->str() == "<")
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####:  677:                tok = tok->link()->next();
+call    0 never executed
+call    1 never executed
+       18:  678:            if (Token::Match(tok, "{ . %name% =")) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  679:                const int inArrayAssignment = state.inArrayAssignment;
+    #####:  680:                state.inArrayAssignment = 1;
+    #####:  681:                compileBinOp(tok, state, compileExpression);
+call    0 never executed
+    #####:  682:                state.inArrayAssignment = inArrayAssignment;
+        -:  683:            }
+     7721:  684:        } else if (!state.cpp || !Token::Match(tok, "new|delete %name%|*|&|::|(|[")) {
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+call    2 returned 100%
+branch  3 taken 99% (fallthrough)
+branch  4 taken 1%
+branch  5 taken 99% (fallthrough)
+branch  6 taken 1%
+     7695:  685:            tok = skipDecl(tok);
+call    0 returned 100%
+    10761:  686:            while (tok->next() && tok->next()->isName())
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 17% (fallthrough)
+branch  6 taken 83%
+branch  7 taken 17% (fallthrough)
+branch  8 taken 83%
+     1533:  687:                tok = tok->next();
+call    0 returned 100%
+     7695:  688:            state.op.push(tok);
+call    0 returned 100%
+     7695:  689:            if (Token::Match(tok, "%name% <") && tok->linkAt(1))
+call    0 returned 100%
+branch  1 taken 2% (fallthrough)
+branch  2 taken 98%
+call    3 returned 100%
+branch  4 taken 50% (fallthrough)
+branch  5 taken 50%
+branch  6 taken 1% (fallthrough)
+branch  7 taken 99%
+       70:  690:                tok = tok->linkAt(1);
+call    0 returned 100%
+     7625:  691:            else if (Token::Match(tok, "%name% ..."))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  692:                tok = tok->next();
+call    0 never executed
+     7695:  693:            tok = tok->next();
+call    0 returned 100%
+     7695:  694:            if (Token::Match(tok, "%str%")) {
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+        6:  695:                while (Token::Match(tok, "%name%|%str%"))
+call    0 returned 100%
+branch  1 taken 50% (fallthrough)
+branch  2 taken 50%
+        2:  696:                    tok = tok->next();
+call    0 returned 100%
+        -:  697:            }
+        -:  698:        }
+     1664:  699:    } else if (tok->str() == "{") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 3% (fallthrough)
+branch  3 taken 97%
+       47:  700:        const Token *prev = tok->previous();
+call    0 returned 100%
+       47:  701:        if (Token::simpleMatch(prev, ") {") && iscast(prev->link()))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+    #####:  702:            prev = prev->link()->previous();
+call    0 never executed
+call    1 never executed
+       47:  703:        if (Token::simpleMatch(tok->link(),"} [")) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####:  704:            tok = tok->next();
+call    0 never executed
+       47:  705:        } else if (state.cpp && iscpp11init(tok)) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 45% (fallthrough)
+branch  4 taken 55%
+branch  5 taken 45% (fallthrough)
+branch  6 taken 55%
+       21:  706:            if (state.op.empty() || Token::Match(tok->previous(), "[{,]"))
+call    0 returned 100%
+branch  1 taken 10% (fallthrough)
+branch  2 taken 90%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0%
+       21:  707:                compileUnaryOp(tok, state, compileExpression);
+call    0 returned 100%
+        -:  708:            else
+    #####:  709:                compileBinOp(tok, state, compileExpression);
+call    0 never executed
+       21:  710:            if (Token::Match(tok, "} ,|:"))
+call    0 returned 100%
+branch  1 taken 10% (fallthrough)
+branch  2 taken 90%
+        2:  711:                tok = tok->next();
+call    0 returned 100%
+       26:  712:        } else if (!state.inArrayAssignment && !Token::simpleMatch(prev, "=")) {
+branch  0 taken 96% (fallthrough)
+branch  1 taken 4%
+call    2 returned 100%
+branch  3 taken 32% (fallthrough)
+branch  4 taken 68%
+branch  5 taken 31% (fallthrough)
+branch  6 taken 69%
+        8:  713:            state.op.push(tok);
+call    0 returned 100%
+        8:  714:            tok = tok->link()->next();
+call    0 returned 100%
+call    1 returned 100%
+        -:  715:        } else {
+       18:  716:            if (tok->link() != tok->next()) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 89% (fallthrough)
+branch  3 taken 11%
+       16:  717:                state.inArrayAssignment++;
+       16:  718:                compileUnaryOp(tok, state, compileExpression);
+call    0 returned 100%
+       46:  719:                while (Token::Match(tok, "} [,};]") && state.inArrayAssignment > 0) {
+call    0 returned 100%
+branch  1 taken 48% (fallthrough)
+branch  2 taken 52%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+branch  5 taken 48% (fallthrough)
+branch  6 taken 52%
+       15:  720:                    tok = tok->next();
+call    0 returned 100%
+       15:  721:                    state.inArrayAssignment--;
+        -:  722:                }
+        -:  723:            } else {
+        2:  724:                state.op.push(tok);
+call    0 returned 100%
+        2:  725:                tok = tok->tokAt(2);
+call    0 returned 100%
+        -:  726:            }
+        -:  727:        }
+        -:  728:    }
+        -:  729:}
+        -:  730:
+function _ZL12compileScopeRP5TokenR9AST_state called 10898 returned 100% blocks executed 93%
+    10898:  731:static void compileScope(Token *&tok, AST_state& state)
+        -:  732:{
+    10898:  733:    compileTerm(tok, state);
+call    0 returned 100%
+    11380:  734:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+    11138:  735:        if (tok->str() == "::") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 2% (fallthrough)
+branch  3 taken 98%
+      241:  736:            Token *binop = tok;
+      241:  737:            tok = tok->next();
+call    0 returned 100%
+      241:  738:            if (tok && tok->str() == "~") // Jump over ~ of destructor definition
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####:  739:                tok = tok->next();
+call    0 never executed
+      241:  740:            if (tok)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+      241:  741:                compileTerm(tok, state);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  742:
+      241:  743:            if (binop->previous() && (binop->previous()->isName() || (binop->previous()->link() && binop->strAt(-1) == ">")))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+branch  7 taken 3% (fallthrough)
+branch  8 taken 97%
+call    9 returned 100%
+call   10 returned 100%
+branch 11 taken 71% (fallthrough)
+branch 12 taken 29%
+call   13 returned 100%
+branch 14 taken 100% (fallthrough)
+branch 15 taken 0% (throw)
+call   16 returned 100%
+branch 17 taken 40% (fallthrough)
+branch 18 taken 60%
+branch 19 taken 98% (fallthrough)
+branch 20 taken 2%
+      236:  744:                compileBinOp(binop, state, nullptr);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  745:            else
+        5:  746:                compileUnaryOp(binop, state, nullptr);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+    10897:  747:        } else break;
+        -:  748:    }
+    10898:  749:}
+        -:  750:
+function _ZL13isPrefixUnaryPK5Tokenb called 1050 returned 100% blocks executed 83%
+     1050:  751:static bool isPrefixUnary(const Token* tok, bool cpp)
+        -:  752:{
+     2100:  753:    if (!tok->previous()
+call    0 returned 100%
+branch  1 taken 30% (fallthrough)
+branch  2 taken 70%
+     1360:  754:        || ((Token::Match(tok->previous(), "(|[|{|%op%|;|}|?|:|,|.|return|::") || (cpp && tok->strAt(-1) == "throw"))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 70% (fallthrough)
+branch  5 taken 30%
+branch  6 taken 97% (fallthrough)
+branch  7 taken 3%
+call    8 returned 100%
+call    9 returned 100%
+branch 10 taken 0% (fallthrough)
+branch 11 taken 100%
+      310:  755:            && (tok->previous()->tokType() != Token::eIncDecOp || tok->tokType() == Token::eIncDecOp)))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+      310:  756:        return true;
+        -:  757:
+      740:  758:    if (tok->str() == "*" && tok->previous()->tokType() == Token::eIncDecOp && isPrefixUnary(tok->previous(), cpp))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 38% (fallthrough)
+branch  3 taken 62%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 taken 0% (fallthrough)
+branch 13 taken 100%
+    #####:  759:        return true;
+        -:  760:
+      740:  761:    return tok->strAt(-1) == ")" && iscast(tok->linkAt(-1));
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 2% (fallthrough)
+branch  3 taken 98%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 12% (fallthrough)
+branch  7 taken 88%
+        -:  762:}
+        -:  763:
+function _ZL18compilePrecedence2RP5TokenR9AST_state called 10574 returned 100% blocks executed 87%
+    10574:  764:static void compilePrecedence2(Token *&tok, AST_state& state)
+        -:  765:{
+    10574:  766:    compileScope(tok, state);
+call    0 returned 100%
+    16798:  767:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+    13684:  768:        if (tok->tokType() == Token::eIncDecOp && !isPrefixUnary(tok, state.cpp)) {
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+call    3 returned 100%
+branch  4 taken 73% (fallthrough)
+branch  5 taken 27%
+branch  6 taken 1% (fallthrough)
+branch  7 taken 99%
+      108:  769:            compileUnaryOp(tok, state, compileScope);
+call    0 returned 100%
+    13576:  770:        } else if (tok->str() == "...") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+        8:  771:            state.op.push(tok);
+call    0 returned 100%
+        8:  772:            tok = tok->next();
+call    0 returned 100%
+        8:  773:            break;
+    13568:  774:        } else if (tok->str() == "." && tok->strAt(1) != "*") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 2% (fallthrough)
+branch  3 taken 98%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0%
+branch  8 taken 2% (fallthrough)
+branch  9 taken 98%
+      216:  775:            if (tok->strAt(1) == ".") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####:  776:                state.op.push(tok);
+call    0 never executed
+    #####:  777:                tok = tok->tokAt(3);
+call    0 never executed
+    #####:  778:                break;
+        -:  779:            } else
+      216:  780:                compileBinOp(tok, state, compileScope);
+call    0 returned 100%
+    13352:  781:        } else if (tok->str() == "[") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+      122:  782:            if (state.cpp && isPrefixUnary(tok, state.cpp) && Token::Match(tok->link(), "] (|{")) { // Lambda
+branch  0 taken 95% (fallthrough)
+branch  1 taken 5%
+call    2 returned 100%
+branch  3 taken 5% (fallthrough)
+branch  4 taken 95%
+call    5 returned 100%
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0%
+branch  9 taken 5% (fallthrough)
+branch 10 taken 95%
+        -:  783:                // What we do here:
+        -:  784:                // - Nest the round bracket under the square bracket.
+        -:  785:                // - Nest what follows the lambda (if anything) with the lambda opening [
+        -:  786:                // - Compile the content of the lambda function as separate tree (this is done later)
+        -:  787:                // this must be consistent with isLambdaCaptureList
+        6:  788:                Token* const squareBracket = tok;
+        6:  789:                if (Token::simpleMatch(squareBracket->link(), "] (")) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+        6:  790:                    Token* const roundBracket = squareBracket->link()->next();
+call    0 returned 100%
+call    1 returned 100%
+        6:  791:                    Token* curlyBracket = roundBracket->link()->next();
+call    0 returned 100%
+call    1 returned 100%
+        6:  792:                    if (Token::Match(curlyBracket, "mutable|const"))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####:  793:                        curlyBracket = curlyBracket->next();
+call    0 never executed
+        6:  794:                    if (curlyBracket && curlyBracket->originalName() == "->") {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 17% (fallthrough)
+branch  5 taken 83%
+branch  6 taken 17% (fallthrough)
+branch  7 taken 83%
+        5:  795:                        while (Token::Match(curlyBracket, "%name%|.|::|&|*"))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 67% (fallthrough)
+branch  4 taken 33%
+        2:  796:                            curlyBracket = curlyBracket->next();
+call    0 returned 100%
+        -:  797:                    }
+       12:  798:                    if (curlyBracket && curlyBracket->str() == "{") {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0%
+        6:  799:                        squareBracket->astOperand1(roundBracket);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        6:  800:                        roundBracket->astOperand1(curlyBracket);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        6:  801:                        state.op.push(squareBracket);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        6:  802:                        tok = curlyBracket->link()->next();
+call    0 returned 100%
+call    1 returned 100%
+       12:  803:                        continue;
+        -:  804:                    }
+        -:  805:                } else {
+    #####:  806:                    Token* const curlyBracket = squareBracket->link()->next();
+call    0 never executed
+call    1 never executed
+    #####:  807:                    squareBracket->astOperand1(curlyBracket);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  808:                    state.op.push(squareBracket);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  809:                    tok = curlyBracket->link()->next();
+call    0 never executed
+call    1 never executed
+    #####:  810:                    continue;
+        -:  811:                }
+        -:  812:            }
+        -:  813:
+      116:  814:            const Token* const tok2 = tok;
+      116:  815:            if (tok->strAt(1) != "]")
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 99% (fallthrough)
+branch  3 taken 1%
+      115:  816:                compileBinOp(tok, state, compileExpression);
+call    0 returned 100%
+        -:  817:            else
+        1:  818:                compileUnaryOp(tok, state, compileExpression);
+call    0 returned 100%
+      116:  819:            tok = tok2->link()->next();
+call    0 returned 100%
+call    1 returned 100%
+    13230:  820:        } else if (tok->str() == "(" && (!iscast(tok) || Token::Match(tok->previous(), "if|while|for|switch|catch"))) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 21% (fallthrough)
+branch  3 taken 79%
+call    4 returned 100%
+branch  5 taken 3% (fallthrough)
+branch  6 taken 97%
+call    7 returned 100%
+call    8 returned 100%
+branch  9 taken 0% (fallthrough)
+branch 10 taken 100%
+branch 11 taken 20% (fallthrough)
+branch 12 taken 80%
+     2646:  821:            Token* tok2 = tok;
+     2646:  822:            tok = tok->next();
+call    0 returned 100%
+     2646:  823:            const bool opPrevTopSquare = !state.op.empty() && state.op.top() && state.op.top()->str() == "[";
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+call    6 returned 100%
+call    7 returned 100%
+call    8 returned 100%
+branch  9 taken 0% (fallthrough)
+branch 10 taken 100%
+     2646:  824:            const std::size_t oldOpSize = state.op.size();
+call    0 returned 100%
+     2646:  825:            compileExpression(tok, state);
+call    0 returned 100%
+     2646:  826:            tok = tok2;
+     7938:  827:            if ((tok->previous() && tok->previous()->isName() && (!Token::Match(tok->previous(), "return|case") && (!state.cpp || !Token::Match(tok->previous(), "throw|delete"))))
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 94% (fallthrough)
+branch  4 taken 6%
+call    5 returned 100%
+call    6 returned 100%
+branch  7 taken 99% (fallthrough)
+branch  8 taken 1%
+branch  9 taken 98% (fallthrough)
+branch 10 taken 2%
+call   11 returned 100%
+call   12 returned 100%
+branch 13 taken 1% (fallthrough)
+branch 14 taken 99%
+branch 15 taken 94% (fallthrough)
+branch 16 taken 6%
+      169:  828:                || (tok->strAt(-1) == "]" && (!state.cpp || !Token::Match(tok->linkAt(-1)->previous(), "new|delete")))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+call    6 returned 100%
+call    7 returned 100%
+call    8 returned 100%
+branch  9 taken 100% (fallthrough)
+branch 10 taken 0%
+      169:  829:                || (tok->strAt(-1) == ">" && tok->linkAt(-1))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 10% (fallthrough)
+branch  3 taken 90%
+call    4 returned 100%
+branch  5 taken 12% (fallthrough)
+branch  6 taken 88%
+      154:  830:                || (tok->strAt(-1) == ")" && !iscast(tok->linkAt(-1))) // Don't treat brackets to clarify precedence as function calls
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 8% (fallthrough)
+branch  3 taken 92%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 92% (fallthrough)
+branch  7 taken 8%
+     2799:  831:                || (tok->strAt(-1) == "}" && opPrevTopSquare)) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 1% (fallthrough)
+branch  5 taken 99%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+     2493:  832:                const bool operandInside = oldOpSize < state.op.size();
+call    0 returned 100%
+     2493:  833:                if (operandInside)
+branch  0 taken 63% (fallthrough)
+branch  1 taken 37%
+     1567:  834:                    compileBinOp(tok, state, nullptr);
+call    0 returned 100%
+        -:  835:                else
+      926:  836:                    compileUnaryOp(tok, state, nullptr);
+call    0 returned 100%
+        -:  837:            }
+     2646:  838:            tok = tok->link()->next();
+call    0 returned 100%
+call    1 returned 100%
+    10584:  839:        } else if (iscast(tok) && Token::simpleMatch(tok->link(), ") {") && Token::simpleMatch(tok->link()->linkAt(1), "} [")) {
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+call    7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 taken 0% (fallthrough)
+branch 13 taken 100%
+    #####:  840:            Token *cast = tok;
+    #####:  841:            tok = tok->link()->next();
+call    0 never executed
+call    1 never executed
+    #####:  842:            Token *tok1 = tok;
+    #####:  843:            compileUnaryOp(tok, state, compileExpression);
+call    0 never executed
+    #####:  844:            cast->astOperand1(tok1);
+call    0 never executed
+    #####:  845:            tok = tok1->link()->next();
+call    0 never executed
+call    1 never executed
+    10584:  846:        } else if (state.cpp && tok->str() == "{" && iscpp11init(tok)) {
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 15% (fallthrough)
+branch  5 taken 85%
+call    6 returned 100%
+branch  7 taken 1% (fallthrough)
+branch  8 taken 99%
+branch  9 taken 1% (fallthrough)
+branch 10 taken 99%
+       20:  847:            if (Token::simpleMatch(tok, "{ }"))
+call    0 returned 100%
+branch  1 taken 55% (fallthrough)
+branch  2 taken 45%
+       11:  848:                compileUnaryOp(tok, state, compileExpression);
+call    0 returned 100%
+        -:  849:            else
+        9:  850:                compileBinOp(tok, state, compileExpression);
+call    0 returned 100%
+       20:  851:            if (Token::simpleMatch(tok, "}"))
+call    0 returned 100%
+branch  1 taken 90% (fallthrough)
+branch  2 taken 10%
+       18:  852:                tok = tok->next();
+call    0 returned 100%
+    10564:  853:        } else break;
+        -:  854:    }
+    10574:  855:}
+        -:  856:
+function _ZL18compilePrecedence3RP5TokenR9AST_state called 10565 returned 100% blocks executed 62%
+    10565:  857:static void compilePrecedence3(Token *&tok, AST_state& state)
+        -:  858:{
+    10565:  859:    compilePrecedence2(tok, state);
+call    0 returned 100%
+    11311:  860:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+    11723:  861:        if ((Token::Match(tok, "[+-!~*&]") || tok->tokType() == Token::eIncDecOp) &&
+call    0 returned 100%
+branch  1 taken 93% (fallthrough)
+branch  2 taken 7%
+call    3 returned 100%
+branch  4 taken 1% (fallthrough)
+branch  5 taken 99%
+branch  6 taken 34% (fallthrough)
+branch  7 taken 66%
+branch  8 taken 2% (fallthrough)
+branch  9 taken 98%
+      787:  862:            isPrefixUnary(tok, state.cpp)) {
+call    0 returned 100%
+      267:  863:            if (Token::Match(tok, "* [*,)]")) {
+call    0 returned 100%
+branch  1 taken 4% (fallthrough)
+branch  2 taken 96%
+       12:  864:                Token* tok2 = tok->next();
+call    0 returned 100%
+       40:  865:                while (tok2->next() && tok2->str() == "*")
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 54% (fallthrough)
+branch  6 taken 46%
+branch  7 taken 54% (fallthrough)
+branch  8 taken 46%
+       14:  866:                    tok2 = tok2->next();
+call    0 returned 100%
+       12:  867:                if (Token::Match(tok2, "[>),]")) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  868:                    tok = tok2;
+    #####:  869:                    continue;
+        -:  870:                }
+        -:  871:            }
+      267:  872:            compileUnaryOp(tok, state, compilePrecedence3);
+call    0 returned 100%
+    10669:  873:        } else if (tok->str() == "(" && iscast(tok)) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0%
+branch  7 taken 1% (fallthrough)
+branch  8 taken 99%
+       79:  874:            Token* castTok = tok;
+       79:  875:            castTok->isCast(true);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       79:  876:            tok = tok->link()->next();
+call    0 returned 100%
+call    1 returned 100%
+       79:  877:            compilePrecedence3(tok, state);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       79:  878:            compileUnaryOp(castTok, state, nullptr);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+    10590:  879:        } else if (state.cpp && Token::Match(tok, "new %name%|::|(")) {
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+call    2 returned 100%
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+branch  5 taken 1% (fallthrough)
+branch  6 taken 99%
+       17:  880:            Token* newtok = tok;
+       17:  881:            tok = tok->next();
+call    0 returned 100%
+       17:  882:            bool innertype = false;
+       17:  883:            if (tok->str() == "(") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####:  884:                if (Token::Match(tok, "( &| %name%") && Token::Match(tok->link(), ") ( %type%") && Token::simpleMatch(tok->link()->linkAt(1), ") ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+branch 21 never executed
+    #####:  885:                    tok = tok->link()->next();
+call    0 never executed
+call    1 never executed
+    #####:  886:                if (Token::Match(tok->link(), ") ::| %type%"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  887:                    tok = tok->link()->next();
+call    0 never executed
+call    1 never executed
+    #####:  888:                else if (Token::Match(tok, "( %type%") && Token::Match(tok->link(), ") [();,[]")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  889:                    tok = tok->next();
+call    0 never executed
+    #####:  890:                    innertype = true;
+    #####:  891:                } else if (Token::Match(tok, "( &| %name%") && Token::simpleMatch(tok->link(), ") (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  892:                    tok = tok->next();
+call    0 never executed
+    #####:  893:                    innertype = true;
+        -:  894:                } else {
+        -:  895:                    /* bad code */
+    #####:  896:                    continue;
+        -:  897:                }
+        -:  898:            }
+       17:  899:            state.op.push(tok);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       51:  900:            while (Token::Match(tok, "%name%|*|&|<|::")) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 50% (fallthrough)
+branch  4 taken 50%
+       17:  901:                if (tok->link())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  902:                    tok = tok->link();
+call    0 never executed
+       17:  903:                tok = tok->next();
+call    0 returned 100%
+        -:  904:            }
+       17:  905:            if (Token::Match(tok, "( const| %type% ) (")) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####:  906:                state.op.push(tok->next());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  907:                tok = tok->link()->next();
+call    0 never executed
+call    1 never executed
+    #####:  908:                compileBinOp(tok, state, compilePrecedence2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+       17:  909:            } else if (tok && (tok->str() == "[" || tok->str() == "(" || tok->str() == "{"))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 59% (fallthrough)
+branch  5 taken 41%
+call    6 returned 100%
+call    7 returned 100%
+branch  8 taken 80% (fallthrough)
+branch  9 taken 20%
+call   10 returned 100%
+call   11 returned 100%
+branch 12 taken 0% (fallthrough)
+branch 13 taken 100%
+branch 14 taken 53% (fallthrough)
+branch 15 taken 47%
+        9:  910:                compilePrecedence2(tok, state);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        8:  911:            else if (innertype && Token::simpleMatch(tok, ") [")) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+    #####:  912:                tok = tok->next();
+call    0 never executed
+    #####:  913:                compilePrecedence2(tok, state);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  914:            }
+       17:  915:            compileUnaryOp(newtok, state, nullptr);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       17:  916:            if (innertype && Token::simpleMatch(tok, ") ,"))
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+    #####:  917:                tok = tok->next();
+call    0 never executed
+    10573:  918:        } else if (state.cpp && Token::Match(tok, "delete %name%|*|&|::|(|[")) {
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+call    2 returned 100%
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+branch  5 taken 1% (fallthrough)
+branch  6 taken 99%
+       10:  919:            Token* tok2 = tok;
+       10:  920:            tok = tok->next();
+call    0 returned 100%
+       10:  921:            if (tok && tok->str() == "[")
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 30% (fallthrough)
+branch  5 taken 70%
+branch  6 taken 30% (fallthrough)
+branch  7 taken 70%
+        3:  922:                tok = tok->link()->next();
+call    0 returned 100%
+call    1 returned 100%
+       10:  923:            compilePrecedence3(tok, state);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       10:  924:            compileUnaryOp(tok2, state, nullptr);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  925:        }
+        -:  926:        // TODO: Handle sizeof
+    10563:  927:        else break;
+        -:  928:    }
+    10565:  929:}
+call    0 never executed
+        -:  930:
+function _ZL20compilePointerToElemRP5TokenR9AST_state called 10209 returned 100% blocks executed 75%
+    10209:  931:static void compilePointerToElem(Token *&tok, AST_state& state)
+        -:  932:{
+    10209:  933:    compilePrecedence3(tok, state);
+call    0 returned 100%
+    10209:  934:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+    10207:  935:        if (Token::simpleMatch(tok, ". *")) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  936:            compileBinOp(tok, state, compilePrecedence3);
+call    0 never executed
+    10207:  937:        } else break;
+        -:  938:    }
+    10209:  939:}
+        -:  940:
+function _ZL13compileMulDivRP5TokenR9AST_state called 9867 returned 100% blocks executed 100%
+     9867:  941:static void compileMulDiv(Token *&tok, AST_state& state)
+        -:  942:{
+     9867:  943:    compilePointerToElem(tok, state);
+call    0 returned 100%
+    10551:  944:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+    10207:  945:        if (Token::Match(tok, "[/%]") || (tok->str() == "*" && !tok->astOperand1())) {
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 3% (fallthrough)
+branch  6 taken 97%
+call    7 returned 100%
+branch  8 taken 100% (fallthrough)
+branch  9 taken 0%
+branch 10 taken 3% (fallthrough)
+branch 11 taken 97%
+      354:  946:            if (Token::Match(tok, "* [*,)]")) {
+call    0 returned 100%
+branch  1 taken 7% (fallthrough)
+branch  2 taken 93%
+       26:  947:                Token* tok2 = tok->next();
+call    0 returned 100%
+       64:  948:                while (tok2->next() && tok2->str() == "*")
+call    0 returned 100%
+branch  1 taken 96% (fallthrough)
+branch  2 taken 4%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 44% (fallthrough)
+branch  6 taken 56%
+branch  7 taken 42% (fallthrough)
+branch  8 taken 58%
+       19:  949:                    tok2 = tok2->next();
+call    0 returned 100%
+       26:  950:                if (Token::Match(tok2, "[>),]")) {
+call    0 returned 100%
+branch  1 taken 46% (fallthrough)
+branch  2 taken 54%
+       12:  951:                    tok = tok2;
+       12:  952:                    break;
+        -:  953:                }
+        -:  954:            }
+      342:  955:            compileBinOp(tok, state, compilePointerToElem);
+call    0 returned 100%
+     9853:  956:        } else break;
+        -:  957:    }
+     9867:  958:}
+        -:  959:
+function _ZL13compileAddSubRP5TokenR9AST_state called 9771 returned 100% blocks executed 100%
+     9771:  960:static void compileAddSub(Token *&tok, AST_state& state)
+        -:  961:{
+     9771:  962:    compileMulDiv(tok, state);
+call    0 returned 100%
+     9963:  963:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     9865:  964:        if (Token::Match(tok, "+|-") && !tok->astOperand1()) {
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+branch  6 taken 1% (fallthrough)
+branch  7 taken 99%
+       96:  965:            compileBinOp(tok, state, compileMulDiv);
+call    0 returned 100%
+     9769:  966:        } else break;
+        -:  967:    }
+     9771:  968:}
+        -:  969:
+function _ZL12compileShiftRP5TokenR9AST_state called 9723 returned 100% blocks executed 100%
+     9723:  970:static void compileShift(Token *&tok, AST_state& state)
+        -:  971:{
+     9723:  972:    compileAddSub(tok, state);
+call    0 returned 100%
+     9819:  973:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     9769:  974:        if (Token::Match(tok, "<<|>>")) {
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+       48:  975:            compileBinOp(tok, state, compileAddSub);
+call    0 returned 100%
+     9721:  976:        } else break;
+        -:  977:    }
+     9723:  978:}
+        -:  979:
+function _ZL14compileRelCompRP5TokenR9AST_state called 9542 returned 100% blocks executed 100%
+     9542:  980:static void compileRelComp(Token *&tok, AST_state& state)
+        -:  981:{
+     9542:  982:    compileShift(tok, state);
+call    0 returned 100%
+     9904:  983:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     9721:  984:        if (Token::Match(tok, "<|<=|>=|>") && !tok->link()) {
+call    0 returned 100%
+branch  1 taken 2% (fallthrough)
+branch  2 taken 98%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+branch  6 taken 2% (fallthrough)
+branch  7 taken 98%
+      181:  985:            compileBinOp(tok, state, compileShift);
+call    0 returned 100%
+     9540:  986:        } else break;
+        -:  987:    }
+     9542:  988:}
+        -:  989:
+function _ZL13compileEqCompRP5TokenR9AST_state called 9331 returned 100% blocks executed 100%
+     9331:  990:static void compileEqComp(Token *&tok, AST_state& state)
+        -:  991:{
+     9331:  992:    compileRelComp(tok, state);
+call    0 returned 100%
+     9753:  993:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     9540:  994:        if (Token::Match(tok, "==|!=")) {
+call    0 returned 100%
+branch  1 taken 2% (fallthrough)
+branch  2 taken 98%
+      211:  995:            compileBinOp(tok, state, compileRelComp);
+call    0 returned 100%
+     9329:  996:        } else break;
+        -:  997:    }
+     9331:  998:}
+        -:  999:
+function _ZL10compileAndRP5TokenR9AST_state called 9204 returned 100% blocks executed 93%
+     9204: 1000:static void compileAnd(Token *&tok, AST_state& state)
+        -: 1001:{
+     9204: 1002:    compileEqComp(tok, state);
+call    0 returned 100%
+     9458: 1003:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     9329: 1004:        if (tok->str() == "&" && !tok->astOperand1()) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0%
+branch  7 taken 1% (fallthrough)
+branch  8 taken 99%
+      131: 1005:            Token* tok2 = tok->next();
+call    0 returned 100%
+      131: 1006:            if (!tok2)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####: 1007:                break;
+      131: 1008:            if (tok2->str() == "&")
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####: 1009:                tok2 = tok2->next();
+call    0 never executed
+      131: 1010:            if (state.cpp && Token::Match(tok2, ",|)")) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 3% (fallthrough)
+branch  4 taken 97%
+branch  5 taken 3% (fallthrough)
+branch  6 taken 97%
+        4: 1011:                tok = tok2;
+        4: 1012:                break; // rValue reference
+        -: 1013:            }
+      127: 1014:            compileBinOp(tok, state, compileEqComp);
+call    0 returned 100%
+     9198: 1015:        } else break;
+        -: 1016:    }
+     9204: 1017:}
+        -: 1018:
+function _ZL10compileXorRP5TokenR9AST_state called 9202 returned 100% blocks executed 100%
+     9202: 1019:static void compileXor(Token *&tok, AST_state& state)
+        -: 1020:{
+     9202: 1021:    compileAnd(tok, state);
+call    0 returned 100%
+     9206: 1022:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     9202: 1023:        if (tok->str() == "^") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+        2: 1024:            compileBinOp(tok, state, compileAnd);
+call    0 returned 100%
+     9200: 1025:        } else break;
+        -: 1026:    }
+     9202: 1027:}
+        -: 1028:
+function _ZL9compileOrRP5TokenR9AST_state called 9189 returned 100% blocks executed 100%
+     9189: 1029:static void compileOr(Token *&tok, AST_state& state)
+        -: 1030:{
+     9189: 1031:    compileXor(tok, state);
+call    0 returned 100%
+     9215: 1032:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     9200: 1033:        if (tok->str() == "|") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+       13: 1034:            compileBinOp(tok, state, compileXor);
+call    0 returned 100%
+     9187: 1035:        } else break;
+        -: 1036:    }
+     9189: 1037:}
+        -: 1038:
+function _ZL15compileLogicAndRP5TokenR9AST_state called 9113 returned 100% blocks executed 86%
+     9113: 1039:static void compileLogicAnd(Token *&tok, AST_state& state)
+        -: 1040:{
+     9113: 1041:    compileOr(tok, state);
+call    0 returned 100%
+     9265: 1042:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     9187: 1043:        if (tok->str() == "&&") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+       76: 1044:            if (!tok->astOperand1()) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+       76: 1045:                Token* tok2 = tok->next();
+call    0 returned 100%
+       76: 1046:                if (!tok2)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####: 1047:                    break;
+       76: 1048:                if (state.cpp && Token::Match(tok2, ",|)")) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+    #####: 1049:                    tok = tok2;
+    #####: 1050:                    break; // rValue reference
+        -: 1051:                }
+        -: 1052:            }
+       76: 1053:            compileBinOp(tok, state, compileOr);
+call    0 returned 100%
+     9111: 1054:        } else break;
+        -: 1055:    }
+     9113: 1056:}
+        -: 1057:
+function _ZL14compileLogicOrRP5TokenR9AST_state called 9075 returned 100% blocks executed 100%
+     9075: 1058:static void compileLogicOr(Token *&tok, AST_state& state)
+        -: 1059:{
+     9075: 1060:    compileLogicAnd(tok, state);
+call    0 returned 100%
+     9151: 1061:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     9111: 1062:        if (tok->str() == "||") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+       38: 1063:            compileBinOp(tok, state, compileLogicAnd);
+call    0 returned 100%
+     9073: 1064:        } else break;
+        -: 1065:    }
+     9075: 1066:}
+        -: 1067:
+function _ZL20compileAssignTernaryRP5TokenR9AST_state called 9075 returned 100% blocks executed 90%
+     9075: 1068:static void compileAssignTernary(Token *&tok, AST_state& state)
+        -: 1069:{
+     9075: 1070:    compileLogicOr(tok, state);
+call    0 returned 100%
+    11147: 1071:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+    10109: 1072:        if (tok->isAssignmentOp()) {
+call    0 returned 100%
+branch  1 taken 9% (fallthrough)
+branch  2 taken 91%
+      921: 1073:            state.assign++;
+      921: 1074:            compileBinOp(tok, state, compileAssignTernary);
+call    0 returned 100%
+      921: 1075:            if (state.assign > 0)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+      921: 1076:                state.assign--;
+     9188: 1077:        } else if (tok->str() == "?") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+        -: 1078:            // http://en.cppreference.com/w/cpp/language/operator_precedence says about ternary operator:
+        -: 1079:            //       "The expression in the middle of the conditional operator (between ? and :) is parsed as if parenthesized: its precedence relative to ?: is ignored."
+        -: 1080:            // Hence, we rely on Tokenizer::prepareTernaryOpForAST() to add such parentheses where necessary.
+       46: 1081:            if (tok->strAt(1) == ":") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####: 1082:                state.op.push(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -: 1083:            }
+       46: 1084:            const int assign = state.assign;
+       46: 1085:            state.assign = 0;
+       46: 1086:            compileBinOp(tok, state, compileAssignTernary);
+call    0 returned 100%
+       46: 1087:            state.assign = assign;
+     9142: 1088:        } else if (tok->str() == ":") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 2% (fallthrough)
+branch  3 taken 98%
+      196: 1089:            if (state.depth == 1U && state.inCase) {
+branch  0 taken 69% (fallthrough)
+branch  1 taken 31%
+branch  2 taken 94% (fallthrough)
+branch  3 taken 6%
+      127: 1090:                state.inCase = false;
+      127: 1091:                tok = tok->next();
+call    0 returned 100%
+      127: 1092:                break;
+        -: 1093:            }
+       69: 1094:            if (state.assign > 0)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####: 1095:                break;
+       69: 1096:            compileBinOp(tok, state, compileAssignTernary);
+call    0 returned 100%
+     8946: 1097:        } else break;
+        -: 1098:    }
+     9075: 1099:}
+        -: 1100:
+function _ZL12compileCommaRP5TokenR9AST_state called 7730 returned 100% blocks executed 86%
+     7730: 1101:static void compileComma(Token *&tok, AST_state& state)
+        -: 1102:{
+     7730: 1103:    compileAssignTernary(tok, state);
+call    0 returned 100%
+     8348: 1104:    while (tok) {
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     8037: 1105:        if (tok->str() == ",") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 4% (fallthrough)
+branch  3 taken 96%
+      309: 1106:            if (Token::simpleMatch(tok, ", }"))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####: 1107:                tok = tok->next();
+call    0 never executed
+        -: 1108:            else
+      309: 1109:                compileBinOp(tok, state, compileAssignTernary);
+call    0 returned 100%
+     7728: 1110:        } else break;
+        -: 1111:    }
+     7730: 1112:}
+        -: 1113:
+function _ZL17compileExpressionRP5TokenR9AST_state called 7730 returned 100% blocks executed 80%
+     7730: 1114:static void compileExpression(Token *&tok, AST_state& state)
+        -: 1115:{
+     7730: 1116:    if (state.depth > AST_MAX_DEPTH)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####: 1117:        return; // ticket #5592
+     7730: 1118:    if (tok)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+     7730: 1119:        compileComma(tok, state);
+call    0 returned 100%
+        -: 1120:}
+        -: 1121:
+function _ZL19isLambdaCaptureListPK5Token called 125 returned 100% blocks executed 79%
+      125: 1122:static bool isLambdaCaptureList(const Token * tok)
+        -: 1123:{
+        -: 1124:    // a lambda expression '[x](y){}' is compiled as:
+        -: 1125:    // [
+        -: 1126:    // `-(  <<-- optional
+        -: 1127:    //   `-{
+        -: 1128:    // see compilePrecedence2
+      125: 1129:    if (tok->str() != "[")
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####: 1130:        return false;
+      125: 1131:    if (!Token::Match(tok->link(), "] (|{"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 93% (fallthrough)
+branch  3 taken 7%
+      116: 1132:        return false;
+        9: 1133:    if (Token::simpleMatch(tok->astOperand1(), "{") && tok->astOperand1() == tok->link()->next())
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 taken 0% (fallthrough)
+branch 10 taken 100%
+    #####: 1134:        return true;
+        9: 1135:    if (!tok->astOperand1() || tok->astOperand1()->str() != "(")
+call    0 returned 100%
+branch  1 taken 67% (fallthrough)
+branch  2 taken 33%
+call    3 returned 100%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+branch  8 taken 33% (fallthrough)
+branch  9 taken 67%
+        3: 1136:        return false;
+        6: 1137:    const Token * params = tok->astOperand1();
+call    0 returned 100%
+        6: 1138:    if (!params || !params->astOperand1() || params->astOperand1()->str() != "{")
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+call    5 returned 100%
+call    6 returned 100%
+call    7 returned 100%
+branch  8 taken 0% (fallthrough)
+branch  9 taken 100%
+branch 10 taken 0% (fallthrough)
+branch 11 taken 100%
+    #####: 1139:        return false;
+        6: 1140:    return true;
+        -: 1141:}
+        -: 1142:
+        -: 1143:static Token * createAstAtToken(Token *tok, bool cpp);
+        -: 1144:
+        -: 1145:// Compile inner expressions inside inner ({..}) and lambda bodies
+function _ZL21createAstAtTokenInnerP5TokenPKS_b called 4448 returned 100% blocks executed 74%
+     4448: 1146:static void createAstAtTokenInner(Token * const tok1, const Token *endToken, bool cpp)
+        -: 1147:{
+    20765: 1148:    for (Token *tok = tok1; tok && tok != endToken; tok = tok ? tok->next() : nullptr) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 79% (fallthrough)
+branch  3 taken 21%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+call    6 returned 100%
+    16317: 1149:        if (tok->str() == "{" && !iscpp11init(tok)) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+call    4 returned 100%
+branch  5 taken 52% (fallthrough)
+branch  6 taken 48%
+branch  7 taken 1% (fallthrough)
+branch  8 taken 99%
+       25: 1150:            if (Token::simpleMatch(tok->astOperand1(), ","))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 36% (fallthrough)
+branch  3 taken 64%
+        9: 1151:                continue;
+       16: 1152:            if (Token::simpleMatch(tok->previous(), "( {"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 56% (fallthrough)
+branch  3 taken 44%
+        -: 1153:                ;
+        -: 1154:            // struct assignment
+        9: 1155:            else if (Token::simpleMatch(tok->previous(), ") {") && Token::simpleMatch(tok->linkAt(-1), "( struct"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 taken 0% (fallthrough)
+branch  9 taken 100%
+    #####: 1156:                continue;
+        -: 1157:            // Lambda function
+       18: 1158:            else if (Token::simpleMatch(tok->astParent(), "(") &&
+call    0 returned 100%
+call    1 returned 100%
+branch  2 never executed
+branch  3 never executed
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+    #####: 1159:                     Token::simpleMatch(tok->astParent()->astParent(), "[") &&
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        9: 1160:                     tok->astParent()->astParent()->astOperand1() &&
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####: 1161:                     tok == tok->astParent()->astParent()->astOperand1()->astOperand1())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -: 1162:                ;
+        -: 1163:            else {
+        -: 1164:                // function argument is initializer list?
+        9: 1165:                const Token *parent = tok->astParent();
+call    0 returned 100%
+        9: 1166:                while (Token::simpleMatch(parent, ","))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####: 1167:                    parent = parent->astParent();
+call    0 never executed
+        9: 1168:                if (!parent || !Token::Match(parent->previous(), "%name% ("))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0%
+        -: 1169:                    // not function argument..
+        9: 1170:                    continue;
+        -: 1171:            }
+        -: 1172:
+        7: 1173:            if (Token::simpleMatch(tok->previous(), "( { ."))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####: 1174:                break;
+        -: 1175:
+        7: 1176:            const Token * const endToken2 = tok->link();
+call    0 returned 100%
+       95: 1177:            for (; tok && tok != endToken && tok != endToken2; tok = tok ? tok->next() : nullptr)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 86% (fallthrough)
+branch  5 taken 14%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0%
+call    8 returned 100%
+       44: 1178:                tok = createAstAtToken(tok, cpp);
+call    0 returned 100%
+    16292: 1179:        } else if (tok->str() == "[") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+      125: 1180:            if (isLambdaCaptureList(tok)) {
+call    0 returned 100%
+branch  1 taken 5% (fallthrough)
+branch  2 taken 95%
+        6: 1181:                tok = tok->astOperand1();
+call    0 returned 100%
+        6: 1182:                if (tok->str() == "(")
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+        6: 1183:                    tok = tok->astOperand1();
+call    0 returned 100%
+        6: 1184:                const Token * const endToken2 = tok->link();
+call    0 returned 100%
+       58: 1185:                for (; tok && tok != endToken && tok != endToken2; tok = tok ? tok->next() : nullptr)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 81% (fallthrough)
+branch  5 taken 19%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0%
+call    8 returned 100%
+       26: 1186:                    tok = createAstAtToken(tok, cpp);
+call    0 returned 100%
+        -: 1187:            }
+        -: 1188:        }
+        -: 1189:    }
+     4448: 1190:}
+        -: 1191:
+function _ZL10findAstTopP5TokenS0_ called 60 returned 100% blocks executed 76%
+       60: 1192:static Token * findAstTop(Token *tok1, Token *tok2)
+        -: 1193:{
+       62: 1194:    for (Token *tok = tok1; tok && (tok != tok2); tok = tok->next()) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 81% (fallthrough)
+branch  3 taken 19%
+call    4 returned 100%
+       50: 1195:        if (tok->astParent() || tok->astOperand1() || tok->astOperand2())
+call    0 returned 100%
+branch  1 taken 18% (fallthrough)
+branch  2 taken 82%
+call    3 returned 100%
+branch  4 taken 22% (fallthrough)
+branch  5 taken 78%
+call    6 returned 100%
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+branch  9 taken 96% (fallthrough)
+branch 10 taken 4%
+       48: 1196:            return tok->astTop();
+call    0 returned 100%
+        2: 1197:        if (Token::simpleMatch(tok, "( {"))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####: 1198:            tok = tok->link();
+call    0 never executed
+        -: 1199:    }
+       12: 1200:    for (Token *tok = tok1; tok && (tok != tok2); tok = tok->next()) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 17% (fallthrough)
+branch  3 taken 83%
+call    4 never executed
+        2: 1201:        if (tok->isName() || tok->isNumber())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0%
+        2: 1202:            return tok;
+    #####: 1203:        if (Token::simpleMatch(tok, "( {"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1204:            tok = tok->link();
+call    0 never executed
+        -: 1205:    }
+       10: 1206:    return nullptr;
+        -: 1207:}
+        -: 1208:
+function _ZL16createAstAtTokenP5Tokenb called 12391 returned 100% blocks executed 75%
+    12391: 1209:static Token * createAstAtToken(Token *tok, bool cpp)
+        -: 1210:{
+    12391: 1211:    if (Token::simpleMatch(tok, "for (")) {
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+       35: 1212:        Token *tok2 = skipDecl(tok->tokAt(2));
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+       35: 1213:        Token *init1 = nullptr;
+       35: 1214:        Token * const endPar = tok->next()->link();
+call    0 returned 100%
+call    1 returned 100%
+       35: 1215:        while (tok2 && tok2 != endPar && tok2->str() != ";") {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 83% (fallthrough)
+branch  7 taken 17%
+branch  8 taken 83% (fallthrough)
+branch  9 taken 17%
+       29: 1216:            if (tok2->str() == "<" && tok2->link()) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+    #####: 1217:                tok2 = tok2->link();
+call    0 never executed
+    #####: 1218:                if (!tok2)
+branch  0 never executed
+branch  1 never executed
+    #####: 1219:                    break;
+       29: 1220:            } else if (Token::Match(tok2, "%name% %op%|(|[|.|:|::") || Token::Match(tok2->previous(), "[(;{}] %cop%|(")) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 taken 100% (fallthrough)
+branch 12 taken 0%
+       29: 1221:                init1 = tok2;
+       29: 1222:                AST_state state1(cpp);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 never executed
+       29: 1223:                compileExpression(tok2, state1);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       29: 1224:                if (Token::Match(tok2, ";|)"))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+       29: 1225:                    break;
+    #####: 1226:                init1 = nullptr;
+call    0 returned 100%
+branch  1 taken 0%
+branch  2 taken 100%
+        -: 1227:            }
+    #####: 1228:            if (!tok2) // #7109 invalid code
+branch  0 never executed
+branch  1 never executed
+    #####: 1229:                return nullptr;
+    #####: 1230:            tok2 = tok2->next();
+call    0 never executed
+        -: 1231:        }
+       35: 1232:        if (!tok2 || tok2->str() != ";") {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 14% (fallthrough)
+branch  5 taken 86%
+branch  6 taken 14% (fallthrough)
+branch  7 taken 86%
+        5: 1233:            if (tok2 == endPar && init1) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+        5: 1234:                tok->next()->astOperand2(init1);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+        5: 1235:                tok->next()->astOperand1(tok);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+        -: 1236:            }
+        5: 1237:            return tok2;
+        -: 1238:        }
+        -: 1239:
+       30: 1240:        Token * const init = init1 ? init1 : tok2;
+branch  0 taken 80% (fallthrough)
+branch  1 taken 20%
+        -: 1241:
+       30: 1242:        Token * const semicolon1 = tok2;
+       30: 1243:        tok2 = tok2->next();
+call    0 returned 100%
+       60: 1244:        AST_state state2(cpp);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+call    5 never executed
+       30: 1245:        compileExpression(tok2, state2);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -: 1246:
+       30: 1247:        Token * const semicolon2 = tok2;
+       30: 1248:        if (!semicolon2)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####: 1249:            return nullptr; // invalid code #7235
+       30: 1250:        tok2 = tok2->next();
+call    0 returned 100%
+       60: 1251:        AST_state state3(cpp);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+       30: 1252:        if (Token::simpleMatch(tok2, "( {")) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####: 1253:            state3.op.push(tok2->next());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1254:            tok2 = tok2->link()->next();
+call    0 never executed
+call    1 never executed
+        -: 1255:        }
+       30: 1256:        compileExpression(tok2, state3);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -: 1257:
+       30: 1258:        if (init != semicolon1)
+branch  0 taken 80% (fallthrough)
+branch  1 taken 20%
+       24: 1259:            semicolon1->astOperand1(init->astTop());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+       30: 1260:        tok2 = findAstTop(semicolon1->next(), semicolon2);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+       30: 1261:        if (tok2)
+branch  0 taken 93% (fallthrough)
+branch  1 taken 7%
+       28: 1262:            semicolon2->astOperand1(tok2);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       30: 1263:        tok2 = findAstTop(semicolon2->next(), endPar);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+       30: 1264:        if (tok2)
+branch  0 taken 73% (fallthrough)
+branch  1 taken 27%
+       22: 1265:            semicolon2->astOperand2(tok2);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        8: 1266:        else if (!state3.op.empty())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####: 1267:            semicolon2->astOperand2(state3.op.top());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -: 1268:
+       30: 1269:        semicolon1->astOperand2(semicolon2);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       30: 1270:        tok->next()->astOperand1(tok);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+       30: 1271:        tok->next()->astOperand2(semicolon1);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+        -: 1272:
+       30: 1273:        createAstAtTokenInner(endPar->link(), endPar, cpp);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+        -: 1274:
+       30: 1275:        return endPar;
+        -: 1276:    }
+        -: 1277:
+    12356: 1278:    if (cpp && Token::Match(tok, "if|switch (")) {
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+call    2 returned 100%
+branch  3 taken 3% (fallthrough)
+branch  4 taken 97%
+branch  5 taken 3% (fallthrough)
+branch  6 taken 97%
+      407: 1279:        Token *semicolon = nullptr;
+        -: 1280:        Token *tok2;
+     1678: 1281:        for (tok2 = tok->tokAt(2); tok2 && tok2->str() != ")"; tok2 = tok2->next()) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+call    5 returned 100%
+call    6 returned 100%
+branch  7 taken 76% (fallthrough)
+branch  8 taken 24%
+branch  9 taken 76% (fallthrough)
+branch 10 taken 24%
+call   11 returned 100%
+     1271: 1282:            if (tok2->str() == ";") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####: 1283:                if (semicolon)
+branch  0 never executed
+branch  1 never executed
+    #####: 1284:                    break;
+    #####: 1285:                semicolon = tok2;
+        -: 1286:            }
+     1271: 1287:            if (tok2->str() == "(")
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 8% (fallthrough)
+branch  3 taken 92%
+      106: 1288:                tok2 = tok2->link();
+call    0 returned 100%
+        -: 1289:        }
+      407: 1290:        if (semicolon && tok2 == tok->linkAt(1)) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+    #####: 1291:            tok2 = skipDecl(tok->tokAt(2));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1292:            Token *init1 = tok2;
+    #####: 1293:            AST_state state1(cpp);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+    #####: 1294:            compileExpression(tok2, state1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -: 1295:
+    #####: 1296:            tok2 = semicolon->next();
+call    0 never executed
+    #####: 1297:            Token *expr1 = tok2;
+    #####: 1298:            AST_state state2(cpp);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####: 1299:            compileExpression(tok2, state2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -: 1300:
+    #####: 1301:            semicolon->astOperand1(findAstTop(init1, semicolon->previous()));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####: 1302:            semicolon->astOperand2(findAstTop(expr1, tok2));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1303:            tok->next()->astOperand1(tok);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1304:            tok->next()->astOperand2(semicolon);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -: 1305:        }
+        -: 1306:    }
+        -: 1307:
+    12356: 1308:    if (Token::simpleMatch(tok, "( {"))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####: 1309:        return tok;
+        -: 1310:
+    12356: 1311:    if (Token::Match(tok, "%type% <") && tok->linkAt(1) && !Token::Match(tok->linkAt(1), "> [({]"))
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+call    6 returned 100%
+call    7 returned 100%
+branch  8 taken 90% (fallthrough)
+branch  9 taken 10%
+branch 10 taken 1% (fallthrough)
+branch 11 taken 99%
+        9: 1312:        return tok->linkAt(1);
+call    0 returned 100%
+        -: 1313:
+    12347: 1314:    if (Token::Match(tok, "%type% %name%|*|&|::") && tok->str() != "return") {
+call    0 returned 100%
+branch  1 taken 20% (fallthrough)
+branch  2 taken 80%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 95% (fallthrough)
+branch  6 taken 5%
+branch  7 taken 19% (fallthrough)
+branch  8 taken 81%
+     2391: 1315:        bool decl = false;
+     2391: 1316:        Token *typetok = tok;
+    11191: 1317:        while (Token::Match(typetok, "%type%|::|*|&")) {
+call    0 returned 100%
+branch  1 taken 65% (fallthrough)
+branch  2 taken 35%
+     4400: 1318:            if (typetok->isStandardType() || Token::Match(typetok, "struct|const|static"))
+call    0 returned 100%
+branch  1 taken 58% (fallthrough)
+branch  2 taken 42%
+call    3 returned 100%
+branch  4 taken 8% (fallthrough)
+branch  5 taken 92%
+branch  6 taken 47% (fallthrough)
+branch  7 taken 53%
+     2058: 1319:                decl = true;
+     4400: 1320:            typetok = typetok->next();
+call    0 returned 100%
+        -: 1321:        }
+     2391: 1322:        if (decl && Token::Match(typetok->previous(), "[*&] %var% ="))
+branch  0 taken 84% (fallthrough)
+branch  1 taken 16%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 1% (fallthrough)
+branch  5 taken 99%
+branch  6 taken 1% (fallthrough)
+branch  7 taken 99%
+       13: 1323:            tok = typetok;
+        -: 1324:    }
+        -: 1325:
+    12347: 1326:    if (Token::Match(tok, "return|case") || (cpp && tok->str() == "throw") || !tok->previous() || Token::Match(tok, "%name% %op%|(|[|.|::|<|?|;") || Token::Match(tok->previous(), "[;{}] %cop%|++|--|( !!{")) {
+call    0 returned 100%
+branch  1 taken 97% (fallthrough)
+branch  2 taken 3%
+branch  3 taken 98% (fallthrough)
+branch  4 taken 2%
+call    5 returned 100%
+call    6 returned 100%
+branch  7 taken 99% (fallthrough)
+branch  8 taken 1%
+call    9 returned 100%
+branch 10 taken 92% (fallthrough)
+branch 11 taken 8%
+call   12 returned 100%
+branch 13 taken 73% (fallthrough)
+branch 14 taken 27%
+call   15 returned 100%
+call   16 returned 100%
+branch 17 taken 1% (fallthrough)
+branch 18 taken 99%
+branch 19 taken 36% (fallthrough)
+branch 20 taken 64%
+     4422: 1327:        if (cpp && (Token::Match(tok->tokAt(-2), "[;{}] new|delete %name%") || Token::Match(tok->tokAt(-3), "[;{}] :: new|delete %name%")))
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+call    5 returned 100%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0% (throw)
+branch  8 taken 99% (fallthrough)
+branch  9 taken 1%
+call   10 returned 100%
+branch 11 taken 100% (fallthrough)
+branch 12 taken 0% (throw)
+call   13 returned 100%
+branch 14 taken 100% (fallthrough)
+branch 15 taken 0% (throw)
+branch 16 taken 0% (fallthrough)
+branch 17 taken 100%
+branch 18 taken 1% (fallthrough)
+branch 19 taken 99%
+        6: 1328:            tok = tok->previous();
+call    0 returned 100%
+        -: 1329:
+     4422: 1330:        Token * const tok1 = tok;
+     8844: 1331:        AST_state state(cpp);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+call    5 never executed
+     4422: 1332:        compileExpression(tok, state);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+     4422: 1333:        const Token * const endToken = tok;
+     4422: 1334:        if (endToken == tok1 || !endToken)
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+        4: 1335:            return tok1;
+        -: 1336:
+     4418: 1337:        createAstAtTokenInner(tok1->next(), endToken, cpp);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+        -: 1338:
+     4418: 1339:        return endToken->previous();
+call    0 returned 100%
+        -: 1340:    }
+        -: 1341:
+     7925: 1342:    if (cpp && tok->str() == "{" && iscpp11init(tok)) {
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+call    2 returned 100%
+call    3 returned 100%
+branch  4 taken 22% (fallthrough)
+branch  5 taken 78%
+call    6 returned 100%
+branch  7 taken 1% (fallthrough)
+branch  8 taken 99%
+branch  9 taken 1% (fallthrough)
+branch 10 taken 99%
+       34: 1343:        AST_state state(cpp);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+call    4 never executed
+       17: 1344:        compileExpression(tok, state);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       17: 1345:        return tok;
+        -: 1346:    }
+        -: 1347:
+     7908: 1348:    return tok;
+        -: 1349:}
+        -: 1350:
+function _ZN9TokenList9createAstEv called 960 returned 100% blocks executed 89%
+      960: 1351:void TokenList::createAst()
+        -: 1352:{
+    13281: 1353:    for (Token *tok = mTokensFrontBack.front; tok; tok = tok ? tok->next() : nullptr) {
+branch  0 taken 93% (fallthrough)
+branch  1 taken 7%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+call    4 returned 100%
+    12321: 1354:        tok = createAstAtToken(tok, isCPP());
+call    0 returned 100%
+call    1 returned 100%
+        -: 1355:    }
+      960: 1356:}
+        -: 1357:
+function _ZNK9TokenList11validateAstEv called 956 returned 100% blocks executed 55%
+      956: 1358:void TokenList::validateAst() const
+        -: 1359:{
+        -: 1360:    // Check for some known issues in AST to avoid crash/hang later on
+     1912: 1361:    std::set < const Token* > safeAstTokens; // list of "safe" AST tokens without endless recursion
+call    0 returned 100%
+call    1 returned 100%
+call    2 never executed
+    29888: 1362:    for (const Token *tok = mTokensFrontBack.front; tok; tok = tok->next()) {
+branch  0 taken 97% (fallthrough)
+branch  1 taken 3%
+call    2 returned 100%
+        -: 1363:        // Syntax error if binary operator only has 1 operand
+    28932: 1364:        if ((tok->isAssignmentOp() || tok->isComparisonOp() || Token::Match(tok,"[|^/%]")) && tok->astOperand1() && !tok->astOperand2())
+call    0 returned 100%
+branch  1 taken 97% (fallthrough)
+branch  2 taken 3%
+call    3 returned 100%
+branch  4 taken 99% (fallthrough)
+branch  5 taken 1%
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0% (throw)
+branch  9 taken 1% (fallthrough)
+branch 10 taken 99%
+call   11 returned 100%
+branch 12 taken 99% (fallthrough)
+branch 13 taken 1%
+call   14 returned 100%
+branch 15 taken 0% (fallthrough)
+branch 16 taken 100%
+branch 17 taken 0% (fallthrough)
+branch 18 taken 100%
+    #####: 1365:            throw InternalError(tok, "Syntax Error: AST broken, binary operator has only one operand.", InternalError::AST);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+        -: 1366:
+        -: 1367:        // Syntax error if we encounter "?" with operand2 that is not ":"
+    28932: 1368:        if (tok->astOperand2() && tok->str() == "?" && tok->astOperand2()->str() != ":")
+call    0 returned 100%
+branch  1 taken 16% (fallthrough)
+branch  2 taken 84%
+call    3 returned 100%
+call    4 returned 100%
+branch  5 taken 1% (fallthrough)
+branch  6 taken 99%
+call    7 returned 100%
+call    8 returned 100%
+call    9 returned 100%
+branch 10 taken 0% (fallthrough)
+branch 11 taken 100%
+branch 12 taken 0% (fallthrough)
+branch 13 taken 100%
+    #####: 1369:            throw InternalError(tok, "Syntax Error: AST broken, ternary operator lacks ':'.", InternalError::AST);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+        -: 1370:
+        -: 1371:        // Check for endless recursion
+    28932: 1372:        const Token* parent = tok->astParent();
+call    0 returned 100%
+    28932: 1373:        if (parent) {
+branch  0 taken 39% (fallthrough)
+branch  1 taken 61%
+    22436: 1374:            std::set < const Token* > astTokens; // list of anchestors
+call    0 returned 100%
+call    1 returned 100%
+call    2 never executed
+    11218: 1375:            astTokens.insert(tok);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+     2491: 1376:            do {
+    13709: 1377:                if (safeAstTokens.find(parent) != safeAstTokens.end())
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+call    6 returned 100%
+branch  7 taken 58% (fallthrough)
+branch  8 taken 42%
+call    9 never executed
+     7962: 1378:                    break;
+     5747: 1379:                if (astTokens.find(parent) != astTokens.end())
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+call    6 returned 100%
+branch  7 taken 0% (fallthrough)
+branch  8 taken 100%
+call    9 never executed
+    #####: 1380:                    throw InternalError(tok, "AST broken: endless recursion from '" + tok->str() + "'", InternalError::AST);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+     5747: 1381:                astTokens.insert(parent);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+     5747: 1382:            } while ((parent = parent->astParent()) != nullptr);
+call    0 returned 100%
+branch  1 taken 43% (fallthrough)
+branch  2 taken 57%
+    11218: 1383:            safeAstTokens.insert(astTokens.begin(), astTokens.end());
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+call    5 returned 100%
+call    6 returned 100%
+call    7 never executed
+call    8 never executed
+    17714: 1384:        } else if (tok->str() == ";") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 17% (fallthrough)
+branch  3 taken 83%
+     3004: 1385:            safeAstTokens.clear();
+call    0 returned 100%
+        -: 1386:        } else {
+    14710: 1387:            safeAstTokens.insert(tok);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+        -: 1388:        }
+        -: 1389:
+        -: 1390:        // Check binary operators
+    28932: 1391:        if (Token::Match(tok, "%or%|%oror%|%assign%|%comp%")) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 5% (fallthrough)
+branch  4 taken 95%
+        -: 1392:            // Skip lambda captures
+     1365: 1393:            if (Token::Match(tok, "= ,|]"))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+      391: 1394:                continue;
+        -: 1395:            // Don't check templates
+     1365: 1396:            if (tok->link())
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####: 1397:                continue;
+        -: 1398:            // Skip pure virtual functions
+     1365: 1399:            if (Token::simpleMatch(tok->previous(), ") = 0"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+    #####: 1400:                continue;
+        -: 1401:            // Skip operator definitions
+     1365: 1402:            if (Token::simpleMatch(tok->previous(), "operator"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+    #####: 1403:                continue;
+        -: 1404:            // Skip incomplete code
+     1365: 1405:            if (!tok->astOperand1() && !tok->astOperand2() && !tok->astParent())
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 99%
+call    3 returned 100%
+branch  4 taken 75% (fallthrough)
+branch  5 taken 25%
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0%
+branch  9 taken 1% (fallthrough)
+branch 10 taken 99%
+        3: 1406:                continue;
+        -: 1407:            // Skip lambda assignment and/or initializer
+     1362: 1408:            if (Token::Match(tok, "= {|^|["))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+       20: 1409:                continue;
+        -: 1410:            // FIXME: Workaround broken AST assignment in type aliases
+     1342: 1411:            if (Token::Match(tok->previous(), "%name% = %name%"))
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+branch  4 taken 27% (fallthrough)
+branch  5 taken 73%
+      368: 1412:                continue;
+      974: 1413:            if (!tok->astOperand1() || !tok->astOperand2())
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+call    3 returned 100%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+    #####: 1414:                throw InternalError(tok, "Syntax Error: AST broken, binary operator '" + tok->str() + "' doesn't have two operands.", InternalError::AST);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+        -: 1415:        }
+        -: 1416:    }
+      956: 1417:}
+        -: 1418:
+function _ZNK9TokenList11getOrigFileB5cxx11EPK5Token called 629 returned 100% blocks executed 100%
+      629: 1419:std::string TokenList::getOrigFile(const Token *tok) const
+        -: 1420:{
+      629: 1421:    return mOrigFiles.at(tok->fileIndex());
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+        -: 1422:}
+        -: 1423:
+function _ZNK9TokenList4fileB5cxx11EPK5Token called 629 returned 100% blocks executed 100%
+      629: 1424:const std::string& TokenList::file(const Token *tok) const
+        -: 1425:{
+      629: 1426:    return mFiles.at(tok->fileIndex());
+call    0 returned 100%
+call    1 returned 100%
+        -: 1427:}
+        -: 1428:
+function _ZNK9TokenList8fileLineB5cxx11EPK5Token called 0 returned 0% blocks executed 0%
+    #####: 1429:std::string TokenList::fileLine(const Token *tok) const
+        -: 1430:{
+    #####: 1431:    return ErrorLogger::ErrorMessage::FileLocation(tok, this).stringify();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -: 1432:}
+        -: 1433:
+function _ZNK9TokenList13validateTokenEPK5Token called 6 returned 100% blocks executed 78%
+        6: 1434:bool TokenList::validateToken(const Token* tok) const
+        -: 1435:{
+        6: 1436:    if (!tok)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####: 1437:        return true;
+      146: 1438:    for (const Token *t = mTokensFrontBack.front; t; t = t->next()) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+      146: 1439:        if (tok==t)
+branch  0 taken 4% (fallthrough)
+branch  1 taken 96%
+        6: 1440:            return true;
+        -: 1441:    }
+    #####: 1442:    return false;
+        -: 1443:}
+        -: 1444:
+function _ZN9TokenList21simplifyPlatformTypesEv called 1138 returned 100% blocks executed 41%
+     1138: 1445:void TokenList::simplifyPlatformTypes()
+        -: 1446:{
+     1138: 1447:    const bool isCPP11  = mSettings->standards.cpp >= Standards::CPP11;
+        -: 1448:
+        -: 1449:    enum { isLongLong, isLong, isInt } type;
+        -: 1450:
+        -: 1451:    /** @todo This assumes a flat address space. Not true for segmented address space (FAR *). */
+        -: 1452:
+     1138: 1453:    if (mSettings->sizeof_size_t == mSettings->sizeof_long)
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     1137: 1454:        type = isLong;
+        1: 1455:    else if (mSettings->sizeof_size_t == mSettings->sizeof_long_long)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        1: 1456:        type = isLongLong;
+    #####: 1457:    else if (mSettings->sizeof_size_t == mSettings->sizeof_int)
+branch  0 never executed
+branch  1 never executed
+    #####: 1458:        type = isInt;
+        -: 1459:    else
+    #####: 1460:        return;
+        -: 1461:
+    30756: 1462:    for (Token *tok = front(); tok; tok = tok->next()) {
+call    0 returned 100%
+branch  1 taken 96% (fallthrough)
+branch  2 taken 4%
+call    3 returned 100%
+        -: 1463:        // pre-check to reduce unneeded match calls
+    29618: 1464:        if (!Token::Match(tok, "std| ::| %type%"))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 59% (fallthrough)
+branch  4 taken 41%
+    17581: 1465:            continue;
+        -: 1466:        bool isUnsigned;
+    12037: 1467:        if (Token::Match(tok, "std| ::| size_t|uintptr_t|uintmax_t")) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+       20: 1468:            if (isCPP11 && tok->strAt(-1) == "using" && tok->strAt(1) == "=")
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+call    5 returned 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 taken 0% (fallthrough)
+branch 15 taken 100%
+    #####: 1469:                continue;
+       20: 1470:            isUnsigned = true;
+    24031: 1471:        } else if (Token::Match(tok, "std| ::| ssize_t|ptrdiff_t|intptr_t|intmax_t")) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+        3: 1472:            if (isCPP11 && tok->strAt(-1) == "using" && tok->strAt(1) == "=")
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+call    5 returned 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 taken 0% (fallthrough)
+branch 15 taken 100%
+    #####: 1473:                continue;
+        3: 1474:            isUnsigned = false;
+        -: 1475:        } else
+    12014: 1476:            continue;
+        -: 1477:
+       23: 1478:        bool inStd = false;
+       23: 1479:        if (tok->str() == "::") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+    #####: 1480:            tok->deleteThis();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+       23: 1481:        } else if (tok->str() == "std") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 9% (fallthrough)
+branch  3 taken 91%
+        2: 1482:            if (tok->next()->str() != "::")
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+    #####: 1483:                continue;
+        2: 1484:            inStd = true;
+        2: 1485:            tok->deleteNext();
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        2: 1486:            tok->deleteThis();
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -: 1487:        }
+        -: 1488:
+       23: 1489:        if (inStd)
+branch  0 taken 9% (fallthrough)
+branch  1 taken 91%
+        2: 1490:            tok->originalName("std::" + tok->str());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+call    7 returned 100%
+call    8 never executed
+call    9 never executed
+        -: 1491:        else
+       21: 1492:            tok->originalName(tok->str());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+       23: 1493:        if (isUnsigned)
+branch  0 taken 87% (fallthrough)
+branch  1 taken 13%
+       20: 1494:            tok->isUnsigned(true);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -: 1495:
+       23: 1496:        switch (type) {
+branch  0 taken 0%
+branch  1 taken 100%
+branch  2 taken 0%
+branch  3 taken 0%
+    #####: 1497:        case isLongLong:
+    #####: 1498:            tok->isLong(true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1499:            tok->str("long");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1500:            break;
+       23: 1501:        case isLong:
+       23: 1502:            tok->str("long");
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       23: 1503:            break;
+    #####: 1504:        case isInt:
+    #####: 1505:            tok->str("int");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1506:            break;
+        -: 1507:        }
+        -: 1508:    }
+        -: 1509:
+     2276: 1510:    const std::string platform_type(mSettings->platformString());
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+call    7 returned 100%
+call    8 returned 100%
+call    9 never executed
+        -: 1511:
+    30756: 1512:    for (Token *tok = front(); tok; tok = tok->next()) {
+call    0 returned 100%
+branch  1 taken 96% (fallthrough)
+branch  2 taken 4%
+call    3 returned 100%
+    29618: 1513:        if (tok->tokType() != Token::eType && tok->tokType() != Token::eName)
+call    0 returned 100%
+branch  1 taken 90% (fallthrough)
+branch  2 taken 10%
+call    3 returned 100%
+branch  4 taken 67% (fallthrough)
+branch  5 taken 33%
+branch  6 taken 60% (fallthrough)
+branch  7 taken 40%
+    17864: 1514:            continue;
+        -: 1515:
+    11754: 1516:        const Library::PlatformType * const platformtype = mSettings->library.platform_type(tok->str(), platform_type);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+        -: 1517:
+    11754: 1518:        if (platformtype) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+        -: 1519:            // check for namespace
+    #####: 1520:            if (tok->strAt(-1) == "::") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1521:                const Token * tok1 = tok->tokAt(-2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -: 1522:                // skip when non-global namespace defined
+    #####: 1523:                if (tok1 && tok1->tokType() == Token::eName)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####: 1524:                    continue;
+    #####: 1525:                tok = tok->previous();
+call    0 never executed
+    #####: 1526:                tok->deleteThis();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -: 1527:            }
+        -: 1528:            Token *typeToken;
+    #####: 1529:            if (platformtype->_const_ptr) {
+branch  0 never executed
+branch  1 never executed
+    #####: 1530:                tok->str("const");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1531:                tok->insertToken("*");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####: 1532:                tok->insertToken(platformtype->mType);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1533:                typeToken = tok;
+    #####: 1534:            } else if (platformtype->_pointer) {
+branch  0 never executed
+branch  1 never executed
+    #####: 1535:                tok->str(platformtype->mType);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1536:                typeToken = tok;
+    #####: 1537:                tok->insertToken("*");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####: 1538:            } else if (platformtype->_ptr_ptr) {
+branch  0 never executed
+branch  1 never executed
+    #####: 1539:                tok->str(platformtype->mType);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1540:                typeToken = tok;
+    #####: 1541:                tok->insertToken("*");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####: 1542:                tok->insertToken("*");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -: 1543:            } else {
+    #####: 1544:                tok->originalName(tok->str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1545:                tok->str(platformtype->mType);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1546:                typeToken = tok;
+        -: 1547:            }
+    #####: 1548:            if (platformtype->_signed)
+branch  0 never executed
+branch  1 never executed
+    #####: 1549:                typeToken->isSigned(true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1550:            if (platformtype->_unsigned)
+branch  0 never executed
+branch  1 never executed
+    #####: 1551:                typeToken->isUnsigned(true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1552:            if (platformtype->_long)
+branch  0 never executed
+branch  1 never executed
+    #####: 1553:                typeToken->isLong(true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -: 1554:        }
+        -: 1555:    }
+        -: 1556:}
+        -: 1557:
+function _ZN9TokenList15simplifyStdTypeEv called 1138 returned 100% blocks executed 88%
+     1138: 1558:void TokenList::simplifyStdType()
+        -: 1559:{
+    30679: 1560:    for (Token *tok = front(); tok; tok = tok->next()) {
+call    0 returned 100%
+branch  1 taken 96% (fallthrough)
+branch  2 taken 4%
+call    3 returned 100%
+    29541: 1561:        if (Token::Match(tok, "char|short|int|long|unsigned|signed|double|float") || (mSettings->standards.c >= Standards::C99 && Token::Match(tok, "complex|_Complex"))) {
+call    0 returned 100%
+branch  1 taken 95% (fallthrough)
+branch  2 taken 5%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+call    5 returned 100%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+branch  8 taken 5% (fallthrough)
+branch  9 taken 95%
+     1519: 1562:            bool isFloat= false;
+     1519: 1563:            bool isSigned = false;
+     1519: 1564:            bool isUnsigned = false;
+     1519: 1565:            bool isComplex = false;
+     1519: 1566:            int countLong = 0;
+     1519: 1567:            Token* typeSpec = nullptr;
+        -: 1568:
+     1519: 1569:            Token* tok2 = tok;
+     4711: 1570:            for (; tok2->next(); tok2 = tok2->next()) {
+call    0 returned 100%
+branch  1 taken 96% (fallthrough)
+branch  2 taken 4%
+call    3 returned 100%
+     2997: 1571:                if (tok2->str() == "long") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 2% (fallthrough)
+branch  3 taken 98%
+       64: 1572:                    countLong++;
+       64: 1573:                    if (!isFloat)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       64: 1574:                        typeSpec = tok2;
+     2933: 1575:                } else if (tok2->str() == "short") {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+        9: 1576:                    typeSpec = tok2;
+     2924: 1577:                } else if (tok2->str() == "unsigned")
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 2% (fallthrough)
+branch  3 taken 98%
+       63: 1578:                    isUnsigned = true;
+     2861: 1579:                else if (tok2->str() == "signed")
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 1% (fallthrough)
+branch  3 taken 99%
+        5: 1580:                    isSigned = true;
+     2856: 1581:                else if (Token::Match(tok2, "float|double")) {
+call    0 returned 100%
+branch  1 taken 3% (fallthrough)
+branch  2 taken 97%
+       85: 1582:                    isFloat = true;
+       85: 1583:                    typeSpec = tok2;
+     2771: 1584:                } else if (mSettings->standards.c >= Standards::C99 && Token::Match(tok2, "complex|_Complex"))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 0% (fallthrough)
+branch  4 taken 100%
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+    #####: 1585:                    isComplex = !isFloat || tok2->str() == "_Complex" || Token::Match(tok2->next(), "*|&|%name%"); // Ensure that "complex" is not the variables name
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+     2771: 1586:                else if (Token::Match(tok2, "char|int")) {
+call    0 returned 100%
+branch  1 taken 49% (fallthrough)
+branch  2 taken 51%
+     1370: 1587:                    if (!typeSpec)
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+     1365: 1588:                        typeSpec = tok2;
+        -: 1589:                } else
+     1401: 1590:                    break;
+        -: 1591:            }
+        -: 1592:
+     1519: 1593:            if (!typeSpec) { // unsigned i; or similar declaration
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+       10: 1594:                if (!isComplex) { // Ensure that "complex" is not the variables name
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       10: 1595:                    tok->str("int");
+call    0 returned 100%
+       10: 1596:                    tok->isSigned(isSigned);
+call    0 returned 100%
+       10: 1597:                    tok->isUnsigned(isUnsigned);
+call    0 returned 100%
+        -: 1598:                }
+        -: 1599:            } else {
+     1509: 1600:                typeSpec->isLong(typeSpec->isLong() || (isFloat && countLong == 1) || countLong > 1);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 6% (fallthrough)
+branch  4 taken 94%
+branch  5 taken 91% (fallthrough)
+branch  6 taken 9%
+branch  7 taken 1% (fallthrough)
+branch  8 taken 99%
+call    9 returned 100%
+     1509: 1601:                typeSpec->isComplex(typeSpec->isComplex() || (isFloat && isComplex));
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 6% (fallthrough)
+branch  4 taken 94%
+branch  5 taken 0% (fallthrough)
+branch  6 taken 100%
+call    7 returned 100%
+     1509: 1602:                typeSpec->isSigned(typeSpec->isSigned() || isSigned);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 1% (fallthrough)
+branch  4 taken 99%
+call    5 returned 100%
+     1509: 1603:                typeSpec->isUnsigned(typeSpec->isUnsigned() || isUnsigned);
+call    0 returned 100%
+branch  1 taken 99% (fallthrough)
+branch  2 taken 1%
+branch  3 taken 4% (fallthrough)
+branch  4 taken 96%
+call    5 returned 100%
+        -: 1604:
+        -: 1605:                // Remove specifiers
+     1509: 1606:                const Token* tok3 = tok->previous();
+call    0 returned 100%
+     1509: 1607:                tok2 = tok2->previous();
+call    0 returned 100%
+     4681: 1608:                while (tok3 != tok2) {
+branch  0 taken 51% (fallthrough)
+branch  1 taken 49%
+     1663: 1609:                    if (tok2 != typeSpec &&
+branch  0 taken 5% (fallthrough)
+branch  1 taken 95%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 5% (fallthrough)
+branch  5 taken 95%
+       77: 1610:                        (isComplex || !Token::Match(tok2, "complex|_Complex")))  // Ensure that "complex" is not the variables name
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+       77: 1611:                        tok2->deleteThis();
+call    0 returned 100%
+     1586: 1612:                    tok2 = tok2->previous();
+call    0 returned 100%
+        -: 1613:                }
+        -: 1614:            }
+        -: 1615:        }
+        -: 1616:    }
+function _GLOBAL__sub_I__ZN9TokenListC2EPK8Settings called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+     1141: 1617:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+        -: 1618:

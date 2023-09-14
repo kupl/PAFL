@@ -1,0 +1,153 @@
+        -:    0:Source:/home/workspace/lib/utils.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef utilsH
+        -:   21:#define utilsH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include <algorithm>
+        -:   25:#include <cctype>
+        -:   26:#include <cstddef>
+        -:   27:#include <string>
+        -:   28:
+        -:   29:inline bool endsWith(const std::string &str, char c)
+        -:   30:{
+        -:   31:    return str[str.size()-1U] == c;
+        -:   32:}
+        -:   33:
+        -:   34:inline bool endsWith(const std::string &str, const char end[], std::size_t endlen)
+        -:   35:{
+        -:   36:    return (str.size() >= endlen) && (str.compare(str.size()-endlen, endlen, end)==0);
+        -:   37:}
+        -:   38:
+        -:   39:inline static bool isPrefixStringCharLiteral(const std::string &str, char q, const std::string& p)
+        -:   40:{
+        -:   41:    if (!endsWith(str, q))
+        -:   42:        return false;
+        -:   43:    if ((str.length() + 1) > p.length() && (str.compare(0, p.size() + 1, p + q) == 0))
+        -:   44:        return true;
+        -:   45:    return false;
+        -:   46:}
+        -:   47:
+        -:   48:inline static bool isStringCharLiteral(const std::string &str, char q)
+        -:   49:{
+        -:   50:    for (const std::string & p: {
+        -:   51:    "", "u8", "u", "U", "L"
+        -:   52:}) {
+        -:   53:        if (isPrefixStringCharLiteral(str, q, p))
+        -:   54:            return true;
+        -:   55:    }
+        -:   56:    return false;
+        -:   57:}
+        -:   58:
+        -:   59:inline static bool isStringLiteral(const std::string &str)
+        -:   60:{
+        -:   61:    return isStringCharLiteral(str, '"');
+        -:   62:}
+        -:   63:
+        -:   64:inline static bool isCharLiteral(const std::string &str)
+        -:   65:{
+        -:   66:    return isStringCharLiteral(str, '\'');
+        -:   67:}
+        -:   68:
+        -:   69:inline static std::string getStringCharLiteral(const std::string &str, char q)
+        -:   70:{
+        -:   71:    const std::size_t quotePos = str.find(q);
+        -:   72:    return str.substr(quotePos + 1U, str.size() - quotePos - 2U);
+        -:   73:}
+        -:   74:
+        -:   75:inline static std::string getStringLiteral(const std::string &str)
+        -:   76:{
+        -:   77:    if (isStringLiteral(str))
+        -:   78:        return getStringCharLiteral(str, '"');
+        -:   79:    return "";
+        -:   80:}
+        -:   81:
+        -:   82:inline static std::string getCharLiteral(const std::string &str)
+        -:   83:{
+        -:   84:    if (isCharLiteral(str))
+        -:   85:        return getStringCharLiteral(str, '\'');
+        -:   86:    return "";
+        -:   87:}
+        -:   88:
+function _ZL14getOrdinalTexti called 19 returned 100% blocks executed 63%
+       19:   89:inline static const char *getOrdinalText(int i)
+        -:   90:{
+       19:   91:    if (i == 1)
+branch  0 taken 95% (fallthrough)
+branch  1 taken 5%
+       18:   92:        return "st";
+        1:   93:    if (i == 2)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        1:   94:        return "nd";
+    #####:   95:    if (i == 3)
+branch  0 never executed
+branch  1 never executed
+    #####:   96:        return "rd";
+    #####:   97:    return "th";
+        -:   98:}
+        -:   99:
+        -:  100:inline static int caseInsensitiveStringCompare(const std::string &lhs, const std::string &rhs)
+        -:  101:{
+        -:  102:    if (lhs.size() != rhs.size())
+        -:  103:        return (lhs.size() < rhs.size()) ? -1 : 1;
+        -:  104:    for (unsigned int i = 0; i < lhs.size(); ++i) {
+        -:  105:        const int c1 = std::toupper(lhs[i]);
+        -:  106:        const int c2 = std::toupper(rhs[i]);
+        -:  107:        if (c1 != c2)
+        -:  108:            return (c1 < c2) ? -1 : 1;
+        -:  109:    }
+        -:  110:    return 0;
+        -:  111:}
+        -:  112:
+        -:  113:#define UNUSED(x) (void)(x)
+        -:  114:
+        -:  115:// Use the nonneg macro when you want to assert that a variable/argument is not negative
+        -:  116:#ifdef __CPPCHECK__
+        -:  117:#define nonneg   __cppcheck_low__(0)
+        -:  118:#elif defined(NONNEG)
+        -:  119:// Enable non-negative values checking
+        -:  120:// TODO : investigate using annotations/contracts for stronger value checking
+        -:  121:#define nonneg   unsigned
+        -:  122:#else
+        -:  123:// Disable non-negative values checking
+        -:  124:#define nonneg
+        -:  125:#endif
+        -:  126:
+        -:  127:#if defined(__has_feature)
+        -:  128:#if __has_feature(address_sanitizer)
+        -:  129:#define ASAN 1
+        -:  130:#endif
+        -:  131:#endif
+        -:  132:
+        -:  133:#ifndef ASAN
+        -:  134:#ifdef  __SANITIZE_ADDRESS__
+        -:  135:#define ASAN 1
+        -:  136:#else
+        -:  137:#define ASAN 0
+        -:  138:#endif
+        -:  139:#endif
+        -:  140:
+        -:  141:#endif

@@ -1,0 +1,974 @@
+        -:    0:Source:/home/workspace/lib/tokenize.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/tokenize.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/tokenize.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef tokenizeH
+        -:   21:#define tokenizeH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "config.h"
+        -:   25:#include "errorlogger.h"
+        -:   26:#include "tokenlist.h"
+        -:   27:
+        -:   28:#include <ctime>
+        -:   29:#include <list>
+        -:   30:#include <map>
+        -:   31:#include <string>
+        -:   32:#include <stack>
+        -:   33:
+        -:   34:class Settings;
+        -:   35:class SymbolDatabase;
+        -:   36:class TimerResults;
+        -:   37:class Token;
+        -:   38:class TemplateSimplifier;
+        -:   39:
+        -:   40:namespace simplecpp {
+        -:   41:    class TokenList;
+        -:   42:}
+        -:   43:
+        -:   44:/// @addtogroup Core
+        -:   45:/// @{
+        -:   46:
+        -:   47:/** @brief The main purpose is to tokenize the source code. It also has functions that simplify the token list */
+        -:   48:class CPPCHECKLIB Tokenizer {
+        -:   49:
+        -:   50:    friend class TestSimplifyTokens;
+        -:   51:    friend class TestSimplifyTypedef;
+        -:   52:    friend class TestSimplifyUsing;
+        -:   53:    friend class TestTokenizer;
+        -:   54:    friend class SymbolDatabase;
+        -:   55:    friend class TestSimplifyTemplate;
+        -:   56:    friend class TemplateSimplifier;
+        -:   57:
+        -:   58:    /** Class used in Tokenizer::setVarIdPass1 */
+function _ZN9Tokenizer11VariableMapD2Ev called 956 returned 100% blocks executed 100%
+      956:   59:    class VariableMap {
+call    0 returned 100%
+call    1 returned 100%
+        -:   60:    private:
+        -:   61:        std::map<std::string, int> mVariableId;
+        -:   62:        std::stack<std::list<std::pair<std::string,int> > > mScopeInfo;
+        -:   63:        mutable nonneg int mVarId;
+        -:   64:    public:
+        -:   65:        VariableMap();
+        -:   66:        void enterScope();
+        -:   67:        bool leaveScope();
+        -:   68:        void addVariable(const std::string &varname);
+        -:   69:        bool hasVariable(const std::string &varname) const;
+function _ZNK9Tokenizer11VariableMap4findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 9047 returned 100% blocks executed 100%
+     9047:   70:        std::map<std::string,int>::const_iterator find(const std::string &varname) const {
+     9047:   71:            return mVariableId.find(varname);
+call    0 returned 100%
+        -:   72:        }
+function _ZNK9Tokenizer11VariableMap3endB5cxx11Ev called 9047 returned 100% blocks executed 100%
+     9047:   73:        std::map<std::string,int>::const_iterator end() const {
+     9047:   74:            return mVariableId.end();
+call    0 returned 100%
+        -:   75:        }
+function _ZNK9Tokenizer11VariableMap3mapB5cxx11Ev called 8273 returned 100% blocks executed 100%
+     8273:   76:        const std::map<std::string,int> &map() const {
+     8273:   77:            return mVariableId;
+        -:   78:        }
+function _ZNK9Tokenizer11VariableMap8getVarIdEv called 6442 returned 100% blocks executed 100%
+     6442:   79:        nonneg int *getVarId() const {
+     6442:   80:            return &mVarId;
+        -:   81:        }
+        -:   82:    };
+        -:   83:
+        -:   84:
+        -:   85:public:
+        -:   86:    Tokenizer();
+        -:   87:    Tokenizer(const Settings * settings, ErrorLogger *errorLogger);
+        -:   88:    ~Tokenizer();
+        -:   89:
+        -:   90:    void setTimerResults(TimerResults *tr) {
+        -:   91:        mTimerResults = tr;
+        -:   92:    }
+        -:   93:
+        -:   94:    /** Is the code C. Used for bailouts */
+function _ZNK9Tokenizer3isCEv called 0 returned 0% blocks executed 0%
+    #####:   95:    bool isC() const {
+    #####:   96:        return list.isC();
+call    0 never executed
+        -:   97:    }
+        -:   98:
+        -:   99:    /** Is the code CPP. Used for bailouts */
+function _ZNK9Tokenizer5isCPPEv called 0 returned 0% blocks executed 0%
+    #####:  100:    bool isCPP() const {
+    #####:  101:        return list.isCPP();
+call    0 never executed
+        -:  102:    }
+        -:  103:
+        -:  104:    /**
+        -:  105:     * Check if inner scope ends with a call to a noreturn function
+        -:  106:     * \param endScopeToken The '}' token
+        -:  107:     * \param unknown set to true if it's unknown if the scope is noreturn
+        -:  108:     * \return true if scope ends with a function call that might be 'noreturn'
+        -:  109:     */
+        -:  110:    bool IsScopeNoReturn(const Token *endScopeToken, bool *unknown = nullptr) const;
+        -:  111:
+        -:  112:    bool createTokens(std::istream &code, const std::string& FileName);
+        -:  113:    void createTokens(const simplecpp::TokenList *tokenList);
+        -:  114:
+        -:  115:    bool simplifyTokens1(const std::string &configuration);
+        -:  116:    /**
+        -:  117:     * Tokenize code
+        -:  118:     * @param code input stream for code, e.g.
+        -:  119:     * \code
+        -:  120:     * #file "p.h"
+        -:  121:     * class Foo
+        -:  122:     * {
+        -:  123:     * private:
+        -:  124:     * void Bar();
+        -:  125:     * };
+        -:  126:     *
+        -:  127:     * #endfile
+        -:  128:     * void Foo::Bar()
+        -:  129:     * {
+        -:  130:     * }
+        -:  131:     * \endcode
+        -:  132:     *
+        -:  133:     * @param FileName The filename
+        -:  134:     * @param configuration E.g. "A" for code where "#ifdef A" is true
+        -:  135:     * @return false if source code contains syntax errors
+        -:  136:     */
+        -:  137:    bool tokenize(std::istream &code,
+        -:  138:                  const char FileName[],
+        -:  139:                  const std::string &configuration = emptyString);
+        -:  140:
+        -:  141:    /** Set variable id */
+        -:  142:    void setVarId();
+        -:  143:    void setVarIdPass1();
+        -:  144:    void setVarIdPass2();
+        -:  145:
+        -:  146:    /**
+        -:  147:    * Basic simplification of tokenlist
+        -:  148:    *
+        -:  149:    * @param FileName The filename to run; used to do
+        -:  150:    * markup checks.
+        -:  151:    *
+        -:  152:    * @return false if there is an error that requires aborting
+        -:  153:    * the checking of this file.
+        -:  154:    */
+        -:  155:    bool simplifyTokenList1(const char FileName[]);
+        -:  156:
+        -:  157:    /**
+        -:  158:    * Most aggressive simplification of tokenlist
+        -:  159:    *
+        -:  160:    * @return false if there is an error that requires aborting
+        -:  161:    * the checking of this file.
+        -:  162:    */
+        -:  163:    bool simplifyTokenList2();
+        -:  164:
+        -:  165:    /**
+        -:  166:     * If --check-headers=no has been given; then remove unneeded code in headers.
+        -:  167:     * - All executable code.
+        -:  168:     * - Unused types/variables/etc
+        -:  169:     */
+        -:  170:    void simplifyHeaders();
+        -:  171:
+        -:  172:    /**
+        -:  173:     * Deletes dead code between 'begin' and 'end'.
+        -:  174:     * In general not everything can be erased, such as:
+        -:  175:     * - code after labels;
+        -:  176:     * - code outside the scope where the function is called;
+        -:  177:     * - code after a change of scope caused by 'switch(...);'
+        -:  178:     *   instructions, like 'case %any%;' or 'default;'
+        -:  179:     * Also, if the dead code contains a 'switch' block
+        -:  180:     * and inside it there's a label, the function removes all
+        -:  181:     * the 'switch(..)' tokens and every occurrence of 'case %any%; | default;'
+        -:  182:     * expression, such as the 'switch' block is reduced to a simple block.
+        -:  183:     *
+        -:  184:     * @param begin Tokens after this have a possibility to be erased.
+        -:  185:     * @param end Tokens before this have a possibility to be erased.
+        -:  186:     */
+        -:  187:    static void eraseDeadCode(Token *begin, const Token *end);
+        -:  188:
+        -:  189:    /**
+        -:  190:     * Simplify '* & ( %name% ) =' or any combination of '* &' and '()'
+        -:  191:     * parentheses around '%name%' to '%name% ='
+        -:  192:     */
+        -:  193:    void simplifyMulAndParens();
+        -:  194:
+        -:  195:    /**
+        -:  196:     * Calculates sizeof value for given type.
+        -:  197:     * @param type Token which will contain e.g. "int", "*", or string.
+        -:  198:     * @return sizeof for given type, or 0 if it can't be calculated.
+        -:  199:     */
+        -:  200:    nonneg int sizeOfType(const Token *type) const;
+        -:  201:
+        -:  202:    /**
+        -:  203:     * Try to determine if function parameter is passed by value by looking
+        -:  204:     * at the function declaration.
+        -:  205:     * @param fpar token for function parameter in the function call
+        -:  206:     * @return true if the parameter is passed by value. if unsure, false is returned
+        -:  207:     */
+        -:  208:    bool isFunctionParameterPassedByValue(const Token *fpar) const;
+        -:  209:
+        -:  210:    /** Simplify assignment in function call "f(x=g());" => "x=g();f(x);"
+        -:  211:     */
+        -:  212:    void simplifyAssignmentInFunctionCall();
+        -:  213:
+        -:  214:    /** Simplify assignment where rhs is a block : "x=({123;});" => "{x=123;}" */
+        -:  215:    void simplifyAssignmentBlock();
+        -:  216:
+        -:  217:    /**
+        -:  218:     * Simplify constant calculations such as "1+2" => "3"
+        -:  219:     * @return true if modifications to token-list are done.
+        -:  220:     *         false if no modifications are done.
+        -:  221:     */
+        -:  222:    bool simplifyCalculations();
+        -:  223:
+        -:  224:    /**
+        -:  225:     * Simplify dereferencing a pointer offset by a number:
+        -:  226:     *     "*(ptr + num)" => "ptr[num]"
+        -:  227:     *     "*(ptr - num)" => "ptr[-num]"
+        -:  228:     */
+        -:  229:    void simplifyOffsetPointerDereference();
+        -:  230:
+        -:  231:    /**
+        -:  232:       * Simplify referencing a pointer offset:
+        -:  233:       *     "Replace "&str[num]" => "(str + num)"
+        -:  234:       */
+        -:  235:    void simplifyOffsetPointerReference();
+        -:  236:
+        -:  237:    /** Insert array size where it isn't given */
+        -:  238:    void arraySize();
+        -:  239:
+        -:  240:    /** Simplify labels and 'case|default' syntaxes.
+        -:  241:      */
+        -:  242:    void simplifyLabelsCaseDefault();
+        -:  243:
+        -:  244:    /** simplify case ranges (gcc extension)
+        -:  245:      */
+        -:  246:    void simplifyCaseRange();
+        -:  247:
+        -:  248:    /** Remove macros in global scope */
+        -:  249:    void removeMacrosInGlobalScope();
+        -:  250:
+        -:  251:    /** Remove undefined macro in class definition:
+        -:  252:      * class DLLEXPORT Fred { };
+        -:  253:      * class Fred FINAL : Base { };
+        -:  254:      */
+        -:  255:    void removeMacroInClassDef();
+        -:  256:
+        -:  257:    /** Remove unknown macro in variable declarations: PROGMEM char x; */
+        -:  258:    void removeMacroInVarDecl();
+        -:  259:
+        -:  260:    /** Remove redundant assignment */
+        -:  261:    void removeRedundantAssignment();
+        -:  262:
+        -:  263:    /** Simplifies some realloc usage like
+        -:  264:      * 'x = realloc (0, n);' => 'x = malloc(n);'
+        -:  265:      * 'x = realloc (y, 0);' => 'x = 0; free(y);'
+        -:  266:      */
+        -:  267:    void simplifyRealloc();
+        -:  268:
+        -:  269:    /** Add parentheses for sizeof: sizeof x => sizeof(x) */
+        -:  270:    void sizeofAddParentheses();
+        -:  271:
+        -:  272:    /**
+        -:  273:     * Replace sizeof() to appropriate size.
+        -:  274:     * @return true if modifications to token-list are done.
+        -:  275:     *         false if no modifications are done.
+        -:  276:     */
+        -:  277:    bool simplifySizeof();
+        -:  278:
+        -:  279:    /**
+        -:  280:     * Simplify variable declarations (split up)
+        -:  281:     * \param only_k_r_fpar Only simplify K&R function parameters
+        -:  282:     */
+        -:  283:    void simplifyVarDecl(const bool only_k_r_fpar);
+        -:  284:    void simplifyVarDecl(Token * tokBegin, const Token * const tokEnd, const bool only_k_r_fpar);
+        -:  285:
+        -:  286:    /**
+        -:  287:     * Simplify variable initialization
+        -:  288:     * '; int *p(0);' => '; int *p = 0;'
+        -:  289:     */
+        -:  290:    void simplifyInitVar();
+        -:  291:    Token * initVar(Token * tok);
+        -:  292:
+        -:  293:    /**
+        -:  294:     * Simplify easy constant '?:' operation
+        -:  295:     * Example: 0 ? (2/0) : 0 => 0
+        -:  296:     * @return true if something is modified
+        -:  297:     *         false if nothing is done.
+        -:  298:     */
+        -:  299:    bool simplifyConstTernaryOp();
+        -:  300:
+        -:  301:    /**
+        -:  302:     * Simplify compound assignments
+        -:  303:     * Example: ";a+=b;" => ";a=a+b;"
+        -:  304:     */
+        -:  305:    void simplifyCompoundAssignment();
+        -:  306:
+        -:  307:    /**
+        -:  308:     * Simplify the location of "static" and "const" qualifiers in
+        -:  309:     * a variable declaration or definition.
+        -:  310:     * Example: "int static const a;" => "static const a;"
+        -:  311:     * Example: "long long const static b;" => "static const long long b;"
+        -:  312:     */
+        -:  313:    void simplifyStaticConst();
+        -:  314:
+        -:  315:    /**
+        -:  316:     * Simplify assignments in "if" and "while" conditions
+        -:  317:     * Example: "if(a=b);" => "a=b;if(a);"
+        -:  318:     * Example: "while(a=b) { f(a); }" => "a = b; while(a){ f(a); a = b; }"
+        -:  319:     * Example: "do { f(a); } while(a=b);" => "do { f(a); a = b; } while(a);"
+        -:  320:     */
+        -:  321:    void simplifyIfAndWhileAssign();
+        -:  322:
+        -:  323:    /**
+        -:  324:     * Simplify multiple assignments.
+        -:  325:     * Example: "a = b = c = 0;" => "a = 0; b = 0; c = 0;"
+        -:  326:     */
+        -:  327:    void simplifyVariableMultipleAssign();
+        -:  328:
+        -:  329:    /**
+        -:  330:     * Simplify the 'C Alternative Tokens'
+        -:  331:     * Examples:
+        -:  332:     * "if(s and t)" => "if(s && t)"
+        -:  333:     * "while((r bitand s) and not t)" => while((r & s) && !t)"
+        -:  334:     * "a and_eq b;" => "a &= b;"
+        -:  335:     */
+        -:  336:    bool simplifyCAlternativeTokens();
+        -:  337:
+        -:  338:    /**
+        -:  339:     * Simplify comma into a semicolon when possible:
+        -:  340:     * - "delete a, delete b" => "delete a; delete b;"
+        -:  341:     * - "a = 0, b = 0;" => "a = 0; b = 0;"
+        -:  342:     * - "return a(), b;" => "a(); return b;"
+        -:  343:     */
+        -:  344:    void simplifyComma();
+        -:  345:
+        -:  346:    /** Add braces to an if-block, for-block, etc.
+        -:  347:     * @return true if no syntax errors
+        -:  348:     */
+        -:  349:    bool simplifyAddBraces();
+        -:  350:
+        -:  351:    /** Add braces to an if-block, for-block, etc.
+        -:  352:     * for command starting at token including else-block
+        -:  353:     * @return last token of command
+        -:  354:     *         or input token in case of an error where no braces are added
+        -:  355:     *         or NULL when syntaxError is called
+        -:  356:     */
+        -:  357:    Token * simplifyAddBracesToCommand(Token * tok);
+        -:  358:
+        -:  359:    /** Add pair of braces to an single if-block, else-block, for-block, etc.
+        -:  360:     * for command starting at token
+        -:  361:     * @return last token of command
+        -:  362:     *         or input token in case of an error where no braces are added
+        -:  363:     *         or NULL when syntaxError is called
+        -:  364:     */
+        -:  365:    Token * simplifyAddBracesPair(Token *tok, bool commandWithCondition);
+        -:  366:
+        -:  367:    /**
+        -:  368:     * typedef A mytype;
+        -:  369:     * mytype c;
+        -:  370:     *
+        -:  371:     * Becomes:
+        -:  372:     * typedef A mytype;
+        -:  373:     * A c;
+        -:  374:     */
+        -:  375:    void simplifyTypedef();
+        -:  376:
+        -:  377:    /**
+        -:  378:     */
+        -:  379:    bool isMemberFunction(const Token *openParen) const;
+        -:  380:
+        -:  381:    /**
+        -:  382:     */
+        -:  383:    bool simplifyUsing();
+        -:  384:
+        -:  385:    /**
+        -:  386:     * Simplify casts
+        -:  387:     */
+        -:  388:    void simplifyCasts();
+        -:  389:
+        -:  390:    /**
+        -:  391:     * Change (multiple) arrays to (multiple) pointers.
+        -:  392:     */
+        -:  393:    void simplifyUndefinedSizeArray();
+        -:  394:
+        -:  395:    /**
+        -:  396:     * A simplify function that replaces a variable with its value in cases
+        -:  397:     * when the value is known. e.g. "x=10; if(x)" => "x=10;if(10)"
+        -:  398:     *
+        -:  399:     * @return true if modifications to token-list are done.
+        -:  400:     *         false if no modifications are done.
+        -:  401:     */
+        -:  402:    bool simplifyKnownVariables();
+        -:  403:
+        -:  404:    /**
+        -:  405:     * Utility function for simplifyKnownVariables. Get data about an
+        -:  406:     * assigned variable.
+        -:  407:     */
+        -:  408:    static bool simplifyKnownVariablesGetData(nonneg int varid, Token **_tok2, Token **_tok3, std::string &value, nonneg int &valueVarId, bool &valueIsPointer, bool floatvar);
+        -:  409:
+        -:  410:    /**
+        -:  411:     * utility function for simplifyKnownVariables. Perform simplification
+        -:  412:     * of a given variable
+        -:  413:     */
+        -:  414:    bool simplifyKnownVariablesSimplify(Token **tok2, Token *tok3, nonneg int varid, const std::string &structname, std::string &value, nonneg int valueVarId, bool valueIsPointer, const Token * const valueToken, int indentlevel) const;
+        -:  415:
+        -:  416:    /** Simplify useless C++ empty namespaces, like: 'namespace %name% { }'*/
+        -:  417:    void simplifyEmptyNamespaces();
+        -:  418:
+        -:  419:    /** Simplify redundant code placed after control flow statements :
+        -:  420:     * 'return', 'throw', 'goto', 'break' and 'continue'
+        -:  421:     */
+        -:  422:    void simplifyFlowControl();
+        -:  423:
+        -:  424:    /** Expand nested strcat() calls. */
+        -:  425:    void simplifyNestedStrcat();
+        -:  426:
+        -:  427:    /** Simplify "if else" */
+        -:  428:    void elseif();
+        -:  429:
+        -:  430:    /** Simplify conditions
+        -:  431:     * @return true if something is modified
+        -:  432:     *         false if nothing is done.
+        -:  433:     */
+        -:  434:    bool simplifyConditions();
+        -:  435:
+        -:  436:    /** Remove redundant code, e.g. if( false ) { int a; } should be
+        -:  437:     * removed, because it is never executed.
+        -:  438:     * @return true if something is modified
+        -:  439:     *         false if nothing is done.
+        -:  440:     */
+        -:  441:    bool removeRedundantConditions();
+        -:  442:
+        -:  443:    /**
+        -:  444:     * Remove redundant for:
+        -:  445:     * "for (x=0;x<1;x++) { }" => "{ x = 1; }"
+        -:  446:     */
+        -:  447:    void removeRedundantFor();
+        -:  448:
+        -:  449:
+        -:  450:    /**
+        -:  451:     * Reduces "; ;" to ";", except in "( ; ; )"
+        -:  452:     */
+        -:  453:    void removeRedundantSemicolons();
+        -:  454:
+        -:  455:    /** Simplify function calls - constant return value
+        -:  456:     * @return true if something is modified
+        -:  457:     *         false if nothing is done.
+        -:  458:     */
+        -:  459:    bool simplifyFunctionReturn();
+        -:  460:
+        -:  461:    /** Struct simplification
+        -:  462:     * "struct S { } s;" => "struct S { }; S s;"
+        -:  463:     */
+        -:  464:
+        -:  465:    void simplifyStructDecl();
+        -:  466:
+        -:  467:    /**
+        -:  468:     * Remove redundant parentheses:
+        -:  469:     * - "((x))" => "(x)"
+        -:  470:     * - "(function())" => "function()"
+        -:  471:     * - "(delete x)" => "delete x"
+        -:  472:     * - "(delete [] x)" => "delete [] x"
+        -:  473:     * @return true if modifications to token-list are done.
+        -:  474:     *         false if no modifications are done.
+        -:  475:     */
+        -:  476:    bool simplifyRedundantParentheses();
+        -:  477:
+        -:  478:    void simplifyCharAt();
+        -:  479:
+        -:  480:    /** Simplify references */
+        -:  481:    void simplifyReference();
+        -:  482:
+        -:  483:    /**
+        -:  484:     * Simplify functions like "void f(x) int x; {"
+        -:  485:     * into "void f(int x) {"
+        -:  486:     */
+        -:  487:    void simplifyFunctionParameters();
+        -:  488:
+        -:  489:    /**
+        -:  490:     * Simplify templates
+        -:  491:     */
+        -:  492:    void simplifyTemplates();
+        -:  493:
+        -:  494:    void simplifyDoublePlusAndDoubleMinus();
+        -:  495:
+        -:  496:    void simplifyRedundantConsecutiveBraces();
+        -:  497:
+        -:  498:    void simplifyArrayAccessSyntax();
+        -:  499:
+        -:  500:    void simplifyParameterVoid();
+        -:  501:
+        -:  502:    void fillTypeSizes();
+        -:  503:
+        -:  504:    void combineOperators();
+        -:  505:
+        -:  506:    void combineStringAndCharLiterals();
+        -:  507:
+        -:  508:    void concatenateNegativeNumberAndAnyPositive();
+        -:  509:
+        -:  510:    void simplifyExternC();
+        -:  511:
+        -:  512:    void simplifyRoundCurlyParentheses();
+        -:  513:
+        -:  514:    void simplifyTypeIntrinsics();
+        -:  515:
+        -:  516:    void simplifySQL();
+        -:  517:
+        -:  518:    void checkForEnumsWithTypedef();
+        -:  519:
+        -:  520:    void findComplicatedSyntaxErrorsInTemplates();
+        -:  521:
+        -:  522:    /**
+        -:  523:     * Simplify e.g. 'atol("0")' into '0'
+        -:  524:     */
+        -:  525:    void simplifyMathFunctions();
+        -:  526:
+        -:  527:    /**
+        -:  528:     * Simplify e.g. 'sin(0)' into '0'
+        -:  529:     */
+        -:  530:    void simplifyMathExpressions();
+        -:  531:
+        -:  532:    /**
+        -:  533:     * Modify strings in the token list by replacing hex and oct
+        -:  534:     * values. E.g. "\x61" -> "a" and "\000" -> "\0"
+        -:  535:     * @param source The string to be modified, e.g. "\x61"
+        -:  536:     * @return Modified string, e.g. "a"
+        -:  537:     */
+        -:  538:    static std::string simplifyString(const std::string &source);
+        -:  539:
+        -:  540:    /**
+        -:  541:     * is token pointing at function head?
+        -:  542:     * @param tok         A '(' or ')' token in a possible function head
+        -:  543:     * @param endsWith    string after function head
+        -:  544:     * @return token matching with endsWith if syntax seems to be a function head else nullptr
+        -:  545:     */
+        -:  546:    const Token * isFunctionHead(const Token *tok, const std::string &endsWith) const;
+        -:  547:
+        -:  548:    /**
+        -:  549:     * is token pointing at function head?
+        -:  550:     * @param tok         A '(' or ')' token in a possible function head
+        -:  551:     * @param endsWith    string after function head
+        -:  552:     * @param cpp         c++ code
+        -:  553:     * @return token matching with endsWith if syntax seems to be a function head else nullptr
+        -:  554:     */
+        -:  555:    static const Token * isFunctionHead(const Token *tok, const std::string &endsWith, bool cpp);
+        -:  556:
+        -:  557:private:
+        -:  558:
+        -:  559:    /**
+        -:  560:     * simplify "while (0)"
+        -:  561:     */
+        -:  562:    void simplifyWhile0();
+        -:  563:
+        -:  564:    /**
+        -:  565:     * Simplify while(func() && errno==EINTR)
+        -:  566:     */
+        -:  567:    void simplifyErrNoInWhile();
+        -:  568:
+        -:  569:    /**
+        -:  570:     * Simplify while(func(f))
+        -:  571:     */
+        -:  572:    void simplifyFuncInWhile();
+        -:  573:
+        -:  574:    /**
+        -:  575:     * Remove "std::" before some function names
+        -:  576:     */
+        -:  577:    void simplifyStd();
+        -:  578:
+        -:  579:    /** Simplify pointer to standard type (C only) */
+        -:  580:    void simplifyPointerToStandardType();
+        -:  581:
+        -:  582:    /** Simplify function pointers */
+        -:  583:    void simplifyFunctionPointers();
+        -:  584:
+        -:  585:    /**
+        -:  586:     * Send error message to error logger about internal bug.
+        -:  587:     * @param tok the token that this bug concerns.
+        -:  588:     */
+        -:  589:    void cppcheckError(const Token *tok) const;
+        -:  590:
+        -:  591:    /**
+        -:  592:     * Setup links for tokens so that one can call Token::link().
+        -:  593:     */
+        -:  594:    void createLinks();
+        -:  595:
+        -:  596:    /**
+        -:  597:     * Setup links between < and >.
+        -:  598:     */
+        -:  599:    void createLinks2();
+        -:  600:
+        -:  601:public:
+        -:  602:
+        -:  603:    /** Syntax error */
+        -:  604:    void syntaxError(const Token *tok, const std::string &code = "") const;
+        -:  605:
+        -:  606:    /** Syntax error. Unmatched character. */
+        -:  607:    void unmatchedToken(const Token *tok) const;
+        -:  608:
+        -:  609:    /** Syntax error. C++ code in C file. */
+        -:  610:    void syntaxErrorC(const Token *tok, const std::string &what) const;
+        -:  611:
+        -:  612:    /** Warn about unknown macro(s), configuration is recommended */
+        -:  613:    void unknownMacroError(const Token *tok1) const;
+        -:  614:
+        -:  615:private:
+        -:  616:
+        -:  617:    /** Report that there is an unhandled "class x y {" code */
+        -:  618:    void unhandled_macro_class_x_y(const Token *tok) const;
+        -:  619:
+        -:  620:    /** Check configuration (unknown macros etc) */
+        -:  621:    void checkConfiguration() const;
+        -:  622:    void macroWithSemicolonError(const Token *tok, const std::string &macroName) const;
+        -:  623:
+        -:  624:    /**
+        -:  625:     * Is there C++ code in C file?
+        -:  626:     */
+        -:  627:    void validateC() const;
+        -:  628:
+        -:  629:    /**
+        -:  630:     * assert that tokens are ok - used during debugging for example
+        -:  631:     * to catch problems in simplifyTokenList1/2.
+        -:  632:     */
+        -:  633:    void validate() const;
+        -:  634:
+        -:  635:    /** Detect garbage code and call syntaxError() if found. */
+        -:  636:    void findGarbageCode() const;
+        -:  637:
+        -:  638:    /** Detect garbage expression */
+        -:  639:    static bool isGarbageExpr(const Token *start, const Token *end, bool allowSemicolon);
+        -:  640:
+        -:  641:    /**
+        -:  642:     * Remove __declspec()
+        -:  643:     */
+        -:  644:    void simplifyDeclspec();
+        -:  645:
+        -:  646:    /**
+        -:  647:     * Remove calling convention
+        -:  648:     */
+        -:  649:    void simplifyCallingConvention();
+        -:  650:
+        -:  651:    /**
+        -:  652:     * Remove \__attribute\__ ((?))
+        -:  653:     */
+        -:  654:    void simplifyAttribute();
+        -:  655:
+        -:  656:    /**
+        -:  657:     * Remove \__cppcheck\__ ((?))
+        -:  658:     */
+        -:  659:    void simplifyCppcheckAttribute();
+        -:  660:
+        -:  661:    /**
+        -:  662:     * Remove keywords "volatile", "inline", "register", and "restrict"
+        -:  663:     */
+        -:  664:    void simplifyKeyword();
+        -:  665:
+        -:  666:    /**
+        -:  667:     * Remove __asm
+        -:  668:     */
+        -:  669:    void simplifyAsm();
+        -:  670:
+        -:  671:    /**
+        -:  672:     * asm heuristics, Put ^{} statements in asm()
+        -:  673:     */
+        -:  674:    void simplifyAsm2();
+        -:  675:
+        -:  676:    /**
+        -:  677:     * Simplify \@&hellip;  (compiler extension)
+        -:  678:     */
+        -:  679:    void simplifyAt();
+        -:  680:
+        -:  681:    /**
+        -:  682:     * Simplify bitfields - the field width is removed as we don't use it.
+        -:  683:     */
+        -:  684:    void simplifyBitfields();
+        -:  685:
+        -:  686:    /**
+        -:  687:     * Remove unnecessary member qualification
+        -:  688:     */
+        -:  689:    void removeUnnecessaryQualification();
+        -:  690:
+        -:  691:    /**
+        -:  692:     * Add std:: in front of std classes, when using namespace std; was given
+        -:  693:     */
+        -:  694:    void simplifyNamespaceStd();
+        -:  695:
+        -:  696:    /**
+        -:  697:    * Convert Microsoft memory functions
+        -:  698:    * CopyMemory(dst, src, len) -> memcpy(dst, src, len)
+        -:  699:    * FillMemory(dst, len, val) -> memset(dst, val, len)
+        -:  700:    * MoveMemory(dst, src, len) -> memmove(dst, src, len)
+        -:  701:    * ZeroMemory(dst, len) -> memset(dst, 0, len)
+        -:  702:    */
+        -:  703:    void simplifyMicrosoftMemoryFunctions();
+        -:  704:
+        -:  705:    /**
+        -:  706:    * Convert Microsoft string functions
+        -:  707:    * _tcscpy -> strcpy
+        -:  708:    */
+        -:  709:    void simplifyMicrosoftStringFunctions();
+        -:  710:
+        -:  711:    /**
+        -:  712:      * Remove Borland code
+        -:  713:      */
+        -:  714:    void simplifyBorland();
+        -:  715:
+        -:  716:    /**
+        -:  717:     * Remove Qt signals and slots
+        -:  718:     */
+        -:  719:    void simplifyQtSignalsSlots();
+        -:  720:
+        -:  721:    /**
+        -:  722:     * Collapse operator name tokens into single token
+        -:  723:     * operator = => operator=
+        -:  724:     */
+        -:  725:    void simplifyOperatorName();
+        -:  726:
+        -:  727:    /**
+        -:  728:    * Remove [[attribute]] (C++11 and later) from TokenList
+        -:  729:    */
+        -:  730:    void simplifyCPPAttribute();
+        -:  731:
+        -:  732:    /**
+        -:  733:     * Replace strlen(str)
+        -:  734:     * @return true if any replacement took place, false else
+        -:  735:     * */
+        -:  736:    bool simplifyStrlen();
+        -:  737:
+        -:  738:    /**
+        -:  739:     * Convert namespace aliases
+        -:  740:     */
+        -:  741:    void simplifyNamespaceAliases();
+        -:  742:
+        -:  743:    /**
+        -:  744:     * Convert C++17 style nested namespace to older style
+        -:  745:     */
+        -:  746:    void simplifyNestedNamespace();
+        -:  747:
+        -:  748:    /**
+        -:  749:    * Prepare ternary operators with parentheses so that the AST can be created
+        -:  750:    * */
+        -:  751:    void prepareTernaryOpForAST();
+        -:  752:
+        -:  753:    /**
+        -:  754:     * check for duplicate enum definition
+        -:  755:     */
+        -:  756:    static bool duplicateDefinition(Token **tokPtr);
+        -:  757:
+        -:  758:    /**
+        -:  759:     * report error message
+        -:  760:     */
+        -:  761:    void reportError(const Token* tok, const Severity::SeverityType severity, const std::string& id, const std::string& msg, bool inconclusive = false) const;
+        -:  762:    void reportError(const std::list<const Token*>& callstack, Severity::SeverityType severity, const std::string& id, const std::string& msg, bool inconclusive = false) const;
+        -:  763:
+        -:  764:    bool duplicateTypedef(Token **tokPtr, const Token *name, const Token *typeDef) const;
+        -:  765:
+        -:  766:    void unsupportedTypedef(const Token *tok) const;
+        -:  767:
+        -:  768:    void setVarIdClassDeclaration(const Token * const startToken,
+        -:  769:                                  const VariableMap &variableMap,
+        -:  770:                                  const nonneg int scopeStartVarId,
+        -:  771:                                  std::map<int, std::map<std::string,int> >& structMembers);
+        -:  772:
+        -:  773:    void setVarIdStructMembers(Token **tok1,
+        -:  774:                               std::map<int, std::map<std::string, int> >& structMembers,
+        -:  775:                               nonneg int *varId);
+        -:  776:
+        -:  777:    void setVarIdClassFunction(const std::string &classname,
+        -:  778:                               Token * const startToken,
+        -:  779:                               const Token * const endToken,
+        -:  780:                               const std::map<std::string,int> &varlist,
+        -:  781:                               std::map<int, std::map<std::string,int> >& structMembers,
+        -:  782:                               nonneg int *varId_);
+        -:  783:
+        -:  784:    /**
+        -:  785:     * Simplify e.g. 'return(strncat(temp,"a",1));' into
+        -:  786:     * strncat(temp,"a",1); return temp;
+        -:  787:     */
+        -:  788:    void simplifyReturnStrncat();
+        -:  789:
+        -:  790:    /**
+        -:  791:     * Output list of unknown types.
+        -:  792:     */
+        -:  793:    void printUnknownTypes() const;
+        -:  794:
+        -:  795:    /** Find end of SQL (or PL/SQL) block */
+        -:  796:    static const Token *findSQLBlockEnd(const Token *tokSQLStart);
+        -:  797:
+        -:  798:public:
+        -:  799:
+        -:  800:    /** Was there templates in the code? */
+        -:  801:    bool codeWithTemplates() const {
+        -:  802:        return mCodeWithTemplates;
+        -:  803:    }
+        -:  804:
+        -:  805:
+        -:  806:    void setSettings(const Settings *settings) {
+        -:  807:        mSettings = settings;
+        -:  808:        list.setSettings(settings);
+        -:  809:    }
+        -:  810:
+        -:  811:    const SymbolDatabase *getSymbolDatabase() const {
+        -:  812:        return mSymbolDatabase;
+        -:  813:    }
+        -:  814:    void createSymbolDatabase();
+        -:  815:    void deleteSymbolDatabase();
+        -:  816:
+        -:  817:    /** print --debug output if debug flags match the simplification:
+        -:  818:     * 0=unknown/both simplifications
+        -:  819:     * 1=1st simplifications
+        -:  820:     * 2=2nd simplifications
+        -:  821:     */
+        -:  822:    void printDebugOutput(int simplification) const;
+        -:  823:
+        -:  824:    void dump(std::ostream &out) const;
+        -:  825:
+        -:  826:    Token *deleteInvalidTypedef(Token *typeDef);
+        -:  827:
+        -:  828:    /**
+        -:  829:     * Get variable count.
+        -:  830:     * @return number of variables
+        -:  831:     */
+        -:  832:    nonneg int varIdCount() const {
+        -:  833:        return mVarId;
+        -:  834:    }
+        -:  835:
+        -:  836:    /**
+        -:  837:     * Token list: stores all tokens.
+        -:  838:     */
+        -:  839:    TokenList list;
+        -:  840:    // Implement tokens() as a wrapper for convenience when using the TokenList
+function _ZNK9Tokenizer6tokensEv called 0 returned 0% blocks executed 0%
+    #####:  841:    const Token* tokens() const {
+    #####:  842:        return list.front();
+call    0 never executed
+        -:  843:    }
+        -:  844:
+        -:  845:    /**
+        -:  846:    * Helper function to check whether number is zero (0 or 0.0 or 0E+0) or not?
+        -:  847:    * @param s the string to check
+        -:  848:    * @return true in case is is zero and false otherwise.
+        -:  849:    */
+        -:  850:    static bool isZeroNumber(const std::string &s);
+        -:  851:
+        -:  852:    /**
+        -:  853:    * Helper function to check whether number is one (1 or 0.1E+1 or 1E+0) or not?
+        -:  854:    * @param s the string to check
+        -:  855:    * @return true in case is is one and false otherwise.
+        -:  856:    */
+        -:  857:    static bool isOneNumber(const std::string &s);
+        -:  858:
+        -:  859:    /**
+        -:  860:    * Helper function to check whether number is two (2 or 0.2E+1 or 2E+0) or not?
+        -:  861:    * @param s the string to check
+        -:  862:    * @return true in case is is two and false otherwise.
+        -:  863:    */
+        -:  864:    static bool isTwoNumber(const std::string &s);
+        -:  865:
+        -:  866:    /**
+        -:  867:    * Helper function to check for start of function execution scope.
+        -:  868:    * Do not use this in checks.  Use the symbol database.
+        -:  869:    * @param tok pointer to end parentheses of parameter list
+        -:  870:    * @return pointer to start brace of function scope or nullptr if not start.
+        -:  871:    */
+        -:  872:    static const Token * startOfExecutableScope(const Token * tok);
+        -:  873:
+        -:  874:#ifdef MAXTIME
+        -:  875:    bool isMaxTime() const {
+        -:  876:        return (std::time(0) > mMaxTime);
+        -:  877:#else
+function _ZN9Tokenizer9isMaxTimeEv called 0 returned 0% blocks executed 0%
+    #####:  878:    static bool isMaxTime() {
+    #####:  879:        return false;
+        -:  880:#endif
+        -:  881:    }
+        -:  882:
+        -:  883:    const Settings *getSettings() const {
+        -:  884:        return mSettings;
+        -:  885:    }
+        -:  886:
+        -:  887:    void calculateScopes();
+        -:  888:
+        -:  889:    /** Disable copy constructor */
+        -:  890:    Tokenizer(const Tokenizer &) = delete;
+        -:  891:
+        -:  892:    /** Disable assignment operator */
+        -:  893:    Tokenizer &operator=(const Tokenizer &) = delete;
+        -:  894:
+        -:  895:private:
+        -:  896:    Token *processFunc(Token *tok2, bool inOperator) const;
+        -:  897:
+        -:  898:    /**
+        -:  899:    * Get new variable id.
+        -:  900:    * @return new variable id
+        -:  901:    */
+        -:  902:    nonneg int newVarId() {
+        -:  903:        return ++mVarId;
+        -:  904:    }
+        -:  905:
+        -:  906:    /** Set pod types */
+        -:  907:    void setPodTypes();
+        -:  908:
+        -:  909:    /** settings */
+        -:  910:    const Settings * mSettings;
+        -:  911:
+        -:  912:    /** errorlogger */
+        -:  913:    ErrorLogger* const mErrorLogger;
+        -:  914:
+        -:  915:    /** Symbol database that all checks etc can use */
+        -:  916:    SymbolDatabase *mSymbolDatabase;
+        -:  917:
+        -:  918:    TemplateSimplifier *mTemplateSimplifier;
+        -:  919:
+        -:  920:    /** E.g. "A" for code where "#ifdef A" is true. This is used to
+        -:  921:        print additional information in error situations. */
+        -:  922:    std::string mConfiguration;
+        -:  923:
+        -:  924:    /** sizeof information for known types */
+        -:  925:    std::map<std::string, int> mTypeSize;
+        -:  926:
+        -:  927:    /** variable count */
+        -:  928:    nonneg int mVarId;
+        -:  929:
+        -:  930:    /** unnamed count "Unnamed0", "Unnamed1", "Unnamed2", ... */
+        -:  931:    nonneg int mUnnamedCount;
+        -:  932:
+        -:  933:    /**
+        -:  934:     * was there any templates? templates that are "unused" are
+        -:  935:     * removed from the token list
+        -:  936:     */
+        -:  937:    bool mCodeWithTemplates;
+        -:  938:
+        -:  939:    /**
+        -:  940:     * TimerResults
+        -:  941:     */
+        -:  942:    TimerResults *mTimerResults;
+        -:  943:
+        -:  944:#ifdef MAXTIME
+        -:  945:    /** Tokenizer maxtime */
+        -:  946:    const std::time_t mMaxTime;
+        -:  947:#endif
+        -:  948:};
+        -:  949:
+        -:  950:/// @}
+        -:  951:
+        -:  952://---------------------------------------------------------------------------
+        -:  953:#endif // tokenizeH

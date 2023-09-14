@@ -1,0 +1,159 @@
+        -:    0:Source:/home/workspace/lib/checkassert.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkassert.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkassert.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#ifndef checkassertH
+        -:   22:#define checkassertH
+        -:   23://---------------------------------------------------------------------------
+        -:   24:
+        -:   25:#include "check.h"
+        -:   26:#include "config.h"
+        -:   27:
+        -:   28:#include <string>
+        -:   29:
+        -:   30:class ErrorLogger;
+        -:   31:class Scope;
+        -:   32:class Settings;
+        -:   33:class Token;
+        -:   34:class Tokenizer;
+        -:   35:
+        -:   36:/// @addtogroup Checks
+        -:   37:/// @{
+        -:   38:
+        -:   39:/**
+        -:   40: * @brief Checking for side effects in assert statements
+        -:   41: */
+        -:   42:
+function _ZN11CheckAssertD0Ev called 0 returned 0% blocks executed 0%
+function _ZN11CheckAssertD2Ev called 0 returned 0% blocks executed 0%
+    #####:   43:class CPPCHECKLIB CheckAssert : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   44:public:
+function _ZN11CheckAssertC2Ev called 0 returned 0% blocks executed 0%
+    #####:   45:    CheckAssert() : Check(myName()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   46:    }
+        -:   47:
+function _ZN11CheckAssertC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   48:    CheckAssert(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:   49:        : Check(myName(), tokenizer, settings, errorLogger) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   50:    }
+        -:   51:
+        -:   52:    /** run checks, the token list is not simplified */
+function _ZN11CheckAssert9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   53:    virtual void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:   54:        CheckAssert checkAssert(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   55:        checkAssert.assertWithSideEffects();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   56:    }
+        -:   57:
+        -:   58:    void assertWithSideEffects();
+        -:   59:
+        -:   60:protected:
+        -:   61:    void checkVariableAssignment(const Token* assignTok, const Scope *assertionScope);
+        -:   62:    static bool inSameScope(const Token* returnTok, const Token* assignTok);
+        -:   63:
+        -:   64:private:
+        -:   65:    void sideEffectInAssertError(const Token *tok, const std::string& functionName);
+        -:   66:    void assignmentInAssertError(const Token *tok, const std::string &varname);
+        -:   67:
+function _ZNK11CheckAssert16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:   68:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:   69:        CheckAssert c(nullptr, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   70:        c.sideEffectInAssertError(nullptr, "function");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   71:        c.assignmentInAssertError(nullptr, "var");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   72:    }
+        -:   73:
+function _ZN11CheckAssert6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   74:    static std::string myName() {
+    #####:   75:        return "Assert";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:   76:    }
+        -:   77:
+function _ZNK11CheckAssert9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   78:    std::string classInfo() const OVERRIDE {
+    #####:   79:        return "Warn if there are side effects in assert statements (since this cause different behaviour in debug/release builds).\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:   80:    }
+        -:   81:};
+        -:   82:/// @}
+        -:   83://---------------------------------------------------------------------------
+        -:   84:#endif // checkassertH

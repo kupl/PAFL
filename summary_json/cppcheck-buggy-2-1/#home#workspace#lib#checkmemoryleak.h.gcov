@@ -1,0 +1,758 @@
+        -:    0:Source:/home/workspace/lib/checkmemoryleak.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkmemoryleak.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkmemoryleak.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef checkmemoryleakH
+        -:   21:#define checkmemoryleakH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:/**
+        -:   25: * @file
+        -:   26: *
+        -:   27: * %Check for memory leaks
+        -:   28: *
+        -:   29: * The checking is split up into three specialized classes.
+        -:   30: * - CheckMemoryLeakInFunction can detect when a function variable is allocated but not deallocated properly.
+        -:   31: * - CheckMemoryLeakInClass can detect when a class variable is allocated but not deallocated properly.
+        -:   32: * - CheckMemoryLeakStructMember checks allocation/deallocation of structs and struct members
+        -:   33: */
+        -:   34:
+        -:   35:#include "check.h"
+        -:   36:#include "config.h"
+        -:   37:#include "errorlogger.h"
+        -:   38:#include "tokenize.h"
+        -:   39:
+        -:   40:#include <list>
+        -:   41:#include <string>
+        -:   42:
+        -:   43:class Function;
+        -:   44:class Scope;
+        -:   45:class Settings;
+        -:   46:class SymbolDatabase;
+        -:   47:class Token;
+        -:   48:class Variable;
+        -:   49:
+        -:   50:/// @addtogroup Core
+        -:   51:/// @{
+        -:   52:
+        -:   53:/** @brief Base class for memory leaks checking */
+        -:   54:class CPPCHECKLIB CheckMemoryLeak {
+        -:   55:private:
+        -:   56:    /** For access to the tokens */
+        -:   57:    const Tokenizer * const mTokenizer_;
+        -:   58:
+        -:   59:    /** ErrorLogger used to report errors */
+        -:   60:    ErrorLogger * const mErrorLogger_;
+        -:   61:
+        -:   62:    /** Enabled standards */
+        -:   63:    const Settings * const mSettings_;
+        -:   64:
+        -:   65:    /**
+        -:   66:     * Report error. Similar with the function Check::reportError
+        -:   67:     * @param tok the token where the error occurs
+        -:   68:     * @param severity the severity of the bug
+        -:   69:     * @param id type of message
+        -:   70:     * @param msg text
+        -:   71:     * @param cwe cwe number
+        -:   72:     */
+        -:   73:    void reportErr(const Token *tok, Severity::SeverityType severity, const std::string &id, const std::string &msg, const CWE &cwe) const;
+        -:   74:
+        -:   75:    /**
+        -:   76:     * Report error. Similar with the function Check::reportError
+        -:   77:     * @param callstack callstack of error
+        -:   78:     * @param severity the severity of the bug
+        -:   79:     * @param id type of message
+        -:   80:     * @param msg text
+        -:   81:     * @param cwe cwe number
+        -:   82:     */
+        -:   83:    void reportErr(const std::list<const Token *> &callstack, Severity::SeverityType severity, const std::string &id, const std::string &msg, const CWE &cwe) const;
+        -:   84:
+        -:   85:public:
+        -:   86:    CheckMemoryLeak() = delete;
+        -:   87:    CheckMemoryLeak(const CheckMemoryLeak &) = delete;
+        -:   88:    void operator=(const CheckMemoryLeak &) = delete;
+        -:   89:
+function _ZN15CheckMemoryLeakC2EPK9TokenizerP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:   90:    CheckMemoryLeak(const Tokenizer *t, ErrorLogger *e, const Settings *s)
+    #####:   91:        : mTokenizer_(t), mErrorLogger_(e), mSettings_(s) {
+    #####:   92:    }
+        -:   93:
+        -:   94:    /** @brief What type of allocation are used.. the "Many" means that several types of allocation and deallocation are used */
+        -:   95:    enum AllocType { No, Malloc, New, NewArray, File, Fd, Pipe, OtherMem, OtherRes, Many };
+        -:   96:
+        -:   97:    void memoryLeak(const Token *tok, const std::string &varname, AllocType alloctype) const;
+        -:   98:
+        -:   99:    /**
+        -:  100:     * @brief Get type of deallocation at given position
+        -:  101:     * @param tok position
+        -:  102:     * @param varid variable id
+        -:  103:     * @return type of deallocation
+        -:  104:     */
+        -:  105:    AllocType getDeallocationType(const Token *tok, nonneg int varid) const;
+        -:  106:
+        -:  107:    /**
+        -:  108:     * @brief Get type of allocation at given position
+        -:  109:     */
+        -:  110:    AllocType getAllocationType(const Token *tok2, nonneg int varid, std::list<const Function*> *callstack = nullptr) const;
+        -:  111:
+        -:  112:    /**
+        -:  113:     * @brief Get type of reallocation at given position
+        -:  114:     */
+        -:  115:    AllocType getReallocationType(const Token *tok2, nonneg int varid) const;
+        -:  116:
+        -:  117:    /**
+        -:  118:     * Check if token reopens a standard stream
+        -:  119:     * @param tok token to check
+        -:  120:     */
+        -:  121:    bool isReopenStandardStream(const Token *tok) const;
+        -:  122:    /**
+        -:  123:     * Report that there is a memory leak (new/malloc/etc)
+        -:  124:     * @param tok token where memory is leaked
+        -:  125:     * @param varname name of variable
+        -:  126:     */
+        -:  127:    void memleakError(const Token *tok, const std::string &varname) const;
+        -:  128:
+        -:  129:    /**
+        -:  130:     * Report that there is a resource leak (fopen/popen/etc)
+        -:  131:     * @param tok token where resource is leaked
+        -:  132:     * @param varname name of variable
+        -:  133:     */
+        -:  134:    void resourceLeakError(const Token *tok, const std::string &varname) const;
+        -:  135:
+        -:  136:    /**
+        -:  137:     * @brief Report error: deallocating a deallocated pointer
+        -:  138:     * @param tok token where error occurs
+        -:  139:     * @param varname name of variable
+        -:  140:     */
+        -:  141:    void deallocDeallocError(const Token *tok, const std::string &varname) const;
+        -:  142:    void deallocuseError(const Token *tok, const std::string &varname) const;
+        -:  143:    void mismatchSizeError(const Token *tok, const std::string &sz) const;
+        -:  144:    void mismatchAllocDealloc(const std::list<const Token *> &callstack, const std::string &varname) const;
+        -:  145:    void memleakUponReallocFailureError(const Token *tok, const std::string &reallocfunction, const std::string &varname) const;
+        -:  146:
+        -:  147:    /** What type of allocated memory does the given function return? */
+        -:  148:    AllocType functionReturnType(const Function* func, std::list<const Function*> *callstack = nullptr) const;
+        -:  149:
+        -:  150:    /** Function allocates pointed-to argument (a la asprintf)? */
+        -:  151:    const char *functionArgAlloc(const Function *func, nonneg int targetpar, AllocType &allocType) const;
+        -:  152:};
+        -:  153:
+        -:  154:/// @}
+        -:  155:
+        -:  156:
+        -:  157:
+        -:  158:/// @addtogroup Checks
+        -:  159:/// @{
+        -:  160:
+        -:  161:
+        -:  162:/**
+        -:  163: * @brief %CheckMemoryLeakInFunction detects when a function variable is allocated but not deallocated properly.
+        -:  164: *
+        -:  165: * The checking is done by looking at each function variable separately. By repeating these 4 steps over and over:
+        -:  166: * -# locate a function variable
+        -:  167: * -# create a simple token list that describes the usage of the function variable.
+        -:  168: * -# simplify the token list.
+        -:  169: * -# finally, check if the simplified token list contain any leaks.
+        -:  170: */
+        -:  171:
+function _ZN25CheckMemoryLeakInFunctionD0Ev called 0 returned 0% blocks executed 0%
+function _ZN25CheckMemoryLeakInFunctionD2Ev called 0 returned 0% blocks executed 0%
+    #####:  172:class CPPCHECKLIB CheckMemoryLeakInFunction : private Check, public CheckMemoryLeak {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  173:public:
+        -:  174:    /** @brief This constructor is used when registering this class */
+function _ZN25CheckMemoryLeakInFunctionC2Ev called 1 returned 100% blocks executed 75%
+        1:  175:    CheckMemoryLeakInFunction() : Check(myName()), CheckMemoryLeak(nullptr, nullptr, nullptr) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+call    6 never executed
+        1:  176:    }
+        -:  177:
+        -:  178:    /** @brief This constructor is used when running checks */
+function _ZN25CheckMemoryLeakInFunctionC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  179:    CheckMemoryLeakInFunction(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:  180:        : Check(myName(), tokenizer, settings, errorLogger), CheckMemoryLeak(tokenizer, errorLogger, settings) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  181:    }
+        -:  182:
+function _ZN25CheckMemoryLeakInFunction9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  183:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:  184:        CheckMemoryLeakInFunction checkMemoryLeak(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  185:        checkMemoryLeak.checkReallocUsage();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  186:    }
+        -:  187:
+        -:  188:    /** @brief Unit testing : testing the white list */
+        -:  189:    static bool test_white_list(const std::string &funcname, const Settings *settings, bool cpp);
+        -:  190:
+        -:  191:    /**
+        -:  192:     * Checking for a memory leak caused by improper realloc usage.
+        -:  193:     */
+        -:  194:    void checkReallocUsage();
+        -:  195:
+        -:  196:private:
+        -:  197:    /** Report all possible errors (for the --errorlist) */
+function _ZNK25CheckMemoryLeakInFunction16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  198:    void getErrorMessages(ErrorLogger *e, const Settings *settings) const OVERRIDE {
+    #####:  199:        CheckMemoryLeakInFunction c(nullptr, settings, e);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  200:
+    #####:  201:        c.memleakError(nullptr, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  202:        c.resourceLeakError(nullptr, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  203:
+    #####:  204:        c.deallocDeallocError(nullptr, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  205:        c.deallocuseError(nullptr, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  206:        c.mismatchSizeError(nullptr, "sz");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  207:        const std::list<const Token *> callstack;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  208:        c.mismatchAllocDealloc(callstack, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  209:        c.memleakUponReallocFailureError(nullptr, "realloc", "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  210:    }
+        -:  211:
+        -:  212:    /**
+        -:  213:     * Get name of class (--doc)
+        -:  214:     * @return name of class
+        -:  215:     */
+function _ZN25CheckMemoryLeakInFunction6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  216:    static std::string myName() {
+    #####:  217:        return "Memory leaks (function variables)";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  218:    }
+        -:  219:
+        -:  220:    /**
+        -:  221:     * Get class information (--doc)
+        -:  222:     * @return Wiki formatted information about this class
+        -:  223:     */
+function _ZNK25CheckMemoryLeakInFunction9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  224:    std::string classInfo() const OVERRIDE {
+    #####:  225:        return "Is there any allocated memory when a function goes out of scope\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  226:    }
+        -:  227:};
+        -:  228:
+        -:  229:
+        -:  230:
+        -:  231:/**
+        -:  232: * @brief %Check class variables, variables that are allocated in the constructor should be deallocated in the destructor
+        -:  233: */
+        -:  234:
+function _ZN22CheckMemoryLeakInClassD0Ev called 0 returned 0% blocks executed 0%
+function _ZN22CheckMemoryLeakInClassD2Ev called 0 returned 0% blocks executed 0%
+    #####:  235:class CPPCHECKLIB CheckMemoryLeakInClass : private Check, private CheckMemoryLeak {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  236:public:
+function _ZN22CheckMemoryLeakInClassC2Ev called 1 returned 100% blocks executed 75%
+        1:  237:    CheckMemoryLeakInClass() : Check(myName()), CheckMemoryLeak(nullptr, nullptr, nullptr) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+call    6 never executed
+        1:  238:    }
+        -:  239:
+function _ZN22CheckMemoryLeakInClassC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  240:    CheckMemoryLeakInClass(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:  241:        : Check(myName(), tokenizer, settings, errorLogger), CheckMemoryLeak(tokenizer, errorLogger, settings) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  242:    }
+        -:  243:
+function _ZN22CheckMemoryLeakInClass9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  244:    void runChecks(const Tokenizer *tokenizr, const Settings *settings, ErrorLogger *errLog) OVERRIDE {
+    #####:  245:        if (!tokenizr->isCPP())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  246:            return;
+        -:  247:
+    #####:  248:        CheckMemoryLeakInClass checkMemoryLeak(tokenizr, settings, errLog);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  249:        checkMemoryLeak.check();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  250:    }
+        -:  251:
+        -:  252:    void check();
+        -:  253:
+        -:  254:private:
+        -:  255:    void variable(const Scope *scope, const Token *tokVarname);
+        -:  256:
+        -:  257:    /** Public functions: possible double-allocation */
+        -:  258:    void checkPublicFunctions(const Scope *scope, const Token *classtok);
+        -:  259:    void publicAllocationError(const Token *tok, const std::string &varname);
+        -:  260:
+        -:  261:    void unsafeClassError(const Token *tok, const std::string &classname, const std::string &varname);
+        -:  262:
+function _ZNK22CheckMemoryLeakInClass16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  263:    void getErrorMessages(ErrorLogger *e, const Settings *settings) const OVERRIDE {
+    #####:  264:        CheckMemoryLeakInClass c(nullptr, settings, e);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  265:        c.publicAllocationError(nullptr, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  266:        c.unsafeClassError(nullptr, "class", "class::varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  267:    }
+        -:  268:
+function _ZN22CheckMemoryLeakInClass6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  269:    static std::string myName() {
+    #####:  270:        return "Memory leaks (class variables)";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  271:    }
+        -:  272:
+function _ZNK22CheckMemoryLeakInClass9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  273:    std::string classInfo() const OVERRIDE {
+    #####:  274:        return "If the constructor allocate memory then the destructor must deallocate it.\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  275:    }
+        -:  276:};
+        -:  277:
+        -:  278:
+        -:  279:
+        -:  280:/** @brief detect simple memory leaks for struct members */
+        -:  281:
+function _ZN27CheckMemoryLeakStructMemberD0Ev called 0 returned 0% blocks executed 0%
+function _ZN27CheckMemoryLeakStructMemberD2Ev called 0 returned 0% blocks executed 0%
+    #####:  282:class CPPCHECKLIB CheckMemoryLeakStructMember : private Check, private CheckMemoryLeak {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  283:public:
+function _ZN27CheckMemoryLeakStructMemberC2Ev called 1 returned 100% blocks executed 75%
+        1:  284:    CheckMemoryLeakStructMember() : Check(myName()), CheckMemoryLeak(nullptr, nullptr, nullptr) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+call    6 never executed
+        1:  285:    }
+        -:  286:
+function _ZN27CheckMemoryLeakStructMemberC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  287:    CheckMemoryLeakStructMember(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:  288:        : Check(myName(), tokenizer, settings, errorLogger), CheckMemoryLeak(tokenizer, errorLogger, settings) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  289:    }
+        -:  290:
+function _ZN27CheckMemoryLeakStructMember9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  291:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:  292:        CheckMemoryLeakStructMember checkMemoryLeak(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  293:        checkMemoryLeak.check();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  294:    }
+        -:  295:
+        -:  296:    void check();
+        -:  297:
+        -:  298:private:
+        -:  299:
+        -:  300:    /** Is local variable allocated with malloc? */
+        -:  301:    static bool isMalloc(const Variable *variable);
+        -:  302:
+        -:  303:    void checkStructVariable(const Variable * const variable);
+        -:  304:
+function _ZNK27CheckMemoryLeakStructMember16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  305:    void getErrorMessages(ErrorLogger * /*errorLogger*/, const Settings * /*settings*/) const OVERRIDE {
+    #####:  306:    }
+        -:  307:
+function _ZN27CheckMemoryLeakStructMember6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  308:    static std::string myName() {
+    #####:  309:        return "Memory leaks (struct members)";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  310:    }
+        -:  311:
+function _ZNK27CheckMemoryLeakStructMember9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  312:    std::string classInfo() const OVERRIDE {
+    #####:  313:        return "Don't forget to deallocate struct members\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  314:    }
+        -:  315:};
+        -:  316:
+        -:  317:
+        -:  318:
+        -:  319:/** @brief detect simple memory leaks (address not taken) */
+        -:  320:
+function _ZN20CheckMemoryLeakNoVarD0Ev called 0 returned 0% blocks executed 0%
+function _ZN20CheckMemoryLeakNoVarD2Ev called 0 returned 0% blocks executed 0%
+    #####:  321:class CPPCHECKLIB CheckMemoryLeakNoVar : private Check, private CheckMemoryLeak {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  322:public:
+function _ZN20CheckMemoryLeakNoVarC2Ev called 1 returned 100% blocks executed 75%
+        1:  323:    CheckMemoryLeakNoVar() : Check(myName()), CheckMemoryLeak(nullptr, nullptr, nullptr) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+call    6 never executed
+        1:  324:    }
+        -:  325:
+function _ZN20CheckMemoryLeakNoVarC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  326:    CheckMemoryLeakNoVar(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:  327:        : Check(myName(), tokenizer, settings, errorLogger), CheckMemoryLeak(tokenizer, errorLogger, settings) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  328:    }
+        -:  329:
+function _ZN20CheckMemoryLeakNoVar9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  330:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:  331:        CheckMemoryLeakNoVar checkMemoryLeak(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  332:        checkMemoryLeak.check();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  333:    }
+        -:  334:
+        -:  335:    void check();
+        -:  336:
+        -:  337:private:
+        -:  338:    /**
+        -:  339:     * @brief %Check if an input argument to a function is the return value of an allocation function
+        -:  340:     * like malloc(), and the function does not release it.
+        -:  341:     * @param scope     The scope of the function to check.
+        -:  342:     */
+        -:  343:    void checkForUnreleasedInputArgument(const Scope *scope);
+        -:  344:
+        -:  345:    /**
+        -:  346:     * @brief %Check if a call to an allocation function like malloc() is made and its return value is not assigned.
+        -:  347:     * @param scope     The scope of the function to check.
+        -:  348:     */
+        -:  349:    void checkForUnusedReturnValue(const Scope *scope);
+        -:  350:
+        -:  351:    /**
+        -:  352:     * @brief %Check if an exception could cause a leak in an argument constructed with shared_ptr/unique_ptr.
+        -:  353:     * @param scope     The scope of the function to check.
+        -:  354:     */
+        -:  355:    void checkForUnsafeArgAlloc(const Scope *scope);
+        -:  356:
+        -:  357:    void functionCallLeak(const Token *loc, const std::string &alloc, const std::string &functionCall);
+        -:  358:    void returnValueNotUsedError(const Token* tok, const std::string &alloc);
+        -:  359:    void unsafeArgAllocError(const Token *tok, const std::string &funcName, const std::string &ptrType, const std::string &objType);
+        -:  360:
+function _ZNK20CheckMemoryLeakNoVar16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  361:    void getErrorMessages(ErrorLogger *e, const Settings *settings) const OVERRIDE {
+    #####:  362:        CheckMemoryLeakNoVar c(nullptr, settings, e);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  363:
+    #####:  364:        c.functionCallLeak(nullptr, "funcName", "funcName");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  365:        c.returnValueNotUsedError(nullptr, "funcName");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  366:        c.unsafeArgAllocError(nullptr, "funcName", "shared_ptr", "int");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+    #####:  367:    }
+        -:  368:
+function _ZN20CheckMemoryLeakNoVar6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  369:    static std::string myName() {
+    #####:  370:        return "Memory leaks (address not taken)";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  371:    }
+        -:  372:
+function _ZNK20CheckMemoryLeakNoVar9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  373:    std::string classInfo() const OVERRIDE {
+    #####:  374:        return "Not taking the address to allocated memory\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  375:    }
+        -:  376:};
+        -:  377:/// @}
+        -:  378://---------------------------------------------------------------------------
+        -:  379:#endif // checkmemoryleakH

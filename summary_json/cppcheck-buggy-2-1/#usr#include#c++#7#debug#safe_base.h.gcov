@@ -1,0 +1,301 @@
+        -:    0:Source:/usr/include/c++/7/debug/safe_base.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:// Safe sequence/iterator base implementation  -*- C++ -*-
+        -:    2:
+        -:    3:// Copyright (C) 2003-2017 Free Software Foundation, Inc.
+        -:    4://
+        -:    5:// This file is part of the GNU ISO C++ Library.  This library is free
+        -:    6:// software; you can redistribute it and/or modify it under the
+        -:    7:// terms of the GNU General Public License as published by the
+        -:    8:// Free Software Foundation; either version 3, or (at your option)
+        -:    9:// any later version.
+        -:   10:
+        -:   11:// This library is distributed in the hope that it will be useful,
+        -:   12:// but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   13:// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   14:// GNU General Public License for more details.
+        -:   15:
+        -:   16:// Under Section 7 of GPL version 3, you are granted additional
+        -:   17:// permissions described in the GCC Runtime Library Exception, version
+        -:   18:// 3.1, as published by the Free Software Foundation.
+        -:   19:
+        -:   20:// You should have received a copy of the GNU General Public License and
+        -:   21:// a copy of the GCC Runtime Library Exception along with this program;
+        -:   22:// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+        -:   23:// <http://www.gnu.org/licenses/>.
+        -:   24:
+        -:   25:/** @file debug/safe_base.h
+        -:   26: *  This file is a GNU debug extension to the Standard C++ Library.
+        -:   27: */
+        -:   28:
+        -:   29:#ifndef _GLIBCXX_DEBUG_SAFE_BASE_H
+        -:   30:#define _GLIBCXX_DEBUG_SAFE_BASE_H 1
+        -:   31:
+        -:   32:#include <ext/concurrence.h>
+        -:   33:
+        -:   34:namespace __gnu_debug
+        -:   35:{
+        -:   36:  class _Safe_sequence_base;
+        -:   37:
+        -:   38:  /** \brief Basic functionality for a @a safe iterator.
+        -:   39:   *
+        -:   40:   *  The %_Safe_iterator_base base class implements the functionality
+        -:   41:   *  of a safe iterator that is not specific to a particular iterator
+        -:   42:   *  type. It contains a pointer back to the sequence it references
+        -:   43:   *  along with iterator version information and pointers to form a
+        -:   44:   *  doubly-linked list of iterators referenced by the container.
+        -:   45:   *
+        -:   46:   *  This class must not perform any operations that can throw an
+        -:   47:   *  exception, or the exception guarantees of derived iterators will
+        -:   48:   *  be broken.
+        -:   49:   */
+        -:   50:  class _Safe_iterator_base
+        -:   51:  {
+        -:   52:    friend class _Safe_sequence_base;
+        -:   53:
+        -:   54:  public:
+        -:   55:    /** The sequence this iterator references; may be NULL to indicate
+        -:   56:	a singular iterator. */
+        -:   57:    _Safe_sequence_base*	_M_sequence;
+        -:   58:
+        -:   59:    /** The version number of this iterator. The sentinel value 0 is
+        -:   60:     *  used to indicate an invalidated iterator (i.e., one that is
+        -:   61:     *  singular because of an operation on the container). This
+        -:   62:     *  version number must equal the version number in the sequence
+        -:   63:     *  referenced by _M_sequence for the iterator to be
+        -:   64:     *  non-singular.
+        -:   65:     */
+        -:   66:    unsigned int		_M_version;
+        -:   67:
+        -:   68:    /** Pointer to the previous iterator in the sequence's list of
+        -:   69:	iterators. Only valid when _M_sequence != NULL. */
+        -:   70:    _Safe_iterator_base*	_M_prior;
+        -:   71:
+        -:   72:    /** Pointer to the next iterator in the sequence's list of
+        -:   73:	iterators. Only valid when _M_sequence != NULL. */
+        -:   74:    _Safe_iterator_base*	_M_next;
+        -:   75:
+        -:   76:  protected:
+        -:   77:    /** Initializes the iterator and makes it singular. */
+function _ZN11__gnu_debug19_Safe_iterator_baseC2Ev called 0 returned 0% blocks executed 0%
+    #####:   78:    _Safe_iterator_base()
+    #####:   79:    : _M_sequence(0), _M_version(0), _M_prior(0), _M_next(0)
+    #####:   80:    { }
+        -:   81:
+        -:   82:    /** Initialize the iterator to reference the sequence pointed to
+        -:   83:     *  by @p __seq. @p __constant is true when we are initializing a
+        -:   84:     *  constant iterator, and false if it is a mutable iterator. Note
+        -:   85:     *  that @p __seq may be NULL, in which case the iterator will be
+        -:   86:     *  singular. Otherwise, the iterator will reference @p __seq and
+        -:   87:     *  be nonsingular.
+        -:   88:     */
+function _ZN11__gnu_debug19_Safe_iterator_baseC2EPKNS_19_Safe_sequence_baseEb called 0 returned 0% blocks executed 0%
+    #####:   89:    _Safe_iterator_base(const _Safe_sequence_base* __seq, bool __constant)
+    #####:   90:    : _M_sequence(0), _M_version(0), _M_prior(0), _M_next(0)
+    #####:   91:    { this->_M_attach(const_cast<_Safe_sequence_base*>(__seq), __constant); }
+call    0 never executed
+        -:   92:
+        -:   93:    /** Initializes the iterator to reference the same sequence that
+        -:   94:	@p __x does. @p __constant is true if this is a constant
+        -:   95:	iterator, and false if it is mutable. */
+        -:   96:    _Safe_iterator_base(const _Safe_iterator_base& __x, bool __constant)
+        -:   97:    : _M_sequence(0), _M_version(0), _M_prior(0), _M_next(0)
+        -:   98:    { this->_M_attach(__x._M_sequence, __constant); }
+        -:   99:
+function _ZN11__gnu_debug19_Safe_iterator_baseD2Ev called 0 returned 0% blocks executed 0%
+    #####:  100:    ~_Safe_iterator_base() { this->_M_detach(); }
+call    0 never executed
+        -:  101:
+        -:  102:    /** For use in _Safe_iterator. */
+        -:  103:    __gnu_cxx::__mutex&
+        -:  104:    _M_get_mutex() throw ();
+        -:  105:
+        -:  106:    /** Attaches this iterator to the given sequence, detaching it
+        -:  107:     *	from whatever sequence it was attached to originally. If the
+        -:  108:     *	new sequence is the NULL pointer, the iterator is left
+        -:  109:     *	unattached.
+        -:  110:     */
+        -:  111:    void
+        -:  112:    _M_attach(_Safe_sequence_base* __seq, bool __constant);
+        -:  113:
+        -:  114:    /** Likewise, but not thread-safe. */
+        -:  115:    void
+        -:  116:    _M_attach_single(_Safe_sequence_base* __seq, bool __constant) throw ();
+        -:  117:
+        -:  118:    /** Detach the iterator for whatever sequence it is attached to,
+        -:  119:     *	if any.
+        -:  120:    */
+        -:  121:    void
+        -:  122:    _M_detach();
+        -:  123:
+        -:  124:  public:
+        -:  125:    /** Likewise, but not thread-safe. */
+        -:  126:    void
+        -:  127:    _M_detach_single() throw ();
+        -:  128:
+        -:  129:    /** Determines if we are attached to the given sequence. */
+        -:  130:    bool
+function _ZNK11__gnu_debug19_Safe_iterator_base14_M_attached_toEPKNS_19_Safe_sequence_baseE called 0 returned 0% blocks executed 0%
+    #####:  131:    _M_attached_to(const _Safe_sequence_base* __seq) const
+    #####:  132:    { return _M_sequence == __seq; }
+        -:  133:
+        -:  134:    /** Is this iterator singular? */
+        -:  135:    _GLIBCXX_PURE bool
+        -:  136:    _M_singular() const throw ();
+        -:  137:
+        -:  138:    /** Can we compare this iterator to the given iterator @p __x?
+        -:  139:	Returns true if both iterators are nonsingular and reference
+        -:  140:	the same sequence. */
+        -:  141:    _GLIBCXX_PURE bool
+        -:  142:    _M_can_compare(const _Safe_iterator_base& __x) const throw ();
+        -:  143:
+        -:  144:    /** Invalidate the iterator, making it singular. */
+        -:  145:    void
+function _ZN11__gnu_debug19_Safe_iterator_base13_M_invalidateEv called 0 returned 0% blocks executed 0%
+    #####:  146:    _M_invalidate()
+    #####:  147:    { _M_version = 0; }
+        -:  148:
+        -:  149:    /** Reset all member variables */
+        -:  150:    void
+        -:  151:    _M_reset() throw ();
+        -:  152:
+        -:  153:    /** Unlink itself */
+        -:  154:    void
+        -:  155:    _M_unlink() throw ()
+        -:  156:    {
+        -:  157:      if (_M_prior)
+        -:  158:	_M_prior->_M_next = _M_next;
+        -:  159:      if (_M_next)
+        -:  160:	_M_next->_M_prior = _M_prior;
+        -:  161:    }
+        -:  162:  };
+        -:  163:
+        -:  164:  /** Iterators that derive from _Safe_iterator_base can be determined singular
+        -:  165:   *  or non-singular.
+        -:  166:   **/
+        -:  167:  inline bool
+        -:  168:  __check_singular_aux(const _Safe_iterator_base* __x)
+        -:  169:  { return __x->_M_singular(); }
+        -:  170:
+        -:  171:  /**
+        -:  172:   * @brief Base class that supports tracking of iterators that
+        -:  173:   * reference a sequence.
+        -:  174:   *
+        -:  175:   * The %_Safe_sequence_base class provides basic support for
+        -:  176:   * tracking iterators into a sequence. Sequences that track
+        -:  177:   * iterators must derived from %_Safe_sequence_base publicly, so
+        -:  178:   * that safe iterators (which inherit _Safe_iterator_base) can
+        -:  179:   * attach to them. This class contains two linked lists of
+        -:  180:   * iterators, one for constant iterators and one for mutable
+        -:  181:   * iterators, and a version number that allows very fast
+        -:  182:   * invalidation of all iterators that reference the container.
+        -:  183:   *
+        -:  184:   * This class must ensure that no operation on it may throw an
+        -:  185:   * exception, otherwise @a safe sequences may fail to provide the
+        -:  186:   * exception-safety guarantees required by the C++ standard.
+        -:  187:   */
+        -:  188:  class _Safe_sequence_base
+        -:  189:  {
+        -:  190:    friend class _Safe_iterator_base;
+        -:  191:
+        -:  192:  public:
+        -:  193:    /// The list of mutable iterators that reference this container
+        -:  194:    _Safe_iterator_base* _M_iterators;
+        -:  195:
+        -:  196:    /// The list of constant iterators that reference this container
+        -:  197:    _Safe_iterator_base* _M_const_iterators;
+        -:  198:
+        -:  199:    /// The container version number. This number may never be 0.
+        -:  200:    mutable unsigned int _M_version;
+        -:  201:
+        -:  202:  protected:
+        -:  203:    // Initialize with a version number of 1 and no iterators
+function _ZN11__gnu_debug19_Safe_sequence_baseC2Ev called 0 returned 0% blocks executed 0%
+    #####:  204:    _Safe_sequence_base() _GLIBCXX_NOEXCEPT
+    #####:  205:    : _M_iterators(0), _M_const_iterators(0), _M_version(1)
+    #####:  206:    { }
+        -:  207:
+        -:  208:#if __cplusplus >= 201103L
+function _ZN11__gnu_debug19_Safe_sequence_baseC2ERKS0_ called 0 returned 0% blocks executed 0%
+    #####:  209:    _Safe_sequence_base(const _Safe_sequence_base&) noexcept
+    #####:  210:    : _Safe_sequence_base() { }
+call    0 never executed
+        -:  211:
+        -:  212:    // Move constructor swap iterators.
+function _ZN11__gnu_debug19_Safe_sequence_baseC2EOS0_ called 0 returned 0% blocks executed 0%
+    #####:  213:    _Safe_sequence_base(_Safe_sequence_base&& __seq) noexcept
+    #####:  214:    : _Safe_sequence_base()
+call    0 never executed
+    #####:  215:    { _M_swap(__seq); }
+call    0 never executed
+        -:  216:#endif
+        -:  217:
+        -:  218:    /** Notify all iterators that reference this sequence that the
+        -:  219:	sequence is being destroyed. */
+function _ZN11__gnu_debug19_Safe_sequence_baseD2Ev called 0 returned 0% blocks executed 0%
+    #####:  220:    ~_Safe_sequence_base()
+    #####:  221:    { this->_M_detach_all(); }
+call    0 never executed
+        -:  222:
+        -:  223:    /** Detach all iterators, leaving them singular. */
+        -:  224:    void
+        -:  225:    _M_detach_all();
+        -:  226:
+        -:  227:    /** Detach all singular iterators.
+        -:  228:     *  @post for all iterators i attached to this sequence,
+        -:  229:     *   i->_M_version == _M_version.
+        -:  230:     */
+        -:  231:    void
+        -:  232:    _M_detach_singular();
+        -:  233:
+        -:  234:    /** Revalidates all attached singular iterators.  This method may
+        -:  235:     *  be used to validate iterators that were invalidated before
+        -:  236:     *  (but for some reason, such as an exception, need to become
+        -:  237:     *  valid again).
+        -:  238:     */
+        -:  239:    void
+        -:  240:    _M_revalidate_singular();
+        -:  241:
+        -:  242:    /** Swap this sequence with the given sequence. This operation
+        -:  243:     *  also swaps ownership of the iterators, so that when the
+        -:  244:     *  operation is complete all iterators that originally referenced
+        -:  245:     *  one container now reference the other container.
+        -:  246:     */
+        -:  247:    void
+        -:  248:    _M_swap(_Safe_sequence_base& __x) _GLIBCXX_USE_NOEXCEPT;
+        -:  249:
+        -:  250:    /** For use in _Safe_sequence. */
+        -:  251:    __gnu_cxx::__mutex&
+        -:  252:    _M_get_mutex() throw ();
+        -:  253:
+        -:  254:    /** Invalidates all iterators. */
+        -:  255:    void
+function _ZNK11__gnu_debug19_Safe_sequence_base17_M_invalidate_allEv called 0 returned 0% blocks executed 0%
+    #####:  256:    _M_invalidate_all() const
+    #####:  257:    { if (++_M_version == 0) _M_version = 1; }
+branch  0 never executed
+branch  1 never executed
+        -:  258:
+        -:  259:  private:
+        -:  260:    /** Attach an iterator to this sequence. */
+        -:  261:    void
+        -:  262:    _M_attach(_Safe_iterator_base* __it, bool __constant);
+        -:  263:
+        -:  264:    /** Likewise but not thread safe. */
+        -:  265:    void
+        -:  266:    _M_attach_single(_Safe_iterator_base* __it, bool __constant) throw ();
+        -:  267:
+        -:  268:    /** Detach an iterator from this sequence */
+        -:  269:    void
+        -:  270:    _M_detach(_Safe_iterator_base* __it);
+        -:  271:
+        -:  272:    /** Likewise but not thread safe. */
+        -:  273:    void
+        -:  274:    _M_detach_single(_Safe_iterator_base* __it) throw ();
+        -:  275:  };
+        -:  276:} // namespace __gnu_debug
+        -:  277:
+        -:  278:#endif

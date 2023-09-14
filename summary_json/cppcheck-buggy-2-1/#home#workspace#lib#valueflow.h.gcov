@@ -1,0 +1,544 @@
+        -:    0:Source:/home/workspace/lib/valueflow.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef valueflowH
+        -:   21:#define valueflowH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "config.h"
+        -:   25:#include "utils.h"
+        -:   26:
+        -:   27:#include <list>
+        -:   28:#include <string>
+        -:   29:#include <utility>
+        -:   30:#include <vector>
+        -:   31:
+        -:   32:class ErrorLogger;
+        -:   33:class Settings;
+        -:   34:class SymbolDatabase;
+        -:   35:class Token;
+        -:   36:class TokenList;
+        -:   37:class Variable;
+        -:   38:
+        -:   39:namespace ValueFlow {
+        -:   40:    struct increment {
+        -:   41:        template <class T>
+function _ZNK9ValueFlow9incrementclIdEEvRT_ called 0 returned 0% blocks executed 0%
+function _ZNK9ValueFlow9incrementclIxEEvRT_ called 0 returned 0% blocks executed 0%
+    #####:   42:        void operator()(T& x) const {
+    #####:   43:            x++;
+    #####:   44:        }
+        -:   45:    };
+        -:   46:    struct decrement {
+        -:   47:        template <class T>
+function _ZNK9ValueFlow9decrementclIdEEvRT_ called 0 returned 0% blocks executed 0%
+function _ZNK9ValueFlow9decrementclIxEEvRT_ called 0 returned 0% blocks executed 0%
+    #####:   48:        void operator()(T& x) const {
+    #####:   49:            x--;
+    #####:   50:        }
+        -:   51:    };
+function _ZN9ValueFlow5ValueC2EOS0_ called 0 returned 0% blocks executed 0%
+function _ZN9ValueFlow5ValueC2ERKS0_ called 0 returned 0% blocks executed 0%
+function _ZN9ValueFlow5ValueaSEOS0_ called 0 returned 0% blocks executed 0%
+function _ZN9ValueFlow5ValueD2Ev called 0 returned 0% blocks executed 0%
+function _ZN9ValueFlow5ValueaSERKS0_ called 0 returned 0% blocks executed 0%
+    #####:   52:    class CPPCHECKLIB Value {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+        -:   53:    public:
+        -:   54:        typedef std::pair<const Token *, std::string> ErrorPathItem;
+        -:   55:        typedef std::list<ErrorPathItem> ErrorPath;
+        -:   56:
+function _ZN9ValueFlow5ValueC2Ex called 0 returned 0% blocks executed 0%
+    #####:   57:        explicit Value(long long val = 0)
+    #####:   58:            : valueType(ValueType::INT),
+        -:   59:              bound(Bound::Point),
+        -:   60:              intvalue(val),
+        -:   61:              tokvalue(nullptr),
+        -:   62:              floatValue(0.0),
+        -:   63:              moveKind(MoveKind::NonMovedVariable),
+        -:   64:              varvalue(val),
+        -:   65:              condition(nullptr),
+        -:   66:              varId(0U),
+        -:   67:              safe(false),
+        -:   68:              conditional(false),
+        -:   69:              defaultArg(false),
+        -:   70:              indirect(0),
+        -:   71:              lifetimeKind(LifetimeKind::Object),
+        -:   72:              lifetimeScope(LifetimeScope::Local),
+    #####:   73:              valueKind(ValueKind::Possible)
+call    0 never executed
+    #####:   74:        {}
+        -:   75:        Value(const Token *c, long long val);
+        -:   76:
+function _ZNK9ValueFlow5Value10equalValueERKS0_ called 0 returned 0% blocks executed 0%
+    #####:   77:        bool equalValue(const ValueFlow::Value& rhs) const {
+    #####:   78:            if (valueType != rhs.valueType)
+branch  0 never executed
+branch  1 never executed
+    #####:   79:                return false;
+    #####:   80:            switch (valueType) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:   81:            case ValueType::INT:
+    #####:   82:                if (intvalue != rhs.intvalue)
+branch  0 never executed
+branch  1 never executed
+    #####:   83:                    return false;
+    #####:   84:                break;
+    #####:   85:            case ValueType::TOK:
+    #####:   86:                if (tokvalue != rhs.tokvalue)
+branch  0 never executed
+branch  1 never executed
+    #####:   87:                    return false;
+    #####:   88:                break;
+    #####:   89:            case ValueType::FLOAT:
+        -:   90:                // TODO: Write some better comparison
+    #####:   91:                if (floatValue > rhs.floatValue || floatValue < rhs.floatValue)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   92:                    return false;
+    #####:   93:                break;
+    #####:   94:            case ValueType::MOVED:
+    #####:   95:                if (moveKind != rhs.moveKind)
+branch  0 never executed
+branch  1 never executed
+    #####:   96:                    return false;
+    #####:   97:                break;
+    #####:   98:            case ValueType::UNINIT:
+    #####:   99:                break;
+    #####:  100:            case ValueType::BUFFER_SIZE:
+    #####:  101:                if (intvalue != rhs.intvalue)
+branch  0 never executed
+branch  1 never executed
+    #####:  102:                    return false;
+    #####:  103:                break;
+    #####:  104:            case ValueType::CONTAINER_SIZE:
+    #####:  105:                if (intvalue != rhs.intvalue)
+branch  0 never executed
+branch  1 never executed
+    #####:  106:                    return false;
+    #####:  107:                break;
+    #####:  108:            case ValueType::LIFETIME:
+    #####:  109:                if (tokvalue != rhs.tokvalue)
+branch  0 never executed
+branch  1 never executed
+    #####:  110:                    return false;
+        -:  111:            }
+    #####:  112:            return true;
+        -:  113:        }
+        -:  114:
+        -:  115:        template <class F>
+function _ZN9ValueFlow5Value10visitValueINS_9decrementEEEvT_ called 0 returned 0% blocks executed 0%
+function _ZN9ValueFlow5Value10visitValueINS_9incrementEEEvT_ called 0 returned 0% blocks executed 0%
+    #####:  116:        void visitValue(F f) {
+    #####:  117:            switch (valueType) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  118:            case ValueType::INT:
+        -:  119:            case ValueType::BUFFER_SIZE:
+        -:  120:            case ValueType::CONTAINER_SIZE: {
+    #####:  121:                f(intvalue);
+call    0 never executed
+call    1 never executed
+    #####:  122:                break;
+        -:  123:            }
+    #####:  124:            case ValueType::FLOAT: {
+    #####:  125:                f(floatValue);
+call    0 never executed
+call    1 never executed
+    #####:  126:                break;
+        -:  127:            }
+    #####:  128:            case ValueType::UNINIT:
+        -:  129:            case ValueType::TOK:
+        -:  130:            case ValueType::LIFETIME:
+        -:  131:            case ValueType::MOVED:
+    #####:  132:                break;
+        -:  133:            }
+    #####:  134:        }
+        -:  135:
+function _ZNK9ValueFlow5ValueeqERKS0_ called 0 returned 0% blocks executed 0%
+    #####:  136:        bool operator==(const Value &rhs) const {
+    #####:  137:            if (!equalValue(rhs))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  138:                return false;
+        -:  139:
+    #####:  140:            return varvalue == rhs.varvalue &&
+branch  0 never executed
+branch  1 never executed
+    #####:  141:                   condition == rhs.condition &&
+branch  0 never executed
+branch  1 never executed
+    #####:  142:                   varId == rhs.varId &&
+branch  0 never executed
+branch  1 never executed
+    #####:  143:                   conditional == rhs.conditional &&
+branch  0 never executed
+branch  1 never executed
+    #####:  144:                   defaultArg == rhs.defaultArg &&
+branch  0 never executed
+branch  1 never executed
+    #####:  145:                   indirect == rhs.indirect &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  146:                   valueKind == rhs.valueKind;
+        -:  147:        }
+        -:  148:
+        -:  149:        bool operator!=(const Value &rhs) const {
+        -:  150:            return !(*this == rhs);
+        -:  151:        }
+        -:  152:
+function _ZN9ValueFlow5Value13decreaseRangeEv called 0 returned 0% blocks executed 0%
+    #####:  153:        void decreaseRange() {
+    #####:  154:            if (bound == Bound::Lower)
+branch  0 never executed
+branch  1 never executed
+    #####:  155:                visitValue(increment{});
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  156:            else if (bound == Bound::Upper)
+branch  0 never executed
+branch  1 never executed
+    #####:  157:                visitValue(decrement{});
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  158:        }
+        -:  159:
+function _ZN9ValueFlow5Value11invertRangeEv called 689 returned 100% blocks executed 100%
+      689:  160:        void invertRange() {
+      689:  161:            if (bound == Bound::Lower)
+branch  0 taken 20% (fallthrough)
+branch  1 taken 80%
+      137:  162:                bound = Bound::Upper;
+      552:  163:            else if (bound == Bound::Upper)
+branch  0 taken 25% (fallthrough)
+branch  1 taken 75%
+      139:  164:                bound = Bound::Lower;
+      689:  165:            decreaseRange();
+call    0 returned 100%
+      689:  166:        }
+        -:  167:
+        -:  168:        std::string infoString() const;
+        -:  169:
+        -:  170:        enum ValueType { INT, TOK, FLOAT, MOVED, UNINIT, CONTAINER_SIZE, LIFETIME, BUFFER_SIZE } valueType;
+function _ZNK9ValueFlow5Value10isIntValueEv called 0 returned 0% blocks executed 0%
+    #####:  171:        bool isIntValue() const {
+    #####:  172:            return valueType == ValueType::INT;
+        -:  173:        }
+function _ZNK9ValueFlow5Value10isTokValueEv called 0 returned 0% blocks executed 0%
+    #####:  174:        bool isTokValue() const {
+    #####:  175:            return valueType == ValueType::TOK;
+        -:  176:        }
+function _ZNK9ValueFlow5Value12isFloatValueEv called 0 returned 0% blocks executed 0%
+    #####:  177:        bool isFloatValue() const {
+    #####:  178:            return valueType == ValueType::FLOAT;
+        -:  179:        }
+function _ZNK9ValueFlow5Value12isMovedValueEv called 0 returned 0% blocks executed 0%
+    #####:  180:        bool isMovedValue() const {
+    #####:  181:            return valueType == ValueType::MOVED;
+        -:  182:        }
+function _ZNK9ValueFlow5Value13isUninitValueEv called 0 returned 0% blocks executed 0%
+    #####:  183:        bool isUninitValue() const {
+    #####:  184:            return valueType == ValueType::UNINIT;
+        -:  185:        }
+function _ZNK9ValueFlow5Value20isContainerSizeValueEv called 0 returned 0% blocks executed 0%
+    #####:  186:        bool isContainerSizeValue() const {
+    #####:  187:            return valueType == ValueType::CONTAINER_SIZE;
+        -:  188:        }
+function _ZNK9ValueFlow5Value15isLifetimeValueEv called 0 returned 0% blocks executed 0%
+    #####:  189:        bool isLifetimeValue() const {
+    #####:  190:            return valueType == ValueType::LIFETIME;
+        -:  191:        }
+        -:  192:        bool isBufferSizeValue() const {
+        -:  193:            return valueType == ValueType::BUFFER_SIZE;
+        -:  194:        }
+        -:  195:
+function _ZNK9ValueFlow5Value20isLocalLifetimeValueEv called 0 returned 0% blocks executed 0%
+    #####:  196:        bool isLocalLifetimeValue() const {
+    #####:  197:            return valueType == ValueType::LIFETIME && lifetimeScope == LifetimeScope::Local;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  198:        }
+        -:  199:
+function _ZNK9ValueFlow5Value23isArgumentLifetimeValueEv called 0 returned 0% blocks executed 0%
+    #####:  200:        bool isArgumentLifetimeValue() const {
+    #####:  201:            return valueType == ValueType::LIFETIME && lifetimeScope == LifetimeScope::Argument;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  202:        }
+        -:  203:
+function _ZNK9ValueFlow5Value10isNonValueEv called 0 returned 0% blocks executed 0%
+    #####:  204:        bool isNonValue() const {
+    #####:  205:            return isMovedValue() || isUninitValue() || isLifetimeValue();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+        -:  206:        }
+        -:  207:
+        -:  208:        /** The value bound  */
+        -:  209:        enum class Bound { Upper, Lower, Point } bound;
+        -:  210:
+        -:  211:        /** int value */
+        -:  212:        long long intvalue;
+        -:  213:
+        -:  214:        /** token value - the token that has the value. this is used for pointer aliases, strings, etc. */
+        -:  215:        const Token *tokvalue;
+        -:  216:
+        -:  217:        /** float value */
+        -:  218:        double floatValue;
+        -:  219:
+        -:  220:        /** kind of moved  */
+        -:  221:        enum class MoveKind {NonMovedVariable, MovedVariable, ForwardedVariable} moveKind;
+        -:  222:
+        -:  223:        /** For calculated values - variable value that calculated value depends on */
+        -:  224:        long long varvalue;
+        -:  225:
+        -:  226:        /** Condition that this value depends on */
+        -:  227:        const Token *condition;
+        -:  228:
+        -:  229:        ErrorPath errorPath;
+        -:  230:
+        -:  231:        /** For calculated values - varId that calculated value depends on */
+        -:  232:        nonneg int varId;
+        -:  233:
+        -:  234:        /** value relies on safe checking */
+        -:  235:        bool safe;
+        -:  236:
+        -:  237:        /** Conditional value */
+        -:  238:        bool conditional;
+        -:  239:
+        -:  240:        /** Is this value passed as default parameter to the function? */
+        -:  241:        bool defaultArg;
+        -:  242:
+        -:  243:        int indirect;
+        -:  244:
+        -:  245:        enum class LifetimeKind {Object, Lambda, Iterator, Address} lifetimeKind;
+        -:  246:
+        -:  247:        enum class LifetimeScope { Local, Argument } lifetimeScope;
+        -:  248:
+        -:  249:        static const char * toString(MoveKind moveKind) {
+        -:  250:            switch (moveKind) {
+        -:  251:            case MoveKind::NonMovedVariable:
+        -:  252:                return "NonMovedVariable";
+        -:  253:            case MoveKind::MovedVariable:
+        -:  254:                return "MovedVariable";
+        -:  255:            case MoveKind::ForwardedVariable:
+        -:  256:                return "ForwardedVariable";
+        -:  257:            }
+        -:  258:            return "";
+        -:  259:        }
+        -:  260:
+        -:  261:        /** How known is this value */
+        -:  262:        enum class ValueKind {
+        -:  263:            /** This value is possible, other unlisted values may also be possible */
+        -:  264:            Possible,
+        -:  265:            /** Only listed values are possible */
+        -:  266:            Known,
+        -:  267:            /** Inconclusive */
+        -:  268:            Inconclusive,
+        -:  269:            /** Listed values are impossible */
+        -:  270:            Impossible
+        -:  271:        } valueKind;
+        -:  272:
+function _ZN9ValueFlow5Value8setKnownEv called 0 returned 0% blocks executed 0%
+    #####:  273:        void setKnown() {
+    #####:  274:            valueKind = ValueKind::Known;
+    #####:  275:        }
+        -:  276:
+function _ZNK9ValueFlow5Value7isKnownEv called 0 returned 0% blocks executed 0%
+    #####:  277:        bool isKnown() const {
+    #####:  278:            return valueKind == ValueKind::Known;
+        -:  279:        }
+        -:  280:
+function _ZN9ValueFlow5Value11setPossibleEv called 77 returned 100% blocks executed 100%
+       77:  281:        void setPossible() {
+       77:  282:            valueKind = ValueKind::Possible;
+       77:  283:        }
+        -:  284:
+function _ZNK9ValueFlow5Value10isPossibleEv called 0 returned 0% blocks executed 0%
+    #####:  285:        bool isPossible() const {
+    #####:  286:            return valueKind == ValueKind::Possible;
+        -:  287:        }
+        -:  288:
+function _ZNK9ValueFlow5Value12isImpossibleEv called 0 returned 0% blocks executed 0%
+    #####:  289:        bool isImpossible() const {
+    #####:  290:            return valueKind == ValueKind::Impossible;
+        -:  291:        }
+        -:  292:
+function _ZN9ValueFlow5Value13setImpossibleEv called 691 returned 100% blocks executed 100%
+      691:  293:        void setImpossible() {
+      691:  294:            valueKind = ValueKind::Impossible;
+      691:  295:        }
+        -:  296:
+function _ZN9ValueFlow5Value15setInconclusiveEb called 511 returned 100% blocks executed 100%
+      511:  297:        void setInconclusive(bool inconclusive = true) {
+      511:  298:            if (inconclusive)
+branch  0 taken 28% (fallthrough)
+branch  1 taken 72%
+      144:  299:                valueKind = ValueKind::Inconclusive;
+      511:  300:        }
+        -:  301:
+function _ZNK9ValueFlow5Value14isInconclusiveEv called 0 returned 0% blocks executed 0%
+    #####:  302:        bool isInconclusive() const {
+    #####:  303:            return valueKind == ValueKind::Inconclusive;
+        -:  304:        }
+        -:  305:
+function _ZN9ValueFlow5Value21changeKnownToPossibleEv called 1259 returned 100% blocks executed 100%
+     1259:  306:        void changeKnownToPossible() {
+     1259:  307:            if (isKnown())
+call    0 returned 100%
+branch  1 taken 35% (fallthrough)
+branch  2 taken 65%
+      444:  308:                valueKind = ValueKind::Possible;
+     1259:  309:        }
+        -:  310:
+        -:  311:        bool errorSeverity() const {
+        -:  312:            return !condition && !defaultArg;
+        -:  313:        }
+        -:  314:    };
+        -:  315:
+        -:  316:    /// Constant folding of expression. This can be used before the full ValueFlow has been executed (ValueFlow::setValues).
+        -:  317:    const ValueFlow::Value * valueFlowConstantFoldAST(Token *expr, const Settings *settings);
+        -:  318:
+        -:  319:    /// Perform valueflow analysis.
+        -:  320:    void setValues(TokenList *tokenlist, SymbolDatabase* symboldatabase, ErrorLogger *errorLogger, const Settings *settings);
+        -:  321:
+        -:  322:    std::string eitherTheConditionIsRedundant(const Token *condition);
+        -:  323:}
+        -:  324:
+function _ZN13LifetimeTokenC2EOS_ called 0 returned 0% blocks executed 0%
+function _ZN13LifetimeTokenaSERKS_ called 0 returned 0% blocks executed 0%
+function _ZN13LifetimeTokenaSEOS_ called 0 returned 0% blocks executed 0%
+function _ZN13LifetimeTokenC2ERKS_ called 3100 returned 100% blocks executed 100%
+function _ZN13LifetimeTokenD2Ev called 0 returned 0% blocks executed 0%
+     3100:  325:struct LifetimeToken {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 returned 100%
+call    4 never executed
+        -:  326:    const Token* token;
+        -:  327:    bool addressOf;
+        -:  328:    ValueFlow::Value::ErrorPath errorPath;
+        -:  329:    bool inconclusive;
+        -:  330:
+        -:  331:    LifetimeToken() : token(nullptr), addressOf(false), errorPath(), inconclusive(false) {}
+        -:  332:
+function _ZN13LifetimeTokenC2EPK5TokenNSt7__debug4listISt4pairIS2_NSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISC_EEE called 3008 returned 100% blocks executed 100%
+     3008:  333:    LifetimeToken(const Token* token, ValueFlow::Value::ErrorPath errorPath)
+     3008:  334:        : token(token), addressOf(false), errorPath(std::move(errorPath)), inconclusive(false)
+call    0 returned 100%
+call    1 returned 100%
+     3008:  335:    {}
+        -:  336:
+function _ZN13LifetimeTokenC2EPK5TokenbNSt7__debug4listISt4pairIS2_NSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISC_EEE called 92 returned 100% blocks executed 100%
+       92:  337:    LifetimeToken(const Token* token, bool addressOf, ValueFlow::Value::ErrorPath errorPath)
+       92:  338:        : token(token), addressOf(addressOf), errorPath(std::move(errorPath)), inconclusive(false)
+call    0 returned 100%
+call    1 returned 100%
+       92:  339:    {}
+        -:  340:
+function _ZN13LifetimeToken12setAddressOfENSt7__debug6vectorIS_SaIS_EEEb called 23 returned 100% blocks executed 100%
+       23:  341:    static std::vector<LifetimeToken> setAddressOf(std::vector<LifetimeToken> v, bool b) {
+       46:  342:        for (LifetimeToken& x : v)
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 50% (fallthrough)
+branch  4 taken 50%
+call    5 returned 100%
+call    6 returned 100%
+call    7 returned 100%
+call    8 returned 100%
+       23:  343:            x.addressOf = b;
+       23:  344:        return v;
+call    0 returned 100%
+        -:  345:    }
+        -:  346:
+function _ZN13LifetimeToken15setInconclusiveENSt7__debug6vectorIS_SaIS_EEEb called 0 returned 0% blocks executed 0%
+    #####:  347:    static std::vector<LifetimeToken> setInconclusive(std::vector<LifetimeToken> v, bool b) {
+    #####:  348:        for (LifetimeToken& x : v)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  349:            x.inconclusive = b;
+    #####:  350:        return v;
+call    0 never executed
+        -:  351:    }
+        -:  352:};
+        -:  353:
+        -:  354:std::vector<LifetimeToken> getLifetimeTokens(const Token* tok, ValueFlow::Value::ErrorPath errorPath = ValueFlow::Value::ErrorPath{}, int depth = 20);
+        -:  355:
+        -:  356:const Variable* getLifetimeVariable(const Token* tok, ValueFlow::Value::ErrorPath& errorPath, bool* addressOf = nullptr);
+        -:  357:
+        -:  358:bool isLifetimeBorrowed(const Token *tok, const Settings *settings);
+        -:  359:
+        -:  360:std::string lifetimeType(const Token *tok, const ValueFlow::Value *val);
+        -:  361:
+        -:  362:std::string lifetimeMessage(const Token *tok, const ValueFlow::Value *val, ValueFlow::Value::ErrorPath &errorPath);
+        -:  363:
+        -:  364:ValueFlow::Value getLifetimeObjValue(const Token *tok);
+        -:  365:
+        -:  366:#endif // valueflowH

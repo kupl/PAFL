@@ -1,0 +1,185 @@
+        -:    0:Source:/home/workspace/lib/platform.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2:* Cppcheck - A tool for static C/C++ code analysis
+        -:    3:* Copyright (C) 2007-2019 Cppcheck team.
+        -:    4:*
+        -:    5:* This program is free software: you can redistribute it and/or modify
+        -:    6:* it under the terms of the GNU General Public License as published by
+        -:    7:* the Free Software Foundation, either version 3 of the License, or
+        -:    8:* (at your option) any later version.
+        -:    9:*
+        -:   10:* This program is distributed in the hope that it will be useful,
+        -:   11:* but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12:* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13:* GNU General Public License for more details.
+        -:   14:*
+        -:   15:* You should have received a copy of the GNU General Public License
+        -:   16:* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17:*/
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef platformH
+        -:   21:#define platformH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "config.h"
+        -:   25:#include "utils.h"
+        -:   26:
+        -:   27:#include <climits>
+        -:   28:#include <string>
+        -:   29:
+        -:   30:/// @addtogroup Core
+        -:   31:/// @{
+        -:   32:
+        -:   33:namespace tinyxml2 {
+        -:   34:    class XMLDocument;
+        -:   35:}
+        -:   36:
+        -:   37:namespace cppcheck {
+        -:   38:
+        -:   39:    /**
+        -:   40:    * @brief Platform settings
+        -:   41:    */
+        -:   42:    class CPPCHECKLIB Platform {
+        -:   43:    private:
+function _ZN8cppcheck8Platform9min_valueEi called 0 returned 0% blocks executed 0%
+    #####:   44:        static long long min_value(int bit) {
+    #####:   45:            if (bit >= 64)
+branch  0 never executed
+branch  1 never executed
+    #####:   46:                return LLONG_MIN;
+    #####:   47:            return -(1LL << (bit-1));
+        -:   48:        }
+        -:   49:
+function _ZN8cppcheck8Platform9max_valueEi called 0 returned 0% blocks executed 0%
+    #####:   50:        static long long max_value(int bit) {
+    #####:   51:            if (bit >= 64)
+branch  0 never executed
+branch  1 never executed
+    #####:   52:                return (~0ULL) >> 1;
+    #####:   53:            return (1LL << (bit-1)) - 1LL;
+        -:   54:        }
+        -:   55:    public:
+        -:   56:        Platform();
+        -:   57:        virtual ~Platform() {}
+        -:   58:
+        -:   59:        bool isIntValue(long long value) const {
+        -:   60:            return value >= min_value(int_bit) && value <= max_value(int_bit);
+        -:   61:        }
+        -:   62:
+        -:   63:        bool isLongValue(long long value) const {
+        -:   64:            return value >= min_value(long_bit) && value <= max_value(long_bit);
+        -:   65:        }
+        -:   66:
+        -:   67:        nonneg int char_bit;       /// bits in char
+        -:   68:        nonneg int short_bit;      /// bits in short
+        -:   69:        nonneg int int_bit;        /// bits in int
+        -:   70:        nonneg int long_bit;       /// bits in long
+        -:   71:        nonneg int long_long_bit;  /// bits in long long
+        -:   72:
+        -:   73:        /** size of standard types */
+        -:   74:        nonneg int sizeof_bool;
+        -:   75:        nonneg int sizeof_short;
+        -:   76:        nonneg int sizeof_int;
+        -:   77:        nonneg int sizeof_long;
+        -:   78:        nonneg int sizeof_long_long;
+        -:   79:        nonneg int sizeof_float;
+        -:   80:        nonneg int sizeof_double;
+        -:   81:        nonneg int sizeof_long_double;
+        -:   82:        nonneg int sizeof_wchar_t;
+        -:   83:        nonneg int sizeof_size_t;
+        -:   84:        nonneg int sizeof_pointer;
+        -:   85:
+        -:   86:        char defaultSign;  // unsigned:'u', signed:'s', unknown:'\0'
+        -:   87:
+        -:   88:        enum PlatformType {
+        -:   89:            Unspecified, // No platform specified
+        -:   90:            Native, // whatever system this code was compiled on
+        -:   91:            Win32A,
+        -:   92:            Win32W,
+        -:   93:            Win64,
+        -:   94:            Unix32,
+        -:   95:            Unix64,
+        -:   96:            PlatformFile
+        -:   97:        };
+        -:   98:
+        -:   99:        /** platform type */
+        -:  100:        PlatformType platformType;
+        -:  101:
+        -:  102:        /** set the platform type for predefined platforms */
+        -:  103:        bool platform(PlatformType type);
+        -:  104:
+        -:  105:        /**
+        -:  106:         * load platform file
+        -:  107:         * @param exename application path
+        -:  108:         * @param filename platform filename
+        -:  109:         * @return returns true if file was loaded successfully
+        -:  110:         */
+        -:  111:        bool loadPlatformFile(const char exename[], const std::string &filename);
+        -:  112:
+        -:  113:        /** load platform from xml document, primarily for testing */
+        -:  114:        bool loadFromXmlDocument(const tinyxml2::XMLDocument *doc);
+        -:  115:
+        -:  116:        /**
+        -:  117:        * @brief Returns true if platform type is Windows
+        -:  118:        * @return true if Windows platform type.
+        -:  119:        */
+        -:  120:        bool isWindowsPlatform() const {
+        -:  121:            return platformType == Win32A ||
+        -:  122:                   platformType == Win32W ||
+        -:  123:                   platformType == Win64;
+        -:  124:        }
+        -:  125:
+        -:  126:        const char *platformString() const {
+        -:  127:            return platformString(platformType);
+        -:  128:        }
+        -:  129:
+        -:  130:        static const char *platformString(PlatformType pt) {
+        -:  131:            switch (pt) {
+        -:  132:            case Unspecified:
+        -:  133:                return "Unspecified";
+        -:  134:            case Native:
+        -:  135:                return "Native";
+        -:  136:            case Win32A:
+        -:  137:                return "win32A";
+        -:  138:            case Win32W:
+        -:  139:                return "win32W";
+        -:  140:            case Win64:
+        -:  141:                return "win64";
+        -:  142:            case Unix32:
+        -:  143:                return "unix32";
+        -:  144:            case Unix64:
+        -:  145:                return "unix64";
+        -:  146:            case PlatformFile:
+        -:  147:                return "platformFile";
+        -:  148:            default:
+        -:  149:                return "unknown";
+        -:  150:            }
+        -:  151:        }
+        -:  152:
+        -:  153:        long long unsignedCharMax() const {
+        -:  154:            return max_value(char_bit + 1);
+        -:  155:        }
+        -:  156:
+function _ZNK8cppcheck8Platform13signedCharMaxEv called 0 returned 0% blocks executed 0%
+    #####:  157:        long long signedCharMax() const {
+    #####:  158:            return max_value(char_bit);
+call    0 never executed
+        -:  159:        }
+        -:  160:
+function _ZNK8cppcheck8Platform13signedCharMinEv called 0 returned 0% blocks executed 0%
+    #####:  161:        long long signedCharMin() const {
+    #####:  162:            return min_value(char_bit);
+call    0 never executed
+        -:  163:        }
+        -:  164:    };
+        -:  165:
+        -:  166:}
+        -:  167:
+        -:  168:/// @}
+        -:  169://---------------------------------------------------------------------------
+        -:  170:#endif // platformH

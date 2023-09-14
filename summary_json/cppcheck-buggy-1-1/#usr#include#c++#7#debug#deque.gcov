@@ -1,0 +1,719 @@
+        -:    0:Source:/usr/include/c++/7/debug/deque
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:// Debugging deque implementation -*- C++ -*-
+        -:    2:
+        -:    3:// Copyright (C) 2003-2017 Free Software Foundation, Inc.
+        -:    4://
+        -:    5:// This file is part of the GNU ISO C++ Library.  This library is free
+        -:    6:// software; you can redistribute it and/or modify it under the
+        -:    7:// terms of the GNU General Public License as published by the
+        -:    8:// Free Software Foundation; either version 3, or (at your option)
+        -:    9:// any later version.
+        -:   10:
+        -:   11:// This library is distributed in the hope that it will be useful,
+        -:   12:// but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   13:// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   14:// GNU General Public License for more details.
+        -:   15:
+        -:   16:// Under Section 7 of GPL version 3, you are granted additional
+        -:   17:// permissions described in the GCC Runtime Library Exception, version
+        -:   18:// 3.1, as published by the Free Software Foundation.
+        -:   19:
+        -:   20:// You should have received a copy of the GNU General Public License and
+        -:   21:// a copy of the GCC Runtime Library Exception along with this program;
+        -:   22:// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+        -:   23:// <http://www.gnu.org/licenses/>.
+        -:   24:
+        -:   25:/** @file debug/deque
+        -:   26: *  This file is a GNU debug extension to the Standard C++ Library.
+        -:   27: */
+        -:   28:
+        -:   29:#ifndef _GLIBCXX_DEBUG_DEQUE
+        -:   30:#define _GLIBCXX_DEBUG_DEQUE 1
+        -:   31:
+        -:   32:#pragma GCC system_header
+        -:   33:
+        -:   34:#include <deque>
+        -:   35:#include <debug/safe_sequence.h>
+        -:   36:#include <debug/safe_container.h>
+        -:   37:#include <debug/safe_iterator.h>
+        -:   38:
+        -:   39:namespace std _GLIBCXX_VISIBILITY(default)
+        -:   40:{
+        -:   41:namespace __debug
+        -:   42:{
+        -:   43:  /// Class std::deque with safety/checking/debug instrumentation.
+        -:   44:  template<typename _Tp, typename _Allocator = std::allocator<_Tp> >
+        -:   45:    class deque
+        -:   46:    : public __gnu_debug::_Safe_container<
+        -:   47:	deque<_Tp, _Allocator>, _Allocator,
+        -:   48:	__gnu_debug::_Safe_sequence>,
+        -:   49:      public _GLIBCXX_STD_C::deque<_Tp, _Allocator>
+        -:   50:    {
+        -:   51:      typedef  _GLIBCXX_STD_C::deque<_Tp, _Allocator>		_Base;
+        -:   52:      typedef __gnu_debug::_Safe_container<
+        -:   53:	deque, _Allocator, __gnu_debug::_Safe_sequence>	_Safe;
+        -:   54:
+        -:   55:      typedef typename _Base::const_iterator	_Base_const_iterator;
+        -:   56:      typedef typename _Base::iterator		_Base_iterator;
+        -:   57:      typedef __gnu_debug::_Equal_to<_Base_const_iterator> _Equal;
+        -:   58:
+        -:   59:    public:
+        -:   60:      typedef typename _Base::reference			reference;
+        -:   61:      typedef typename _Base::const_reference		const_reference;
+        -:   62:
+        -:   63:      typedef __gnu_debug::_Safe_iterator<_Base_iterator, deque>
+        -:   64:							iterator;
+        -:   65:      typedef __gnu_debug::_Safe_iterator<_Base_const_iterator, deque>
+        -:   66:							const_iterator;
+        -:   67:
+        -:   68:      typedef typename _Base::size_type			size_type;
+        -:   69:      typedef typename _Base::difference_type		difference_type;
+        -:   70:
+        -:   71:      typedef _Tp					value_type;
+        -:   72:      typedef _Allocator				allocator_type;
+        -:   73:      typedef typename _Base::pointer			pointer;
+        -:   74:      typedef typename _Base::const_pointer		const_pointer;
+        -:   75:      typedef std::reverse_iterator<iterator>		reverse_iterator;
+        -:   76:      typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
+        -:   77:
+        -:   78:      // 23.2.1.1 construct/copy/destroy:
+        -:   79:
+        -:   80:#if __cplusplus < 201103L
+        -:   81:      deque()
+        -:   82:      : _Base() { }
+        -:   83:
+        -:   84:      deque(const deque& __x)
+        -:   85:      : _Base(__x) { }
+        -:   86:
+        -:   87:      ~deque() { }
+        -:   88:#else
+function _ZNSt7__debug5dequeIP5TokenSaIS2_EEC2Ev called 0 returned 0% blocks executed 0%
+    #####:   89:      deque() = default;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+        -:   90:      deque(const deque&) = default;
+        -:   91:      deque(deque&&) = default;
+        -:   92:
+        -:   93:      deque(const deque& __d, const _Allocator& __a)
+        -:   94:      : _Base(__d, __a) { }
+        -:   95:
+        -:   96:      deque(deque&& __d, const _Allocator& __a)
+        -:   97:      : _Safe(std::move(__d)), _Base(std::move(__d), __a) { }
+        -:   98:
+        -:   99:      deque(initializer_list<value_type> __l,
+        -:  100:	    const allocator_type& __a = allocator_type())
+        -:  101:      : _Base(__l, __a) { }
+        -:  102:
+function _ZNSt7__debug5dequeIP5TokenSaIS2_EED2Ev called 0 returned 0% blocks executed 0%
+    #####:  103:      ~deque() = default;
+call    0 never executed
+call    1 never executed
+        -:  104:#endif
+        -:  105:
+        -:  106:      explicit
+        -:  107:      deque(const _Allocator& __a)
+        -:  108:      : _Base(__a) { }
+        -:  109:
+        -:  110:#if __cplusplus >= 201103L
+        -:  111:      explicit
+        -:  112:      deque(size_type __n, const _Allocator& __a = _Allocator())
+        -:  113:      : _Base(__n, __a) { }
+        -:  114:
+        -:  115:      deque(size_type __n, const _Tp& __value,
+        -:  116:	    const _Allocator& __a = _Allocator())
+        -:  117:      : _Base(__n, __value, __a) { }
+        -:  118:#else
+        -:  119:      explicit
+        -:  120:      deque(size_type __n, const _Tp& __value = _Tp(),
+        -:  121:	    const _Allocator& __a = _Allocator())
+        -:  122:      : _Base(__n, __value, __a) { }
+        -:  123:#endif
+        -:  124:
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:      template<class _InputIterator,
+        -:  127:	       typename = std::_RequireInputIter<_InputIterator>>
+        -:  128:#else
+        -:  129:      template<class _InputIterator>
+        -:  130:#endif
+        -:  131:	deque(_InputIterator __first, _InputIterator __last,
+        -:  132:	      const _Allocator& __a = _Allocator())
+        -:  133:	: _Base(__gnu_debug::__base(__gnu_debug::__check_valid_range(__first,
+        -:  134:								     __last)),
+        -:  135:		__gnu_debug::__base(__last), __a)
+        -:  136:	{ }
+        -:  137:
+        -:  138:      deque(const _Base& __x)
+        -:  139:      : _Base(__x) { }
+        -:  140:
+        -:  141:#if __cplusplus < 201103L
+        -:  142:      deque&
+        -:  143:      operator=(const deque& __x)
+        -:  144:      {
+        -:  145:	this->_M_safe() = __x;
+        -:  146:	_M_base() = __x;
+        -:  147:	return *this;
+        -:  148:      }
+        -:  149:#else
+        -:  150:      deque&
+        -:  151:      operator=(const deque&) = default;
+        -:  152:
+        -:  153:      deque&
+        -:  154:      operator=(deque&&) = default;
+        -:  155:
+        -:  156:      deque&
+        -:  157:      operator=(initializer_list<value_type> __l)
+        -:  158:      {
+        -:  159:	_M_base() = __l;
+        -:  160:	this->_M_invalidate_all();
+        -:  161:	return *this;
+        -:  162:      }
+        -:  163:#endif
+        -:  164:
+        -:  165:#if __cplusplus >= 201103L
+        -:  166:      template<class _InputIterator,
+        -:  167:	       typename = std::_RequireInputIter<_InputIterator>>
+        -:  168:#else
+        -:  169:      template<class _InputIterator>
+        -:  170:#endif
+        -:  171:	void
+        -:  172:	assign(_InputIterator __first, _InputIterator __last)
+        -:  173:	{
+        -:  174:	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+        -:  175:	  __glibcxx_check_valid_range2(__first, __last, __dist);
+        -:  176:	  if (__dist.second >= __gnu_debug::__dp_sign)
+        -:  177:	    _Base::assign(__gnu_debug::__unsafe(__first),
+        -:  178:			  __gnu_debug::__unsafe(__last));
+        -:  179:	  else
+        -:  180:	    _Base::assign(__first, __last);
+        -:  181:
+        -:  182:	  this->_M_invalidate_all();
+        -:  183:	}
+        -:  184:
+        -:  185:      void
+        -:  186:      assign(size_type __n, const _Tp& __t)
+        -:  187:      {
+        -:  188:	_Base::assign(__n, __t);
+        -:  189:	this->_M_invalidate_all();
+        -:  190:      }
+        -:  191:
+        -:  192:#if __cplusplus >= 201103L
+        -:  193:      void
+        -:  194:      assign(initializer_list<value_type> __l)
+        -:  195:      {
+        -:  196:	_Base::assign(__l);
+        -:  197:	this->_M_invalidate_all();
+        -:  198:      }
+        -:  199:#endif
+        -:  200:
+        -:  201:      using _Base::get_allocator;
+        -:  202:
+        -:  203:      // iterators:
+        -:  204:      iterator
+        -:  205:      begin() _GLIBCXX_NOEXCEPT
+        -:  206:      { return iterator(_Base::begin(), this); }
+        -:  207:
+        -:  208:      const_iterator
+        -:  209:      begin() const _GLIBCXX_NOEXCEPT
+        -:  210:      { return const_iterator(_Base::begin(), this); }
+        -:  211:
+        -:  212:      iterator
+        -:  213:      end() _GLIBCXX_NOEXCEPT
+        -:  214:      { return iterator(_Base::end(), this); }
+        -:  215:
+        -:  216:      const_iterator
+        -:  217:      end() const _GLIBCXX_NOEXCEPT
+        -:  218:      { return const_iterator(_Base::end(), this); }
+        -:  219:
+        -:  220:      reverse_iterator
+        -:  221:      rbegin() _GLIBCXX_NOEXCEPT
+        -:  222:      { return reverse_iterator(end()); }
+        -:  223:
+        -:  224:      const_reverse_iterator
+        -:  225:      rbegin() const _GLIBCXX_NOEXCEPT
+        -:  226:      { return const_reverse_iterator(end()); }
+        -:  227:
+        -:  228:      reverse_iterator
+        -:  229:      rend() _GLIBCXX_NOEXCEPT
+        -:  230:      { return reverse_iterator(begin()); }
+        -:  231:
+        -:  232:      const_reverse_iterator
+        -:  233:      rend() const _GLIBCXX_NOEXCEPT
+        -:  234:      { return const_reverse_iterator(begin()); }
+        -:  235:
+        -:  236:#if __cplusplus >= 201103L
+        -:  237:      const_iterator
+        -:  238:      cbegin() const noexcept
+        -:  239:      { return const_iterator(_Base::begin(), this); }
+        -:  240:
+        -:  241:      const_iterator
+        -:  242:      cend() const noexcept
+        -:  243:      { return const_iterator(_Base::end(), this); }
+        -:  244:
+        -:  245:      const_reverse_iterator
+        -:  246:      crbegin() const noexcept
+        -:  247:      { return const_reverse_iterator(end()); }
+        -:  248:
+        -:  249:      const_reverse_iterator
+        -:  250:      crend() const noexcept
+        -:  251:      { return const_reverse_iterator(begin()); }
+        -:  252:#endif
+        -:  253:
+        -:  254:    private:
+        -:  255:      void
+        -:  256:      _M_invalidate_after_nth(difference_type __n)
+        -:  257:      {
+        -:  258:	typedef __gnu_debug::_After_nth_from<_Base_const_iterator> _After_nth;
+        -:  259:	this->_M_invalidate_if(_After_nth(__n, _Base::begin()));
+        -:  260:      }
+        -:  261:
+        -:  262:    public:
+        -:  263:      // 23.2.1.2 capacity:
+        -:  264:      using _Base::size;
+        -:  265:      using _Base::max_size;
+        -:  266:
+        -:  267:#if __cplusplus >= 201103L
+        -:  268:      void
+        -:  269:      resize(size_type __sz)
+        -:  270:      {
+        -:  271:	bool __invalidate_all = __sz > this->size();
+        -:  272:	if (__sz < this->size())
+        -:  273:	  this->_M_invalidate_after_nth(__sz);
+        -:  274:
+        -:  275:	_Base::resize(__sz);
+        -:  276:
+        -:  277:	if (__invalidate_all)
+        -:  278:	  this->_M_invalidate_all();
+        -:  279:      }
+        -:  280:
+        -:  281:      void
+        -:  282:      resize(size_type __sz, const _Tp& __c)
+        -:  283:      {
+        -:  284:	bool __invalidate_all = __sz > this->size();
+        -:  285:	if (__sz < this->size())
+        -:  286:	  this->_M_invalidate_after_nth(__sz);
+        -:  287:
+        -:  288:	_Base::resize(__sz, __c);
+        -:  289:
+        -:  290:	if (__invalidate_all)
+        -:  291:	  this->_M_invalidate_all();
+        -:  292:      }
+        -:  293:#else
+        -:  294:      void
+        -:  295:      resize(size_type __sz, _Tp __c = _Tp())
+        -:  296:      {
+        -:  297:	bool __invalidate_all = __sz > this->size();
+        -:  298:	if (__sz < this->size())
+        -:  299:	  this->_M_invalidate_after_nth(__sz);
+        -:  300:
+        -:  301:	_Base::resize(__sz, __c);
+        -:  302:
+        -:  303:	if (__invalidate_all)
+        -:  304:	  this->_M_invalidate_all();
+        -:  305:      }
+        -:  306:#endif
+        -:  307:
+        -:  308:#if __cplusplus >= 201103L
+        -:  309:      void
+        -:  310:      shrink_to_fit() noexcept
+        -:  311:      {
+        -:  312:	if (_Base::_M_shrink_to_fit())
+        -:  313:	  this->_M_invalidate_all();
+        -:  314:      }
+        -:  315:#endif
+        -:  316:
+        -:  317:      using _Base::empty;
+        -:  318:
+        -:  319:      // element access:
+        -:  320:      reference
+        -:  321:      operator[](size_type __n) _GLIBCXX_NOEXCEPT
+        -:  322:      {
+        -:  323:	__glibcxx_check_subscript(__n);
+        -:  324:	return _M_base()[__n];
+        -:  325:      }
+        -:  326:
+        -:  327:      const_reference
+        -:  328:      operator[](size_type __n) const _GLIBCXX_NOEXCEPT
+        -:  329:      {
+        -:  330:	__glibcxx_check_subscript(__n);
+        -:  331:	return _M_base()[__n];
+        -:  332:      }
+        -:  333:
+        -:  334:      using _Base::at;
+        -:  335:
+        -:  336:      reference
+        -:  337:      front() _GLIBCXX_NOEXCEPT
+        -:  338:      {
+        -:  339:	__glibcxx_check_nonempty();
+        -:  340:	return _Base::front();
+        -:  341:      }
+        -:  342:
+        -:  343:      const_reference
+        -:  344:      front() const _GLIBCXX_NOEXCEPT
+        -:  345:      {
+        -:  346:	__glibcxx_check_nonempty();
+        -:  347:	return _Base::front();
+        -:  348:      }
+        -:  349:
+        -:  350:      reference
+function _ZNSt7__debug5dequeIP5TokenSaIS2_EE4backEv called 0 returned 0% blocks executed 0%
+    #####:  351:      back() _GLIBCXX_NOEXCEPT
+        -:  352:      {
+    #####:  353:	__glibcxx_check_nonempty();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  354:	return _Base::back();
+call    0 never executed
+        -:  355:      }
+        -:  356:
+        -:  357:      const_reference
+        -:  358:      back() const _GLIBCXX_NOEXCEPT
+        -:  359:      {
+        -:  360:	__glibcxx_check_nonempty();
+        -:  361:	return _Base::back();
+        -:  362:      }
+        -:  363:
+        -:  364:      // 23.2.1.3 modifiers:
+        -:  365:      void
+        -:  366:      push_front(const _Tp& __x)
+        -:  367:      {
+        -:  368:	_Base::push_front(__x);
+        -:  369:	this->_M_invalidate_all();
+        -:  370:      }
+        -:  371:
+        -:  372:      void
+function _ZNSt7__debug5dequeIP5TokenSaIS2_EE9push_backERKS2_ called 0 returned 0% blocks executed 0%
+    #####:  373:      push_back(const _Tp& __x)
+        -:  374:      {
+    #####:  375:	_Base::push_back(__x);
+call    0 never executed
+    #####:  376:	this->_M_invalidate_all();
+call    0 never executed
+    #####:  377:      }
+        -:  378:
+        -:  379:#if __cplusplus >= 201103L
+        -:  380:      void
+        -:  381:      push_front(_Tp&& __x)
+        -:  382:      { emplace_front(std::move(__x)); }
+        -:  383:
+        -:  384:      void
+function _ZNSt7__debug5dequeIP5TokenSaIS2_EE9push_backEOS2_ called 0 returned 0% blocks executed 0%
+    #####:  385:      push_back(_Tp&& __x)
+    #####:  386:      { emplace_back(std::move(__x)); }
+call    0 never executed
+call    1 never executed
+        -:  387:
+        -:  388:      template<typename... _Args>
+        -:  389:#if __cplusplus > 201402L
+        -:  390:	reference
+        -:  391:#else
+        -:  392:	void
+        -:  393:#endif
+        -:  394:	emplace_front(_Args&&... __args)
+        -:  395:	{
+        -:  396:	  _Base::emplace_front(std::forward<_Args>(__args)...);
+        -:  397:	  this->_M_invalidate_all();
+        -:  398:#if __cplusplus > 201402L
+        -:  399:	  return front();
+        -:  400:#endif
+        -:  401:	}
+        -:  402:
+        -:  403:      template<typename... _Args>
+        -:  404:#if __cplusplus > 201402L
+        -:  405:	reference
+        -:  406:#else
+        -:  407:	void
+        -:  408:#endif
+function _ZNSt7__debug5dequeIP5TokenSaIS2_EE12emplace_backIJS2_EEEvDpOT_ called 0 returned 0% blocks executed 0%
+    #####:  409:	emplace_back(_Args&&... __args)
+        -:  410:	{
+    #####:  411:	  _Base::emplace_back(std::forward<_Args>(__args)...);
+call    0 never executed
+call    1 never executed
+    #####:  412:	  this->_M_invalidate_all();
+call    0 never executed
+        -:  413:#if __cplusplus > 201402L
+        -:  414:	  return back();
+        -:  415:#endif
+    #####:  416:	}
+        -:  417:
+        -:  418:      template<typename... _Args>
+        -:  419:	iterator
+        -:  420:	emplace(const_iterator __position, _Args&&... __args)
+        -:  421:	{
+        -:  422:	  __glibcxx_check_insert(__position);
+        -:  423:	  _Base_iterator __res = _Base::emplace(__position.base(),
+        -:  424:						std::forward<_Args>(__args)...);
+        -:  425:	  this->_M_invalidate_all();
+        -:  426:	  return iterator(__res, this);
+        -:  427:	}
+        -:  428:#endif
+        -:  429:
+        -:  430:      iterator
+        -:  431:#if __cplusplus >= 201103L
+        -:  432:      insert(const_iterator __position, const _Tp& __x)
+        -:  433:#else
+        -:  434:      insert(iterator __position, const _Tp& __x)
+        -:  435:#endif
+        -:  436:      {
+        -:  437:	__glibcxx_check_insert(__position);
+        -:  438:	_Base_iterator __res = _Base::insert(__position.base(), __x);
+        -:  439:	this->_M_invalidate_all();
+        -:  440:	return iterator(__res, this);
+        -:  441:      }
+        -:  442:
+        -:  443:#if __cplusplus >= 201103L
+        -:  444:      iterator
+        -:  445:      insert(const_iterator __position, _Tp&& __x)
+        -:  446:      { return emplace(__position, std::move(__x)); }
+        -:  447:
+        -:  448:      iterator
+        -:  449:      insert(const_iterator __position, initializer_list<value_type> __l)
+        -:  450:      {
+        -:  451:	__glibcxx_check_insert(__position);
+        -:  452:	_Base_iterator __res = _Base::insert(__position.base(), __l);
+        -:  453:	this->_M_invalidate_all();
+        -:  454:	return iterator(__res, this);
+        -:  455:      }
+        -:  456:#endif
+        -:  457:
+        -:  458:#if __cplusplus >= 201103L
+        -:  459:      iterator
+        -:  460:      insert(const_iterator __position, size_type __n, const _Tp& __x)
+        -:  461:      {
+        -:  462:	__glibcxx_check_insert(__position);
+        -:  463:	_Base_iterator __res = _Base::insert(__position.base(), __n, __x);
+        -:  464:	this->_M_invalidate_all();
+        -:  465:	return iterator(__res, this);
+        -:  466:      }
+        -:  467:#else
+        -:  468:      void
+        -:  469:      insert(iterator __position, size_type __n, const _Tp& __x)
+        -:  470:      {
+        -:  471:	__glibcxx_check_insert(__position);
+        -:  472:	_Base::insert(__position.base(), __n, __x);
+        -:  473:	this->_M_invalidate_all();
+        -:  474:      }
+        -:  475:#endif
+        -:  476:
+        -:  477:#if __cplusplus >= 201103L
+        -:  478:      template<class _InputIterator,
+        -:  479:	       typename = std::_RequireInputIter<_InputIterator>>
+        -:  480:	iterator
+        -:  481:	insert(const_iterator __position,
+        -:  482:	       _InputIterator __first, _InputIterator __last)
+        -:  483:	{
+        -:  484:	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+        -:  485:	  __glibcxx_check_insert_range(__position, __first, __last, __dist);
+        -:  486:	  _Base_iterator __res;
+        -:  487:	  if (__dist.second >= __gnu_debug::__dp_sign)
+        -:  488:	    __res = _Base::insert(__position.base(),
+        -:  489:				  __gnu_debug::__unsafe(__first),
+        -:  490:				  __gnu_debug::__unsafe(__last));
+        -:  491:	  else
+        -:  492:	    __res = _Base::insert(__position.base(), __first, __last);
+        -:  493:
+        -:  494:	  this->_M_invalidate_all();
+        -:  495:	  return iterator(__res, this);
+        -:  496:	}
+        -:  497:#else
+        -:  498:      template<class _InputIterator>
+        -:  499:	void
+        -:  500:	insert(iterator __position,
+        -:  501:	       _InputIterator __first, _InputIterator __last)
+        -:  502:	{
+        -:  503:	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+        -:  504:	  __glibcxx_check_insert_range(__position, __first, __last, __dist);
+        -:  505:
+        -:  506:	  if (__dist.second >= __gnu_debug::__dp_sign)
+        -:  507:	    _Base::insert(__position.base(),
+        -:  508:			  __gnu_debug::__unsafe(__first),
+        -:  509:			  __gnu_debug::__unsafe(__last));
+        -:  510:	  else
+        -:  511:	    _Base::insert(__position.base(), __first, __last);
+        -:  512:
+        -:  513:	  this->_M_invalidate_all();
+        -:  514:	}
+        -:  515:#endif
+        -:  516:
+        -:  517:      void
+        -:  518:      pop_front() _GLIBCXX_NOEXCEPT
+        -:  519:      {
+        -:  520:	__glibcxx_check_nonempty();
+        -:  521:	this->_M_invalidate_if(_Equal(_Base::begin()));
+        -:  522:	_Base::pop_front();
+        -:  523:      }
+        -:  524:
+        -:  525:      void
+function _ZNSt7__debug5dequeIP5TokenSaIS2_EE8pop_backEv called 0 returned 0% blocks executed 0%
+    #####:  526:      pop_back() _GLIBCXX_NOEXCEPT
+        -:  527:      {
+    #####:  528:	__glibcxx_check_nonempty();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  529:	this->_M_invalidate_if(_Equal(--_Base::end()));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  530:	_Base::pop_back();
+call    0 never executed
+    #####:  531:      }
+        -:  532:
+        -:  533:      iterator
+        -:  534:#if __cplusplus >= 201103L
+        -:  535:      erase(const_iterator __position)
+        -:  536:#else
+        -:  537:      erase(iterator __position)	
+        -:  538:#endif
+        -:  539:      {
+        -:  540:	__glibcxx_check_erase(__position);
+        -:  541:#if __cplusplus >= 201103L
+        -:  542:	_Base_const_iterator __victim = __position.base();
+        -:  543:#else
+        -:  544:	_Base_iterator __victim = __position.base();
+        -:  545:#endif
+        -:  546:	if (__victim == _Base::begin() || __victim == _Base::end() - 1)
+        -:  547:	  {
+        -:  548:	    this->_M_invalidate_if(_Equal(__victim));
+        -:  549:	    return iterator(_Base::erase(__victim), this);
+        -:  550:	  }
+        -:  551:	else
+        -:  552:	  {
+        -:  553:	    _Base_iterator __res = _Base::erase(__victim);
+        -:  554:	    this->_M_invalidate_all();
+        -:  555:	    return iterator(__res, this);
+        -:  556:	  }
+        -:  557:      }
+        -:  558:
+        -:  559:      iterator
+        -:  560:#if __cplusplus >= 201103L
+        -:  561:      erase(const_iterator __first, const_iterator __last)
+        -:  562:#else
+        -:  563:      erase(iterator __first, iterator __last)
+        -:  564:#endif
+        -:  565:      {
+        -:  566:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  567:	// 151. can't currently clear() empty container
+        -:  568:	__glibcxx_check_erase_range(__first, __last);
+        -:  569:
+        -:  570:	if (__first.base() == __last.base())
+        -:  571:#if __cplusplus >= 201103L
+        -:  572:	  return iterator(__first.base()._M_const_cast(), this);
+        -:  573:#else
+        -:  574:	  return __first;
+        -:  575:#endif
+        -:  576:	else if (__first.base() == _Base::begin()
+        -:  577:		 || __last.base() == _Base::end())
+        -:  578:	  {
+        -:  579:	    this->_M_detach_singular();
+        -:  580:	    for (_Base_const_iterator __position = __first.base();
+        -:  581:		 __position != __last.base(); ++__position)
+        -:  582:	      {
+        -:  583:		this->_M_invalidate_if(_Equal(__position));
+        -:  584:	      }
+        -:  585:	    __try
+        -:  586:	      {
+        -:  587:		return iterator(_Base::erase(__first.base(), __last.base()),
+        -:  588:				this);
+        -:  589:	      }
+        -:  590:	    __catch(...)
+        -:  591:	      {
+        -:  592:		this->_M_revalidate_singular();
+        -:  593:		__throw_exception_again;
+        -:  594:	      }
+        -:  595:	  }
+        -:  596:	else
+        -:  597:	  {
+        -:  598:	    _Base_iterator __res = _Base::erase(__first.base(),
+        -:  599:						__last.base());
+        -:  600:	    this->_M_invalidate_all();
+        -:  601:	    return iterator(__res, this);
+        -:  602:	  }
+        -:  603:      }
+        -:  604:
+        -:  605:      void
+        -:  606:      swap(deque& __x)
+        -:  607:      _GLIBCXX_NOEXCEPT_IF( noexcept(declval<_Base&>().swap(__x)) )
+        -:  608:      {
+        -:  609:	_Safe::_M_swap(__x);
+        -:  610:	_Base::swap(__x);
+        -:  611:      }
+        -:  612:
+        -:  613:      void
+        -:  614:      clear() _GLIBCXX_NOEXCEPT
+        -:  615:      {
+        -:  616:	_Base::clear();
+        -:  617:	this->_M_invalidate_all();
+        -:  618:      }
+        -:  619:
+        -:  620:      _Base&
+        -:  621:      _M_base() _GLIBCXX_NOEXCEPT	{ return *this; }
+        -:  622:
+        -:  623:      const _Base&
+        -:  624:      _M_base() const _GLIBCXX_NOEXCEPT	{ return *this; }
+        -:  625:    };
+        -:  626:
+        -:  627:  template<typename _Tp, typename _Alloc>
+        -:  628:    inline bool
+        -:  629:    operator==(const deque<_Tp, _Alloc>& __lhs,
+        -:  630:	       const deque<_Tp, _Alloc>& __rhs)
+        -:  631:    { return __lhs._M_base() == __rhs._M_base(); }
+        -:  632:
+        -:  633:  template<typename _Tp, typename _Alloc>
+        -:  634:    inline bool
+        -:  635:    operator!=(const deque<_Tp, _Alloc>& __lhs,
+        -:  636:	       const deque<_Tp, _Alloc>& __rhs)
+        -:  637:    { return __lhs._M_base() != __rhs._M_base(); }
+        -:  638:
+        -:  639:  template<typename _Tp, typename _Alloc>
+        -:  640:    inline bool
+        -:  641:    operator<(const deque<_Tp, _Alloc>& __lhs,
+        -:  642:	      const deque<_Tp, _Alloc>& __rhs)
+        -:  643:    { return __lhs._M_base() < __rhs._M_base(); }
+        -:  644:
+        -:  645:  template<typename _Tp, typename _Alloc>
+        -:  646:    inline bool
+        -:  647:    operator<=(const deque<_Tp, _Alloc>& __lhs,
+        -:  648:	       const deque<_Tp, _Alloc>& __rhs)
+        -:  649:    { return __lhs._M_base() <= __rhs._M_base(); }
+        -:  650:
+        -:  651:  template<typename _Tp, typename _Alloc>
+        -:  652:    inline bool
+        -:  653:    operator>=(const deque<_Tp, _Alloc>& __lhs,
+        -:  654:	       const deque<_Tp, _Alloc>& __rhs)
+        -:  655:    { return __lhs._M_base() >= __rhs._M_base(); }
+        -:  656:
+        -:  657:  template<typename _Tp, typename _Alloc>
+        -:  658:    inline bool
+        -:  659:    operator>(const deque<_Tp, _Alloc>& __lhs,
+        -:  660:	      const deque<_Tp, _Alloc>& __rhs)
+        -:  661:    { return __lhs._M_base() > __rhs._M_base(); }
+        -:  662:
+        -:  663:  template<typename _Tp, typename _Alloc>
+        -:  664:    inline void
+        -:  665:    swap(deque<_Tp, _Alloc>& __lhs, deque<_Tp, _Alloc>& __rhs)
+        -:  666:    _GLIBCXX_NOEXCEPT_IF(noexcept(__lhs.swap(__rhs)))
+        -:  667:    { __lhs.swap(__rhs); }
+        -:  668:
+        -:  669:} // namespace __debug
+        -:  670:} // namespace std
+        -:  671:
+        -:  672:#endif

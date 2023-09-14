@@ -1,0 +1,209 @@
+        -:    0:Source:/home/workspace/lib/check.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/ctu.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/ctu.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef checkH
+        -:   21:#define checkH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "config.h"
+        -:   25:#include "errorlogger.h"
+        -:   26:#include "settings.h"
+        -:   27:#include "token.h"
+        -:   28:#include "tokenize.h"
+        -:   29:#include "valueflow.h"
+        -:   30:
+        -:   31:#include <list>
+        -:   32:#include <string>
+        -:   33:
+        -:   34:namespace tinyxml2 {
+        -:   35:    class XMLElement;
+        -:   36:}
+        -:   37:
+        -:   38:namespace CTU {
+        -:   39:    class FileInfo;
+        -:   40:}
+        -:   41:
+        -:   42:/** Use WRONG_DATA in checkers to mark conditions that check that data is correct */
+        -:   43:#define WRONG_DATA(COND, TOK)  (wrongData((TOK), (COND), #COND))
+        -:   44:
+        -:   45:/// @addtogroup Core
+        -:   46:/// @{
+        -:   47:
+        -:   48:/**
+        -:   49: * @brief Interface class that cppcheck uses to communicate with the checks.
+        -:   50: * All checking classes must inherit from this class
+        -:   51: */
+        -:   52:class CPPCHECKLIB Check {
+        -:   53:public:
+        -:   54:    /** This constructor is used when registering the CheckClass */
+        -:   55:    explicit Check(const std::string &aname);
+        -:   56:
+        -:   57:    /** This constructor is used when running checks. */
+        -:   58:    Check(const std::string &aname, const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+        -:   59:        : mTokenizer(tokenizer), mSettings(settings), mErrorLogger(errorLogger), mName(aname) {
+        -:   60:    }
+        -:   61:
+        -:   62:    virtual ~Check() {
+        -:   63:        if (!mTokenizer)
+        -:   64:            instances().remove(this);
+        -:   65:    }
+        -:   66:
+        -:   67:    /** List of registered check classes. This is used by Cppcheck to run checks and generate documentation */
+        -:   68:    static std::list<Check *> &instances();
+        -:   69:
+        -:   70:    /** run checks, the token list is not simplified */
+        -:   71:    virtual void runChecks(const Tokenizer *, const Settings *, ErrorLogger *) = 0;
+        -:   72:
+        -:   73:    /** get error messages */
+        -:   74:    virtual void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const = 0;
+        -:   75:
+        -:   76:    /** class name, used to generate documentation */
+        -:   77:    const std::string& name() const {
+        -:   78:        return mName;
+        -:   79:    }
+        -:   80:
+        -:   81:    /** get information about this class, used to generate documentation */
+        -:   82:    virtual std::string classInfo() const = 0;
+        -:   83:
+        -:   84:    /**
+        -:   85:     * Write given error to errorlogger or to out stream in xml format.
+        -:   86:     * This is for for printout out the error list with --errorlist
+        -:   87:     * @param errmsg Error message to write
+        -:   88:     */
+        -:   89:    static void reportError(const ErrorLogger::ErrorMessage &errmsg);
+        -:   90:
+        -:   91:    /** Base class used for whole-program analysis */
+        -:   92:    class CPPCHECKLIB FileInfo {
+        -:   93:    public:
+function _ZN5Check8FileInfoC2Ev called 0 returned 0% blocks executed 0%
+    #####:   94:        FileInfo() {}
+function _ZN5Check8FileInfoD0Ev called 0 returned 0% blocks executed 0%
+function _ZN5Check8FileInfoD2Ev called 0 returned 0% blocks executed 0%
+    #####:   95:        virtual ~FileInfo() {}
+call    0 never executed
+call    1 never executed
+function _ZNK5Check8FileInfo8toStringB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:   96:        virtual std::string toString() const {
+    #####:   97:            return std::string();
+call    0 never executed
+        -:   98:        }
+        -:   99:    };
+        -:  100:
+        -:  101:    virtual FileInfo * getFileInfo(const Tokenizer *tokenizer, const Settings *settings) const {
+        -:  102:        (void)tokenizer;
+        -:  103:        (void)settings;
+        -:  104:        return nullptr;
+        -:  105:    }
+        -:  106:
+        -:  107:    virtual FileInfo * loadFileInfoFromXml(const tinyxml2::XMLElement *xmlElement) const {
+        -:  108:        (void)xmlElement;
+        -:  109:        return nullptr;
+        -:  110:    }
+        -:  111:
+        -:  112:    // Return true if an error is reported.
+        -:  113:    virtual bool analyseWholeProgram(const CTU::FileInfo *ctu, const std::list<FileInfo*> &fileInfo, const Settings& settings, ErrorLogger &errorLogger) {
+        -:  114:        (void)ctu;
+        -:  115:        (void)fileInfo;
+        -:  116:        (void)settings;
+        -:  117:        (void)errorLogger;
+        -:  118:        return false;
+        -:  119:    }
+        -:  120:
+        -:  121:    static std::string getMessageId(const ValueFlow::Value &value, const char id[]);
+        -:  122:
+        -:  123:protected:
+        -:  124:    const Tokenizer * const mTokenizer;
+        -:  125:    const Settings * const mSettings;
+        -:  126:    ErrorLogger * const mErrorLogger;
+        -:  127:
+        -:  128:    /** report an error */
+        -:  129:    template<typename T, typename U>
+        -:  130:    void reportError(const Token *tok, const Severity::SeverityType severity, const T id, const U msg) {
+        -:  131:        reportError(tok, severity, id, msg, CWE(0U), false);
+        -:  132:    }
+        -:  133:
+        -:  134:    /** report an error */
+        -:  135:    template<typename T, typename U>
+        -:  136:    void reportError(const Token *tok, const Severity::SeverityType severity, const T id, const U msg, const CWE &cwe, bool inconclusive) {
+        -:  137:        const std::list<const Token *> callstack(1, tok);
+        -:  138:        reportError(callstack, severity, id, msg, cwe, inconclusive);
+        -:  139:    }
+        -:  140:
+        -:  141:    /** report an error */
+        -:  142:    template<typename T, typename U>
+        -:  143:    void reportError(const std::list<const Token *> &callstack, Severity::SeverityType severity, const T id, const U msg) {
+        -:  144:        reportError(callstack, severity, id, msg, CWE(0U), false);
+        -:  145:    }
+        -:  146:
+        -:  147:    /** report an error */
+        -:  148:    template<typename T, typename U>
+        -:  149:    void reportError(const std::list<const Token *> &callstack, Severity::SeverityType severity, const T id, const U msg, const CWE &cwe, bool inconclusive) {
+        -:  150:        const ErrorLogger::ErrorMessage errmsg(callstack, mTokenizer ? &mTokenizer->list : nullptr, severity, id, msg, cwe, inconclusive);
+        -:  151:        if (mErrorLogger)
+        -:  152:            mErrorLogger->reportErr(errmsg);
+        -:  153:        else
+        -:  154:            reportError(errmsg);
+        -:  155:    }
+        -:  156:
+        -:  157:    void reportError(const ErrorPath &errorPath, Severity::SeverityType severity, const char id[], const std::string &msg, const CWE &cwe, bool inconclusive) {
+        -:  158:        const ErrorLogger::ErrorMessage errmsg(errorPath, mTokenizer ? &mTokenizer->list : nullptr, severity, id, msg, cwe, inconclusive);
+        -:  159:        if (mErrorLogger)
+        -:  160:            mErrorLogger->reportErr(errmsg);
+        -:  161:        else
+        -:  162:            reportError(errmsg);
+        -:  163:    }
+        -:  164:
+        -:  165:    ErrorPath getErrorPath(const Token *errtok, const ValueFlow::Value *value, const std::string &bug) const {
+        -:  166:        ErrorPath errorPath;
+        -:  167:        if (!value) {
+        -:  168:            errorPath.emplace_back(errtok,bug);
+        -:  169:        } else if (mSettings->verbose || mSettings->xml || !mSettings->templateLocation.empty()) {
+        -:  170:            errorPath = value->errorPath;
+        -:  171:            errorPath.emplace_back(errtok,bug);
+        -:  172:        } else {
+        -:  173:            if (value->condition)
+        -:  174:                errorPath.emplace_back(value->condition, "condition '" + value->condition->expressionString() + "'");
+        -:  175:            //else if (!value->isKnown() || value->defaultArg)
+        -:  176:            //    errorPath = value->callstack;
+        -:  177:            errorPath.emplace_back(errtok,bug);
+        -:  178:        }
+        -:  179:        return errorPath;
+        -:  180:    }
+        -:  181:
+        -:  182:    /**
+        -:  183:     * Use WRONG_DATA in checkers when you check for wrong data. That
+        -:  184:     * will call this method
+        -:  185:     */
+        -:  186:    bool wrongData(const Token *tok, bool condition, const char *str);
+        -:  187:
+        -:  188:    /** disabled assignment operator and copy constructor */
+        -:  189:    void operator=(const Check &) = delete;
+        -:  190:    Check(const Check &) = delete;
+        -:  191:private:
+        -:  192:    const std::string mName;
+        -:  193:};
+        -:  194:
+        -:  195:/// @}
+        -:  196://---------------------------------------------------------------------------
+        -:  197:#endif //  checkH

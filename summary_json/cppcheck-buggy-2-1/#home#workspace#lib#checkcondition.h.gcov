@@ -1,0 +1,418 @@
+        -:    0:Source:/home/workspace/lib/checkcondition.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkcondition.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkcondition.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#ifndef checkconditionH
+        -:   22:#define checkconditionH
+        -:   23://---------------------------------------------------------------------------
+        -:   24:
+        -:   25:#include "check.h"
+        -:   26:#include "config.h"
+        -:   27:#include "mathlib.h"
+        -:   28:
+        -:   29:#include <string>
+        -:   30:
+        -:   31:class ErrorLogger;
+        -:   32:class Settings;
+        -:   33:class Token;
+        -:   34:class Tokenizer;
+        -:   35:
+        -:   36:/// @addtogroup Checks
+        -:   37:/// @{
+        -:   38:
+        -:   39:/**
+        -:   40: * @brief Check for condition mismatches
+        -:   41: */
+        -:   42:
+function _ZN14CheckConditionD0Ev called 0 returned 0% blocks executed 0%
+function _ZN14CheckConditionD2Ev called 0 returned 0% blocks executed 0%
+    #####:   43:class CPPCHECKLIB CheckCondition : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:   44:public:
+        -:   45:    /** This constructor is used when registering the CheckAssignIf */
+function _ZN14CheckConditionC2Ev called 0 returned 0% blocks executed 0%
+    #####:   46:    CheckCondition() : Check(myName()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:   47:    }
+        -:   48:
+        -:   49:    /** This constructor is used when running checks. */
+function _ZN14CheckConditionC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   50:    CheckCondition(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:   51:        : Check(myName(), tokenizer, settings, errorLogger) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:   52:    }
+        -:   53:
+function _ZN14CheckCondition9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   54:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:   55:        CheckCondition checkCondition(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   56:        checkCondition.multiCondition();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   57:        checkCondition.clarifyCondition();   // not simplified because ifAssign
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   58:        checkCondition.multiCondition2();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   59:        checkCondition.checkIncorrectLogicOperator();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   60:        checkCondition.checkInvalidTestForOverflow();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   61:        checkCondition.duplicateCondition();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   62:        checkCondition.checkPointerAdditionResultNotNull();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   63:        checkCondition.checkDuplicateConditionalAssign();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   64:        checkCondition.assignIf();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   65:        checkCondition.alwaysTrueFalse();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   66:        checkCondition.checkBadBitmaskCheck();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   67:        checkCondition.comparison();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   68:        checkCondition.checkModuloAlwaysTrueFalse();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   69:    }
+        -:   70:
+        -:   71:    /** mismatching assignment / comparison */
+        -:   72:    void assignIf();
+        -:   73:
+        -:   74:    /** parse scopes recursively */
+        -:   75:    bool assignIfParseScope(const Token * const assignTok,
+        -:   76:                            const Token * const startTok,
+        -:   77:                            const nonneg int varid,
+        -:   78:                            const bool islocal,
+        -:   79:                            const char bitop,
+        -:   80:                            const MathLib::bigint num);
+        -:   81:
+        -:   82:    /** check bitmask using | instead of & */
+        -:   83:    void checkBadBitmaskCheck();
+        -:   84:
+        -:   85:    /** mismatching lhs and rhs in comparison */
+        -:   86:    void comparison();
+        -:   87:
+        -:   88:    void duplicateCondition();
+        -:   89:
+        -:   90:    /** match 'if' and 'else if' conditions */
+        -:   91:    void multiCondition();
+        -:   92:
+        -:   93:    /**
+        -:   94:     * multiconditions #2
+        -:   95:     * - Opposite inner conditions => always false
+        -:   96:     * - (TODO) Same/Overlapping inner condition => always true
+        -:   97:     * - same condition after early exit => always false
+        -:   98:     **/
+        -:   99:    void multiCondition2();
+        -:  100:
+        -:  101:    /** @brief %Check for testing for mutual exclusion over ||*/
+        -:  102:    void checkIncorrectLogicOperator();
+        -:  103:
+        -:  104:    /** @brief %Check for suspicious usage of modulo (e.g. "if(var % 4 == 4)") */
+        -:  105:    void checkModuloAlwaysTrueFalse();
+        -:  106:
+        -:  107:    /** @brief Suspicious condition (assignment+comparison) */
+        -:  108:    void clarifyCondition();
+        -:  109:
+        -:  110:    /** @brief Condition is always true/false */
+        -:  111:    void alwaysTrueFalse();
+        -:  112:
+        -:  113:    /** @brief %Check for invalid test for overflow 'x+100 < x' */
+        -:  114:    void checkInvalidTestForOverflow();
+        -:  115:
+        -:  116:    /** @brief Check if pointer addition result is NULL '(ptr + 1) == NULL' */
+        -:  117:    void checkPointerAdditionResultNotNull();
+        -:  118:
+        -:  119:    void checkDuplicateConditionalAssign();
+        -:  120:
+        -:  121:private:
+        -:  122:    // The conditions that have been diagnosed
+        -:  123:    std::set<const Token*> mCondDiags;
+        -:  124:    bool diag(const Token* tok, bool insert=true);
+        -:  125:    bool isAliased(const std::set<int> &vars) const;
+        -:  126:    bool isOverlappingCond(const Token * const cond1, const Token * const cond2, bool pure) const;
+        -:  127:    void assignIfError(const Token *tok1, const Token *tok2, const std::string &condition, bool result);
+        -:  128:    void mismatchingBitAndError(const Token *tok1, const MathLib::bigint num1, const Token *tok2, const MathLib::bigint num2);
+        -:  129:    void badBitmaskCheckError(const Token *tok);
+        -:  130:    void comparisonError(const Token *tok,
+        -:  131:                         const std::string &bitop,
+        -:  132:                         MathLib::bigint value1,
+        -:  133:                         const std::string &op,
+        -:  134:                         MathLib::bigint value2,
+        -:  135:                         bool result);
+        -:  136:    void duplicateConditionError(const Token *tok1, const Token *tok2, ErrorPath errorPath);
+        -:  137:    void overlappingElseIfConditionError(const Token *tok, nonneg int line1);
+        -:  138:    void oppositeElseIfConditionError(const Token *ifCond, const Token *elseIfCond, ErrorPath errorPath);
+        -:  139:
+        -:  140:    void oppositeInnerConditionError(const Token *tok1, const Token* tok2, ErrorPath errorPath);
+        -:  141:
+        -:  142:    void identicalInnerConditionError(const Token *tok1, const Token* tok2, ErrorPath errorPath);
+        -:  143:
+        -:  144:    void identicalConditionAfterEarlyExitError(const Token *cond1, const Token *cond2, ErrorPath errorPath);
+        -:  145:
+        -:  146:    void incorrectLogicOperatorError(const Token *tok, const std::string &condition, bool always, bool inconclusive, ErrorPath errors);
+        -:  147:    void redundantConditionError(const Token *tok, const std::string &text, bool inconclusive);
+        -:  148:
+        -:  149:    void moduloAlwaysTrueFalseError(const Token* tok, const std::string& maxVal);
+        -:  150:
+        -:  151:    void clarifyConditionError(const Token *tok, bool assign, bool boolop);
+        -:  152:
+        -:  153:    void alwaysTrueFalseError(const Token *tok, const ValueFlow::Value *value);
+        -:  154:
+        -:  155:    void invalidTestForOverflow(const Token* tok, bool result);
+        -:  156:    void pointerAdditionResultNotNullError(const Token *tok, const Token *calc);
+        -:  157:
+        -:  158:    void duplicateConditionalAssignError(const Token *condTok, const Token* assignTok);
+        -:  159:
+function _ZNK14CheckCondition16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  160:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:  161:        CheckCondition c(nullptr, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  162:
+    #####:  163:        ErrorPath errorPath;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  164:
+    #####:  165:        c.assignIfError(nullptr, nullptr, emptyString, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  166:        c.badBitmaskCheckError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  167:        c.comparisonError(nullptr, "&", 6, "==", 1, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  168:        c.duplicateConditionError(nullptr, nullptr, errorPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  169:        c.overlappingElseIfConditionError(nullptr, 1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  170:        c.mismatchingBitAndError(nullptr, 0xf0, nullptr, 1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  171:        c.oppositeInnerConditionError(nullptr, nullptr, errorPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  172:        c.identicalInnerConditionError(nullptr, nullptr, errorPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  173:        c.identicalConditionAfterEarlyExitError(nullptr, nullptr, errorPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  174:        c.incorrectLogicOperatorError(nullptr, "foo > 3 && foo < 4", true, false, errorPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  175:        c.redundantConditionError(nullptr, "If x > 11 the condition x > 10 is always true.", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  176:        c.moduloAlwaysTrueFalseError(nullptr, "1");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  177:        c.clarifyConditionError(nullptr, true, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  178:        c.alwaysTrueFalseError(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  179:        c.invalidTestForOverflow(nullptr, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  180:        c.pointerAdditionResultNotNullError(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  181:        c.duplicateConditionalAssignError(nullptr, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  182:    }
+        -:  183:
+function _ZN14CheckCondition6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  184:    static std::string myName() {
+    #####:  185:        return "Condition";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  186:    }
+        -:  187:
+function _ZNK14CheckCondition9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  188:    std::string classInfo() const OVERRIDE {
+        -:  189:        return "Match conditions with assignments and other conditions:\n"
+        -:  190:               "- Mismatching assignment and comparison => comparison is always true/false\n"
+        -:  191:               "- Mismatching lhs and rhs in comparison => comparison is always true/false\n"
+        -:  192:               "- Detect usage of | where & should be used\n"
+        -:  193:               "- Duplicate condition and assignment\n"
+        -:  194:               "- Detect matching 'if' and 'else if' conditions\n"
+        -:  195:               "- Mismatching bitand (a &= 0xf0; a &= 1; => a = 0)\n"
+        -:  196:               "- Opposite inner condition is always false\n"
+        -:  197:               "- Identical condition after early exit is always false\n"
+        -:  198:               "- Condition that is always true/false\n"
+        -:  199:               "- Mutual exclusion over || always evaluating to true\n"
+        -:  200:               "- Comparisons of modulo results that are always true/false.\n"
+        -:  201:               "- Known variable values => condition is always true/false\n"
+    #####:  202:               "- Invalid test for overflow (for example 'ptr+u < ptr'). Condition is always false unless there is overflow, and overflow is undefined behaviour.\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  203:    }
+        -:  204:};
+        -:  205:/// @}
+        -:  206://---------------------------------------------------------------------------
+        -:  207:#endif // checkconditionH

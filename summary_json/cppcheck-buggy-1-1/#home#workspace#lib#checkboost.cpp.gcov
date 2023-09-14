@@ -1,0 +1,141 @@
+        -:    0:Source:/home/workspace/lib/checkboost.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkboost.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkboost.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2018 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#include "checkboost.h"
+        -:   20:
+        -:   21:#include "errorlogger.h"
+        -:   22:#include "symboldatabase.h"
+        -:   23:#include "token.h"
+        -:   24:
+        -:   25:#include <cstddef>
+        -:   26:
+        -:   27:// Register this check class (by creating a static instance of it)
+        -:   28:namespace {
+        1:   29:    CheckBoost instance;
+call    0 returned 100%
+call    1 returned 100%
+        -:   30:}
+        -:   31:
+        1:   32:static const CWE CWE664(664);
+call    0 returned 100%
+        -:   33:
+function _ZN10CheckBoost29checkBoostForeachModificationEv called 0 returned 0% blocks executed 0%
+    #####:   34:void CheckBoost::checkBoostForeachModification()
+        -:   35:{
+    #####:   36:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:   37:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   38:        for (const Token *tok = scope->bodyStart->next(); tok && tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+    #####:   39:            if (!Token::simpleMatch(tok, "BOOST_FOREACH ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   40:                continue;
+        -:   41:
+    #####:   42:            const Token *containerTok = tok->next()->link()->previous();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   43:            if (!Token::Match(containerTok, "%var% ) {"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   44:                continue;
+        -:   45:
+    #####:   46:            const Token *tok2 = containerTok->tokAt(2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   47:            const Token *end = tok2->link();
+call    0 never executed
+    #####:   48:            for (; tok2 != end; tok2 = tok2->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:   49:                if (Token::Match(tok2, "%varid% . insert|erase|push_back|push_front|pop_front|pop_back|clear|swap|resize|assign|merge|remove|remove_if|reverse|sort|splice|unique|pop|push", containerTok->varId())) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:   50:                    const Token* nextStatement = Token::findsimplematch(tok2->linkAt(3), ";", end);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:   51:                    if (!Token::Match(nextStatement, "; break|return|throw"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   52:                        boostForeachError(tok2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   53:                    break;
+        -:   54:                }
+        -:   55:            }
+        -:   56:        }
+        -:   57:    }
+    #####:   58:}
+        -:   59:
+function _ZN10CheckBoost17boostForeachErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:   60:void CheckBoost::boostForeachError(const Token *tok)
+        -:   61:{
+    #####:   62:    reportError(tok, Severity::error, "boostForeachError",
+call    0 never executed
+        -:   63:                "BOOST_FOREACH caches the end() iterator. It's undefined behavior if you modify the container inside.", CWE664, false
+        -:   64:               );
+function _GLOBAL__sub_I__ZN10CheckBoost29checkBoostForeachModificationEv called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:   65:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

@@ -1,0 +1,4078 @@
+        -:    0:Source:/home/workspace/lib/checkmemoryleak.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkmemoryleak.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkmemoryleak.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20:#include "checkmemoryleak.h"
+        -:   21:
+        -:   22:#include "astutils.h"
+        -:   23:#include "library.h"
+        -:   24:#include "mathlib.h"
+        -:   25:#include "settings.h"
+        -:   26:#include "standards.h"
+        -:   27:#include "symboldatabase.h"
+        -:   28:#include "token.h"
+        -:   29:#include "tokenize.h"
+        -:   30:#include "tokenlist.h"
+        -:   31:#include "utils.h"
+        -:   32:#include "valueflow.h"
+        -:   33:
+        -:   34:#include <algorithm>
+        -:   35:#include <cstddef>
+        -:   36:#include <set>
+        -:   37:#include <stack>
+        -:   38:
+        -:   39://---------------------------------------------------------------------------
+        -:   40:
+        -:   41:// Register this check class (by creating a static instance of it)
+        -:   42:namespace {
+        1:   43:    CheckMemoryLeakInFunction instance1;
+call    0 returned 100%
+call    1 returned 100%
+        1:   44:    CheckMemoryLeakInClass instance2;
+call    0 returned 100%
+call    1 returned 100%
+        1:   45:    CheckMemoryLeakStructMember instance3;
+call    0 returned 100%
+call    1 returned 100%
+        1:   46:    CheckMemoryLeakNoVar instance4;
+call    0 returned 100%
+call    1 returned 100%
+        -:   47:}
+        -:   48:
+        -:   49:// CWE ID used:
+        1:   50:static const CWE CWE398(398U);  // Indicator of Poor Code Quality
+call    0 returned 100%
+        1:   51:static const CWE CWE401(401U);  // Improper Release of Memory Before Removing Last Reference ('Memory Leak')
+call    0 returned 100%
+        1:   52:static const CWE CWE771(771U);  // Missing Reference to Active Allocated Resource
+call    0 returned 100%
+        1:   53:static const CWE CWE772(772U);  // Missing Release of Resource after Effective Lifetime
+call    0 returned 100%
+        -:   54:
+        -:   55:
+        -:   56:/** List of functions that can be ignored when searching for memory leaks.
+        -:   57: * These functions don't take the address of the given pointer
+        -:   58: * This list contains function names with const parameters e.g.: atof(const char *)
+        -:   59: * TODO: This list should be replaced by <leak-ignore/> in .cfg files.
+        -:   60: */
+      115:   61:static const std::set<std::string> call_func_white_list = {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0% (throw)
+call    8 returned 100%
+call    9 returned 100%
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0% (throw)
+call   12 returned 100%
+call   13 returned 100%
+branch 14 taken 100% (fallthrough)
+branch 15 taken 0% (throw)
+call   16 returned 100%
+call   17 returned 100%
+branch 18 taken 100% (fallthrough)
+branch 19 taken 0% (throw)
+call   20 returned 100%
+call   21 returned 100%
+branch 22 taken 100% (fallthrough)
+branch 23 taken 0% (throw)
+call   24 returned 100%
+call   25 returned 100%
+branch 26 taken 100% (fallthrough)
+branch 27 taken 0% (throw)
+call   28 returned 100%
+call   29 returned 100%
+branch 30 taken 100% (fallthrough)
+branch 31 taken 0% (throw)
+call   32 returned 100%
+call   33 returned 100%
+branch 34 taken 100% (fallthrough)
+branch 35 taken 0% (throw)
+call   36 returned 100%
+call   37 returned 100%
+branch 38 taken 100% (fallthrough)
+branch 39 taken 0% (throw)
+call   40 returned 100%
+call   41 returned 100%
+branch 42 taken 100% (fallthrough)
+branch 43 taken 0% (throw)
+call   44 returned 100%
+call   45 returned 100%
+branch 46 taken 100% (fallthrough)
+branch 47 taken 0% (throw)
+call   48 returned 100%
+call   49 returned 100%
+branch 50 taken 100% (fallthrough)
+branch 51 taken 0% (throw)
+call   52 returned 100%
+call   53 returned 100%
+branch 54 taken 100% (fallthrough)
+branch 55 taken 0% (throw)
+call   56 returned 100%
+call   57 returned 100%
+branch 58 taken 100% (fallthrough)
+branch 59 taken 0% (throw)
+call   60 returned 100%
+call   61 returned 100%
+branch 62 taken 100% (fallthrough)
+branch 63 taken 0% (throw)
+call   64 returned 100%
+call   65 returned 100%
+branch 66 taken 100% (fallthrough)
+branch 67 taken 0% (throw)
+call   68 returned 100%
+call   69 returned 100%
+branch 70 taken 100% (fallthrough)
+branch 71 taken 0% (throw)
+call   72 returned 100%
+call   73 returned 100%
+branch 74 taken 100% (fallthrough)
+branch 75 taken 0% (throw)
+call   76 returned 100%
+call   77 returned 100%
+branch 78 taken 100% (fallthrough)
+branch 79 taken 0% (throw)
+call   80 returned 100%
+call   81 returned 100%
+branch 82 taken 100% (fallthrough)
+branch 83 taken 0% (throw)
+call   84 returned 100%
+call   85 returned 100%
+branch 86 taken 100% (fallthrough)
+branch 87 taken 0% (throw)
+call   88 returned 100%
+call   89 returned 100%
+branch 90 taken 100% (fallthrough)
+branch 91 taken 0% (throw)
+call   92 returned 100%
+call   93 returned 100%
+branch 94 taken 100% (fallthrough)
+branch 95 taken 0% (throw)
+call   96 returned 100%
+call   97 returned 100%
+branch 98 taken 100% (fallthrough)
+branch 99 taken 0% (throw)
+call   100 returned 100%
+call   101 returned 100%
+branch 102 taken 100% (fallthrough)
+branch 103 taken 0% (throw)
+call   104 returned 100%
+call   105 returned 100%
+branch 106 taken 100% (fallthrough)
+branch 107 taken 0% (throw)
+call   108 returned 100%
+call   109 returned 100%
+branch 110 taken 100% (fallthrough)
+branch 111 taken 0% (throw)
+call   112 returned 100%
+call   113 returned 100%
+branch 114 taken 100% (fallthrough)
+branch 115 taken 0% (throw)
+call   116 returned 100%
+call   117 returned 100%
+branch 118 taken 100% (fallthrough)
+branch 119 taken 0% (throw)
+call   120 returned 100%
+call   121 returned 100%
+branch 122 taken 100% (fallthrough)
+branch 123 taken 0% (throw)
+call   124 returned 100%
+call   125 returned 100%
+branch 126 taken 100% (fallthrough)
+branch 127 taken 0% (throw)
+call   128 returned 100%
+call   129 returned 100%
+branch 130 taken 100% (fallthrough)
+branch 131 taken 0% (throw)
+call   132 returned 100%
+call   133 returned 100%
+branch 134 taken 100% (fallthrough)
+branch 135 taken 0% (throw)
+call   136 returned 100%
+call   137 returned 100%
+branch 138 taken 100% (fallthrough)
+branch 139 taken 0% (throw)
+call   140 returned 100%
+call   141 returned 100%
+branch 142 taken 100% (fallthrough)
+branch 143 taken 0% (throw)
+call   144 returned 100%
+call   145 returned 100%
+branch 146 taken 100% (fallthrough)
+branch 147 taken 0% (throw)
+call   148 returned 100%
+call   149 returned 100%
+branch 150 taken 100% (fallthrough)
+branch 151 taken 0% (throw)
+call   152 returned 100%
+call   153 returned 100%
+branch 154 taken 100% (fallthrough)
+branch 155 taken 0% (throw)
+call   156 returned 100%
+call   157 returned 100%
+branch 158 taken 100% (fallthrough)
+branch 159 taken 0% (throw)
+call   160 returned 100%
+call   161 returned 100%
+branch 162 taken 100% (fallthrough)
+branch 163 taken 0% (throw)
+call   164 returned 100%
+call   165 returned 100%
+branch 166 taken 100% (fallthrough)
+branch 167 taken 0% (throw)
+call   168 returned 100%
+call   169 returned 100%
+branch 170 taken 100% (fallthrough)
+branch 171 taken 0% (throw)
+call   172 returned 100%
+call   173 returned 100%
+branch 174 taken 100% (fallthrough)
+branch 175 taken 0% (throw)
+call   176 returned 100%
+call   177 returned 100%
+branch 178 taken 100% (fallthrough)
+branch 179 taken 0% (throw)
+call   180 returned 100%
+call   181 returned 100%
+branch 182 taken 100% (fallthrough)
+branch 183 taken 0% (throw)
+call   184 returned 100%
+call   185 returned 100%
+branch 186 taken 100% (fallthrough)
+branch 187 taken 0% (throw)
+call   188 returned 100%
+call   189 returned 100%
+branch 190 taken 100% (fallthrough)
+branch 191 taken 0% (throw)
+call   192 returned 100%
+call   193 returned 100%
+branch 194 taken 100% (fallthrough)
+branch 195 taken 0% (throw)
+call   196 returned 100%
+call   197 returned 100%
+branch 198 taken 100% (fallthrough)
+branch 199 taken 0% (throw)
+call   200 returned 100%
+call   201 returned 100%
+branch 202 taken 100% (fallthrough)
+branch 203 taken 0% (throw)
+call   204 returned 100%
+call   205 returned 100%
+branch 206 taken 100% (fallthrough)
+branch 207 taken 0% (throw)
+call   208 returned 100%
+call   209 returned 100%
+branch 210 taken 100% (fallthrough)
+branch 211 taken 0% (throw)
+call   212 returned 100%
+call   213 returned 100%
+branch 214 taken 100% (fallthrough)
+branch 215 taken 0% (throw)
+call   216 returned 100%
+call   217 returned 100%
+branch 218 taken 100% (fallthrough)
+branch 219 taken 0% (throw)
+call   220 returned 100%
+call   221 returned 100%
+branch 222 taken 100% (fallthrough)
+branch 223 taken 0% (throw)
+call   224 returned 100%
+call   225 returned 100%
+branch 226 taken 100% (fallthrough)
+branch 227 taken 0% (throw)
+call   228 returned 100%
+call   229 returned 100%
+branch 230 taken 100% (fallthrough)
+branch 231 taken 0% (throw)
+call   232 returned 100%
+call   233 returned 100%
+branch 234 taken 100% (fallthrough)
+branch 235 taken 0% (throw)
+call   236 returned 100%
+call   237 returned 100%
+branch 238 taken 100% (fallthrough)
+branch 239 taken 0% (throw)
+call   240 returned 100%
+call   241 returned 100%
+branch 242 taken 100% (fallthrough)
+branch 243 taken 0% (throw)
+call   244 returned 100%
+call   245 returned 100%
+branch 246 taken 100% (fallthrough)
+branch 247 taken 0% (throw)
+call   248 returned 100%
+call   249 returned 100%
+branch 250 taken 100% (fallthrough)
+branch 251 taken 0% (throw)
+call   252 returned 100%
+call   253 returned 100%
+branch 254 taken 100% (fallthrough)
+branch 255 taken 0% (throw)
+call   256 returned 100%
+call   257 returned 100%
+branch 258 taken 100% (fallthrough)
+branch 259 taken 0% (throw)
+call   260 returned 100%
+call   261 returned 100%
+branch 262 taken 100% (fallthrough)
+branch 263 taken 0% (throw)
+call   264 returned 100%
+call   265 returned 100%
+branch 266 taken 100% (fallthrough)
+branch 267 taken 0% (throw)
+call   268 returned 100%
+call   269 returned 100%
+branch 270 taken 100% (fallthrough)
+branch 271 taken 0% (throw)
+call   272 returned 100%
+call   273 returned 100%
+branch 274 taken 100% (fallthrough)
+branch 275 taken 0% (throw)
+call   276 returned 100%
+call   277 returned 100%
+branch 278 taken 100% (fallthrough)
+branch 279 taken 0% (throw)
+call   280 returned 100%
+call   281 returned 100%
+branch 282 taken 100% (fallthrough)
+branch 283 taken 0% (throw)
+call   284 returned 100%
+call   285 returned 100%
+branch 286 taken 100% (fallthrough)
+branch 287 taken 0% (throw)
+call   288 returned 100%
+call   289 returned 100%
+branch 290 taken 100% (fallthrough)
+branch 291 taken 0% (throw)
+call   292 returned 100%
+call   293 returned 100%
+branch 294 taken 100% (fallthrough)
+branch 295 taken 0% (throw)
+call   296 returned 100%
+call   297 returned 100%
+branch 298 taken 100% (fallthrough)
+branch 299 taken 0% (throw)
+call   300 returned 100%
+call   301 returned 100%
+branch 302 taken 100% (fallthrough)
+branch 303 taken 0% (throw)
+call   304 returned 100%
+call   305 returned 100%
+branch 306 taken 100% (fallthrough)
+branch 307 taken 0% (throw)
+call   308 returned 100%
+call   309 returned 100%
+branch 310 taken 100% (fallthrough)
+branch 311 taken 0% (throw)
+call   312 returned 100%
+call   313 returned 100%
+branch 314 taken 100% (fallthrough)
+branch 315 taken 0% (throw)
+call   316 returned 100%
+call   317 returned 100%
+branch 318 taken 100% (fallthrough)
+branch 319 taken 0% (throw)
+call   320 returned 100%
+call   321 returned 100%
+branch 322 taken 100% (fallthrough)
+branch 323 taken 0% (throw)
+call   324 returned 100%
+call   325 returned 100%
+branch 326 taken 100% (fallthrough)
+branch 327 taken 0% (throw)
+call   328 returned 100%
+call   329 returned 100%
+branch 330 taken 100% (fallthrough)
+branch 331 taken 0% (throw)
+call   332 returned 100%
+call   333 returned 100%
+branch 334 taken 100% (fallthrough)
+branch 335 taken 0% (throw)
+call   336 returned 100%
+call   337 returned 100%
+branch 338 taken 100% (fallthrough)
+branch 339 taken 0% (throw)
+call   340 returned 100%
+call   341 returned 100%
+branch 342 taken 100% (fallthrough)
+branch 343 taken 0% (throw)
+call   344 returned 100%
+call   345 returned 100%
+branch 346 taken 100% (fallthrough)
+branch 347 taken 0% (throw)
+call   348 returned 100%
+call   349 returned 100%
+branch 350 taken 100% (fallthrough)
+branch 351 taken 0% (throw)
+call   352 returned 100%
+call   353 returned 100%
+branch 354 taken 100% (fallthrough)
+branch 355 taken 0% (throw)
+call   356 returned 100%
+call   357 returned 100%
+branch 358 taken 100% (fallthrough)
+branch 359 taken 0% (throw)
+call   360 returned 100%
+call   361 returned 100%
+branch 362 taken 100% (fallthrough)
+branch 363 taken 0% (throw)
+call   364 returned 100%
+call   365 returned 100%
+branch 366 taken 100% (fallthrough)
+branch 367 taken 0% (throw)
+call   368 returned 100%
+call   369 returned 100%
+branch 370 taken 100% (fallthrough)
+branch 371 taken 0% (throw)
+call   372 returned 100%
+call   373 returned 100%
+branch 374 taken 100% (fallthrough)
+branch 375 taken 0% (throw)
+call   376 returned 100%
+call   377 returned 100%
+branch 378 taken 100% (fallthrough)
+branch 379 taken 0% (throw)
+call   380 returned 100%
+call   381 returned 100%
+branch 382 taken 100% (fallthrough)
+branch 383 taken 0% (throw)
+call   384 returned 100%
+call   385 returned 100%
+branch 386 taken 100% (fallthrough)
+branch 387 taken 0% (throw)
+call   388 returned 100%
+call   389 returned 100%
+branch 390 taken 100% (fallthrough)
+branch 391 taken 0% (throw)
+call   392 returned 100%
+call   393 returned 100%
+branch 394 taken 100% (fallthrough)
+branch 395 taken 0% (throw)
+call   396 returned 100%
+call   397 returned 100%
+branch 398 taken 100% (fallthrough)
+branch 399 taken 0% (throw)
+call   400 returned 100%
+call   401 returned 100%
+branch 402 taken 100% (fallthrough)
+branch 403 taken 0% (throw)
+call   404 returned 100%
+call   405 returned 100%
+branch 406 taken 100% (fallthrough)
+branch 407 taken 0% (throw)
+call   408 returned 100%
+call   409 returned 100%
+branch 410 taken 100% (fallthrough)
+branch 411 taken 0% (throw)
+call   412 returned 100%
+call   413 returned 100%
+branch 414 taken 100% (fallthrough)
+branch 415 taken 0% (throw)
+call   416 returned 100%
+call   417 returned 100%
+branch 418 taken 100% (fallthrough)
+branch 419 taken 0% (throw)
+call   420 returned 100%
+call   421 returned 100%
+branch 422 taken 100% (fallthrough)
+branch 423 taken 0% (throw)
+call   424 returned 100%
+call   425 returned 100%
+branch 426 taken 100% (fallthrough)
+branch 427 taken 0% (throw)
+call   428 returned 100%
+call   429 returned 100%
+branch 430 taken 100% (fallthrough)
+branch 431 taken 0% (throw)
+call   432 returned 100%
+call   433 returned 100%
+branch 434 taken 100% (fallthrough)
+branch 435 taken 0% (throw)
+call   436 returned 100%
+call   437 returned 100%
+branch 438 taken 100% (fallthrough)
+branch 439 taken 0% (throw)
+call   440 returned 100%
+call   441 returned 100%
+branch 442 taken 100% (fallthrough)
+branch 443 taken 0% (throw)
+call   444 returned 100%
+call   445 returned 100%
+branch 446 taken 100% (fallthrough)
+branch 447 taken 0% (throw)
+call   448 returned 100%
+call   449 returned 100%
+branch 450 taken 100% (fallthrough)
+branch 451 taken 0% (throw)
+call   452 returned 100%
+call   453 returned 100%
+branch 454 taken 100% (fallthrough)
+branch 455 taken 0% (throw)
+call   456 returned 100%
+call   457 returned 100%
+branch 458 taken 100% (fallthrough)
+branch 459 taken 0% (throw)
+call   460 returned 100%
+branch 461 taken 99% (fallthrough)
+branch 462 taken 1%
+call   463 returned 100%
+call   464 returned 100%
+call   465 returned 100%
+call   466 returned 100%
+call   467 returned 100%
+call   468 returned 100%
+call   469 returned 100%
+call   470 returned 100%
+call   471 returned 100%
+call   472 returned 100%
+call   473 returned 100%
+call   474 returned 100%
+call   475 returned 100%
+call   476 returned 100%
+call   477 returned 100%
+call   478 returned 100%
+call   479 returned 100%
+call   480 returned 100%
+call   481 returned 100%
+call   482 returned 100%
+call   483 returned 100%
+call   484 returned 100%
+call   485 returned 100%
+call   486 returned 100%
+call   487 returned 100%
+call   488 returned 100%
+call   489 returned 100%
+call   490 returned 100%
+call   491 returned 100%
+call   492 returned 100%
+call   493 returned 100%
+call   494 returned 100%
+call   495 returned 100%
+call   496 returned 100%
+call   497 returned 100%
+call   498 returned 100%
+call   499 returned 100%
+call   500 returned 100%
+call   501 returned 100%
+call   502 returned 100%
+call   503 returned 100%
+call   504 returned 100%
+call   505 returned 100%
+call   506 returned 100%
+call   507 returned 100%
+call   508 returned 100%
+call   509 returned 100%
+call   510 returned 100%
+call   511 returned 100%
+call   512 returned 100%
+call   513 returned 100%
+call   514 returned 100%
+call   515 returned 100%
+call   516 returned 100%
+call   517 returned 100%
+call   518 returned 100%
+call   519 returned 100%
+call   520 returned 100%
+call   521 returned 100%
+call   522 returned 100%
+call   523 returned 100%
+call   524 returned 100%
+call   525 returned 100%
+call   526 returned 100%
+call   527 returned 100%
+call   528 returned 100%
+call   529 returned 100%
+call   530 returned 100%
+call   531 returned 100%
+call   532 returned 100%
+call   533 returned 100%
+call   534 returned 100%
+call   535 returned 100%
+call   536 returned 100%
+call   537 returned 100%
+call   538 returned 100%
+call   539 returned 100%
+call   540 returned 100%
+call   541 returned 100%
+call   542 returned 100%
+call   543 returned 100%
+call   544 returned 100%
+call   545 returned 100%
+call   546 returned 100%
+call   547 returned 100%
+call   548 returned 100%
+call   549 returned 100%
+call   550 returned 100%
+call   551 returned 100%
+call   552 returned 100%
+call   553 returned 100%
+call   554 returned 100%
+call   555 returned 100%
+call   556 returned 100%
+call   557 returned 100%
+call   558 returned 100%
+call   559 returned 100%
+call   560 returned 100%
+call   561 returned 100%
+call   562 returned 100%
+call   563 returned 100%
+call   564 returned 100%
+call   565 returned 100%
+call   566 returned 100%
+call   567 returned 100%
+call   568 returned 100%
+call   569 returned 100%
+call   570 returned 100%
+call   571 returned 100%
+call   572 returned 100%
+call   573 returned 100%
+call   574 returned 100%
+call   575 returned 100%
+call   576 returned 100%
+call   577 returned 100%
+call   578 never executed
+branch 579 never executed
+branch 580 never executed
+call   581 never executed
+call   582 never executed
+call   583 never executed
+call   584 never executed
+call   585 never executed
+call   586 never executed
+call   587 never executed
+call   588 never executed
+call   589 never executed
+call   590 never executed
+call   591 never executed
+call   592 never executed
+call   593 never executed
+call   594 never executed
+call   595 never executed
+call   596 never executed
+call   597 never executed
+call   598 never executed
+call   599 never executed
+call   600 never executed
+call   601 never executed
+call   602 never executed
+call   603 never executed
+call   604 never executed
+call   605 never executed
+call   606 never executed
+call   607 never executed
+call   608 never executed
+call   609 never executed
+call   610 never executed
+call   611 never executed
+call   612 never executed
+call   613 never executed
+call   614 never executed
+call   615 never executed
+call   616 never executed
+call   617 never executed
+call   618 never executed
+call   619 never executed
+call   620 never executed
+call   621 never executed
+call   622 never executed
+call   623 never executed
+call   624 never executed
+call   625 never executed
+call   626 never executed
+call   627 never executed
+call   628 never executed
+call   629 never executed
+call   630 never executed
+call   631 never executed
+call   632 never executed
+call   633 never executed
+call   634 never executed
+call   635 never executed
+call   636 never executed
+call   637 never executed
+call   638 never executed
+call   639 never executed
+call   640 never executed
+call   641 never executed
+call   642 never executed
+call   643 never executed
+call   644 never executed
+call   645 never executed
+call   646 never executed
+call   647 never executed
+call   648 never executed
+call   649 never executed
+call   650 never executed
+call   651 never executed
+call   652 never executed
+call   653 never executed
+call   654 never executed
+call   655 never executed
+call   656 never executed
+call   657 never executed
+call   658 never executed
+call   659 never executed
+call   660 never executed
+call   661 never executed
+call   662 never executed
+call   663 never executed
+call   664 never executed
+call   665 never executed
+call   666 never executed
+call   667 never executed
+call   668 never executed
+call   669 never executed
+call   670 never executed
+call   671 never executed
+call   672 never executed
+call   673 never executed
+call   674 never executed
+call   675 never executed
+call   676 never executed
+call   677 never executed
+call   678 never executed
+call   679 never executed
+call   680 never executed
+call   681 never executed
+call   682 never executed
+call   683 never executed
+call   684 never executed
+call   685 never executed
+call   686 never executed
+call   687 never executed
+call   688 never executed
+call   689 never executed
+call   690 never executed
+call   691 never executed
+call   692 never executed
+call   693 never executed
+call   694 never executed
+        -:   62:    "_open", "_wopen", "access", "adjtime", "asctime_r", "asprintf", "chdir", "chmod", "chown"
+        -:   63:    , "creat", "ctime_r", "execl", "execle", "execlp", "execv", "execve", "fchmod", "fcntl"
+        -:   64:    , "fdatasync", "fclose", "flock", "fmemopen", "fnmatch", "fopen", "fopencookie", "for", "free"
+        -:   65:    , "freopen", "fseeko", "fstat", "fsync", "ftello", "ftruncate", "getgrnam", "gethostbyaddr", "gethostbyname"
+        -:   66:    , "getnetbyname", "getopt", "getopt_long", "getprotobyname", "getpwnam", "getservbyname", "getservbyport"
+        -:   67:    , "glob", "gmtime", "gmtime_r", "if", "index", "inet_addr", "inet_aton", "inet_network", "initgroups"
+        -:   68:    , "ioctl", "link", "localtime_r", "lockf", "lseek", "lstat", "mkdir", "mkfifo", "mknod", "mkstemp"
+        -:   69:    , "obstack_printf", "obstack_vprintf", "open", "opendir", "parse_printf_format", "pathconf"
+        -:   70:    , "perror", "popen", "posix_fadvise", "posix_fallocate", "pread", "psignal", "pwrite", "read", "readahead"
+        -:   71:    , "readdir", "readdir_r", "readlink", "readv", "realloc", "regcomp", "return", "rewinddir", "rindex"
+        -:   72:    , "rmdir", "scandir", "seekdir", "setbuffer", "sethostname", "setlinebuf", "sizeof", "strdup"
+        -:   73:    , "stat", "stpcpy", "strcasecmp", "stricmp", "strncasecmp", "switch"
+        -:   74:    , "symlink", "sync_file_range", "telldir", "tempnam", "time", "typeid", "unlink"
+        -:   75:    , "utime", "utimes", "vasprintf", "while", "wordexp", "write", "writev"
+      114:   76:};
+call    0 returned 100%
+call    1 never executed
+        -:   77:
+        -:   78://---------------------------------------------------------------------------
+        -:   79:
+function _ZNK15CheckMemoryLeak17getAllocationTypeEPK5TokeniPNSt7__debug4listIPK8FunctionSaIS7_EEE called 0 returned 0% blocks executed 0%
+    #####:   80:CheckMemoryLeak::AllocType CheckMemoryLeak::getAllocationType(const Token *tok2, nonneg int varid, std::list<const Function*> *callstack) const
+        -:   81:{
+        -:   82:    // What we may have...
+        -:   83:    //     * var = (char *)malloc(10);
+        -:   84:    //     * var = new char[10];
+        -:   85:    //     * var = strdup("hello");
+        -:   86:    //     * var = strndup("hello", 3);
+    #####:   87:    if (tok2 && tok2->str() == "(") {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   88:        tok2 = tok2->link();
+call    0 never executed
+    #####:   89:        tok2 = tok2 ? tok2->next() : nullptr;
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+        -:   90:    }
+    #####:   91:    if (! tok2)
+branch  0 never executed
+branch  1 never executed
+    #####:   92:        return No;
+    #####:   93:    if (tok2->str() == "::")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   94:        tok2 = tok2->next();
+call    0 never executed
+    #####:   95:    if (! tok2->isName())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   96:        return No;
+        -:   97:
+    #####:   98:    if (!Token::Match(tok2, "%name% ::|. %type%")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:   99:        // Using realloc..
+    #####:  100:        AllocType reallocType = getReallocationType(tok2, varid);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  101:        if (reallocType != No)
+branch  0 never executed
+branch  1 never executed
+    #####:  102:            return reallocType;
+        -:  103:
+    #####:  104:        if (mTokenizer_->isCPP() && tok2->str() == "new") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  105:            if (tok2->strAt(1) == "(" && !Token::Match(tok2->next(),"( std| ::| nothrow )"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  106:                return No;
+    #####:  107:            if (tok2->astOperand1() && (tok2->astOperand1()->str() == "[" || (tok2->astOperand1()->astOperand1() && tok2->astOperand1()->astOperand1()->str() == "[")))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+    #####:  108:                return NewArray;
+    #####:  109:            const Token *typeTok = tok2->next();
+call    0 never executed
+    #####:  110:            while (Token::Match(typeTok, "%name% :: %name%"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  111:                typeTok = typeTok->tokAt(2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  112:            if (typeTok->type() && typeTok->type()->isClassType()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  113:                const Scope *classScope = typeTok->type()->classScope;
+call    0 never executed
+    #####:  114:                if (classScope && classScope->numConstructors > 0)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  115:                    return No;
+        -:  116:            }
+    #####:  117:            return New;
+        -:  118:        }
+        -:  119:
+    #####:  120:        if (mSettings_->posix()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  121:            if (Token::Match(tok2, "open|openat|creat|mkstemp|mkostemp|socket (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  122:                // simple sanity check of function parameters..
+        -:  123:                // TODO: Make such check for all these functions
+    #####:  124:                const int num = numberOfArguments(tok2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  125:                if (tok2->str() == "open" && num != 2 && num != 3)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  126:                    return No;
+        -:  127:
+        -:  128:                // is there a user function with this name?
+    #####:  129:                if (tok2->function())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  130:                    return No;
+    #####:  131:                return Fd;
+        -:  132:            }
+        -:  133:
+    #####:  134:            if (Token::simpleMatch(tok2, "popen ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  135:                return Pipe;
+        -:  136:        }
+        -:  137:
+        -:  138:        // Does tok2 point on a Library allocation function?
+    #####:  139:        const int alloctype = mSettings_->library.getAllocId(tok2, -1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  140:        if (alloctype > 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  141:            if (alloctype == mSettings_->library.deallocId("free"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  142:                return Malloc;
+    #####:  143:            if (alloctype == mSettings_->library.deallocId("fclose"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  144:                return File;
+    #####:  145:            return Library::ismemory(alloctype) ? OtherMem : OtherRes;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  146:        }
+        -:  147:    }
+        -:  148:
+    #####:  149:    while (Token::Match(tok2,"%name% ::|. %type%"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  150:        tok2 = tok2->tokAt(2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  151:
+        -:  152:    // User function
+    #####:  153:    const Function* func = tok2->function();
+call    0 never executed
+    #####:  154:    if (func == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  155:        return No;
+        -:  156:
+        -:  157:    // Prevent recursion
+    #####:  158:    if (callstack && std::find(callstack->begin(), callstack->end(), func) != callstack->end())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+branch 28 never executed
+branch 29 never executed
+call   30 never executed
+branch 31 never executed
+branch 32 never executed
+call   33 never executed
+branch 34 never executed
+branch 35 never executed
+call   36 never executed
+    #####:  159:        return No;
+        -:  160:
+    #####:  161:    std::list<const Function*> cs;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  162:    if (!callstack)
+branch  0 never executed
+branch  1 never executed
+    #####:  163:        callstack = &cs;
+        -:  164:
+    #####:  165:    callstack->push_back(func);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  166:    return functionReturnType(func, callstack);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  167:}
+        -:  168:
+        -:  169:
+function _ZNK15CheckMemoryLeak19getReallocationTypeEPK5Tokeni called 0 returned 0% blocks executed 0%
+    #####:  170:CheckMemoryLeak::AllocType CheckMemoryLeak::getReallocationType(const Token *tok2, nonneg int varid) const
+        -:  171:{
+        -:  172:    // What we may have...
+        -:  173:    //     * var = (char *)realloc(..;
+    #####:  174:    if (tok2 && tok2->str() == "(") {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  175:        tok2 = tok2->link();
+call    0 never executed
+    #####:  176:        tok2 = tok2 ? tok2->next() : nullptr;
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+        -:  177:    }
+    #####:  178:    if (! tok2)
+branch  0 never executed
+branch  1 never executed
+    #####:  179:        return No;
+        -:  180:
+    #####:  181:    if (!Token::Match(tok2, "%name% ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  182:        return No;
+        -:  183:
+    #####:  184:    const Library::AllocFunc *f = mSettings_->library.getReallocFuncInfo(tok2);
+call    0 never executed
+    #####:  185:    if (!(f && f->reallocArg > 0 && f->reallocArg <= numberOfArguments(tok2)))
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  186:        return No;
+    #####:  187:    const Token* arg = getArguments(tok2).at(f->reallocArg - 1);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  188:    while (arg && arg->isCast())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  189:        arg = arg->astOperand1();
+call    0 never executed
+    #####:  190:    while (arg && arg->isUnaryOp("*"))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+    #####:  191:        arg = arg->astOperand1();
+call    0 never executed
+    #####:  192:    if (varid > 0 && !Token::Match(arg, "%varid% [,)]", varid))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  193:        return No;
+        -:  194:
+    #####:  195:    const int realloctype = mSettings_->library.getReallocId(tok2, -1);
+call    0 never executed
+    #####:  196:    if (realloctype > 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  197:        if (realloctype == mSettings_->library.deallocId("free"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  198:            return Malloc;
+    #####:  199:        if (realloctype == mSettings_->library.deallocId("fclose"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  200:            return File;
+    #####:  201:        return Library::ismemory(realloctype) ? OtherMem : OtherRes;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  202:    }
+    #####:  203:    return No;
+        -:  204:}
+        -:  205:
+        -:  206:
+function _ZNK15CheckMemoryLeak19getDeallocationTypeEPK5Tokeni called 0 returned 0% blocks executed 0%
+    #####:  207:CheckMemoryLeak::AllocType CheckMemoryLeak::getDeallocationType(const Token *tok, nonneg int varid) const
+        -:  208:{
+    #####:  209:    if (mTokenizer_->isCPP() && tok->str() == "delete" && tok->astOperand1()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  210:        const Token* vartok = tok->astOperand1();
+call    0 never executed
+    #####:  211:        if (Token::Match(vartok, ".|::"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  212:            vartok = vartok->astOperand2();
+call    0 never executed
+        -:  213:
+    #####:  214:        if (vartok && vartok->varId() == varid) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  215:            if (tok->strAt(1) == "[")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  216:                return NewArray;
+    #####:  217:            return New;
+        -:  218:        }
+        -:  219:    }
+        -:  220:
+    #####:  221:    if (tok->str() == "::")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  222:        tok = tok->next();
+call    0 never executed
+        -:  223:
+    #####:  224:    if (Token::Match(tok, "%name% (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  225:        if (Token::simpleMatch(tok, "fcloseall ( )"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  226:            return File;
+        -:  227:
+    #####:  228:        int argNr = 1;
+    #####:  229:        for (const Token* tok2 = tok->tokAt(2); tok2; tok2 = tok2->nextArgument()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  230:            const Token* vartok = tok2;
+    #####:  231:            while (Token::Match(vartok, "%name% .|::"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  232:                vartok = vartok->tokAt(2);
+call    0 never executed
+        -:  233:
+    #####:  234:            if (Token::Match(vartok, "%varid% )|,|-", varid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  235:                if (tok->str() == "realloc" && Token::simpleMatch(vartok->next(), ", 0 )"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  236:                    return Malloc;
+        -:  237:
+    #####:  238:                if (mSettings_->posix()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  239:                    if (tok->str() == "close")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  240:                        return Fd;
+    #####:  241:                    if (tok->str() == "pclose")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  242:                        return Pipe;
+        -:  243:                }
+        -:  244:
+        -:  245:                // Does tok point on a Library deallocation function?
+    #####:  246:                const int dealloctype = mSettings_->library.getDeallocId(tok, argNr);
+call    0 never executed
+    #####:  247:                if (dealloctype > 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  248:                    if (dealloctype == mSettings_->library.deallocId("free"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  249:                        return Malloc;
+    #####:  250:                    if (dealloctype == mSettings_->library.deallocId("fclose"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  251:                        return File;
+    #####:  252:                    return Library::ismemory(dealloctype) ? OtherMem : OtherRes;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  253:                }
+        -:  254:            }
+    #####:  255:            argNr++;
+        -:  256:        }
+        -:  257:    }
+        -:  258:
+    #####:  259:    return No;
+        -:  260:}
+        -:  261:
+function _ZNK15CheckMemoryLeak22isReopenStandardStreamEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  262:bool CheckMemoryLeak::isReopenStandardStream(const Token *tok) const
+        -:  263:{
+    #####:  264:    if (getReallocationType(tok, 0) == File) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  265:        const Library::AllocFunc *f = mSettings_->library.getReallocFuncInfo(tok);
+call    0 never executed
+    #####:  266:        if (f && f->reallocArg > 0 && f->reallocArg <= numberOfArguments(tok)) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  267:            const Token* arg = getArguments(tok).at(f->reallocArg - 1);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  268:            if (Token::Match(arg, "stdin|stdout|stderr"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  269:                return true;
+        -:  270:        }
+        -:  271:    }
+    #####:  272:    return false;
+        -:  273:}
+        -:  274:
+        -:  275://--------------------------------------------------------------------------
+        -:  276:
+        -:  277:
+        -:  278://--------------------------------------------------------------------------
+        -:  279:
+function _ZNK15CheckMemoryLeak10memoryLeakEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEENS_9AllocTypeE called 0 returned 0% blocks executed 0%
+    #####:  280:void CheckMemoryLeak::memoryLeak(const Token *tok, const std::string &varname, AllocType alloctype) const
+        -:  281:{
+    #####:  282:    if (alloctype == CheckMemoryLeak::File ||
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  283:        alloctype == CheckMemoryLeak::Pipe ||
+branch  0 never executed
+branch  1 never executed
+    #####:  284:        alloctype == CheckMemoryLeak::Fd   ||
+branch  0 never executed
+branch  1 never executed
+        -:  285:        alloctype == CheckMemoryLeak::OtherRes)
+    #####:  286:        resourceLeakError(tok, varname);
+call    0 never executed
+        -:  287:    else
+    #####:  288:        memleakError(tok, varname);
+call    0 never executed
+    #####:  289:}
+        -:  290://---------------------------------------------------------------------------
+        -:  291:
+function _ZNK15CheckMemoryLeak9reportErrEPK5TokenN8Severity12SeverityTypeERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESC_RK3CWE called 26 returned 100% blocks executed 80%
+       26:  292:void CheckMemoryLeak::reportErr(const Token *tok, Severity::SeverityType severity, const std::string &id, const std::string &msg, const CWE &cwe) const
+        -:  293:{
+       52:  294:    std::list<const Token *> callstack;
+call    0 returned 100%
+call    1 returned 100%
+call    2 never executed
+        -:  295:
+       26:  296:    if (tok)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       26:  297:        callstack.push_back(tok);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  298:
+       26:  299:    reportErr(callstack, severity, id, msg, cwe);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+       26:  300:}
+        -:  301:
+function _ZNK15CheckMemoryLeak9reportErrERKNSt7__debug4listIPK5TokenSaIS4_EEEN8Severity12SeverityTypeERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESI_RK3CWE called 39 returned 100% blocks executed 69%
+       39:  302:void CheckMemoryLeak::reportErr(const std::list<const Token *> &callstack, Severity::SeverityType severity, const std::string &id, const std::string &msg, const CWE &cwe) const
+        -:  303:{
+       78:  304:    const ErrorLogger::ErrorMessage errmsg(callstack, mTokenizer_ ? &mTokenizer_->list : nullptr, severity, id, msg, cwe, false);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+call    5 returned 100%
+call    6 never executed
+       39:  305:    if (mErrorLogger_)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       39:  306:        mErrorLogger_->reportErr(errmsg);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:  307:    else
+    #####:  308:        Check::reportError(errmsg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+       39:  309:}
+        -:  310:
+function _ZNK15CheckMemoryLeak12memleakErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 20 returned 100% blocks executed 50%
+       20:  311:void CheckMemoryLeak::memleakError(const Token *tok, const std::string &varname) const
+        -:  312:{
+       20:  313:    reportErr(tok, Severity::error, "memleak", "$symbol:" + varname + "\nMemory leak: $symbol", CWE(401U));
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+call    7 returned 100%
+call    8 returned 100%
+branch  9 taken 100% (fallthrough)
+branch 10 taken 0% (throw)
+call   11 returned 100%
+branch 12 taken 100% (fallthrough)
+branch 13 taken 0% (throw)
+call   14 returned 100%
+call   15 returned 100%
+call   16 returned 100%
+call   17 returned 100%
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+       20:  314:}
+        -:  315:
+function _ZNK15CheckMemoryLeak30memleakUponReallocFailureErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####:  316:void CheckMemoryLeak::memleakUponReallocFailureError(const Token *tok, const std::string &reallocfunction, const std::string &varname) const
+        -:  317:{
+    #####:  318:    reportErr(tok, Severity::error, "memleakOnRealloc", "$symbol:" + varname + "\nCommon " + reallocfunction + " mistake: \'$symbol\' nulled but not freed upon failure", CWE(401U));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 never executed
+call   30 never executed
+call   31 never executed
+    #####:  319:}
+        -:  320:
+function _ZNK15CheckMemoryLeak17resourceLeakErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 1 returned 100% blocks executed 53%
+        1:  321:void CheckMemoryLeak::resourceLeakError(const Token *tok, const std::string &varname) const
+        -:  322:{
+        2:  323:    std::string errmsg("Resource leak");
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+call    6 never executed
+        1:  324:    if (!varname.empty())
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        1:  325:        errmsg = "$symbol:" + varname + '\n' + errmsg + ": $symbol";
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0% (throw)
+call    6 returned 100%
+branch  7 taken 100% (fallthrough)
+branch  8 taken 0% (throw)
+call    9 returned 100%
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0% (throw)
+call   12 returned 100%
+call   13 returned 100%
+call   14 returned 100%
+call   15 returned 100%
+call   16 returned 100%
+call   17 never executed
+call   18 never executed
+call   19 never executed
+        1:  326:    reportErr(tok, Severity::error, "resourceLeak", errmsg, CWE(775U));
+call    0 returned 100%
+call    1 returned 100%
+call    2 returned 100%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0% (throw)
+call    5 returned 100%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0% (throw)
+call    8 returned 100%
+call    9 returned 100%
+call   10 never executed
+call   11 never executed
+        1:  327:}
+call    0 never executed
+        -:  328:
+function _ZNK15CheckMemoryLeak19deallocDeallocErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  329:void CheckMemoryLeak::deallocDeallocError(const Token *tok, const std::string &varname) const
+        -:  330:{
+    #####:  331:    reportErr(tok, Severity::error, "deallocDealloc", "$symbol:" + varname + "\nDeallocating a deallocated pointer: $symbol", CWE(415U));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+    #####:  332:}
+        -:  333:
+function _ZNK15CheckMemoryLeak15deallocuseErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 5 returned 100% blocks executed 50%
+        5:  334:void CheckMemoryLeak::deallocuseError(const Token *tok, const std::string &varname) const
+        -:  335:{
+        5:  336:    reportErr(tok, Severity::error, "deallocuse", "$symbol:" + varname + "\nDereferencing '$symbol' after it is deallocated / released", CWE(416U));
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+call    7 returned 100%
+call    8 returned 100%
+branch  9 taken 100% (fallthrough)
+branch 10 taken 0% (throw)
+call   11 returned 100%
+branch 12 taken 100% (fallthrough)
+branch 13 taken 0% (throw)
+call   14 returned 100%
+call   15 returned 100%
+call   16 returned 100%
+call   17 returned 100%
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+        5:  337:}
+        -:  338:
+function _ZNK15CheckMemoryLeak17mismatchSizeErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  339:void CheckMemoryLeak::mismatchSizeError(const Token *tok, const std::string &sz) const
+        -:  340:{
+    #####:  341:    reportErr(tok, Severity::error, "mismatchSize", "The allocated size " + sz + " is not a multiple of the underlying type's size.", CWE(131U));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+    #####:  342:}
+        -:  343:
+function _ZNK15CheckMemoryLeak20mismatchAllocDeallocERKNSt7__debug4listIPK5TokenSaIS4_EEERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 13 returned 100% blocks executed 50%
+       13:  344:void CheckMemoryLeak::mismatchAllocDealloc(const std::list<const Token *> &callstack, const std::string &varname) const
+        -:  345:{
+       13:  346:    reportErr(callstack, Severity::error, "mismatchAllocDealloc", "$symbol:" + varname + "\nMismatching allocation and deallocation: $symbol", CWE(762U));
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+call    7 returned 100%
+call    8 returned 100%
+branch  9 taken 100% (fallthrough)
+branch 10 taken 0% (throw)
+call   11 returned 100%
+branch 12 taken 100% (fallthrough)
+branch 13 taken 0% (throw)
+call   14 returned 100%
+call   15 returned 100%
+call   16 returned 100%
+call   17 returned 100%
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+       13:  347:}
+        -:  348:
+function _ZNK15CheckMemoryLeak18functionReturnTypeEPK8FunctionPNSt7__debug4listIS2_SaIS2_EEE called 0 returned 0% blocks executed 0%
+    #####:  349:CheckMemoryLeak::AllocType CheckMemoryLeak::functionReturnType(const Function* func, std::list<const Function*> *callstack) const
+        -:  350:{
+    #####:  351:    if (!func || !func->hasBody() || !func->functionScope)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  352:        return No;
+        -:  353:
+        -:  354:    // Get return pointer..
+    #####:  355:    int varid = 0;
+    #####:  356:    for (const Token *tok2 = func->functionScope->bodyStart; tok2 != func->functionScope->bodyEnd; tok2 = tok2->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  357:        if (const Token *endOfLambda = findLambdaEndToken(tok2))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  358:            tok2 = endOfLambda;
+    #####:  359:        if (tok2->str() == "{" && !tok2->scope()->isExecutable())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  360:            tok2 = tok2->link();
+call    0 never executed
+    #####:  361:        if (tok2->str() == "return") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  362:            const AllocType allocType = getAllocationType(tok2->next(), 0, callstack);
+call    0 never executed
+call    1 never executed
+    #####:  363:            if (allocType != No)
+branch  0 never executed
+branch  1 never executed
+    #####:  364:                return allocType;
+        -:  365:
+    #####:  366:            if (tok2->scope() != func->functionScope || !tok2->astOperand1())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  367:                return No;
+    #####:  368:            const Token* tok = tok2->astOperand1();
+call    0 never executed
+    #####:  369:            if (Token::Match(tok, ".|::"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  370:                tok = tok->astOperand2() ? tok->astOperand2() : tok->astOperand1();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  371:            if (tok)
+branch  0 never executed
+branch  1 never executed
+    #####:  372:                varid = tok->varId();
+call    0 never executed
+    #####:  373:            break;
+        -:  374:        }
+        -:  375:    }
+        -:  376:
+        -:  377:    // Not returning pointer value..
+    #####:  378:    if (varid == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  379:        return No;
+        -:  380:
+        -:  381:    // If variable is not local then alloctype shall be "No"
+        -:  382:    // Todo: there can be false negatives about mismatching allocation/deallocation.
+        -:  383:    //       => Generate "alloc ; use ;" if variable is not local?
+    #####:  384:    const Variable *var = mTokenizer_->getSymbolDatabase()->getVariableFromVarId(varid);
+call    0 never executed
+call    1 never executed
+    #####:  385:    if (!var || !var->isLocal() || var->isStatic())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  386:        return No;
+        -:  387:
+        -:  388:    // Check if return pointer is allocated..
+    #####:  389:    AllocType allocType = No;
+    #####:  390:    for (const Token* tok = func->functionScope->bodyStart; tok != func->functionScope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  391:        if (Token::Match(tok, "%varid% =", varid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  392:            allocType = getAllocationType(tok->tokAt(2), varid, callstack);
+call    0 never executed
+call    1 never executed
+        -:  393:        }
+    #####:  394:        if (Token::Match(tok, "= %varid% ;", varid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  395:            return No;
+        -:  396:        }
+    #####:  397:        if (!mTokenizer_->isC() && Token::Match(tok, "[(,] %varid% [,)]", varid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  398:            return No;
+        -:  399:        }
+    #####:  400:        if (Token::Match(tok, "[(,] & %varid% [.,)]", varid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  401:            return No;
+        -:  402:        }
+    #####:  403:        if (Token::Match(tok, "[;{}] %varid% .", varid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  404:            return No;
+        -:  405:        }
+    #####:  406:        if (allocType == No && tok->str() == "return")
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  407:            return No;
+        -:  408:    }
+        -:  409:
+    #####:  410:    return allocType;
+        -:  411:}
+        -:  412:
+        -:  413:
+function _ZNK15CheckMemoryLeak16functionArgAllocEPK8FunctioniRNS_9AllocTypeE called 0 returned 0% blocks executed 0%
+    #####:  414:const char *CheckMemoryLeak::functionArgAlloc(const Function *func, nonneg int targetpar, AllocType &allocType) const
+        -:  415:{
+    #####:  416:    allocType = No;
+        -:  417:
+    #####:  418:    if (!func || !func->functionScope)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  419:        return "";
+        -:  420:
+    #####:  421:    if (!Token::simpleMatch(func->retDef, "void"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  422:        return "";
+        -:  423:
+    #####:  424:    std::list<Variable>::const_iterator arg = func->argumentList.begin();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  425:    for (; arg != func->argumentList.end(); ++arg) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+    #####:  426:        if (arg->index() == targetpar-1)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  427:            break;
+        -:  428:    }
+    #####:  429:    if (arg == func->argumentList.end())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  430:        return "";
+        -:  431:
+        -:  432:    // Is **
+    #####:  433:    if (!arg->isPointer())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  434:        return "";
+    #####:  435:    const Token* tok = arg->typeEndToken();
+call    0 never executed
+call    1 never executed
+    #####:  436:    tok = tok->previous();
+call    0 never executed
+    #####:  437:    if (tok->str() != "*")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  438:        return "";
+        -:  439:
+        -:  440:    // Check if pointer is allocated.
+    #####:  441:    bool realloc = false;
+    #####:  442:    for (tok = func->functionScope->bodyStart; tok && tok != func->functionScope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  443:        if (tok->varId() == arg->declarationId()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  444:            if (Token::Match(tok->tokAt(-3), "free ( * %name% )")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  445:                realloc = true;
+    #####:  446:                allocType = No;
+    #####:  447:            } else if (Token::Match(tok->previous(), "* %name% =")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  448:                allocType = getAllocationType(tok->tokAt(2), arg->declarationId());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  449:                if (allocType != No) {
+branch  0 never executed
+branch  1 never executed
+    #####:  450:                    if (realloc)
+branch  0 never executed
+branch  1 never executed
+    #####:  451:                        return "realloc";
+    #####:  452:                    return "alloc";
+        -:  453:                }
+        -:  454:            } else {
+        -:  455:                // unhandled variable usage: bailout
+    #####:  456:                return "";
+        -:  457:            }
+        -:  458:        }
+        -:  459:    }
+        -:  460:
+    #####:  461:    return "";
+        -:  462:}
+        -:  463:
+        -:  464:
+function _ZL6notvarPK5Tokeni called 0 returned 0% blocks executed 0%
+    #####:  465:static bool notvar(const Token *tok, nonneg int varid)
+        -:  466:{
+    #####:  467:    if (!tok)
+branch  0 never executed
+branch  1 never executed
+    #####:  468:        return false;
+    #####:  469:    if (Token::Match(tok, "&&|;"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  470:        return notvar(tok->astOperand1(),varid) || notvar(tok->astOperand2(),varid);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  471:    if (tok->str() == "(" && Token::Match(tok->astOperand1(), "UNLIKELY|LIKELY"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  472:        return notvar(tok->astOperand2(), varid);
+call    0 never executed
+call    1 never executed
+    #####:  473:    const Token *vartok = astIsVariableComparison(tok, "==", "0");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  474:    return vartok && (vartok->varId() == varid);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  475:}
+        -:  476:
+function _ZL5ifvarPK5TokeniRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES9_ called 0 returned 0% blocks executed 0%
+    #####:  477:static bool ifvar(const Token *tok, nonneg int varid, const std::string &comp, const std::string &rhs)
+        -:  478:{
+    #####:  479:    if (!Token::simpleMatch(tok, "if ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  480:        return false;
+    #####:  481:    const Token *condition = tok->next()->astOperand2();
+call    0 never executed
+call    1 never executed
+    #####:  482:    if (condition && condition->str() == "(" && Token::Match(condition->astOperand1(), "UNLIKELY|LIKELY"))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  483:        condition = condition->astOperand2();
+call    0 never executed
+    #####:  484:    if (!condition || condition->str() == "&&")
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  485:        return false;
+        -:  486:
+    #####:  487:    const Token *vartok = astIsVariableComparison(condition, comp, rhs);
+call    0 never executed
+    #####:  488:    return (vartok && vartok->varId() == varid);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  489:}
+        -:  490:
+function _ZN25CheckMemoryLeakInFunction15test_white_listERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPK8Settingsb called 0 returned 0% blocks executed 0%
+    #####:  491:bool CheckMemoryLeakInFunction::test_white_list(const std::string &funcname, const Settings *settings, bool cpp)
+        -:  492:{
+    #####:  493:    return ((call_func_white_list.find(funcname)!=call_func_white_list.end()) || settings->library.isLeakIgnore(funcname) || (cpp && funcname == "delete"));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+        -:  494:}
+        -:  495:
+        -:  496:
+        -:  497://---------------------------------------------------------------------------
+        -:  498:// Check for memory leaks due to improper realloc() usage.
+        -:  499://   Below, "a" may be set to null without being freed if realloc() cannot
+        -:  500://   allocate the requested memory:
+        -:  501://     a = malloc(10); a = realloc(a, 100);
+        -:  502://---------------------------------------------------------------------------
+        -:  503:
+function _ZL12isNoArgumentPK14SymbolDatabasei called 0 returned 0% blocks executed 0%
+    #####:  504:static bool isNoArgument(const SymbolDatabase* symbolDatabase, nonneg int varid)
+        -:  505:{
+    #####:  506:    const Variable* var = symbolDatabase->getVariableFromVarId(varid);
+call    0 never executed
+    #####:  507:    return var && !var->isArgument();
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  508:}
+        -:  509:
+function _ZN25CheckMemoryLeakInFunction17checkReallocUsageEv called 0 returned 0% blocks executed 0%
+    #####:  510:void CheckMemoryLeakInFunction::checkReallocUsage()
+        -:  511:{
+        -:  512:    // only check functions
+    #####:  513:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  514:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  515:
+        -:  516:        // Search for the "var = realloc(var, 100" pattern within this function
+    #####:  517:        for (const Token *tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  518:            if (tok->varId() > 0 && Token::Match(tok, "%name% =")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+        -:  519:                // Get the parenthesis in "realloc("
+    #####:  520:                const Token* parTok = tok->next()->astOperand2();
+call    0 never executed
+call    1 never executed
+        -:  521:                // Skip casts
+    #####:  522:                while (parTok && parTok->isCast())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  523:                    parTok = parTok->astOperand1();
+call    0 never executed
+    #####:  524:                if (!parTok)
+branch  0 never executed
+branch  1 never executed
+    #####:  525:                    continue;
+        -:  526:
+    #####:  527:                const Token *const reallocTok = parTok->astOperand1();
+call    0 never executed
+    #####:  528:                if (!reallocTok)
+branch  0 never executed
+branch  1 never executed
+    #####:  529:                    continue;
+    #####:  530:                const Library::AllocFunc* f = mSettings->library.getReallocFuncInfo(reallocTok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  531:                if (!(f && f->arg == -1 && mSettings->library.isnotnoreturn(reallocTok)))
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  532:                    continue;
+        -:  533:
+    #####:  534:                const AllocType allocType = getReallocationType(reallocTok, tok->varId());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  535:                if (!((allocType == Malloc || allocType == OtherMem)))
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  536:                    continue;
+    #####:  537:                const Token* arg = getArguments(reallocTok).at(f->reallocArg - 1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  538:                while (arg && arg->isCast())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  539:                    arg = arg->astOperand1();
+call    0 never executed
+    #####:  540:                const Token* tok2 = tok;
+    #####:  541:                while (arg && arg->isUnaryOp("*") && tok2 && tok2->astParent() && tok2->astParent()->isUnaryOp("*")) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+branch 24 never executed
+branch 25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+branch 35 never executed
+branch 36 never executed
+call   37 never executed
+branch 38 never executed
+branch 39 never executed
+branch 40 never executed
+branch 41 never executed
+call   42 never executed
+branch 43 never executed
+branch 44 never executed
+call   45 never executed
+branch 46 never executed
+branch 47 never executed
+call   48 never executed
+branch 49 never executed
+branch 50 never executed
+call   51 never executed
+    #####:  542:                    arg = arg->astOperand1();
+call    0 never executed
+    #####:  543:                    tok2 = tok2->astParent();
+call    0 never executed
+        -:  544:                }
+        -:  545:
+    #####:  546:                if (!arg || !tok2)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  547:                    continue;
+        -:  548:
+    #####:  549:                if (!((tok->varId() == arg->varId()) && isNoArgument(symbolDatabase, tok->varId())))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  550:                    continue;
+        -:  551:
+        -:  552:                // Check that another copy of the pointer wasn't saved earlier in the function
+    #####:  553:                if (Token::findmatch(scope->bodyStart, "%name% = %varid% ;", tok, tok->varId()) ||
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  554:                    Token::findmatch(scope->bodyStart, "[{};] %varid% = %name% [;=]", tok, tok->varId()))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  555:                    continue;
+        -:  556:
+    #####:  557:                const Token* tokEndRealloc = reallocTok->linkAt(1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  558:                // Check that the allocation isn't followed immediately by an 'if (!var) { error(); }' that might handle failure
+    #####:  559:                if (Token::simpleMatch(tokEndRealloc->next(), "; if (") &&
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  560:                    notvar(tokEndRealloc->tokAt(3)->astOperand2(), tok->varId())) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  561:                    const Token* tokEndBrace = tokEndRealloc->linkAt(3)->linkAt(1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  562:                    if (tokEndBrace && mTokenizer->IsScopeNoReturn(tokEndBrace))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  563:                        continue;
+        -:  564:                }
+        -:  565:
+    #####:  566:                memleakUponReallocFailureError(tok, reallocTok->str(), tok->str());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  567:            }
+        -:  568:        }
+        -:  569:    }
+    #####:  570:}
+        -:  571://---------------------------------------------------------------------------
+        -:  572:
+        -:  573:
+        -:  574://---------------------------------------------------------------------------
+        -:  575:// Checks for memory leaks in classes..
+        -:  576://---------------------------------------------------------------------------
+        -:  577:
+        -:  578:
+function _ZN22CheckMemoryLeakInClass5checkEv called 0 returned 0% blocks executed 0%
+    #####:  579:void CheckMemoryLeakInClass::check()
+        -:  580:{
+    #####:  581:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+        -:  582:
+        -:  583:    // only check classes and structures
+    #####:  584:    for (const Scope * scope : symbolDatabase->classAndStructScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  585:        for (const Variable &var : scope->varlist) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  586:            if (!var.isStatic() && var.isPointer()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+        -:  587:                // allocation but no deallocation of private variables in public function..
+    #####:  588:                const Token *tok = var.typeStartToken();
+call    0 never executed
+        -:  589:                // Either it is of standard type or a non-derived type
+    #####:  590:                if (tok->isStandardType() || (var.type() && var.type()->derivedFrom.empty())) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  591:                    if (var.isPrivate())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  592:                        checkPublicFunctions(scope, var.nameToken());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  593:
+    #####:  594:                    variable(scope, var.nameToken());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  595:                }
+        -:  596:            }
+        -:  597:        }
+        -:  598:    }
+    #####:  599:}
+        -:  600:
+        -:  601:
+function _ZN22CheckMemoryLeakInClass8variableEPK5ScopePK5Token called 0 returned 0% blocks executed 0%
+    #####:  602:void CheckMemoryLeakInClass::variable(const Scope *scope, const Token *tokVarname)
+        -:  603:{
+    #####:  604:    const std::string& varname = tokVarname->str();
+call    0 never executed
+    #####:  605:    const int varid = tokVarname->varId();
+call    0 never executed
+    #####:  606:    const std::string& classname = scope->className;
+        -:  607:
+        -:  608:    // Check if member variable has been allocated and deallocated..
+    #####:  609:    CheckMemoryLeak::AllocType Alloc = CheckMemoryLeak::No;
+    #####:  610:    CheckMemoryLeak::AllocType Dealloc = CheckMemoryLeak::No;
+        -:  611:
+    #####:  612:    bool allocInConstructor = false;
+    #####:  613:    bool deallocInDestructor = false;
+        -:  614:
+        -:  615:    // Inspect member functions
+    #####:  616:    for (const Function &func : scope->functionList) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  617:        const bool constructor = func.isConstructor();
+call    0 never executed
+    #####:  618:        const bool destructor = func.isDestructor();
+call    0 never executed
+    #####:  619:        if (!func.hasBody()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  620:            if (destructor) { // implementation for destructor is not seen => assume it deallocates all variables properly
+branch  0 never executed
+branch  1 never executed
+    #####:  621:                deallocInDestructor = true;
+    #####:  622:                Dealloc = CheckMemoryLeak::Many;
+        -:  623:            }
+    #####:  624:            continue;
+        -:  625:        }
+    #####:  626:        bool body = false;
+    #####:  627:        const Token *end = func.functionScope->bodyEnd;
+    #####:  628:        for (const Token *tok = func.arg->link(); tok != end; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  629:            if (tok == func.functionScope->bodyStart)
+branch  0 never executed
+branch  1 never executed
+    #####:  630:                body = true;
+        -:  631:            else {
+    #####:  632:                if (!body) {
+branch  0 never executed
+branch  1 never executed
+    #####:  633:                    if (!Token::Match(tok, ":|, %varid% (", varid))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  634:                        continue;
+        -:  635:                }
+        -:  636:
+        -:  637:                // Allocate..
+    #####:  638:                if (!body || Token::Match(tok, "%varid% =", varid)) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+        -:  639:                    // var1 = var2 = ...
+        -:  640:                    // bail out
+    #####:  641:                    if (tok->strAt(-1) == "=")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  642:                        return;
+        -:  643:
+        -:  644:                    // Foo::var1 = ..
+        -:  645:                    // bail out when not same class
+    #####:  646:                    if (tok->strAt(-1) == "::" &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  647:                        tok->strAt(-2) != scope->className)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  648:                        return;
+        -:  649:
+    #####:  650:                    AllocType alloc = getAllocationType(tok->tokAt(body ? 2 : 3), 0);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  651:                    if (alloc != CheckMemoryLeak::No) {
+branch  0 never executed
+branch  1 never executed
+    #####:  652:                        if (constructor)
+branch  0 never executed
+branch  1 never executed
+    #####:  653:                            allocInConstructor = true;
+        -:  654:
+    #####:  655:                        if (Alloc != No && Alloc != alloc)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  656:                            alloc = CheckMemoryLeak::Many;
+        -:  657:
+    #####:  658:                        if (alloc != CheckMemoryLeak::Many && Dealloc != CheckMemoryLeak::No && Dealloc != CheckMemoryLeak::Many && Dealloc != alloc) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  659:                            std::list<const Token *> callstack;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  660:                            callstack.push_back(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  661:                            mismatchAllocDealloc(callstack, classname + "::" + varname);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+        -:  662:                        }
+        -:  663:
+    #####:  664:                        Alloc = alloc;
+        -:  665:                    }
+        -:  666:                }
+        -:  667:
+    #####:  668:                if (!body)
+branch  0 never executed
+branch  1 never executed
+    #####:  669:                    continue;
+        -:  670:
+        -:  671:                // Deallocate..
+    #####:  672:                AllocType dealloc = getDeallocationType(tok, varid);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  673:                // some usage in the destructor => assume it's related
+        -:  674:                // to deallocation
+    #####:  675:                if (destructor && tok->str() == varname)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  676:                    dealloc = CheckMemoryLeak::Many;
+    #####:  677:                if (dealloc != CheckMemoryLeak::No) {
+branch  0 never executed
+branch  1 never executed
+    #####:  678:                    if (destructor)
+branch  0 never executed
+branch  1 never executed
+    #####:  679:                        deallocInDestructor = true;
+        -:  680:
+        -:  681:                    // several types of allocation/deallocation?
+    #####:  682:                    if (Dealloc != CheckMemoryLeak::No && Dealloc != dealloc)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  683:                        dealloc = CheckMemoryLeak::Many;
+        -:  684:
+    #####:  685:                    if (dealloc != CheckMemoryLeak::Many && Alloc != CheckMemoryLeak::No &&  Alloc != Many && Alloc != dealloc) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  686:                        std::list<const Token *> callstack;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  687:                        callstack.push_back(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  688:                        mismatchAllocDealloc(callstack, classname + "::" + varname);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+        -:  689:                    }
+        -:  690:
+    #####:  691:                    Dealloc = dealloc;
+        -:  692:                }
+        -:  693:
+        -:  694:                // Function call .. possible deallocation
+    #####:  695:                else if (Token::Match(tok->previous(), "[{};] %name% (")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  696:                    if (!CheckMemoryLeakInFunction::test_white_list(tok->str(), mSettings, mTokenizer->isCPP())) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  697:                        return;
+        -:  698:                    }
+        -:  699:                }
+        -:  700:            }
+        -:  701:        }
+        -:  702:    }
+        -:  703:
+    #####:  704:    if (allocInConstructor && !deallocInDestructor) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  705:        unsafeClassError(tokVarname, classname, classname + "::" + varname /*, Alloc*/);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  706:    } else if (Alloc != CheckMemoryLeak::No && Dealloc == CheckMemoryLeak::No) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  707:        unsafeClassError(tokVarname, classname, classname + "::" + varname /*, Alloc*/);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  708:    }
+        -:  709:}
+        -:  710:
+function _ZN22CheckMemoryLeakInClass16unsafeClassErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####:  711:void CheckMemoryLeakInClass::unsafeClassError(const Token *tok, const std::string &classname, const std::string &varname)
+        -:  712:{
+    #####:  713:    if (!mSettings->isEnabled(Settings::STYLE))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  714:        return;
+        -:  715:
+    #####:  716:    reportError(tok, Severity::style, "unsafeClassCanLeak",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  717:                "$symbol:" + classname + "\n"
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  718:                "$symbol:" + varname + "\n"
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  719:                "Class '" + classname + "' is unsafe, '" + varname + "' can leak by wrong usage.\n"
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  720:                "The class '" + classname + "' is unsafe, wrong usage can cause memory/resource leaks for '" + varname + "'. This can for instance be fixed by adding proper cleanup in the destructor.", CWE398, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+        -:  721:}
+        -:  722:
+        -:  723:
+function _ZN22CheckMemoryLeakInClass20checkPublicFunctionsEPK5ScopePK5Token called 0 returned 0% blocks executed 0%
+    #####:  724:void CheckMemoryLeakInClass::checkPublicFunctions(const Scope *scope, const Token *classtok)
+        -:  725:{
+        -:  726:    // Check that public functions deallocate the pointers that they allocate.
+        -:  727:    // There is no checking how these functions are used and therefore it
+        -:  728:    // isn't established if there is real leaks or not.
+    #####:  729:    if (!mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  730:        return;
+        -:  731:
+    #####:  732:    const int varid = classtok->varId();
+call    0 never executed
+        -:  733:
+        -:  734:    // Parse public functions..
+        -:  735:    // If they allocate member variables, they should also deallocate
+    #####:  736:    for (const Function &func : scope->functionList) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  737:        if ((func.type == Function::eFunction || func.type == Function::eOperatorEqual) &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  738:            func.access == AccessControl::Public && func.hasBody()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  739:            const Token *tok2 = func.functionScope->bodyStart->next();
+call    0 never executed
+    #####:  740:            if (Token::Match(tok2, "%varid% =", varid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  741:                const CheckMemoryLeak::AllocType alloc = getAllocationType(tok2->tokAt(2), varid);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  742:                if (alloc != CheckMemoryLeak::No)
+branch  0 never executed
+branch  1 never executed
+    #####:  743:                    publicAllocationError(tok2, tok2->str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  744:            } else if (Token::Match(tok2, "%type% :: %varid% =", varid) &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  745:                       tok2->str() == scope->className) {
+call    0 never executed
+call    1 never executed
+    #####:  746:                const CheckMemoryLeak::AllocType alloc = getAllocationType(tok2->tokAt(4), varid);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  747:                if (alloc != CheckMemoryLeak::No)
+branch  0 never executed
+branch  1 never executed
+    #####:  748:                    publicAllocationError(tok2, tok2->strAt(2));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  749:            }
+        -:  750:        }
+        -:  751:    }
+        -:  752:}
+        -:  753:
+function _ZN22CheckMemoryLeakInClass21publicAllocationErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  754:void CheckMemoryLeakInClass::publicAllocationError(const Token *tok, const std::string &varname)
+        -:  755:{
+    #####:  756:    reportError(tok, Severity::warning, "publicAllocationError", "$symbol:" + varname + "\nPossible leak in public function. The pointer '$symbol' is not deallocated before it is allocated.", CWE398, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  757:}
+        -:  758:
+        -:  759:
+function _ZN27CheckMemoryLeakStructMember5checkEv called 0 returned 0% blocks executed 0%
+    #####:  760:void CheckMemoryLeakStructMember::check()
+        -:  761:{
+    #####:  762:    const SymbolDatabase* symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  763:    for (const Variable* var : symbolDatabase->variableList()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  764:        if (!var || !var->isLocal() || var->isStatic() || var->isReference())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+    #####:  765:            continue;
+    #####:  766:        if (var->typeEndToken()->isStandardType())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  767:            continue;
+    #####:  768:        checkStructVariable(var);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  769:    }
+    #####:  770:}
+        -:  771:
+function _ZN27CheckMemoryLeakStructMember8isMallocEPK8Variable called 0 returned 0% blocks executed 0%
+    #####:  772:bool CheckMemoryLeakStructMember::isMalloc(const Variable *variable)
+        -:  773:{
+    #####:  774:    const int declarationId(variable->declarationId());
+call    0 never executed
+    #####:  775:    bool alloc = false;
+    #####:  776:    for (const Token *tok2 = variable->nameToken(); tok2 && tok2 != variable->scope()->bodyEnd; tok2 = tok2->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+    #####:  777:        if (Token::Match(tok2, "= %varid% [;=]", declarationId)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  778:            return false;
+    #####:  779:        } else if (Token::Match(tok2, "%varid% = malloc|kmalloc (", declarationId)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  780:            alloc = true;
+        -:  781:        }
+        -:  782:    }
+    #####:  783:    return alloc;
+        -:  784:}
+        -:  785:
+function _ZN27CheckMemoryLeakStructMember19checkStructVariableEPK8Variable called 0 returned 0% blocks executed 0%
+    #####:  786:void CheckMemoryLeakStructMember::checkStructVariable(const Variable * const variable)
+        -:  787:{
+        -:  788:    // Is struct variable a pointer?
+    #####:  789:    if (variable->isPointer()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  790:        // Check that variable is allocated with malloc
+    #####:  791:        if (!isMalloc(variable))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  792:            return;
+    #####:  793:    } else if (!mTokenizer->isC() && (!variable->typeScope() || variable->typeScope()->getDestructor())) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+        -:  794:        // For non-C code a destructor might cleanup members
+    #####:  795:        return;
+        -:  796:    }
+        -:  797:
+        -:  798:    // Check struct..
+    #####:  799:    int indentlevel2 = 0;
+    #####:  800:    for (const Token *tok2 = variable->nameToken(); tok2 && tok2 != variable->scope()->bodyEnd; tok2 = tok2->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+    #####:  801:        if (tok2->str() == "{")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  802:            ++indentlevel2;
+        -:  803:
+    #####:  804:        else if (tok2->str() == "}") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  805:            if (indentlevel2 == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  806:                break;
+    #####:  807:            --indentlevel2;
+        -:  808:        }
+        -:  809:
+        -:  810:        // Unknown usage of struct
+        -:  811:        /** @todo Check how the struct is used. Only bail out if necessary */
+    #####:  812:        else if (Token::Match(tok2, "[(,] %varid% [,)]", variable->declarationId()))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  813:            break;
+        -:  814:
+        -:  815:        // Struct member is allocated => check if it is also properly deallocated..
+    #####:  816:        else if (Token::Match(tok2->previous(), "[;{}] %varid% . %var% =", variable->declarationId())) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  817:            if (getAllocationType(tok2->tokAt(4), tok2->tokAt(2)->varId()) == AllocType::No)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  818:                continue;
+        -:  819:
+    #####:  820:            const int structid(variable->declarationId());
+call    0 never executed
+    #####:  821:            const int structmemberid(tok2->tokAt(2)->varId());
+call    0 never executed
+call    1 never executed
+        -:  822:
+        -:  823:            // This struct member is allocated.. check that it is deallocated
+    #####:  824:            int indentlevel3 = indentlevel2;
+    #####:  825:            for (const Token *tok3 = tok2; tok3; tok3 = tok3->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  826:                if (tok3->str() == "{")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  827:                    ++indentlevel3;
+        -:  828:
+    #####:  829:                else if (tok3->str() == "}") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  830:                    if (indentlevel3 == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  831:                        memoryLeak(tok3, variable->name() + "." + tok2->strAt(2), Malloc);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  832:                        break;
+        -:  833:                    }
+    #####:  834:                    --indentlevel3;
+        -:  835:                }
+        -:  836:
+        -:  837:                // Deallocating the struct member..
+    #####:  838:                else if (getDeallocationType(tok3, structmemberid) != AllocType::No) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  839:                    // If the deallocation happens at the base level, don't check this member anymore
+    #####:  840:                    if (indentlevel3 == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  841:                        break;
+        -:  842:
+        -:  843:                    // deallocating and then returning from function in a conditional block =>
+        -:  844:                    // skip ahead out of the block
+    #####:  845:                    bool ret = false;
+    #####:  846:                    while (tok3) {
+branch  0 never executed
+branch  1 never executed
+    #####:  847:                        if (tok3->str() == "return")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  848:                            ret = true;
+    #####:  849:                        else if (tok3->str() == "{" || tok3->str() == "}")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  850:                            break;
+    #####:  851:                        tok3 = tok3->next();
+call    0 never executed
+        -:  852:                    }
+    #####:  853:                    if (!ret || !tok3 || tok3->str() != "}")
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  854:                        break;
+    #####:  855:                    --indentlevel3;
+    #####:  856:                    continue;
+        -:  857:                }
+        -:  858:
+        -:  859:                // Deallocating the struct..
+    #####:  860:                else if (Token::Match(tok3, "free|kfree ( %varid% )", structid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  861:                    if (indentlevel2 == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  862:                        memoryLeak(tok3, variable->name() + "." + tok2->strAt(2), Malloc);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  863:                    break;
+        -:  864:                }
+        -:  865:
+        -:  866:                // failed allocation => skip code..
+    #####:  867:                else if (Token::simpleMatch(tok3, "if (") &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  868:                         notvar(tok3->next()->astOperand2(), structmemberid)) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  869:                    // Goto the ")"
+    #####:  870:                    tok3 = tok3->next()->link();
+call    0 never executed
+call    1 never executed
+        -:  871:
+        -:  872:                    // make sure we have ") {".. it should be
+    #####:  873:                    if (!Token::simpleMatch(tok3, ") {"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  874:                        break;
+        -:  875:
+        -:  876:                    // Goto the "}"
+    #####:  877:                    tok3 = tok3->next()->link();
+call    0 never executed
+call    1 never executed
+        -:  878:                }
+        -:  879:
+        -:  880:                // succeeded allocation
+    #####:  881:                else if (ifvar(tok3, structmemberid, "!=", "0")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+        -:  882:                    // goto the ")"
+    #####:  883:                    tok3 = tok3->next()->link();
+call    0 never executed
+call    1 never executed
+        -:  884:
+        -:  885:                    // check if the variable is deallocated or returned..
+    #####:  886:                    int indentlevel4 = 0;
+    #####:  887:                    for (const Token *tok4 = tok3; tok4; tok4 = tok4->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  888:                        if (tok4->str() == "{")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  889:                            ++indentlevel4;
+    #####:  890:                        else if (tok4->str() == "}") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  891:                            --indentlevel4;
+    #####:  892:                            if (indentlevel4 == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  893:                                break;
+    #####:  894:                        } else if (Token::Match(tok4, "free|kfree ( %var% . %varid% )", structmemberid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  895:                            break;
+        -:  896:                        }
+        -:  897:                    }
+        -:  898:
+        -:  899:                    // was there a proper deallocation?
+    #####:  900:                    if (indentlevel4 > 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  901:                        break;
+        -:  902:                }
+        -:  903:
+        -:  904:                // Returning from function..
+    #####:  905:                else if (tok3->str() == "return") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  906:                    // Returning from function without deallocating struct member?
+    #####:  907:                    if (!Token::Match(tok3, "return %varid% ;", structid) &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  908:                        !Token::Match(tok3, "return & %varid%", structid) &&
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  909:                        !(Token::Match(tok3, "return %varid% . %var%", structid) && tok3->tokAt(3)->varId() == structmemberid)) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  910:                        memoryLeak(tok3, variable->name() + "." + tok2->strAt(2), Malloc);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+        -:  911:                    }
+    #####:  912:                    break;
+        -:  913:                }
+        -:  914:
+        -:  915:                // struct assignment..
+    #####:  916:                else if (Token::Match(tok3, "= %varid% ;", structid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  917:                    break;
+    #####:  918:                } else if (Token::Match(tok3, "= %var% . %varid% ;", structmemberid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  919:                    break;
+        -:  920:                }
+        -:  921:
+        -:  922:                // goto isn't handled well.. bail out even though there might be leaks
+    #####:  923:                else if (tok3->str() == "goto")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  924:                    break;
+        -:  925:
+        -:  926:                // using struct in a function call..
+    #####:  927:                else if (Token::Match(tok3, "%name% (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  928:                    // Calling non-function / function that doesn't deallocate?
+    #####:  929:                    if (CheckMemoryLeakInFunction::test_white_list(tok3->str(), mSettings, mTokenizer->isCPP()))
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  930:                        continue;
+        -:  931:
+        -:  932:                    // Check if the struct is used..
+    #####:  933:                    bool deallocated = false;
+    #####:  934:                    const Token* const end4 = tok3->linkAt(1);
+call    0 never executed
+    #####:  935:                    for (const Token *tok4 = tok3; tok4 != end4; tok4 = tok4->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  936:                        if (Token::Match(tok4, "[(,] &| %varid% [,)]", structid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  937:                            /** @todo check if the function deallocates the memory */
+    #####:  938:                            deallocated = true;
+    #####:  939:                            break;
+        -:  940:                        }
+        -:  941:
+    #####:  942:                        if (Token::Match(tok4, "[(,] &| %varid% . %name% [,)]", structid)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  943:                            /** @todo check if the function deallocates the memory */
+    #####:  944:                            deallocated = true;
+    #####:  945:                            break;
+        -:  946:                        }
+        -:  947:                    }
+        -:  948:
+    #####:  949:                    if (deallocated)
+branch  0 never executed
+branch  1 never executed
+    #####:  950:                        break;
+        -:  951:                }
+        -:  952:            }
+        -:  953:        }
+        -:  954:    }
+        -:  955:}
+        -:  956:
+        -:  957:
+        -:  958:
+function _ZN20CheckMemoryLeakNoVar5checkEv called 0 returned 0% blocks executed 0%
+    #####:  959:void CheckMemoryLeakNoVar::check()
+        -:  960:{
+    #####:  961:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+        -:  962:
+        -:  963:    // only check functions
+    #####:  964:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  965:
+        -:  966:        // Checks if a call to an allocation function like malloc() is made and its return value is not assigned.
+    #####:  967:        checkForUnusedReturnValue(scope);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  968:
+        -:  969:        // Checks to see if a function is called with memory allocated for an argument that
+        -:  970:        // could be leaked if a function called for another argument throws.
+    #####:  971:        checkForUnsafeArgAlloc(scope);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  972:
+        -:  973:        // Check for leaks where a the return value of an allocation function like malloc() is an input argument,
+        -:  974:        // for example f(malloc(1)), where f is known to not release the input argument.
+    #####:  975:        checkForUnreleasedInputArgument(scope);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  976:    }
+    #####:  977:}
+        -:  978:
+        -:  979://---------------------------------------------------------------------------
+        -:  980:// Checks if an input argument to a function is the return value of an allocation function
+        -:  981:// like malloc(), and the function does not release it.
+        -:  982://---------------------------------------------------------------------------
+function _ZN20CheckMemoryLeakNoVar31checkForUnreleasedInputArgumentEPK5Scope called 0 returned 0% blocks executed 0%
+    #####:  983:void CheckMemoryLeakNoVar::checkForUnreleasedInputArgument(const Scope *scope)
+        -:  984:{
+        -:  985:    // parse the executable scope until tok is reached...
+    #####:  986:    for (const Token *tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+        -:  987:        // allocating memory in parameter for function call..
+    #####:  988:        if (!Token::Match(tok, "%name% ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  989:            continue;
+        -:  990:
+        -:  991:        // check if the output of the function is assigned
+    #####:  992:        const Token* tok2 = tok->next()->astParent();
+call    0 never executed
+call    1 never executed
+    #####:  993:        while (tok2 && tok2->isCast())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  994:            tok2 = tok2->astParent();
+call    0 never executed
+    #####:  995:        if (tok2 && tok2->isAssignmentOp())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  996:            continue;
+        -:  997:
+    #####:  998:        const std::string& functionName = tok->str();
+call    0 never executed
+    #####:  999:        if ((mTokenizer->isCPP() && functionName == "delete") ||
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1000:            functionName == "free" ||
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1001:            functionName == "fclose" ||
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1002:            functionName == "realloc")
+call    0 never executed
+    #####: 1003:            continue;
+        -: 1004:
+    #####: 1005:        if (!CheckMemoryLeakInFunction::test_white_list(functionName, mSettings, mTokenizer->isCPP()))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1006:            continue;
+        -: 1007:
+    #####: 1008:        const std::vector<const Token *> args = getArguments(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####: 1009:        for (const Token* arg : args) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####: 1010:            if (arg->isOp())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1011:                continue;
+    #####: 1012:            while (arg->astOperand1())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1013:                arg = arg->astOperand1();
+call    0 never executed
+    #####: 1014:            if (getAllocationType(arg, 0) == No)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1015:                continue;
+    #####: 1016:            if (isReopenStandardStream(arg))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1017:                continue;
+    #####: 1018:            functionCallLeak(arg, arg->str(), functionName);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -: 1019:        }
+        -: 1020:
+        -: 1021:    }
+    #####: 1022:}
+        -: 1023:
+        -: 1024://---------------------------------------------------------------------------
+        -: 1025:// Checks if a call to an allocation function like malloc() is made and its return value is not assigned.
+        -: 1026://---------------------------------------------------------------------------
+function _ZN20CheckMemoryLeakNoVar25checkForUnusedReturnValueEPK5Scope called 0 returned 0% blocks executed 0%
+    #####: 1027:void CheckMemoryLeakNoVar::checkForUnusedReturnValue(const Scope *scope)
+        -: 1028:{
+    #####: 1029:    for (const Token *tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####: 1030:        if (!Token::Match(tok, "%name% ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1031:            continue;
+        -: 1032:
+    #####: 1033:        if (tok->varId())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1034:            continue;
+        -: 1035:
+    #####: 1036:        const AllocType allocType = getAllocationType(tok, 0);
+call    0 never executed
+    #####: 1037:        if (allocType == No)
+branch  0 never executed
+branch  1 never executed
+    #####: 1038:            continue;
+        -: 1039:
+    #####: 1040:        if (tok != tok->next()->astOperand1())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1041:            continue;
+        -: 1042:
+    #####: 1043:        if (isReopenStandardStream(tok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1044:            continue;
+        -: 1045:
+        -: 1046:        // get ast parent, skip casts
+    #####: 1047:        const Token *parent = tok->next()->astParent();
+call    0 never executed
+call    1 never executed
+    #####: 1048:        while (parent && parent->str() == "(" && !parent->astOperand2())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####: 1049:            parent = parent->astParent();
+call    0 never executed
+        -: 1050:
+    #####: 1051:        if (!parent) {
+branch  0 never executed
+branch  1 never executed
+        -: 1052:            // Check if we are in a C++11 constructor
+    #####: 1053:            const Token * closingBrace = Token::findmatch(tok, "}|;");
+call    0 never executed
+    #####: 1054:            if (closingBrace->str() == "}" && Token::Match(closingBrace->link()->tokAt(-1), "%name%"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####: 1055:                continue;
+    #####: 1056:            returnValueNotUsedError(tok, tok->str());
+call    0 never executed
+call    1 never executed
+    #####: 1057:        } else if (Token::Match(parent, "%comp%|!")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1058:            returnValueNotUsedError(tok, tok->str());
+call    0 never executed
+call    1 never executed
+        -: 1059:        }
+        -: 1060:    }
+    #####: 1061:}
+        -: 1062:
+        -: 1063://---------------------------------------------------------------------------
+        -: 1064:// Check if an exception could cause a leak in an argument constructed with
+        -: 1065:// shared_ptr/unique_ptr. For example, in the following code, it is possible
+        -: 1066:// that if g() throws an exception, the memory allocated by "new int(42)"
+        -: 1067:// could be leaked. See stackoverflow.com/questions/19034538/
+        -: 1068:// why-is-there-memory-leak-while-using-shared-ptr-as-a-function-parameter
+        -: 1069://
+        -: 1070:// void x() {
+        -: 1071://    f(shared_ptr<int>(new int(42)), g());
+        -: 1072:// }
+        -: 1073://---------------------------------------------------------------------------
+function _ZN20CheckMemoryLeakNoVar22checkForUnsafeArgAllocEPK5Scope called 0 returned 0% blocks executed 0%
+    #####: 1074:void CheckMemoryLeakNoVar::checkForUnsafeArgAlloc(const Scope *scope)
+        -: 1075:{
+        -: 1076:    // This test only applies to C++ source
+    #####: 1077:    if (!mTokenizer->isCPP() || !mSettings->inconclusive || !mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####: 1078:        return;
+        -: 1079:
+    #####: 1080:    for (const Token *tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####: 1081:        if (Token::Match(tok, "%name% (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1082:            const Token *endParamToken = tok->next()->link();
+call    0 never executed
+call    1 never executed
+    #####: 1083:            const Token* pointerType = nullptr;
+    #####: 1084:            const Token* functionCalled = nullptr;
+        -: 1085:
+        -: 1086:            // Scan through the arguments to the function call
+    #####: 1087:            for (const Token *tok2 = tok->tokAt(2); tok2 && tok2 != endParamToken; tok2 = tok2->nextArgument()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+    #####: 1088:                const Function *func = tok2->function();
+call    0 never executed
+    #####: 1089:                const bool isNothrow = func && (func->isAttributeNothrow() || func->isThrow());
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+        -: 1090:
+    #####: 1091:                if (Token::Match(tok2, "shared_ptr|unique_ptr <") && Token::Match(tok2->next()->link(), "> ( new %name%")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####: 1092:                    pointerType = tok2;
+    #####: 1093:                } else if (!isNothrow) {
+branch  0 never executed
+branch  1 never executed
+    #####: 1094:                    if (Token::Match(tok2, "%name% ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1095:                        functionCalled = tok2;
+    #####: 1096:                    else if (tok2->isName() && Token::simpleMatch(tok2->next()->link(), "> ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####: 1097:                        functionCalled = tok2;
+        -: 1098:                }
+        -: 1099:            }
+        -: 1100:
+    #####: 1101:            if (pointerType && functionCalled) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1102:                std::string functionName = functionCalled->str();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####: 1103:                if (functionCalled->strAt(1) == "<") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1104:                    functionName += '<';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1105:                    for (const Token* tok2 = functionCalled->tokAt(2); tok2 != functionCalled->next()->link(); tok2 = tok2->next())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+    #####: 1106:                        functionName += tok2->str();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1107:                    functionName += '>';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -: 1108:                }
+    #####: 1109:                std::string objectTypeName;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####: 1110:                for (const Token* tok2 = pointerType->tokAt(2); tok2 != pointerType->next()->link(); tok2 = tok2->next())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+    #####: 1111:                    objectTypeName += tok2->str();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -: 1112:
+    #####: 1113:                unsafeArgAllocError(tok, functionName, pointerType->str(), objectTypeName);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -: 1114:            }
+        -: 1115:        }
+        -: 1116:    }
+        -: 1117:}
+        -: 1118:
+function _ZN20CheckMemoryLeakNoVar16functionCallLeakEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_ called 0 returned 0% blocks executed 0%
+    #####: 1119:void CheckMemoryLeakNoVar::functionCallLeak(const Token *loc, const std::string &alloc, const std::string &functionCall)
+        -: 1120:{
+    #####: 1121:    reportError(loc, Severity::error, "leakNoVarFunctionCall", "Allocation with " + alloc + ", " + functionCall + " doesn't release it.", CWE772, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+    #####: 1122:}
+        -: 1123:
+function _ZN20CheckMemoryLeakNoVar23returnValueNotUsedErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####: 1124:void CheckMemoryLeakNoVar::returnValueNotUsedError(const Token *tok, const std::string &alloc)
+        -: 1125:{
+    #####: 1126:    reportError(tok, Severity::error, "leakReturnValNotUsed", "$symbol:" + alloc + "\nReturn value of allocation function '$symbol' is not stored.", CWE771, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####: 1127:}
+        -: 1128:
+function _ZN20CheckMemoryLeakNoVar19unsafeArgAllocErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_SA_ called 0 returned 0% blocks executed 0%
+    #####: 1129:void CheckMemoryLeakNoVar::unsafeArgAllocError(const Token *tok, const std::string &funcName, const std::string &ptrType, const std::string& objType)
+        -: 1130:{
+    #####: 1131:    const std::string factoryFunc = ptrType == "shared_ptr" ? "make_shared" : "make_unique";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####: 1132:    reportError(tok, Severity::warning, "leakUnsafeArgAlloc",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1133:                "$symbol:" + funcName + "\n"
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####: 1134:                "Unsafe allocation. If $symbol() throws, memory could be leaked. Use " + factoryFunc + "<" + objType + ">() instead.",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+        -: 1135:                CWE401,
+        -: 1136:                true); // Inconclusive because funcName may never throw
+function _GLOBAL__sub_I__ZNK15CheckMemoryLeak17getAllocationTypeEPK5TokeniPNSt7__debug4listIPK8FunctionSaIS7_EEE called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 51%
+        3: 1137:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
+call    5 never executed

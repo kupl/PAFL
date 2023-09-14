@@ -1,0 +1,297 @@
+        -:    0:Source:/home/workspace/lib/checkleakautovar.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkleakautovar.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkleakautovar.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#ifndef checkleakautovarH
+        -:   22:#define checkleakautovarH
+        -:   23://---------------------------------------------------------------------------
+        -:   24:
+        -:   25:#include "check.h"
+        -:   26:#include "config.h"
+        -:   27:#include "library.h"
+        -:   28:
+        -:   29:#include <map>
+        -:   30:#include <set>
+        -:   31:#include <string>
+        -:   32:
+        -:   33:class ErrorLogger;
+        -:   34:class Settings;
+        -:   35:class Token;
+        -:   36:class Tokenizer;
+        -:   37:
+        -:   38:
+function _ZN7VarInfoC2ERKS_ called 6142 returned 100% blocks executed 55%
+function _ZN7VarInfoD2Ev called 8415 returned 100% blocks executed 100%
+function _ZN7VarInfoC2Ev called 2273 returned 100% blocks executed 100%
+    16830:   39:class CPPCHECKLIB VarInfo {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+branch  5 taken 100% (fallthrough)
+branch  6 taken 0% (throw)
+call    7 returned 100%
+branch  8 taken 100% (fallthrough)
+branch  9 taken 0% (throw)
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 returned 100%
+call   14 returned 100%
+call   15 returned 100%
+call   16 returned 100%
+call   17 returned 100%
+call   18 returned 100%
+call   19 returned 100%
+call   20 returned 100%
+        -:   40:public:
+        -:   41:    enum AllocStatus { OWNED = -2, DEALLOC = -1, NOALLOC = 0, ALLOC = 1 };
+        -:   42:    struct AllocInfo {
+        -:   43:        AllocStatus status;
+        -:   44:        /** Allocation type. If it is a positive value then it corresponds to
+        -:   45:         * a Library allocation id. A negative value is a builtin
+        -:   46:         * checkleakautovar allocation type.
+        -:   47:         */
+        -:   48:        int type;
+function _ZN7VarInfo9AllocInfoC2EiNS_11AllocStatusE called 549 returned 100% blocks executed 100%
+      549:   49:        AllocInfo(int type_ = 0, AllocStatus status_ = NOALLOC) : status(status_), type(type_) {}
+        -:   50:
+function _ZNK7VarInfo9AllocInfo7managedEv called 444 returned 100% blocks executed 100%
+      444:   51:        bool managed() const {
+      444:   52:            return status < 0;
+        -:   53:        }
+        -:   54:    };
+        -:   55:    std::map<int, AllocInfo> alloctype;
+        -:   56:    std::map<int, std::string> possibleUsage;
+        -:   57:    std::set<int> conditionalAlloc;
+        -:   58:    std::set<int> referenced;
+        -:   59:
+function _ZN7VarInfo5clearEv called 73 returned 100% blocks executed 100%
+       73:   60:    void clear() {
+       73:   61:        alloctype.clear();
+call    0 returned 100%
+       73:   62:        possibleUsage.clear();
+call    0 returned 100%
+       73:   63:        conditionalAlloc.clear();
+call    0 returned 100%
+       73:   64:        referenced.clear();
+call    0 returned 100%
+       73:   65:    }
+        -:   66:
+function _ZN7VarInfo5eraseEi called 239 returned 100% blocks executed 100%
+      239:   67:    void erase(nonneg int varid) {
+      239:   68:        alloctype.erase(varid);
+call    0 returned 100%
+      239:   69:        possibleUsage.erase(varid);
+call    0 returned 100%
+      239:   70:        conditionalAlloc.erase(varid);
+call    0 returned 100%
+      239:   71:        referenced.erase(varid);
+call    0 returned 100%
+      239:   72:    }
+        -:   73:
+function _ZN7VarInfo4swapERS_ called 2071 returned 100% blocks executed 100%
+     2071:   74:    void swap(VarInfo &other) {
+     2071:   75:        alloctype.swap(other.alloctype);
+call    0 returned 100%
+     2071:   76:        possibleUsage.swap(other.possibleUsage);
+call    0 returned 100%
+     2071:   77:        conditionalAlloc.swap(other.conditionalAlloc);
+call    0 returned 100%
+     2071:   78:        referenced.swap(other.referenced);
+call    0 returned 100%
+     2071:   79:    }
+        -:   80:
+        -:   81:    /** set possible usage for all variables */
+        -:   82:    void possibleUsageAll(const std::string &functionName);
+        -:   83:
+        -:   84:    void print();
+        -:   85:};
+        -:   86:
+        -:   87:
+        -:   88:/// @addtogroup Checks
+        -:   89:/// @{
+        -:   90:
+        -:   91:/**
+        -:   92: * @brief Check for leaks
+        -:   93: */
+        -:   94:
+function _ZN16CheckLeakAutoVarD0Ev called 0 returned 0% blocks executed 0%
+function _ZN16CheckLeakAutoVarD2Ev called 0 returned 0% blocks executed 0%
+    #####:   95:class CPPCHECKLIB CheckLeakAutoVar : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   96:public:
+        -:   97:    /** This constructor is used when registering the CheckLeakAutoVar */
+function _ZN16CheckLeakAutoVarC2Ev called 0 returned 0% blocks executed 0%
+    #####:   98:    CheckLeakAutoVar() : Check(myName()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   99:    }
+        -:  100:
+        -:  101:    /** This constructor is used when running checks. */
+function _ZN16CheckLeakAutoVarC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  102:    CheckLeakAutoVar(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:  103:        : Check(myName(), tokenizer, settings, errorLogger) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  104:    }
+        -:  105:
+function _ZN16CheckLeakAutoVar9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  106:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:  107:        CheckLeakAutoVar checkLeakAutoVar(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  108:        checkLeakAutoVar.check();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  109:    }
+        -:  110:
+        -:  111:private:
+        -:  112:
+        -:  113:    /** check for leaks in all scopes */
+        -:  114:    void check();
+        -:  115:
+        -:  116:    /** check for leaks in a function scope */
+        -:  117:    void checkScope(const Token * const startToken,
+        -:  118:                    VarInfo *varInfo,
+        -:  119:                    std::set<int> notzero,
+        -:  120:                    nonneg int recursiveCount);
+        -:  121:
+        -:  122:    /** Check token inside expression.
+        -:  123:    * @param tok token inside expression.
+        -:  124:    * @param varInfo Variable info
+        -:  125:    * @return next token to process (if no other checks needed for this token). NULL if other checks could be performed.
+        -:  126:    */
+        -:  127:    const Token * checkTokenInsideExpression(const Token * const tok, VarInfo *varInfo);
+        -:  128:
+        -:  129:    /** parse function call */
+        -:  130:    void functionCall(const Token *tokName, const Token *tokOpeningPar, VarInfo *varInfo, const VarInfo::AllocInfo& allocation, const Library::AllocFunc* af);
+        -:  131:
+        -:  132:    /** parse changes in allocation status */
+        -:  133:    void changeAllocStatus(VarInfo *varInfo, const VarInfo::AllocInfo& allocation, const Token* tok, const Token* arg);
+        -:  134:
+        -:  135:    /** update allocation status if reallocation function */
+        -:  136:    void changeAllocStatusIfRealloc(std::map<int, VarInfo::AllocInfo> &alloctype, const Token *fTok, const Token *retTok);
+        -:  137:
+        -:  138:    /** return. either "return" or end of variable scope is seen */
+        -:  139:    void ret(const Token *tok, const VarInfo &varInfo);
+        -:  140:
+        -:  141:    /** if variable is allocated then there is a leak */
+        -:  142:    void leakIfAllocated(const Token *vartok, const VarInfo &varInfo);
+        -:  143:
+        -:  144:    void leakError(const Token* tok, const std::string &varname, int type);
+        -:  145:    void mismatchError(const Token* tok, const std::string &varname);
+        -:  146:    void deallocUseError(const Token *tok, const std::string &varname);
+        -:  147:    void deallocReturnError(const Token *tok, const std::string &varname);
+        -:  148:    void doubleFreeError(const Token *tok, const std::string &varname, int type);
+        -:  149:
+        -:  150:    /** message: user configuration is needed to complete analysis */
+        -:  151:    void configurationInfo(const Token* tok, const std::string &functionName);
+        -:  152:
+function _ZNK16CheckLeakAutoVar16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  153:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:  154:        CheckLeakAutoVar c(nullptr, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  155:        c.deallocReturnError(nullptr, "p");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  156:        c.configurationInfo(nullptr, "f");  // user configuration is needed to complete analysis
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  157:        c.doubleFreeError(nullptr, "varname", 0);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  158:    }
+        -:  159:
+function _ZN16CheckLeakAutoVar6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  160:    static std::string myName() {
+    #####:  161:        return "Leaks (auto variables)";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  162:    }
+        -:  163:
+function _ZNK16CheckLeakAutoVar9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  164:    std::string classInfo() const OVERRIDE {
+    #####:  165:        return "Detect when a auto variable is allocated but not deallocated or deallocated twice.\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  166:    }
+        -:  167:};
+        -:  168:/// @}
+        -:  169://---------------------------------------------------------------------------
+        -:  170:#endif // checkleakautovarH

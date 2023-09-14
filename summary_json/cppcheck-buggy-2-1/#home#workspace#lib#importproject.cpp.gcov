@@ -1,0 +1,5083 @@
+        -:    0:Source:/home/workspace/lib/importproject.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/importproject.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/importproject.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#include "importproject.h"
+        -:   20:
+        -:   21:#include "path.h"
+        -:   22:#include "settings.h"
+        -:   23:#include "tinyxml2.h"
+        -:   24:#include "token.h"
+        -:   25:#include "tokenize.h"
+        -:   26:#include "tokenlist.h"
+        -:   27:#include "utils.h"
+        -:   28:#define PICOJSON_USE_INT64
+        -:   29:#include <picojson.h>
+        -:   30:
+        -:   31:#include <cstring>
+        -:   32:#include <fstream>
+        -:   33:#include <utility>
+        -:   34:#include <sstream>
+        -:   35:
+        -:   36:
+function _ZN13ImportProject11ignorePathsERKNSt7__debug6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEE called 0 returned 0% blocks executed 0%
+    #####:   37:void ImportProject::ignorePaths(const std::vector<std::string> &ipaths)
+        -:   38:{
+    #####:   39:    for (std::list<FileSettings>::iterator it = fileSettings.begin(); it != fileSettings.end();) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:   40:        bool ignore = false;
+    #####:   41:        for (std::string i : ipaths) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:   42:            if (it->filename.size() > i.size() && it->filename.compare(0,i.size(),i)==0) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:   43:                ignore = true;
+    #####:   44:                break;
+        -:   45:            }
+    #####:   46:            if (!Path::isAbsolute(i)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:   47:                i = mPath + i;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   48:                if (it->filename.size() > i.size() && it->filename.compare(0,i.size(),i)==0) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:   49:                    ignore = true;
+    #####:   50:                    break;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   51:                }
+        -:   52:            }
+        -:   53:        }
+    #####:   54:        if (ignore)
+branch  0 never executed
+branch  1 never executed
+    #####:   55:            fileSettings.erase(it++);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:   56:        else
+    #####:   57:            ++it;
+call    0 never executed
+        -:   58:    }
+    #####:   59:}
+        -:   60:
+function _ZN13ImportProject18ignoreOtherConfigsERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:   61:void ImportProject::ignoreOtherConfigs(const std::string &cfg)
+        -:   62:{
+    #####:   63:    for (std::list<FileSettings>::iterator it = fileSettings.begin(); it != fileSettings.end();) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:   64:        if (it->cfg != cfg)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   65:            fileSettings.erase(it++);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:   66:        else
+    #####:   67:            ++it;
+call    0 never executed
+        -:   68:    }
+    #####:   69:}
+        -:   70:
+function _ZN13ImportProject20ignoreOtherPlatformsEN8cppcheck8Platform12PlatformTypeE called 0 returned 0% blocks executed 0%
+    #####:   71:void ImportProject::ignoreOtherPlatforms(cppcheck::Platform::PlatformType platformType)
+        -:   72:{
+    #####:   73:    for (std::list<FileSettings>::iterator it = fileSettings.begin(); it != fileSettings.end();) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:   74:        if (it->platformType != cppcheck::Platform::Unspecified && it->platformType != platformType)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   75:            fileSettings.erase(it++);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:   76:        else
+    #####:   77:            ++it;
+call    0 never executed
+        -:   78:    }
+    #####:   79:}
+        -:   80:
+function _ZN13ImportProject12FileSettings10setDefinesENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:   81:void ImportProject::FileSettings::setDefines(std::string defs)
+        -:   82:{
+    #####:   83:    while (defs.find(";%(") != std::string::npos) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   84:        const std::string::size_type pos1 = defs.find(";%(");
+call    0 never executed
+    #####:   85:        const std::string::size_type pos2 = defs.find(';', pos1+1);
+call    0 never executed
+    #####:   86:        defs.erase(pos1, pos2 == std::string::npos ? pos2 : (pos2-pos1));
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+        -:   87:    }
+    #####:   88:    while (defs.find(";;") != std::string::npos)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   89:        defs.erase(defs.find(";;"),1);
+call    0 never executed
+call    1 never executed
+    #####:   90:    while (!defs.empty() && defs[0] == ';')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   91:        defs.erase(0, 1);
+call    0 never executed
+    #####:   92:    while (!defs.empty() && endsWith(defs,';'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   93:        defs.erase(defs.size() - 1U); // TODO: Use std::string::pop_back() as soon as travis supports it
+call    0 never executed
+call    1 never executed
+    #####:   94:    bool eq = false;
+    #####:   95:    for (std::size_t pos = 0; pos < defs.size(); ++pos) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   96:        if (defs[pos] == '(' || defs[pos] == '=')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   97:            eq = true;
+    #####:   98:        else if (defs[pos] == ';') {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   99:            if (!eq) {
+branch  0 never executed
+branch  1 never executed
+    #####:  100:                defs.insert(pos,"=1");
+call    0 never executed
+    #####:  101:                pos += 3;
+        -:  102:            }
+    #####:  103:            if (pos < defs.size())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  104:                eq = false;
+        -:  105:        }
+        -:  106:    }
+    #####:  107:    if (!eq && !defs.empty())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  108:        defs += "=1";
+call    0 never executed
+    #####:  109:    defines.swap(defs);
+call    0 never executed
+    #####:  110:}
+        -:  111:
+function _ZL25simplifyPathWithVariablesRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERNSt7__debug3mapIS4_S4_N8cppcheck7stricmpESaISt4pairIKS4_S4_EEEE called 0 returned 0% blocks executed 0%
+    #####:  112:static bool simplifyPathWithVariables(std::string &s, std::map<std::string, std::string, cppcheck::stricmp> &variables)
+        -:  113:{
+    #####:  114:    std::set<std::string, cppcheck::stricmp> expanded;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  115:    std::string::size_type start = 0;
+    #####:  116:    while ((start = s.find("$(")) != std::string::npos) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  117:        const std::string::size_type end = s.find(')',start);
+call    0 never executed
+    #####:  118:        if (end == std::string::npos)
+branch  0 never executed
+branch  1 never executed
+    #####:  119:            break;
+    #####:  120:        const std::string var = s.substr(start+2,end-start-2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  121:        if (expanded.find(var) != expanded.end())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+    #####:  122:            break;
+    #####:  123:        expanded.insert(var);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  124:        std::map<std::string, std::string, cppcheck::stricmp>::const_iterator it1 = variables.find(var);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+        -:  125:        // variable was not found within defined variables
+    #####:  126:        if (it1 == variables.end()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  127:            const char *envValue = std::getenv(var.c_str());
+call    0 never executed
+call    1 never executed
+    #####:  128:            if (!envValue) {
+branch  0 never executed
+branch  1 never executed
+        -:  129:                //! \todo generate a debug/info message about undefined variable
+    #####:  130:                break;
+        -:  131:            }
+    #####:  132:            variables[var] = std::string(envValue);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  133:            it1 = variables.find(var);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -:  134:        }
+    #####:  135:        s = s.substr(0, start) + it1->second + s.substr(end + 1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+        -:  136:    }
+    #####:  137:    if (s.find("$(") != std::string::npos)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  138:        return false;
+    #####:  139:    s = Path::simplifyPath(Path::fromNativeSeparators(s));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  140:    return true;
+        -:  141:}
+        -:  142:
+function _ZN13ImportProject12FileSettings15setIncludePathsERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNSt7__debug4listIS6_SaIS6_EEERNS9_3mapIS6_S6_N8cppcheck7stricmpESaISt4pairIS7_S6_EEEE called 0 returned 0% blocks executed 0%
+    #####:  143:void ImportProject::FileSettings::setIncludePaths(const std::string &basepath, const std::list<std::string> &in, std::map<std::string, std::string, cppcheck::stricmp> &variables)
+        -:  144:{
+    #####:  145:    std::list<std::string> I;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  146:    // only parse each includePath once - so remove duplicates
+    #####:  147:    std::list<std::string> uniqueIncludePaths = in;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  148:    uniqueIncludePaths.sort();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  149:    uniqueIncludePaths.unique();
+call    0 never executed
+        -:  150:
+    #####:  151:    for (const std::string &it : uniqueIncludePaths) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  152:        if (it.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  153:            continue;
+    #####:  154:        if (it.compare(0,2,"%(")==0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  155:            continue;
+    #####:  156:        std::string s(Path::fromNativeSeparators(it));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  157:        if (s[0] == '/' || (s.size() > 1U && s.compare(1,2,":/") == 0)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+    #####:  158:            if (!endsWith(s,'/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  159:                s += '/';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  160:            I.push_back(s);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  161:            continue;
+        -:  162:        }
+        -:  163:
+    #####:  164:        if (endsWith(s,'/')) // this is a temporary hack, simplifyPath can crash if path ends with '/'
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  165:            s.erase(s.size() - 1U); // TODO: Use std::string::pop_back() as soon as travis supports it
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  166:
+    #####:  167:        if (s.find("$(") == std::string::npos) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  168:            s = Path::simplifyPath(basepath + s);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  169:        } else {
+    #####:  170:            if (!simplifyPathWithVariables(s, variables))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  171:                continue;
+        -:  172:        }
+    #####:  173:        if (s.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  174:            continue;
+    #####:  175:        I.push_back(s + '/');
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+        -:  176:    }
+    #####:  177:    includePaths.swap(I);
+call    0 never executed
+    #####:  178:}
+call    0 never executed
+        -:  179:
+function _ZN13ImportProject6importERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEP8Settings called 0 returned 0% blocks executed 0%
+    #####:  180:ImportProject::Type ImportProject::import(const std::string &filename, Settings *settings)
+        -:  181:{
+    #####:  182:    std::ifstream fin(filename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  183:    if (!fin.is_open())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  184:        return ImportProject::Type::MISSING;
+        -:  185:
+    #####:  186:    mPath = Path::getPathFromFilename(Path::fromNativeSeparators(filename));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+    #####:  187:    if (!mPath.empty() && !endsWith(mPath,'/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  188:        mPath += '/';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  189:
+    #####:  190:    if (endsWith(filename, ".json", 5)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  191:        importCompileCommands(fin);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  192:        return ImportProject::Type::COMPILE_DB;
+    #####:  193:    } else if (endsWith(filename, ".sln", 4)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  194:        importSln(fin,mPath);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  195:        return ImportProject::Type::VS_SLN;
+    #####:  196:    } else if (endsWith(filename, ".vcxproj", 8)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  197:        std::map<std::string, std::string, cppcheck::stricmp> variables;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  198:        importVcxproj(filename, variables, emptyString);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  199:        return ImportProject::Type::VS_VCXPROJ;
+    #####:  200:    } else if (endsWith(filename, ".bpr", 4)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  201:        importBcb6Prj(filename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  202:        return ImportProject::Type::BORLAND;
+    #####:  203:    } else if (settings && endsWith(filename, ".cppcheck", 9)) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  204:        return importCppcheckGuiProject(fin, settings) ? ImportProject::Type::CPPCHECK_GUI : ImportProject::Type::MISSING;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  205:    }
+    #####:  206:    return ImportProject::Type::UNKNOWN;
+        -:  207:}
+        -:  208:
+function _ZL9readUntilRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPmPKc called 0 returned 0% blocks executed 0%
+    #####:  209:static std::string readUntil(const std::string &command, std::string::size_type *pos, const char until[])
+        -:  210:{
+    #####:  211:    std::string ret;
+call    0 never executed
+    #####:  212:    bool str = false;
+    #####:  213:    while (*pos < command.size() && (str || !std::strchr(until, command[*pos]))) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  214:        if (command[*pos] == '\\')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  215:            ++*pos;
+    #####:  216:        if (*pos < command.size())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  217:            ret += command[(*pos)++];
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  218:        if (endsWith(ret, '\"'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  219:            str = !str;
+        -:  220:    }
+    #####:  221:    return ret;
+call    0 never executed
+        -:  222:}
+        -:  223:
+function _ZN13ImportProject12FileSettings12parseCommandERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  224:void ImportProject::FileSettings::parseCommand(const std::string &command)
+        -:  225:{
+    #####:  226:    std::string defs;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  227:
+        -:  228:    // Parse command..
+    #####:  229:    std::string::size_type pos = 0;
+    #####:  230:    while (std::string::npos != (pos = command.find(' ',pos))) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  231:        while (pos < command.size() && command[pos] == ' ')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  232:            pos++;
+    #####:  233:        if (pos >= command.size())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  234:            break;
+    #####:  235:        if (command[pos] != '/' && command[pos] != '-')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  236:            continue;
+    #####:  237:        pos++;
+    #####:  238:        if (pos >= command.size())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  239:            break;
+    #####:  240:        const char F = command[pos++];
+call    0 never executed
+    #####:  241:        if (std::strchr("DUI", F)) {
+branch  0 never executed
+branch  1 never executed
+    #####:  242:            while (pos < command.size() && command[pos] == ' ')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  243:                ++pos;
+        -:  244:        }
+    #####:  245:        const std::string fval = readUntil(command, &pos, " =");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  246:        if (F=='D') {
+branch  0 never executed
+branch  1 never executed
+    #####:  247:            const std::string defval = readUntil(command, &pos, " ");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  248:            defs += fval;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  249:            if (!defval.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  250:                defs += defval;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  251:            defs += ';';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  252:        } else if (F=='U')
+branch  0 never executed
+branch  1 never executed
+    #####:  253:            undefs.insert(fval);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  254:        else if (F=='I')
+branch  0 never executed
+branch  1 never executed
+    #####:  255:            includePaths.push_back(fval);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  256:        else if (F=='s' && fval.compare(0,2,"td") == 0) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  257:            ++pos;
+    #####:  258:            const std::string stdval = readUntil(command, &pos, " ");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  259:            standard = stdval;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  260:            if (standard.compare(0, 3, "c++") || standard.compare(0, 5, "gnu++")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  261:                std::string stddef;
+call    0 never executed
+call    1 never executed
+    #####:  262:                if (standard == "c++98" || standard == "gnu++98" || standard == "c++03" || standard == "gnu++03") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  263:                    stddef = "199711L";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  264:                } else if (standard == "c++11" || standard == "gnu++11"|| standard == "c++0x" || standard == "gnu++0x") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  265:                    stddef = "201103L";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  266:                } else if (standard == "c++14" || standard == "gnu++14" || standard == "c++1y" || standard == "gnu++1y") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  267:                    stddef = "201402L";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  268:                } else if (standard == "c++17" || standard == "gnu++17" || standard == "c++1z" || standard == "gnu++1z") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  269:                    stddef = "201703L";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  270:                }
+        -:  271:
+    #####:  272:                if (stddef.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  273:                    // TODO: log error
+    #####:  274:                    continue;
+        -:  275:                }
+        -:  276:
+    #####:  277:                defs += "__cplusplus=";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  278:                defs += stddef;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  279:                defs += ";";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  280:            } else if (standard.compare(0, 1, "c") || standard.compare(0, 3, "gnu")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  281:                if (standard == "c90" || standard == "iso9899:1990" || standard == "gnu90" || standard == "iso9899:199409") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+        -:  282:                    // __STDC_VERSION__ is not set for C90 although the macro was added in the 1994 amendments
+    #####:  283:                    continue;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  284:                }
+        -:  285:
+    #####:  286:                std::string stddef;
+call    0 never executed
+call    1 never executed
+        -:  287:
+    #####:  288:                if (standard == "c99" || standard == "iso9899:1999" || standard == "gnu99") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  289:                    stddef = "199901L";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  290:                } else if (standard == "c11" || standard == "iso9899:2011" || standard == "gnu11" || standard == "c1x" || standard == "gnu1x") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+    #####:  291:                    stddef = "201112L";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  292:                } else if (standard == "c17") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  293:                    stddef = "201710L";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  294:                }
+        -:  295:
+    #####:  296:                if (stddef.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  297:                    // TODO: log error
+    #####:  298:                    continue;
+        -:  299:                }
+        -:  300:
+    #####:  301:                defs += "__STDC_VERSION__=";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  302:                defs += stddef;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  303:                defs += ";";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  304:            }
+    #####:  305:        } else if (F == 'i' && fval == "system") {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  306:            ++pos;
+    #####:  307:            const std::string isystem = readUntil(command, &pos, " ");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  308:            systemIncludePaths.push_back(isystem);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  309:        } else if (F=='m') {
+branch  0 never executed
+branch  1 never executed
+    #####:  310:            if (fval == "unicode") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  311:                defs += "UNICODE";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  312:                defs += ";";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  313:            }
+    #####:  314:        } else if (F=='f') {
+branch  0 never executed
+branch  1 never executed
+    #####:  315:            if (fval == "pic") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  316:                defs += "__pic__";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  317:                defs += ";";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  318:            } else if (fval == "PIC") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  319:                defs += "__PIC__";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  320:                defs += ";";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  321:            } else if (fval == "pie") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  322:                defs += "__pie__";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  323:                defs += ";";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  324:            } else if (fval == "PIE") {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  325:                defs += "__PIE__";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  326:                defs += ";";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  327:            }
+        -:  328:        }
+        -:  329:    }
+    #####:  330:    setDefines(defs);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  331:}
+        -:  332:
+function _ZN13ImportProject21importCompileCommandsERSi called 0 returned 0% blocks executed 0%
+    #####:  333:void ImportProject::importCompileCommands(std::istream &istr)
+        -:  334:{
+    #####:  335:    picojson::value compileCommands;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  336:    istr >> compileCommands;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  337:    if (!compileCommands.is<picojson::array>())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  338:        return;
+        -:  339:
+    #####:  340:    for (const picojson::value &fileInfo : compileCommands.get<picojson::array>()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+call   20 never executed
+    #####:  341:        picojson::object obj = fileInfo.get<picojson::object>();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  342:        std::string dirpath = Path::fromNativeSeparators(obj["directory"].get<std::string>());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+        -:  343:
+        -:  344:        /* CMAKE produces the directory without trailing / so add it if not
+        -:  345:         * there - it is needed by setIncludePaths() */
+    #####:  346:        if (!endsWith(dirpath, '/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  347:            dirpath += '/';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  348:
+    #####:  349:        const std::string directory = dirpath;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+        -:  350:
+    #####:  351:        std::ostringstream comm;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+    #####:  352:        if (obj.find("arguments") != obj.end()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  353:            if (obj[ "arguments" ].is< picojson::array >()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  354:                for (const picojson::value& arg : obj[ "arguments" ].get< picojson::array >()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+    #####:  355:                    if (arg.is< std::string >()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  356:                        comm << arg.get< std::string >() << " ";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+        -:  357:                    }
+        -:  358:                }
+        -:  359:            } else {
+    #####:  360:                return;
+        -:  361:            }
+    #####:  362:        } else if (obj.find("command") != obj.end()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  363:            if (obj[ "command" ].is< std::string >()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  364:                comm << obj[ "command" ].get< std::string >();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -:  365:            }
+        -:  366:        } else {
+    #####:  367:            return;
+        -:  368:        }
+        -:  369:
+    #####:  370:        const std::string command = comm.str();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+    #####:  371:        const std::string file = Path::fromNativeSeparators(obj["file"].get<std::string>());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+        -:  372:
+        -:  373:        // Accept file?
+    #####:  374:        if (!Path::acceptFile(file))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  375:            continue;
+        -:  376:
+    #####:  377:        struct FileSettings fs;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+    #####:  378:        if (Path::isAbsolute(file) || Path::fileExists(file))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  379:            fs.filename = file;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  380:        else {
+    #####:  381:            std::string path = directory;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  382:            if (!path.empty() && !endsWith(path,'/'))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  383:                path += '/';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  384:            path += file;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  385:            fs.filename = Path::simplifyPath(path);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  386:        }
+    #####:  387:        fs.parseCommand(command); // read settings; -D, -I, -U, -std, -m*, -f*
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  388:        std::map<std::string, std::string, cppcheck::stricmp> variables;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  389:        fs.setIncludePaths(directory, fs.includePaths, variables);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  390:        fileSettings.push_back(fs);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  391:    }
+        -:  392:}
+        -:  393:
+function _ZN13ImportProject9importSlnERSiRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  394:void ImportProject::importSln(std::istream &istr, const std::string &path)
+        -:  395:{
+    #####:  396:    std::map<std::string,std::string,cppcheck::stricmp> variables;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  397:    variables["SolutionDir"] = path;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+        -:  398:
+    #####:  399:    std::string line;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  400:    while (std::getline(istr,line)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  401:        if (line.compare(0,8,"Project(")!=0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  402:            continue;
+    #####:  403:        const std::string::size_type pos = line.find(".vcxproj");
+call    0 never executed
+    #####:  404:        if (pos == std::string::npos)
+branch  0 never executed
+branch  1 never executed
+    #####:  405:            continue;
+    #####:  406:        const std::string::size_type pos1 = line.rfind('\"',pos);
+call    0 never executed
+    #####:  407:        if (pos1 == std::string::npos)
+branch  0 never executed
+branch  1 never executed
+    #####:  408:            continue;
+    #####:  409:        std::string vcxproj(line.substr(pos1+1, pos-pos1+7));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  410:        if (!Path::isAbsolute(vcxproj))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  411:            vcxproj = path + vcxproj;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  412:        importVcxproj(Path::fromNativeSeparators(vcxproj), variables, emptyString);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+        -:  413:    }
+    #####:  414:}
+        -:  415:
+        -:  416:namespace {
+function _ZN12_GLOBAL__N_120ProjectConfigurationD2Ev called 0 returned 0% blocks executed 0%
+    #####:  417:    struct ProjectConfiguration {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+function _ZN12_GLOBAL__N_120ProjectConfigurationC2EPKN8tinyxml210XMLElementE called 0 returned 0% blocks executed 0%
+    #####:  418:        explicit ProjectConfiguration(const tinyxml2::XMLElement *cfg) : platform(Unknown) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  419:            const char *a = cfg->Attribute("Include");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  420:            if (a)
+branch  0 never executed
+branch  1 never executed
+    #####:  421:                name = a;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  422:            for (const tinyxml2::XMLElement *e = cfg->FirstChildElement(); e; e = e->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  423:                if (!e->GetText())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  424:                    continue;
+    #####:  425:                if (std::strcmp(e->Name(),"Configuration")==0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  426:                    configuration = e->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  427:                else if (std::strcmp(e->Name(),"Platform")==0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  428:                    platformStr = e->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  429:                    if (platformStr == "Win32")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  430:                        platform = Win32;
+    #####:  431:                    else if (platformStr == "x64")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  432:                        platform = x64;
+        -:  433:                    else
+    #####:  434:                        platform = Unknown;
+        -:  435:                }
+        -:  436:            }
+    #####:  437:        }
+        -:  438:        std::string name;
+        -:  439:        std::string configuration;
+        -:  440:        enum { Win32, x64, Unknown } platform;
+        -:  441:        std::string platformStr;
+        -:  442:    };
+        -:  443:
+function _ZN12_GLOBAL__N_119ItemDefinitionGroupD2Ev called 0 returned 0% blocks executed 0%
+    #####:  444:    struct ItemDefinitionGroup {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+function _ZN12_GLOBAL__N_119ItemDefinitionGroupC2EPKN8tinyxml210XMLElementERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  445:        explicit ItemDefinitionGroup(const tinyxml2::XMLElement *idg, const std::string &includePaths) : additionalIncludePaths(includePaths) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  446:            const char *condAttr = idg->Attribute("Condition");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  447:            if (condAttr)
+branch  0 never executed
+branch  1 never executed
+    #####:  448:                condition = condAttr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  449:            for (const tinyxml2::XMLElement *e1 = idg->FirstChildElement(); e1; e1 = e1->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  450:                if (std::strcmp(e1->Name(), "ClCompile") != 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  451:                    continue;
+    #####:  452:                for (const tinyxml2::XMLElement *e = e1->FirstChildElement(); e; e = e->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  453:                    if (e->GetText()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  454:                        if (std::strcmp(e->Name(), "PreprocessorDefinitions") == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  455:                            preprocessorDefinitions = e->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  456:                        else if (std::strcmp(e->Name(), "AdditionalIncludeDirectories") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  457:                            if (!additionalIncludePaths.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  458:                                additionalIncludePaths += ';';
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  459:                            additionalIncludePaths += e->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  460:                        }
+        -:  461:                    }
+        -:  462:                }
+        -:  463:            }
+    #####:  464:        }
+        -:  465:
+function _ZN12_GLOBAL__N_119ItemDefinitionGroup10replaceAllERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKS6_S9_ called 0 returned 0% blocks executed 0%
+    #####:  466:        static void replaceAll(std::string &c, const std::string &from, const std::string &to) {
+        -:  467:            std::string::size_type pos;
+    #####:  468:            while ((pos = c.find(from)) != std::string::npos) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  469:                c.erase(pos,from.size());
+call    0 never executed
+call    1 never executed
+    #####:  470:                c.insert(pos,to);
+call    0 never executed
+        -:  471:            }
+    #####:  472:        }
+        -:  473:
+function _ZNK12_GLOBAL__N_119ItemDefinitionGroup15conditionIsTrueERKNS_20ProjectConfigurationE called 0 returned 0% blocks executed 0%
+    #####:  474:        bool conditionIsTrue(const ProjectConfiguration &p) const {
+    #####:  475:            if (condition.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  476:                return true;
+    #####:  477:            std::string c = '(' + condition + ");";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  478:            replaceAll(c, "$(Configuration)", p.configuration);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  479:            replaceAll(c, "$(Platform)", p.platformStr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  480:
+        -:  481:            // TODO : Better evaluation
+    #####:  482:            Settings s;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  483:            std::istringstream istr(c);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  484:            Tokenizer tokenizer(&s, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  485:            tokenizer.tokenize(istr,"vcxproj");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  486:            for (const Token *tok = tokenizer.tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  487:                if (tok->str() == "(" && tok->astOperand1() && tok->astOperand2()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  488:                    if (tok->astOperand1()->expressionString() == "Configuration.Contains")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  489:                        return ('\'' + p.configuration + '\'') == tok->astOperand2()->str();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:  490:                }
+    #####:  491:                if (tok->str() == "==" && tok->astOperand1() && tok->astOperand2() && tok->astOperand1()->str() == tok->astOperand2()->str())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+    #####:  492:                    return true;
+        -:  493:            }
+    #####:  494:            return false;
+        -:  495:        }
+        -:  496:        std::string condition;
+        -:  497:        std::string preprocessorDefinitions;
+        -:  498:        std::string additionalIncludePaths;
+        -:  499:    };
+        -:  500:}
+        -:  501:
+function _ZL12toStringListRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  502:static std::list<std::string> toStringList(const std::string &s)
+        -:  503:{
+    #####:  504:    std::list<std::string> ret;
+call    0 never executed
+    #####:  505:    std::string::size_type pos1 = 0;
+        -:  506:    std::string::size_type pos2;
+    #####:  507:    while ((pos2 = s.find(';',pos1)) != std::string::npos) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  508:        ret.push_back(s.substr(pos1, pos2-pos1));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  509:        pos1 = pos2 + 1;
+    #####:  510:        if (pos1 >= s.size())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  511:            break;
+        -:  512:    }
+    #####:  513:    if (pos1 < s.size())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  514:        ret.push_back(s.substr(pos1));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  515:    return ret;
+        -:  516:}
+        -:  517:
+function _ZL19importPropertyGroupPKN8tinyxml210XMLElementEPNSt7__debug3mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESA_N8cppcheck7stricmpESaISt4pairIKSA_SA_EEEEPSA_Pb called 0 returned 0% blocks executed 0%
+    #####:  518:static void importPropertyGroup(const tinyxml2::XMLElement *node, std::map<std::string,std::string,cppcheck::stricmp> *variables, std::string *includePath, bool *useOfMfc)
+        -:  519:{
+    #####:  520:    if (useOfMfc) {
+branch  0 never executed
+branch  1 never executed
+    #####:  521:        for (const tinyxml2::XMLElement *e = node->FirstChildElement(); e; e = e->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  522:            if (std::strcmp(e->Name(), "UseOfMfc") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  523:                *useOfMfc = true;
+    #####:  524:                break;
+        -:  525:            }
+        -:  526:        }
+        -:  527:    }
+        -:  528:
+    #####:  529:    const char* labelAttribute = node->Attribute("Label");
+call    0 never executed
+    #####:  530:    if (labelAttribute && std::strcmp(labelAttribute, "UserMacros") == 0) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  531:        for (const tinyxml2::XMLElement *propertyGroup = node->FirstChildElement(); propertyGroup; propertyGroup = propertyGroup->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  532:            const std::string name(propertyGroup->Name());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  533:            const char *text = propertyGroup->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  534:            (*variables)[name] = std::string(text ? text : "");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  535:        }
+        -:  536:
+    #####:  537:    } else if (!labelAttribute) {
+branch  0 never executed
+branch  1 never executed
+    #####:  538:        for (const tinyxml2::XMLElement *propertyGroup = node->FirstChildElement(); propertyGroup; propertyGroup = propertyGroup->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  539:            if (std::strcmp(propertyGroup->Name(), "IncludePath") != 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  540:                continue;
+    #####:  541:            const char *text = propertyGroup->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  542:            if (!text)
+branch  0 never executed
+branch  1 never executed
+    #####:  543:                continue;
+    #####:  544:            std::string path(text);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  545:            const std::string::size_type pos = path.find("$(IncludePath)");
+call    0 never executed
+    #####:  546:            if (pos != std::string::npos)
+branch  0 never executed
+branch  1 never executed
+    #####:  547:                path = path.substr(0,pos) + *includePath + path.substr(pos+14U);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  548:            *includePath = path;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  549:        }
+        -:  550:    }
+    #####:  551:}
+call    0 never executed
+        -:  552:
+function _ZL26loadVisualStudioPropertiesRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPNSt7__debug3mapIS4_S4_N8cppcheck7stricmpESaISt4pairIS5_S4_EEEEPS4_S6_RNS7_4listIN12_GLOBAL__N_119ItemDefinitionGroupESaISJ_EEE called 0 returned 0% blocks executed 0%
+    #####:  553:static void loadVisualStudioProperties(const std::string &props, std::map<std::string,std::string,cppcheck::stricmp> *variables, std::string *includePath, const std::string &additionalIncludeDirectories, std::list<ItemDefinitionGroup> &itemDefinitionGroupList)
+        -:  554:{
+    #####:  555:    std::string filename(props);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  556:    // variables can't be resolved
+    #####:  557:    if (!simplifyPathWithVariables(filename, *variables))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  558:        return;
+        -:  559:
+        -:  560:    // prepend project dir (if it exists) to transform relative paths into absolute ones
+    #####:  561:    if (!Path::isAbsolute(filename) && variables->count("ProjectDir") > 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+    #####:  562:        filename = Path::getAbsoluteFilePath(variables->at("ProjectDir") + filename);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+        -:  563:
+    #####:  564:    tinyxml2::XMLDocument doc;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  565:    if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  566:        return;
+    #####:  567:    const tinyxml2::XMLElement * const rootnode = doc.FirstChildElement();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  568:    if (rootnode == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  569:        return;
+    #####:  570:    for (const tinyxml2::XMLElement *node = rootnode->FirstChildElement(); node; node = node->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  571:        if (std::strcmp(node->Name(), "ImportGroup") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  572:            const char *labelAttribute = node->Attribute("Label");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  573:            if (labelAttribute == nullptr || std::strcmp(labelAttribute, "PropertySheets") != 0)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  574:                continue;
+    #####:  575:            for (const tinyxml2::XMLElement *importGroup = node->FirstChildElement(); importGroup; importGroup = importGroup->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  576:                if (std::strcmp(importGroup->Name(), "Import") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  577:                    const char *projectAttribute = importGroup->Attribute("Project");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  578:                    if (projectAttribute == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  579:                        continue;
+    #####:  580:                    std::string loadprj(projectAttribute);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  581:                    if (loadprj.find('$') == std::string::npos) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  582:                        loadprj = Path::getPathFromFilename(filename) + loadprj;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  583:                    }
+    #####:  584:                    loadVisualStudioProperties(loadprj, variables, includePath, additionalIncludeDirectories, itemDefinitionGroupList);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  585:                }
+        -:  586:            }
+    #####:  587:        } else if (std::strcmp(node->Name(),"PropertyGroup")==0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  588:            importPropertyGroup(node, variables, includePath, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  589:        } else if (std::strcmp(node->Name(),"ItemDefinitionGroup")==0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  590:            itemDefinitionGroupList.emplace_back(node, additionalIncludeDirectories);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  591:        }
+        -:  592:    }
+        -:  593:}
+        -:  594:
+function _ZN13ImportProject13importVcxprojERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERNSt7__debug3mapIS5_S5_N8cppcheck7stricmpESaISt4pairIS6_S5_EEEES7_ called 0 returned 0% blocks executed 0%
+    #####:  595:void ImportProject::importVcxproj(const std::string &filename, std::map<std::string, std::string, cppcheck::stricmp> &variables, const std::string &additionalIncludeDirectories)
+        -:  596:{
+    #####:  597:    variables["ProjectDir"] = Path::simplifyPath(Path::getPathFromFilename(filename));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+        -:  598:
+    #####:  599:    std::list<ProjectConfiguration> projectConfigurationList;
+call    0 never executed
+call    1 never executed
+    #####:  600:    std::list<std::string> compileList;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  601:    std::list<ItemDefinitionGroup> itemDefinitionGroupList;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  602:    std::string includePath;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+        -:  603:
+    #####:  604:    bool useOfMfc = false;
+        -:  605:
+    #####:  606:    tinyxml2::XMLDocument doc;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  607:    const tinyxml2::XMLError error = doc.LoadFile(filename.c_str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  608:    if (error != tinyxml2::XML_SUCCESS)
+branch  0 never executed
+branch  1 never executed
+    #####:  609:        return;
+    #####:  610:    const tinyxml2::XMLElement * const rootnode = doc.FirstChildElement();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  611:    if (rootnode == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  612:        return;
+    #####:  613:    for (const tinyxml2::XMLElement *node = rootnode->FirstChildElement(); node; node = node->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  614:        if (std::strcmp(node->Name(), "ItemGroup") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  615:            const char *labelAttribute = node->Attribute("Label");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  616:            if (labelAttribute && std::strcmp(labelAttribute, "ProjectConfigurations") == 0) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  617:                for (const tinyxml2::XMLElement *cfg = node->FirstChildElement(); cfg; cfg = cfg->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  618:                    if (std::strcmp(cfg->Name(), "ProjectConfiguration") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  619:                        const ProjectConfiguration p(cfg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  620:                        if (p.platform != ProjectConfiguration::Unknown)
+branch  0 never executed
+branch  1 never executed
+    #####:  621:                            projectConfigurationList.emplace_back(cfg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  622:                    }
+    #####:  623:                }
+        -:  624:            } else {
+    #####:  625:                for (const tinyxml2::XMLElement *e = node->FirstChildElement(); e; e = e->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  626:                    if (std::strcmp(e->Name(), "ClCompile") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  627:                        const char *include = e->Attribute("Include");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  628:                        if (include && Path::acceptFile(include))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+    #####:  629:                            compileList.emplace_back(include);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  630:                    }
+        -:  631:                }
+        -:  632:            }
+    #####:  633:        } else if (std::strcmp(node->Name(), "ItemDefinitionGroup") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  634:            itemDefinitionGroupList.emplace_back(node, additionalIncludeDirectories);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  635:        } else if (std::strcmp(node->Name(), "PropertyGroup") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  636:            importPropertyGroup(node, &variables, &includePath, &useOfMfc);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  637:        } else if (std::strcmp(node->Name(), "ImportGroup") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  638:            const char *labelAttribute = node->Attribute("Label");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  639:            if (labelAttribute && std::strcmp(labelAttribute, "PropertySheets") == 0) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  640:                for (const tinyxml2::XMLElement *e = node->FirstChildElement(); e; e = e->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  641:                    if (std::strcmp(e->Name(), "Import") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  642:                        const char *projectAttribute = e->Attribute("Project");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  643:                        if (projectAttribute)
+branch  0 never executed
+branch  1 never executed
+    #####:  644:                            loadVisualStudioProperties(projectAttribute, &variables, &includePath, additionalIncludeDirectories, itemDefinitionGroupList);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  645:                    }
+        -:  646:                }
+        -:  647:            }
+        -:  648:        }
+        -:  649:    }
+        -:  650:
+    #####:  651:    for (const std::string &c : compileList) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  652:        for (const ProjectConfiguration &p : projectConfigurationList) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  653:            FileSettings fs;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  654:            fs.filename = Path::simplifyPath(Path::isAbsolute(c) ? c : Path::getPathFromFilename(filename) + c);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+call   26 never executed
+    #####:  655:            fs.cfg = p.name;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  656:            fs.msc = true;
+    #####:  657:            fs.useMfc = useOfMfc;
+    #####:  658:            fs.defines = "_WIN32=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  659:            if (p.platform == ProjectConfiguration::Win32)
+branch  0 never executed
+branch  1 never executed
+    #####:  660:                fs.platformType = cppcheck::Platform::Win32W;
+    #####:  661:            else if (p.platform == ProjectConfiguration::x64) {
+branch  0 never executed
+branch  1 never executed
+    #####:  662:                fs.platformType = cppcheck::Platform::Win64;
+    #####:  663:                fs.defines += ";_WIN64=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  664:            }
+    #####:  665:            std::string additionalIncludePaths;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  666:            for (const ItemDefinitionGroup &i : itemDefinitionGroupList) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  667:                if (!i.conditionIsTrue(p))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  668:                    continue;
+    #####:  669:                fs.defines += ';' + i.preprocessorDefinitions;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  670:                additionalIncludePaths += ';' + i.additionalIncludePaths;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+        -:  671:            }
+    #####:  672:            fs.setDefines(fs.defines);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  673:            fs.setIncludePaths(Path::getPathFromFilename(filename), toStringList(includePath + ';' + additionalIncludePaths), variables);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+    #####:  674:            fileSettings.push_back(fs);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  675:        }
+        -:  676:    }
+        -:  677:}
+        -:  678:
+function _ZN13ImportProject13importBcb6PrjERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  679:void ImportProject::importBcb6Prj(const std::string &projectFilename)
+        -:  680:{
+    #####:  681:    tinyxml2::XMLDocument doc;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  682:    const tinyxml2::XMLError error = doc.LoadFile(projectFilename.c_str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  683:    if (error != tinyxml2::XML_SUCCESS)
+branch  0 never executed
+branch  1 never executed
+    #####:  684:        return;
+    #####:  685:    const tinyxml2::XMLElement * const rootnode = doc.FirstChildElement();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  686:    if (rootnode == nullptr)
+branch  0 never executed
+branch  1 never executed
+    #####:  687:        return;
+        -:  688:
+    #####:  689:    const std::string& projectDir = Path::simplifyPath(Path::getPathFromFilename(projectFilename));
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+        -:  690:
+    #####:  691:    std::list<std::string> compileList;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  692:    std::string includePath;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  693:    std::string userdefines;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  694:    std::string sysdefines;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  695:    std::string cflag1;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  696:
+    #####:  697:    for (const tinyxml2::XMLElement *node = rootnode->FirstChildElement(); node; node = node->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  698:        if (std::strcmp(node->Name(), "FILELIST") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  699:            for (const tinyxml2::XMLElement *f = node->FirstChildElement(); f; f = f->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  700:                if (std::strcmp(f->Name(), "FILE") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  701:                    const char *filename = f->Attribute("FILENAME");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  702:                    if (filename && Path::acceptFile(filename))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+    #####:  703:                        compileList.emplace_back(filename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  704:                }
+        -:  705:            }
+    #####:  706:        } else if (std::strcmp(node->Name(), "MACROS") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  707:            for (const tinyxml2::XMLElement *m = node->FirstChildElement(); m; m = m->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  708:                if (std::strcmp(m->Name(), "INCLUDEPATH") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  709:                    const char *v = m->Attribute("value");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  710:                    if (v)
+branch  0 never executed
+branch  1 never executed
+    #####:  711:                        includePath = v;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  712:                } else if (std::strcmp(m->Name(), "USERDEFINES") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  713:                    const char *v = m->Attribute("value");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  714:                    if (v)
+branch  0 never executed
+branch  1 never executed
+    #####:  715:                        userdefines = v;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  716:                } else if (std::strcmp(m->Name(), "SYSDEFINES") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  717:                    const char *v = m->Attribute("value");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  718:                    if (v)
+branch  0 never executed
+branch  1 never executed
+    #####:  719:                        sysdefines = v;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  720:                }
+        -:  721:            }
+    #####:  722:        } else if (std::strcmp(node->Name(), "OPTIONS") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  723:            for (const tinyxml2::XMLElement *m = node->FirstChildElement(); m; m = m->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  724:                if (std::strcmp(m->Name(), "CFLAG1") == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  725:                    const char *v = m->Attribute("value");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  726:                    if (v)
+branch  0 never executed
+branch  1 never executed
+    #####:  727:                        cflag1 = v;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  728:                }
+        -:  729:            }
+        -:  730:        }
+        -:  731:    }
+        -:  732:
+    #####:  733:    std::set<std::string> cflags;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  734:
+        -:  735:    // parse cflag1 and fill the cflags set
+        -:  736:    {
+    #####:  737:        std::string arg;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  738:
+    #####:  739:        for (char i : cflag1) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  740:            if (i == ' ' && !arg.empty()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  741:                cflags.insert(arg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  742:                arg.clear();
+call    0 never executed
+    #####:  743:                continue;
+        -:  744:            }
+    #####:  745:            arg += i;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  746:        }
+        -:  747:
+    #####:  748:        if (!arg.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  749:            cflags.insert(arg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  750:        }
+        -:  751:
+        -:  752:        // cleanup: -t is "An alternate name for the -Wxxx switches; there is no difference"
+        -:  753:        // -> Remove every known -txxx argument and replace it with its -Wxxx counterpart.
+        -:  754:        //    This way, we know what we have to check for later on.
+        -:  755:        static const std::map<std::string, std::string> synonyms = {
+        -:  756:            { "-tC","-WC" },
+        -:  757:            { "-tCDR","-WCDR" },
+        -:  758:            { "-tCDV","-WCDV" },
+        -:  759:            { "-tW","-W" },
+        -:  760:            { "-tWC","-WC" },
+        -:  761:            { "-tWCDR","-WCDR" },
+        -:  762:            { "-tWCDV","-WCDV" },
+        -:  763:            { "-tWD","-WD" },
+        -:  764:            { "-tWDR","-WDR" },
+        -:  765:            { "-tWDV","-WDV" },
+        -:  766:            { "-tWM","-WM" },
+        -:  767:            { "-tWP","-WP" },
+        -:  768:            { "-tWR","-WR" },
+        -:  769:            { "-tWU","-WU" },
+        -:  770:            { "-tWV","-WV" }
+    #####:  771:        };
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+call   26 never executed
+branch 27 never executed
+branch 28 never executed
+call   29 never executed
+branch 30 never executed
+branch 31 never executed
+call   32 never executed
+branch 33 never executed
+branch 34 never executed
+call   35 never executed
+branch 36 never executed
+branch 37 never executed
+call   38 never executed
+branch 39 never executed
+branch 40 never executed
+call   41 never executed
+branch 42 never executed
+branch 43 never executed
+call   44 never executed
+branch 45 never executed
+branch 46 never executed
+call   47 never executed
+branch 48 never executed
+branch 49 never executed
+call   50 never executed
+call   51 never executed
+branch 52 never executed
+branch 53 never executed
+call   54 never executed
+call   55 never executed
+call   56 never executed
+branch 57 never executed
+branch 58 never executed
+call   59 never executed
+call   60 never executed
+branch 61 never executed
+branch 62 never executed
+call   63 never executed
+branch 64 never executed
+branch 65 never executed
+call   66 never executed
+        -:  772:
+    #####:  773:        for (std::map<std::string, std::string>::const_iterator i = synonyms.begin(); i != synonyms.end(); ++i) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  774:            if (cflags.erase(i->first) > 0) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  775:                cflags.insert(i->second);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+        -:  776:            }
+        -:  777:        }
+        -:  778:    }
+        -:  779:
+    #####:  780:    std::string predefines;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  781:    std::string cppPredefines;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  782:
+        -:  783:    // Collecting predefines. See BCB6 help topic "Predefined macros"
+        -:  784:    {
+    #####:  785:        cppPredefines +=
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  786:            // Defined if you've selected C++ compilation; will increase in later releases.
+        -:  787:            // value 0x0560 (but 0x0564 for our BCB6 SP4)
+        -:  788:            // @see http://docwiki.embarcadero.com/RADStudio/Tokyo/en/Predefined_Macros#C.2B.2B_Compiler_Versions_in_Predefined_Macros
+        -:  789:            ";__BCPLUSPLUS__=0x0560"
+        -:  790:
+        -:  791:            // Defined if in C++ mode; otherwise, undefined.
+        -:  792:            ";__cplusplus=1"
+        -:  793:
+        -:  794:            // Defined as 1 for C++ files(meaning that templates are supported); otherwise, it is undefined.
+        -:  795:            ";__TEMPLATES__=1"
+        -:  796:
+        -:  797:            // Defined only for C++ programs to indicate that wchar_t is an intrinsically defined data type.
+        -:  798:            ";_WCHAR_T"
+        -:  799:
+        -:  800:            // Defined only for C++ programs to indicate that wchar_t is an intrinsically defined data type.
+        -:  801:            ";_WCHAR_T_DEFINED"
+        -:  802:
+        -:  803:            // Defined in any compiler that has an optimizer.
+        -:  804:            ";__BCOPT__=1"
+        -:  805:
+        -:  806:            // Version number.
+        -:  807:            // BCB6 is 0x056X (SP4 is 0x0564)
+        -:  808:            // @see http://docwiki.embarcadero.com/RADStudio/Tokyo/en/Predefined_Macros#C.2B.2B_Compiler_Versions_in_Predefined_Macros
+        -:  809:            ";__BORLANDC__=0x0560"
+        -:  810:            ";__TCPLUSPLUS__=0x0560"
+        -:  811:            ";__TURBOC__=0x0560";
+        -:  812:
+        -:  813:        // Defined if Calling Convention is set to cdecl; otherwise undefined.
+    #####:  814:        const bool useCdecl = (cflags.find("-p") == cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+call   26 never executed
+branch 27 never executed
+branch 28 never executed
+call   29 never executed
+branch 30 never executed
+branch 31 never executed
+call   32 never executed
+    #####:  815:                               && cflags.find("-pm") == cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  816:                               && cflags.find("-pr") == cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  817:                               && cflags.find("-ps") == cflags.end());
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+branch 28 never executed
+branch 29 never executed
+call   30 never executed
+branch 31 never executed
+branch 32 never executed
+call   33 never executed
+branch 34 never executed
+branch 35 never executed
+call   36 never executed
+    #####:  818:        if (useCdecl)
+branch  0 never executed
+branch  1 never executed
+    #####:  819:            predefines += ";__CDECL=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  820:
+        -:  821:        // Defined by default indicating that the default char is unsigned char. Use the -K compiler option to undefine this macro.
+    #####:  822:        const bool treatCharAsUnsignedChar = (cflags.find("-K") != cflags.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  823:        if (treatCharAsUnsignedChar)
+branch  0 never executed
+branch  1 never executed
+    #####:  824:            predefines += ";_CHAR_UNSIGNED=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  825:
+        -:  826:        // Defined whenever one of the CodeGuard compiler options is used; otherwise it is undefined.
+    #####:  827:        const bool codeguardUsed = (cflags.find("-vGd") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+call   26 never executed
+branch 27 never executed
+branch 28 never executed
+call   29 never executed
+branch 30 never executed
+branch 31 never executed
+call   32 never executed
+    #####:  828:                                    || cflags.find("-vGt") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  829:                                    || cflags.find("-vGc") != cflags.end());
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+branch 28 never executed
+branch 29 never executed
+call   30 never executed
+branch 31 never executed
+branch 32 never executed
+call   33 never executed
+branch 34 never executed
+branch 35 never executed
+call   36 never executed
+    #####:  830:        if (codeguardUsed)
+branch  0 never executed
+branch  1 never executed
+    #####:  831:            predefines += ";__CODEGUARD__";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  832:
+        -:  833:        // When defined, the macro indicates that the program is a console application.
+    #####:  834:        const bool isConsoleApp = (cflags.find("-WC") != cflags.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  835:        if (isConsoleApp)
+branch  0 never executed
+branch  1 never executed
+    #####:  836:            predefines += ";__CONSOLE__=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  837:
+        -:  838:        // Enable stack unwinding. This is true by default; use -xd- to disable.
+    #####:  839:        const bool enableStackUnwinding = (cflags.find("-xd-") == cflags.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  840:        if (enableStackUnwinding)
+branch  0 never executed
+branch  1 never executed
+    #####:  841:            predefines += ";_CPPUNWIND=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  842:
+        -:  843:        // Defined whenever the -WD compiler option is used; otherwise it is undefined.
+    #####:  844:        const bool isDLL = (cflags.find("-WD") != cflags.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  845:        if (isDLL)
+branch  0 never executed
+branch  1 never executed
+    #####:  846:            predefines += ";__DLL__=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  847:
+        -:  848:        // Defined when compiling in 32-bit flat memory model.
+        -:  849:        // TODO: not sure how to switch to another memory model or how to read configuration from project file
+    #####:  850:        predefines += ";__FLAT__=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  851:
+        -:  852:        // Always defined. The default value is 300. You can change the value to 400 or 500 by using the /4 or /5 compiler options.
+    #####:  853:        if (cflags.find("-6") != cflags.end())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  854:            predefines += ";_M_IX86=600";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  855:        else if (cflags.find("-5") != cflags.end())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  856:            predefines += ";_M_IX86=500";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  857:        else if (cflags.find("-4") != cflags.end())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  858:            predefines += ";_M_IX86=400";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  859:        else
+    #####:  860:            predefines += ";_M_IX86=300";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  861:
+        -:  862:        // Defined only if the -WM option is used. It specifies that the multithread library is to be linked.
+    #####:  863:        const bool linkMtLib = (cflags.find("-WM") != cflags.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  864:        if (linkMtLib)
+branch  0 never executed
+branch  1 never executed
+    #####:  865:            predefines += ";__MT__=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  866:
+        -:  867:        // Defined if Calling Convention is set to Pascal; otherwise undefined.
+    #####:  868:        const bool usePascalCallingConvention = (cflags.find("-p") != cflags.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  869:        if (usePascalCallingConvention)
+branch  0 never executed
+branch  1 never executed
+    #####:  870:            predefines += ";__PASCAL__=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  871:
+        -:  872:        // Defined if you compile with the -A compiler option; otherwise, it is undefined.
+    #####:  873:        const bool useAnsiKeywordExtensions = (cflags.find("-A") != cflags.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  874:        if (useAnsiKeywordExtensions)
+branch  0 never executed
+branch  1 never executed
+    #####:  875:            predefines += ";__STDC__=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  876:
+        -:  877:        // Thread Local Storage. Always true in C++Builder.
+    #####:  878:        predefines += ";__TLC__=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  879:
+        -:  880:        // Defined for Windows-only code.
+    #####:  881:        const bool isWindowsTarget = (cflags.find("-WC") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+call   26 never executed
+branch 27 never executed
+branch 28 never executed
+call   29 never executed
+branch 30 never executed
+branch 31 never executed
+call   32 never executed
+call   33 never executed
+    #####:  882:                                      || cflags.find("-WCDR") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  883:                                      || cflags.find("-WCDV") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  884:                                      || cflags.find("-WD") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  885:                                      || cflags.find("-WDR") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  886:                                      || cflags.find("-WDV") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  887:                                      || cflags.find("-WM") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  888:                                      || cflags.find("-WP") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  889:                                      || cflags.find("-WR") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  890:                                      || cflags.find("-WU") != cflags.end()
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+branch 29 never executed
+branch 30 never executed
+call   31 never executed
+branch 32 never executed
+branch 33 never executed
+call   34 never executed
+    #####:  891:                                      || cflags.find("-WV") != cflags.end());
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+branch 28 never executed
+branch 29 never executed
+call   30 never executed
+branch 31 never executed
+branch 32 never executed
+call   33 never executed
+branch 34 never executed
+branch 35 never executed
+call   36 never executed
+    #####:  892:        if (isWindowsTarget)
+branch  0 never executed
+branch  1 never executed
+    #####:  893:            predefines += ";_Windows";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  894:
+        -:  895:        // Defined for console and GUI applications.
+        -:  896:        // TODO: I'm not sure about the difference to define "_Windows".
+        -:  897:        //       From description, I would assume __WIN32__ is only defined for
+        -:  898:        //       executables, while _Windows would also be defined for DLLs, etc.
+        -:  899:        //       However, in a newly created DLL project, both __WIN32__ and
+        -:  900:        //       _Windows are defined. -> treating them the same for now.
+        -:  901:        //       Also boost uses __WIN32__ for OS identification.
+    #####:  902:        const bool isConsoleOrGuiApp = isWindowsTarget;
+    #####:  903:        if (isConsoleOrGuiApp)
+branch  0 never executed
+branch  1 never executed
+    #####:  904:            predefines += ";__WIN32__=1";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  905:    }
+        -:  906:
+        -:  907:    // Include paths may contain variables like "$(BCB)\include" or "$(BCB)\include\vcl".
+        -:  908:    // Those get resolved by ImportProject::FileSettings::setIncludePaths by
+        -:  909:    // 1. checking the provided variables map ("BCB" => "C:\\Program Files (x86)\\Borland\\CBuilder6")
+        -:  910:    // 2. checking env variables as a fallback
+        -:  911:    // Setting env is always possible. Configuring the variables via cli might be an addition.
+        -:  912:    // Reading the BCB6 install location from registry in windows environments would also be possible,
+        -:  913:    // but I didn't see any such functionality around the source. Not in favor of adding it only
+        -:  914:    // for the BCB6 project loading.
+    #####:  915:    std::map<std::string, std::string, cppcheck::stricmp> variables;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  916:    const std::string defines = predefines + ";" + sysdefines + ";" + userdefines;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  917:    const std::string cppDefines  = cppPredefines + ";" + defines;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  918:    const bool forceCppMode = (cflags.find("-P") != cflags.end());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+        -:  919:
+    #####:  920:    for (const std::string &c : compileList) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  921:        // C++ compilation is selected by file extension by default, so these
+        -:  922:        // defines have to be configured on a per-file base.
+        -:  923:        //
+        -:  924:        // > Files with the .CPP extension compile as C++ files. Files with a .C
+        -:  925:        // > extension, with no extension, or with extensions other than .CPP,
+        -:  926:        // > .OBJ, .LIB, or .ASM compile as C files.
+        -:  927:        // (http://docwiki.embarcadero.com/RADStudio/Tokyo/en/BCC32.EXE,_the_C%2B%2B_32-bit_Command-Line_Compiler)
+        -:  928:        //
+        -:  929:        // We can also force C++ compilation for all files using the -P command line switch.
+    #####:  930:        const bool cppMode = forceCppMode || Path::getFilenameExtensionInLowerCase(c) == ".cpp";
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+    #####:  931:        FileSettings fs;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  932:        fs.setIncludePaths(projectDir, toStringList(includePath), variables);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  933:        fs.setDefines(cppMode ? cppDefines : defines);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  934:        fs.filename = Path::simplifyPath(Path::isAbsolute(c) ? c : projectDir + c);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  935:        fileSettings.push_back(fs);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  936:    }
+        -:  937:}
+        -:  938:
+function _ZL16joinRelativePathRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ called 0 returned 0% blocks executed 0%
+    #####:  939:static std::string joinRelativePath(const std::string &path1, const std::string &path2)
+        -:  940:{
+    #####:  941:    if (!path1.empty() && !Path::isAbsolute(path2))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  942:        return path1 + path2;
+call    0 never executed
+    #####:  943:    return path2;
+call    0 never executed
+        -:  944:}
+        -:  945:
+function _ZL17readXmlStringListPKN8tinyxml210XMLElementERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPKcSC_ called 0 returned 0% blocks executed 0%
+    #####:  946:static std::list<std::string> readXmlStringList(const tinyxml2::XMLElement *node, const std::string &path, const char name[], const char attribute[])
+        -:  947:{
+    #####:  948:    std::list<std::string> ret;
+call    0 never executed
+    #####:  949:    for (const tinyxml2::XMLElement *child = node->FirstChildElement(); child; child = child->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  950:        if (strcmp(child->Name(), name) != 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  951:            continue;
+    #####:  952:        const char *attr = attribute ? child->Attribute(attribute) : child->GetText();
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  953:        if (attr)
+branch  0 never executed
+branch  1 never executed
+    #####:  954:            ret.push_back(joinRelativePath(path, attr));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+        -:  955:    }
+    #####:  956:    return ret;
+        -:  957:}
+        -:  958:
+function _ZL4joinRKNSt7__debug4listINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS6_EEEPKc called 0 returned 0% blocks executed 0%
+    #####:  959:static std::string join(const std::list<std::string> &strlist, const char *sep)
+        -:  960:{
+    #####:  961:    std::string ret;
+call    0 never executed
+    #####:  962:    for (const std::string &s : strlist) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+    #####:  963:        ret += (ret.empty() ? "" : sep) + s;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+        -:  964:    }
+    #####:  965:    return ret;
+        -:  966:}
+        -:  967:
+function _ZL17istream_to_stringRSi called 0 returned 0% blocks executed 0%
+    #####:  968:static std::string istream_to_string(std::istream &istr)
+        -:  969:{
+    #####:  970:    std::istreambuf_iterator<char> eos;
+    #####:  971:    return std::string(std::istreambuf_iterator<char>(istr), eos);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+        -:  972:}
+        -:  973:
+function _ZN13ImportProject24importCppcheckGuiProjectERSiP8Settings called 0 returned 0% blocks executed 0%
+    #####:  974:bool ImportProject::importCppcheckGuiProject(std::istream &istr, Settings *settings)
+        -:  975:{
+    #####:  976:    tinyxml2::XMLDocument doc;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  977:    const std::string xmldata = istream_to_string(istr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  978:    if (doc.Parse(xmldata.data(), xmldata.size()) != tinyxml2::XML_SUCCESS)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  979:        return false;
+    #####:  980:    const tinyxml2::XMLElement * const rootnode = doc.FirstChildElement();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  981:    if (rootnode == nullptr || strcmp(rootnode->Name(), CppcheckXml::ProjectElementName) != 0)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  982:        return false;
+        -:  983:
+    #####:  984:    const std::string &path = mPath;
+        -:  985:
+    #####:  986:    std::list<std::string> paths;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  987:    std::list<std::string> suppressions;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  988:    Settings temp;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  989:
+    #####:  990:    guiProject.analyzeAllVsConfigs.clear();
+call    0 never executed
+        -:  991:
+    #####:  992:    for (const tinyxml2::XMLElement *node = rootnode->FirstChildElement(); node; node = node->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  993:        if (strcmp(node->Name(), CppcheckXml::RootPathName) == 0 && node->Attribute(CppcheckXml::RootPathNameAttrib)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  994:            temp.basePaths.push_back(joinRelativePath(path, node->Attribute(CppcheckXml::RootPathNameAttrib)));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  995:            temp.relativePaths = true;
+    #####:  996:        } else if (strcmp(node->Name(), CppcheckXml::BuildDirElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  997:            temp.buildDir = joinRelativePath(path, node->GetText() ? node->GetText() : "");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+    #####:  998:        else if (strcmp(node->Name(), CppcheckXml::IncludeDirElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  999:            temp.includePaths = readXmlStringList(node, path, CppcheckXml::DirElementName, CppcheckXml::DirNameAttrib);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####: 1000:        else if (strcmp(node->Name(), CppcheckXml::DefinesElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1001:            temp.userDefines = join(readXmlStringList(node, "", CppcheckXml::DefineName, CppcheckXml::DefineNameAttrib), ";");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####: 1002:        else if (strcmp(node->Name(), CppcheckXml::UndefinesElementName) == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1003:            for (const std::string &u : readXmlStringList(node, "", CppcheckXml::UndefineName, nullptr))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+    #####: 1004:                temp.userUndefs.insert(u);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####: 1005:        } else if (strcmp(node->Name(), CppcheckXml::ImportProjectElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1006:            guiProject.projectFile = path + (node->GetText() ? node->GetText() : "");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+    #####: 1007:        else if (strcmp(node->Name(), CppcheckXml::PathsElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1008:            paths = readXmlStringList(node, path, CppcheckXml::PathName, CppcheckXml::PathNameAttrib);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####: 1009:        else if (strcmp(node->Name(), CppcheckXml::ExcludeElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1010:            guiProject.excludedPaths = readXmlStringList(node, "", CppcheckXml::ExcludePathName, CppcheckXml::ExcludePathNameAttrib);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####: 1011:        else if (strcmp(node->Name(), CppcheckXml::IgnoreElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1012:            guiProject.excludedPaths = readXmlStringList(node, "", CppcheckXml::IgnorePathName, CppcheckXml::IgnorePathNameAttrib);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####: 1013:        else if (strcmp(node->Name(), CppcheckXml::LibrariesElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1014:            guiProject.libraries = readXmlStringList(node, "", CppcheckXml::LibraryElementName, nullptr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####: 1015:        else if (strcmp(node->Name(), CppcheckXml::SuppressionsElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1016:            suppressions = readXmlStringList(node, "", CppcheckXml::SuppressionElementName, nullptr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####: 1017:        else if (strcmp(node->Name(), CppcheckXml::PlatformElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1018:            guiProject.platform = node->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1019:        else if (strcmp(node->Name(), CppcheckXml::AnalyzeAllVsConfigsElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1020:            guiProject.analyzeAllVsConfigs = node->GetText();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1021:        else if (strcmp(node->Name(), CppcheckXml::AddonsElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1022:            temp.addons = readXmlStringList(node, "", CppcheckXml::AddonElementName, nullptr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####: 1023:        else if (strcmp(node->Name(), CppcheckXml::TagsElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1024:            node->Attribute(CppcheckXml::TagElementName); // FIXME: Write some warning
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1025:        else if (strcmp(node->Name(), CppcheckXml::ToolsElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1026:            node->Attribute(CppcheckXml::ToolElementName); // FIXME: Write some warning
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1027:        else if (strcmp(node->Name(), CppcheckXml::CheckHeadersElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1028:            temp.checkHeaders = (strcmp(node->GetText(), "true") == 0);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1029:        else if (strcmp(node->Name(), CppcheckXml::CheckUnusedTemplatesElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1030:            temp.checkUnusedTemplates = (strcmp(node->GetText(), "true") == 0);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1031:        else if (strcmp(node->Name(), CppcheckXml::MaxCtuDepthElementName) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1032:            temp.maxCtuDepth = std::atoi(node->GetText());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1033:        else if (strcmp(node->Name(), CppcheckXml::CheckUnknownFunctionReturn) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -: 1034:            ; // TODO
+    #####: 1035:        else if (strcmp(node->Name(), Settings::SafeChecks::XmlRootName) == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1036:            for (const tinyxml2::XMLElement *child = node->FirstChildElement(); child; child = child->NextSiblingElement()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####: 1037:                if (strcmp(child->Name(), Settings::SafeChecks::XmlClasses) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1038:                    temp.safeChecks.classes = true;
+    #####: 1039:                else if (strcmp(child->Name(), Settings::SafeChecks::XmlExternalFunctions) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1040:                    temp.safeChecks.externalFunctions = true;
+    #####: 1041:                else if (strcmp(child->Name(), Settings::SafeChecks::XmlInternalFunctions) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1042:                    temp.safeChecks.internalFunctions = true;
+    #####: 1043:                else if (strcmp(child->Name(), Settings::SafeChecks::XmlExternalVariables) == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1044:                    temp.safeChecks.externalVariables = true;
+        -: 1045:                else
+    #####: 1046:                    return false;
+        -: 1047:            }
+        -: 1048:        } else
+    #####: 1049:            return false;
+        -: 1050:    }
+    #####: 1051:    settings->basePaths = temp.basePaths;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1052:    settings->relativePaths |= temp.relativePaths;
+    #####: 1053:    settings->buildDir = temp.buildDir;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1054:    settings->includePaths = temp.includePaths;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1055:    settings->userDefines = temp.userDefines;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1056:    settings->userUndefs = temp.userUndefs;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1057:    settings->addons = temp.addons;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1058:    for (const std::string &p : paths)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####: 1059:        guiProject.pathNames.push_back(p);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####: 1060:    for (const std::string &supp : suppressions)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####: 1061:        settings->nomsg.addSuppressionLine(supp);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####: 1062:    settings->checkHeaders = temp.checkHeaders;
+    #####: 1063:    settings->checkUnusedTemplates = temp.checkUnusedTemplates;
+    #####: 1064:    settings->maxCtuDepth = temp.maxCtuDepth;
+    #####: 1065:    settings->safeChecks = temp.safeChecks;
+    #####: 1066:    return true;
+        -: 1067:}
+        -: 1068:
+function _ZN13ImportProject17selectOneVsConfigEN8cppcheck8Platform12PlatformTypeE called 0 returned 0% blocks executed 0%
+    #####: 1069:void ImportProject::selectOneVsConfig(Settings::PlatformType platform)
+        -: 1070:{
+    #####: 1071:    std::set<std::string> filenames;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####: 1072:    for (std::list<ImportProject::FileSettings>::iterator it = fileSettings.begin(); it != fileSettings.end();) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####: 1073:        if (it->cfg.empty()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1074:            ++it;
+call    0 never executed
+    #####: 1075:            continue;
+        -: 1076:        }
+    #####: 1077:        const ImportProject::FileSettings &fs = *it;
+call    0 never executed
+    #####: 1078:        bool remove = false;
+    #####: 1079:        if (fs.cfg.compare(0,5,"Debug") != 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####: 1080:            remove = true;
+    #####: 1081:        if (platform == Settings::Win64 && fs.platformType != platform)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1082:            remove = true;
+    #####: 1083:        else if ((platform == Settings::Win32A || platform == Settings::Win32W) && fs.platformType == Settings::Win64)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####: 1084:            remove = true;
+    #####: 1085:        else if (fs.platformType != Settings::Win64 && platform == Settings::Win64)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####: 1086:            remove = true;
+    #####: 1087:        else if (filenames.find(fs.filename) != filenames.end())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+    #####: 1088:            remove = true;
+    #####: 1089:        if (remove) {
+branch  0 never executed
+branch  1 never executed
+    #####: 1090:            it = fileSettings.erase(it);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+        -: 1091:        } else {
+    #####: 1092:            filenames.insert(fs.filename);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####: 1093:            ++it;
+call    0 never executed
+        -: 1094:        }
+        -: 1095:    }
+function _GLOBAL__sub_I__ZN13ImportProject11ignorePathsERKNSt7__debug6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEE called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 80%
+        3: 1096:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

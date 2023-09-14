@@ -1,0 +1,325 @@
+        -:    0:Source:/usr/include/c++/7/debug/safe_sequence.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:// Safe sequence implementation  -*- C++ -*-
+        -:    2:
+        -:    3:// Copyright (C) 2003-2017 Free Software Foundation, Inc.
+        -:    4://
+        -:    5:// This file is part of the GNU ISO C++ Library.  This library is free
+        -:    6:// software; you can redistribute it and/or modify it under the
+        -:    7:// terms of the GNU General Public License as published by the
+        -:    8:// Free Software Foundation; either version 3, or (at your option)
+        -:    9:// any later version.
+        -:   10:
+        -:   11:// This library is distributed in the hope that it will be useful,
+        -:   12:// but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   13:// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   14:// GNU General Public License for more details.
+        -:   15:
+        -:   16:// Under Section 7 of GPL version 3, you are granted additional
+        -:   17:// permissions described in the GCC Runtime Library Exception, version
+        -:   18:// 3.1, as published by the Free Software Foundation.
+        -:   19:
+        -:   20:// You should have received a copy of the GNU General Public License and
+        -:   21:// a copy of the GCC Runtime Library Exception along with this program;
+        -:   22:// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+        -:   23:// <http://www.gnu.org/licenses/>.
+        -:   24:
+        -:   25:/** @file debug/safe_sequence.h
+        -:   26: *  This file is a GNU debug extension to the Standard C++ Library.
+        -:   27: */
+        -:   28:
+        -:   29:#ifndef _GLIBCXX_DEBUG_SAFE_SEQUENCE_H
+        -:   30:#define _GLIBCXX_DEBUG_SAFE_SEQUENCE_H 1
+        -:   31:
+        -:   32:#include <debug/assertions.h>
+        -:   33:#include <debug/macros.h>
+        -:   34:#include <debug/functions.h>
+        -:   35:#include <debug/safe_base.h>
+        -:   36:
+        -:   37:namespace __gnu_debug
+        -:   38:{
+        -:   39:  /** A simple function object that returns true if the passed-in
+        -:   40:   *  value is not equal to the stored value. It saves typing over
+        -:   41:   *  using both bind1st and not_equal.
+        -:   42:   */
+        -:   43:  template<typename _Type>
+        -:   44:    class _Not_equal_to
+        -:   45:    {
+        -:   46:      _Type __value;
+        -:   47:
+        -:   48:    public:
+function _ZN11__gnu_debug13_Not_equal_toINSt9__cxx199820_List_const_iteratorIN9ValueFlow5ValueEEEEC2ERKS5_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13_Not_equal_toISt23_Rb_tree_const_iteratorISt4pairIKiN9ValueFlow5ValueEEEEC2ERKS7_ called 24 returned 100% blocks executed 100%
+function _ZN11__gnu_debug13_Not_equal_toINSt9__cxx199820_List_const_iteratorISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEEC2ERKSE_ called 0 returned 0% blocks executed 0%
+       24:   49:      explicit _Not_equal_to(const _Type& __v) : __value(__v) { }
+        -:   50:
+        -:   51:      bool
+function _ZNK11__gnu_debug13_Not_equal_toINSt9__cxx199820_List_const_iteratorIN9ValueFlow5ValueEEEEclERKS5_ called 0 returned 0% blocks executed 0%
+function _ZNK11__gnu_debug13_Not_equal_toISt23_Rb_tree_const_iteratorISt4pairIKiN9ValueFlow5ValueEEEEclERKS7_ called 0 returned 0% blocks executed 0%
+function _ZNK11__gnu_debug13_Not_equal_toINSt9__cxx199820_List_const_iteratorISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEEclERKSE_ called 0 returned 0% blocks executed 0%
+    #####:   52:      operator()(const _Type& __x) const
+    #####:   53:      { return __value != __x; }
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   54:    };
+        -:   55:
+        -:   56:  /** A simple function object that returns true if the passed-in
+        -:   57:   *  value is equal to the stored value. */
+        -:   58:  template <typename _Type>
+        -:   59:    class _Equal_to
+        -:   60:    {
+        -:   61:      _Type __value;
+        -:   62:
+        -:   63:    public:
+function _ZN11__gnu_debug9_Equal_toINSt9__cxx199815_Deque_iteratorIP5TokenRKS4_PS5_EEEC2ERKS8_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug9_Equal_toINSt9__cxx199820_List_const_iteratorIN9ValueFlow5ValueEEEEC2ERKS5_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug9_Equal_toISt23_Rb_tree_const_iteratorISt4pairIKPK8VariableN9ValueFlow5ValueEEEEC2ERKSA_ called 0 returned 0% blocks executed 0%
+    #####:   64:      explicit _Equal_to(const _Type& __v) : __value(__v) { }
+        -:   65:
+        -:   66:      bool
+function _ZNK11__gnu_debug9_Equal_toINSt9__cxx199815_Deque_iteratorIP5TokenRKS4_PS5_EEEclERKS8_ called 0 returned 0% blocks executed 0%
+function _ZNK11__gnu_debug9_Equal_toINSt9__cxx199820_List_const_iteratorIN9ValueFlow5ValueEEEEclERKS5_ called 0 returned 0% blocks executed 0%
+function _ZNK11__gnu_debug9_Equal_toISt23_Rb_tree_const_iteratorISt4pairIKPK8VariableN9ValueFlow5ValueEEEEclERKSA_ called 0 returned 0% blocks executed 0%
+    #####:   67:      operator()(const _Type& __x) const
+    #####:   68:      { return __value == __x; }
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   69:    };
+        -:   70:
+        -:   71:  /** A function object that returns true when the given random access
+        -:   72:      iterator is at least @c n steps away from the given iterator. */
+        -:   73:  template<typename _Iterator>
+        -:   74:    class _After_nth_from
+        -:   75:    {
+        -:   76:      typedef typename std::iterator_traits<_Iterator>::difference_type
+        -:   77:      difference_type;
+        -:   78:
+        -:   79:      _Iterator _M_base;
+        -:   80:      difference_type _M_n;
+        -:   81:
+        -:   82:    public:
+function _ZN11__gnu_debug15_After_nth_fromIN9__gnu_cxx17__normal_iteratorIPK13LifetimeTokenNSt9__cxx19986vectorIS3_SaIS3_EEEEEEC2ERKlRKSA_ called 0 returned 0% blocks executed 0%
+    #####:   83:      _After_nth_from(const difference_type& __n, const _Iterator& __base)
+    #####:   84:      : _M_base(__base), _M_n(__n) { }
+        -:   85:
+        -:   86:      bool
+function _ZNK11__gnu_debug15_After_nth_fromIN9__gnu_cxx17__normal_iteratorIPK13LifetimeTokenNSt9__cxx19986vectorIS3_SaIS3_EEEEEEclERKSA_ called 0 returned 0% blocks executed 0%
+    #####:   87:      operator()(const _Iterator& __x) const
+    #####:   88:      { return __x - _M_base >= _M_n; }
+call    0 never executed
+        -:   89:    };
+        -:   90:
+        -:   91:  /**
+        -:   92:   * @brief Base class for constructing a @a safe sequence type that
+        -:   93:   * tracks iterators that reference it.
+        -:   94:   *
+        -:   95:   * The class template %_Safe_sequence simplifies the construction of
+        -:   96:   * @a safe sequences that track the iterators that reference the
+        -:   97:   * sequence, so that the iterators are notified of changes in the
+        -:   98:   * sequence that may affect their operation, e.g., if the container
+        -:   99:   * invalidates its iterators or is destructed. This class template
+        -:  100:   * may only be used by deriving from it and passing the name of the
+        -:  101:   * derived class as its template parameter via the curiously
+        -:  102:   * recurring template pattern. The derived class must have @c
+        -:  103:   * iterator and @c const_iterator types that are instantiations of
+        -:  104:   * class template _Safe_iterator for this sequence. Iterators will
+        -:  105:   * then be tracked automatically.
+        -:  106:   */
+        -:  107:  template<typename _Sequence>
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug5dequeIP5TokenSaIS4_EEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug4listIN11ErrorLogger12ErrorMessage12FileLocationESaIS5_EEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorIxSaIxEEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorIxSaIxEEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorINS1_4listIN9ValueFlow5ValueESaIS5_EEESaIS7_EEEED2Ev called 14 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorINS1_4listIN9ValueFlow5ValueESaIS5_EEESaIS7_EEEEC2Ev called 14 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorIPK8VariableSaIS5_EEEEC2ERKS8_ called 1558 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3setIjSt4lessIjESaIjEEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3setIjSt4lessIjESaIjEEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorIPK8VariableSaIS5_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorIPK8VariableSaIS5_EEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug4listIN9ValueFlow5ValueESaIS4_EEEEC2EOS7_ called 632 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3setIPK5ScopeSt4lessIS5_ESaIS5_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3setIPK5ScopeSt4lessIS5_ESaIS5_EEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorI13LifetimeTokenSaIS3_EEEEC2Ev called 3111 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorIPK5TokenSaIS5_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorIPK5TokenSaIS5_EEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug5dequeIP5TokenSaIS4_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug4listIN9ValueFlow5ValueESaIS4_EEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3setIiSt4lessIiESaIiEEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3setIiSt4lessIiESaIiEEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug4listIN9ValueFlow5ValueESaIS4_EEEEC2ERKS7_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3mapIPK8VariableN9ValueFlow5ValueESt4lessIS5_ESaISt4pairIKS5_S7_EEEEED2Ev called 1912 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3mapIPK8VariableN9ValueFlow5ValueESt4lessIS5_ESaISt4pairIKS5_S7_EEEEEC2Ev called 1912 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaISA_EEEED2Ev called 1245 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorISt4pairIPK5TokenPK5ScopeESaISA_EEEEC2Ev called 1245 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3mapIiPK5TokenSt4lessIiESaISt4pairIKiS5_EEEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3mapIiPK5TokenSt4lessIiESaISt4pairIKiS5_EEEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug4listISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISD_EEEEC2ERKSG_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3mapIiN9ValueFlow5ValueESt4lessIiESaISt4pairIKiS4_EEEEEC2Ev called 497 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3mapIiN9ValueFlow5ValueESt4lessIiESaISt4pairIKiS4_EEEEED2Ev called 1505 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug3mapIiN9ValueFlow5ValueESt4lessIiESaISt4pairIKiS4_EEEEEC2ERKSC_ called 1008 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug4listIN11ErrorLogger12ErrorMessage12FileLocationESaIS5_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug4listIN9ValueFlow5ValueESaIS4_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorIN11FwdAnalysis13KnownAndTokenESaIS4_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorIN11FwdAnalysis13KnownAndTokenESaIS4_EEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorI13LifetimeTokenSaIS3_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug6vectorI13LifetimeTokenSaIS3_EEEEC2EOS6_ called 29 returned 100% blocks executed 100%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug4listISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISD_EEEEC2EOSG_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug4listISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISD_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14_Safe_sequenceINSt7__debug4listISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISD_EEEEC2Ev called 0 returned 0% blocks executed 0%
+    14682:  108:    class _Safe_sequence : public _Safe_sequence_base
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 returned 100%
+call    5 returned 100%
+call    6 returned 100%
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 returned 100%
+call   12 never executed
+call   13 never executed
+call   14 returned 100%
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 returned 100%
+call   23 returned 100%
+call   24 returned 100%
+call   25 returned 100%
+call   26 never executed
+call   27 never executed
+call   28 never executed
+call   29 returned 100%
+call   30 returned 100%
+call   31 returned 100%
+call   32 never executed
+call   33 never executed
+call   34 never executed
+call   35 never executed
+call   36 never executed
+call   37 returned 100%
+call   38 never executed
+call   39 never executed
+call   40 never executed
+        -:  109:    {
+        -:  110:    public:
+        -:  111:      /** Invalidates all iterators @c x that reference this sequence,
+        -:  112:	  are not singular, and for which @c __pred(x) returns @c
+        -:  113:	  true. @c __pred will be invoked with the normal iterators nested
+        -:  114:	  in the safe ones. */
+        -:  115:      template<typename _Predicate>
+        -:  116:	void
+        -:  117:	_M_invalidate_if(_Predicate __pred);
+        -:  118:
+        -:  119:      /** Transfers all iterators @c x that reference @c from sequence,
+        -:  120:	  are not singular, and for which @c __pred(x) returns @c
+        -:  121:	  true. @c __pred will be invoked with the normal iterators nested
+        -:  122:	  in the safe ones. */
+        -:  123:      template<typename _Predicate>
+        -:  124:	void
+        -:  125:	_M_transfer_from_if(_Safe_sequence& __from, _Predicate __pred);
+        -:  126:    };
+        -:  127:
+        -:  128:  /// Like _Safe_sequence but with a special _M_invalidate_all implementation
+        -:  129:  /// not invalidating past-the-end iterators. Used by node based sequence.
+        -:  130:  template<typename _Sequence>
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listIN11ErrorLogger12ErrorMessage12FileLocationESaIS5_EEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3setIjSt4lessIjESaIjEEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3setIjSt4lessIjESaIjEEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listIN9ValueFlow5ValueESaIS4_EEEEC2EOS7_ called 632 returned 100% blocks executed 100%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3setIPK5ScopeSt4lessIS5_ESaIS5_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3setIPK5ScopeSt4lessIS5_ESaIS5_EEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listIN9ValueFlow5ValueESaIS4_EEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3setIiSt4lessIiESaIiEEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3setIiSt4lessIiESaIiEEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listIN9ValueFlow5ValueESaIS4_EEEEC2ERKS7_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3mapIPK8VariableN9ValueFlow5ValueESt4lessIS5_ESaISt4pairIKS5_S7_EEEEED2Ev called 1912 returned 100% blocks executed 100%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3mapIPK8VariableN9ValueFlow5ValueESt4lessIS5_ESaISt4pairIKS5_S7_EEEEEC2Ev called 1912 returned 100% blocks executed 100%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3mapIiPK5TokenSt4lessIiESaISt4pairIKiS5_EEEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3mapIiPK5TokenSt4lessIiESaISt4pairIKiS5_EEEEEC2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISD_EEEEC2ERKSG_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3mapIiN9ValueFlow5ValueESt4lessIiESaISt4pairIKiS4_EEEEEC2Ev called 497 returned 100% blocks executed 100%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3mapIiN9ValueFlow5ValueESt4lessIiESaISt4pairIKiS4_EEEEED2Ev called 1505 returned 100% blocks executed 100%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3mapIiN9ValueFlow5ValueESt4lessIiESaISt4pairIKiS4_EEEEEC2ERKSC_ called 1008 returned 100% blocks executed 100%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listIN11ErrorLogger12ErrorMessage12FileLocationESaIS5_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listIN9ValueFlow5ValueESaIS4_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISD_EEEEC2EOSG_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISD_EEEED2Ev called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISD_EEEEC2Ev called 0 returned 0% blocks executed 0%
+     7466:  131:    class _Safe_node_sequence
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 returned 100%
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 returned 100%
+call   11 returned 100%
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 returned 100%
+call   16 returned 100%
+call   17 returned 100%
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+        -:  132:    : public _Safe_sequence<_Sequence>
+        -:  133:    {
+        -:  134:    protected:
+        -:  135:      void
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listIN9ValueFlow5ValueESaIS4_EEEE17_M_invalidate_allEv called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug3mapIiN9ValueFlow5ValueESt4lessIiESaISt4pairIKiS4_EEEEE17_M_invalidate_allEv called 24 returned 100% blocks executed 86%
+function _ZN11__gnu_debug19_Safe_node_sequenceINSt7__debug4listISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEESaISD_EEEE17_M_invalidate_allEv called 0 returned 0% blocks executed 0%
+       24:  136:      _M_invalidate_all()
+        -:  137:      {
+        -:  138:	typedef typename _Sequence::const_iterator _Const_iterator;
+        -:  139:	typedef typename _Const_iterator::iterator_type _Base_const_iterator;
+        -:  140:	typedef __gnu_debug::_Not_equal_to<_Base_const_iterator> _Not_equal;
+       24:  141:	const _Sequence& __seq = *static_cast<_Sequence*>(this);
+       24:  142:	this->_M_invalidate_if(_Not_equal(__seq._M_base().end()));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 returned 100%
+call    7 returned 100%
+call    8 returned 100%
+call    9 returned 100%
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0% (throw)
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+       24:  143:      }
+        -:  144:    };
+        -:  145:
+        -:  146:} // namespace __gnu_debug
+        -:  147:
+        -:  148:#include <debug/safe_sequence.tcc>
+        -:  149:
+        -:  150:#endif

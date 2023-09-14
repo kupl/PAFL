@@ -1,0 +1,1363 @@
+        -:    0:Source:/home/workspace/lib/checktype.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checktype.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checktype.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#include "checktype.h"
+        -:   22:
+        -:   23:#include "errorlogger.h"
+        -:   24:#include "mathlib.h"
+        -:   25:#include "platform.h"
+        -:   26:#include "settings.h"
+        -:   27:#include "symboldatabase.h"
+        -:   28:#include "token.h"
+        -:   29:#include "tokenize.h"
+        -:   30:
+        -:   31:#include <cstddef>
+        -:   32:#include <list>
+        -:   33:#include <ostream>
+        -:   34:#include <stack>
+        -:   35://---------------------------------------------------------------------------
+        -:   36:
+        -:   37:// Register this check class (by creating a static instance of it)
+        -:   38:namespace {
+        1:   39:    CheckType instance;
+call    0 returned 100%
+call    1 returned 100%
+        -:   40:}
+        -:   41:
+        -:   42://---------------------------------------------------------------------------
+        -:   43:// Checking for shift by too many bits
+        -:   44://---------------------------------------------------------------------------
+        -:   45://
+        -:   46:
+        -:   47:// CWE ids used:
+        1:   48:static const struct CWE CWE195(195U);   // Signed to Unsigned Conversion Error
+call    0 returned 100%
+        1:   49:static const struct CWE CWE197(197U);   // Numeric Truncation Error
+call    0 returned 100%
+        1:   50:static const struct CWE CWE758(758U);   // Reliance on Undefined, Unspecified, or Implementation-Defined Behavior
+call    0 returned 100%
+        1:   51:static const struct CWE CWE190(190U);   // Integer Overflow or Wraparound
+call    0 returned 100%
+        -:   52:
+        -:   53:
+function _ZN9CheckType23checkTooBigBitwiseShiftEv called 0 returned 0% blocks executed 0%
+    #####:   54:void CheckType::checkTooBigBitwiseShift()
+        -:   55:{
+        -:   56:    // unknown sizeof(int) => can't run this checker
+    #####:   57:    if (mSettings->platformType == Settings::Unspecified)
+branch  0 never executed
+branch  1 never executed
+    #####:   58:        return;
+        -:   59:
+    #####:   60:    const bool cpp14 = mSettings->standards.cpp >= Standards::CPP14;
+        -:   61:
+    #####:   62:    if (cpp14 && !mSettings->isEnabled(Settings::PORTABILITY))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:   63:        return;
+        -:   64:
+    #####:   65:    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:   66:        // C++ and macro: OUT(x<<y)
+    #####:   67:        if (mTokenizer->isCPP() && Token::Match(tok, "[;{}] %name% (") && Token::simpleMatch(tok->linkAt(2), ") ;") && tok->next()->isUpperCaseName() && !tok->next()->function())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+    #####:   68:            tok = tok->linkAt(2);
+call    0 never executed
+        -:   69:
+    #####:   70:        if (!tok->astOperand1() || !tok->astOperand2())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   71:            continue;
+        -:   72:
+    #####:   73:        if (!Token::Match(tok, "<<|>>|<<=|>>="))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   74:            continue;
+        -:   75:
+        -:   76:        // get number of bits of lhs
+    #####:   77:        const ValueType * const lhstype = tok->astOperand1()->valueType();
+call    0 never executed
+call    1 never executed
+    #####:   78:        if (!lhstype || !lhstype->isIntegral() || lhstype->pointer >= 1)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:   79:            continue;
+        -:   80:        // C11 Standard, section 6.5.7 Bitwise shift operators, states:
+        -:   81:        //   The integer promotions are performed on each of the operands.
+        -:   82:        //   The type of the result is that of the promoted left operand.
+        -:   83:        int lhsbits;
+    #####:   84:        if ((lhstype->type == ValueType::Type::CHAR) ||
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   85:            (lhstype->type == ValueType::Type::SHORT) ||
+branch  0 never executed
+branch  1 never executed
+    #####:   86:            (lhstype->type == ValueType::Type::WCHAR_T) ||
+branch  0 never executed
+branch  1 never executed
+    #####:   87:            (lhstype->type == ValueType::Type::BOOL) ||
+branch  0 never executed
+branch  1 never executed
+    #####:   88:            (lhstype->type == ValueType::Type::INT))
+    #####:   89:            lhsbits = mSettings->int_bit;
+    #####:   90:        else if (lhstype->type == ValueType::Type::LONG)
+branch  0 never executed
+branch  1 never executed
+    #####:   91:            lhsbits = mSettings->long_bit;
+    #####:   92:        else if (lhstype->type == ValueType::Type::LONGLONG)
+branch  0 never executed
+branch  1 never executed
+    #####:   93:            lhsbits = mSettings->long_long_bit;
+        -:   94:        else
+    #####:   95:            continue;
+        -:   96:
+        -:   97:        // Get biggest rhs value. preferably a value which doesn't have 'condition'.
+    #####:   98:        const ValueFlow::Value * value = tok->astOperand2()->getValueGE(lhsbits, mSettings);
+call    0 never executed
+call    1 never executed
+    #####:   99:        if (value && mSettings->isEnabled(value, false) && !cpp14)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  100:            tooBigBitwiseShiftError(tok, lhsbits, *value);
+call    0 never executed
+    #####:  101:        else if (lhstype->sign == ValueType::Sign::SIGNED) {
+branch  0 never executed
+branch  1 never executed
+    #####:  102:            value = tok->astOperand2()->getValueGE(lhsbits-1, mSettings);
+call    0 never executed
+call    1 never executed
+    #####:  103:            if (value && mSettings->isEnabled(value, false))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  104:                tooBigSignedBitwiseShiftError(tok, lhsbits, *value);
+call    0 never executed
+        -:  105:        }
+        -:  106:    }
+        -:  107:}
+        -:  108:
+function _ZN9CheckType23tooBigBitwiseShiftErrorEPK5TokeniRKN9ValueFlow5ValueE called 0 returned 0% blocks executed 0%
+    #####:  109:void CheckType::tooBigBitwiseShiftError(const Token *tok, int lhsbits, const ValueFlow::Value &rhsbits)
+        -:  110:{
+    #####:  111:    const char id[] = "shiftTooManyBits";
+        -:  112:
+    #####:  113:    if (!tok) {
+branch  0 never executed
+branch  1 never executed
+    #####:  114:        reportError(tok, Severity::error, id, "Shifting 32-bit value by 40 bits is undefined behaviour", CWE758, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  115:        return;
+        -:  116:    }
+        -:  117:
+    #####:  118:    const ErrorPath errorPath = getErrorPath(tok, &rhsbits, "Shift");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+        -:  119:
+    #####:  120:    std::ostringstream errmsg;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  121:    errmsg << "Shifting " << lhsbits << "-bit value by " << rhsbits.intvalue << " bits is undefined behaviour";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+    #####:  122:    if (rhsbits.condition)
+branch  0 never executed
+branch  1 never executed
+    #####:  123:        errmsg << ". See condition at line " << rhsbits.condition->linenr() << ".";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+        -:  124:
+    #####:  125:    reportError(errorPath, rhsbits.errorSeverity() ? Severity::error : Severity::warning, id, errmsg.str(), CWE758, rhsbits.isInconclusive());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+        -:  126:}
+        -:  127:
+function _ZN9CheckType29tooBigSignedBitwiseShiftErrorEPK5TokeniRKN9ValueFlow5ValueE called 0 returned 0% blocks executed 0%
+    #####:  128:void CheckType::tooBigSignedBitwiseShiftError(const Token *tok, int lhsbits, const ValueFlow::Value &rhsbits)
+        -:  129:{
+    #####:  130:    const char id[] = "shiftTooManyBitsSigned";
+        -:  131:
+    #####:  132:    const bool cpp14 = mSettings->standards.cpp >= Standards::CPP14;
+        -:  133:
+    #####:  134:    std::string behaviour = "undefined";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  135:    if (cpp14)
+branch  0 never executed
+branch  1 never executed
+    #####:  136:        behaviour = "implementation-defined";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  137:    if (!tok) {
+branch  0 never executed
+branch  1 never executed
+    #####:  138:        reportError(tok, Severity::error, id, "Shifting signed 32-bit value by 31 bits is " + behaviour + " behaviour", CWE758, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  139:        return;
+        -:  140:    }
+        -:  141:
+    #####:  142:    const ErrorPath errorPath = getErrorPath(tok, &rhsbits, "Shift");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+        -:  143:
+    #####:  144:    std::ostringstream errmsg;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  145:    errmsg << "Shifting signed " << lhsbits << "-bit value by " << rhsbits.intvalue << " bits is " + behaviour + " behaviour";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+    #####:  146:    if (rhsbits.condition)
+branch  0 never executed
+branch  1 never executed
+    #####:  147:        errmsg << ". See condition at line " << rhsbits.condition->linenr() << ".";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+        -:  148:
+    #####:  149:    Severity::SeverityType severity = rhsbits.errorSeverity() ? Severity::error : Severity::warning;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  150:    if (cpp14)
+branch  0 never executed
+branch  1 never executed
+    #####:  151:        severity = Severity::portability;
+        -:  152:
+    #####:  153:    reportError(errorPath, severity, id, errmsg.str(), CWE758, rhsbits.isInconclusive());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+        -:  154:}
+        -:  155:
+        -:  156://---------------------------------------------------------------------------
+        -:  157:// Checking for integer overflow
+        -:  158://---------------------------------------------------------------------------
+        -:  159:
+function _ZN9CheckType20checkIntegerOverflowEv called 0 returned 0% blocks executed 0%
+    #####:  160:void CheckType::checkIntegerOverflow()
+        -:  161:{
+        -:  162:    // unknown sizeof(int) => can't run this checker
+    #####:  163:    if (mSettings->platformType == Settings::Unspecified || mSettings->int_bit >= MathLib::bigint_bits)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  164:        return;
+        -:  165:
+    #####:  166:    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  167:        if (!tok->isArithmeticalOp())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  168:            continue;
+        -:  169:
+        -:  170:        // is result signed integer?
+    #####:  171:        const ValueType *vt = tok->valueType();
+call    0 never executed
+    #####:  172:        if (!vt || !vt->isIntegral() || vt->sign != ValueType::Sign::SIGNED)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  173:            continue;
+        -:  174:
+        -:  175:        unsigned int bits;
+    #####:  176:        if (vt->type == ValueType::Type::INT)
+branch  0 never executed
+branch  1 never executed
+    #####:  177:            bits = mSettings->int_bit;
+    #####:  178:        else if (vt->type == ValueType::Type::LONG)
+branch  0 never executed
+branch  1 never executed
+    #####:  179:            bits = mSettings->long_bit;
+    #####:  180:        else if (vt->type == ValueType::Type::LONGLONG)
+branch  0 never executed
+branch  1 never executed
+    #####:  181:            bits = mSettings->long_long_bit;
+        -:  182:        else
+    #####:  183:            continue;
+        -:  184:
+    #####:  185:        if (bits >= MathLib::bigint_bits)
+branch  0 never executed
+branch  1 never executed
+    #####:  186:            continue;
+        -:  187:
+        -:  188:        // max value according to platform settings.
+    #####:  189:        const MathLib::bigint maxvalue = (((MathLib::bigint)1) << (bits - 1)) - 1;
+        -:  190:
+        -:  191:        // is there a overflow result value
+    #####:  192:        const ValueFlow::Value *value = tok->getValueGE(maxvalue + 1, mSettings);
+call    0 never executed
+    #####:  193:        if (!value)
+branch  0 never executed
+branch  1 never executed
+    #####:  194:            value = tok->getValueLE(-maxvalue - 2, mSettings);
+call    0 never executed
+    #####:  195:        if (!value || !mSettings->isEnabled(value,false))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  196:            continue;
+        -:  197:
+        -:  198:        // For left shift, it's common practice to shift into the sign bit
+    #####:  199:        if (tok->str() == "<<" && value->intvalue > 0 && value->intvalue < (((MathLib::bigint)1) << bits))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  200:            continue;
+        -:  201:
+    #####:  202:        integerOverflowError(tok, *value);
+call    0 never executed
+        -:  203:    }
+        -:  204:}
+        -:  205:
+function _ZN9CheckType20integerOverflowErrorEPK5TokenRKN9ValueFlow5ValueE called 0 returned 0% blocks executed 0%
+    #####:  206:void CheckType::integerOverflowError(const Token *tok, const ValueFlow::Value &value)
+        -:  207:{
+    #####:  208:    const std::string expr(tok ? tok->expressionString() : "");
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+        -:  209:
+    #####:  210:    std::string msg;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  211:    if (value.condition)
+branch  0 never executed
+branch  1 never executed
+    #####:  212:        msg = ValueFlow::eitherTheConditionIsRedundant(value.condition) +
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  213:              " or there is signed integer overflow for expression '" + expr + "'.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+        -:  214:    else
+    #####:  215:        msg = "Signed integer overflow for expression '" + expr + "'.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  216:
+    #####:  217:    if (value.safe)
+branch  0 never executed
+branch  1 never executed
+    #####:  218:        msg = "Safe checks: " + msg;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  219:
+    #####:  220:    reportError(getErrorPath(tok, &value, "Integer overflow"),
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  221:                value.errorSeverity() ? Severity::error : Severity::warning,
+call    0 never executed
+    #####:  222:                getMessageId(value, "integerOverflow").c_str(),
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  223:                msg,
+        -:  224:                CWE190,
+    #####:  225:                value.isInconclusive());
+call    0 never executed
+    #####:  226:}
+        -:  227:
+        -:  228://---------------------------------------------------------------------------
+        -:  229:// Checking for sign conversion when operand can be negative
+        -:  230://---------------------------------------------------------------------------
+        -:  231:
+function _ZN9CheckType19checkSignConversionEv called 0 returned 0% blocks executed 0%
+    #####:  232:void CheckType::checkSignConversion()
+        -:  233:{
+    #####:  234:    if (!mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  235:        return;
+        -:  236:
+    #####:  237:    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  238:        if (!tok->isArithmeticalOp() || Token::Match(tok,"+|-"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  239:            continue;
+        -:  240:
+        -:  241:        // Is result unsigned?
+    #####:  242:        if (!(tok->valueType() && tok->valueType()->sign == ValueType::Sign::UNSIGNED))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  243:            continue;
+        -:  244:
+        -:  245:        // Check if an operand can be negative..
+    #####:  246:        std::stack<const Token *> tokens;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  247:        tokens.push(tok->astOperand1());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  248:        tokens.push(tok->astOperand2());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  249:        while (!tokens.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  250:            const Token *tok1 = tokens.top();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  251:            tokens.pop();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  252:            if (!tok1)
+branch  0 never executed
+branch  1 never executed
+    #####:  253:                continue;
+    #####:  254:            const ValueFlow::Value *negativeValue = tok1->getValueLE(-1,mSettings);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  255:            if (!negativeValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  256:                continue;
+    #####:  257:            if (tok1->valueType() && tok1->valueType()->sign != ValueType::Sign::UNSIGNED)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  258:                signConversionError(tok1, negativeValue, tok1->isNumber());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  259:        }
+        -:  260:    }
+        -:  261:}
+        -:  262:
+function _ZN9CheckType19signConversionErrorEPK5TokenPKN9ValueFlow5ValueEb called 0 returned 0% blocks executed 0%
+    #####:  263:void CheckType::signConversionError(const Token *tok, const ValueFlow::Value *negativeValue, const bool constvalue)
+        -:  264:{
+    #####:  265:    const std::string expr(tok ? tok->expressionString() : "var");
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+        -:  266:
+    #####:  267:    std::ostringstream msg;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  268:    if (tok && tok->isName())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  269:        msg << "$symbol:" << expr << "\n";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  270:    if (constvalue)
+branch  0 never executed
+branch  1 never executed
+    #####:  271:        msg << "Expression '" << expr << "' has a negative value. That is converted to an unsigned value and used in an unsigned calculation.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+        -:  272:    else
+    #####:  273:        msg << "Expression '" << expr << "' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+        -:  274:
+    #####:  275:    if (!negativeValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  276:        reportError(tok, Severity::warning, "signConversion", msg.str(), CWE195, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+        -:  277:    else {
+    #####:  278:        const ErrorPath &errorPath = getErrorPath(tok,negativeValue,"Negative value is converted to an unsigned value");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  279:        reportError(errorPath,
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  280:                    Severity::warning,
+    #####:  281:                    Check::getMessageId(*negativeValue, "signConversion").c_str(),
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  282:                    msg.str(),
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  283:                    CWE195,
+    #####:  284:                    negativeValue->isInconclusive());
+call    0 never executed
+        -:  285:    }
+    #####:  286:}
+        -:  287:
+        -:  288:
+        -:  289://---------------------------------------------------------------------------
+        -:  290:// Checking for long cast of int result   const long x = var1 * var2;
+        -:  291://---------------------------------------------------------------------------
+        -:  292:
+function _ZN9CheckType13checkLongCastEv called 0 returned 0% blocks executed 0%
+    #####:  293:void CheckType::checkLongCast()
+        -:  294:{
+    #####:  295:    if (!mSettings->isEnabled(Settings::STYLE))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  296:        return;
+        -:  297:
+        -:  298:    // Assignments..
+    #####:  299:    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  300:        if (tok->str() != "=" || !Token::Match(tok->astOperand2(), "*|<<"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  301:            continue;
+        -:  302:
+    #####:  303:        if (tok->astOperand2()->hasKnownIntValue()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  304:            const ValueFlow::Value &v = tok->astOperand2()->values().front();
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  305:            if (mSettings->isIntValue(v.intvalue))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  306:                continue;
+        -:  307:        }
+        -:  308:
+    #####:  309:        const ValueType *lhstype = tok->astOperand1() ? tok->astOperand1()->valueType() : nullptr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  310:        const ValueType *rhstype = tok->astOperand2()->valueType();
+call    0 never executed
+call    1 never executed
+        -:  311:
+    #####:  312:        if (!lhstype || !rhstype)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  313:            continue;
+        -:  314:
+        -:  315:        // assign int result to long/longlong const nonpointer?
+    #####:  316:        if (rhstype->type == ValueType::Type::INT &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  317:            rhstype->pointer == 0U &&
+branch  0 never executed
+branch  1 never executed
+    #####:  318:            rhstype->originalTypeName.empty() &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  319:            (lhstype->type == ValueType::Type::LONG || lhstype->type == ValueType::Type::LONGLONG) &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  320:            lhstype->pointer == 0U &&
+branch  0 never executed
+branch  1 never executed
+    #####:  321:            lhstype->constness == 1U &&
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  322:            lhstype->originalTypeName.empty())
+call    0 never executed
+    #####:  323:            longCastAssignError(tok);
+call    0 never executed
+        -:  324:    }
+        -:  325:
+        -:  326:    // Return..
+    #####:  327:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  328:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  329:
+        -:  330:        // function must return long data
+    #####:  331:        const Token * def = scope->classDef;
+    #####:  332:        bool islong = false;
+    #####:  333:        while (Token::Match(def, "%type%|::")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  334:            if (def->str() == "long" && def->originalName().empty()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  335:                islong = true;
+    #####:  336:                break;
+        -:  337:            }
+    #####:  338:            def = def->previous();
+call    0 never executed
+        -:  339:        }
+    #####:  340:        if (!islong)
+branch  0 never executed
+branch  1 never executed
+    #####:  341:            continue;
+        -:  342:
+        -:  343:        // return statements
+    #####:  344:        const Token *ret = nullptr;
+    #####:  345:        for (const Token *tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  346:            if (tok->str() == "return") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  347:                if (Token::Match(tok->astOperand1(), "<<|*")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  348:                    const ValueType *type = tok->astOperand1()->valueType();
+call    0 never executed
+call    1 never executed
+    #####:  349:                    if (type && type->type == ValueType::Type::INT && type->pointer == 0U && type->originalTypeName.empty())
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  350:                        ret = tok;
+        -:  351:                }
+        -:  352:                // All return statements must have problem otherwise no warning
+    #####:  353:                if (ret != tok) {
+branch  0 never executed
+branch  1 never executed
+    #####:  354:                    ret = nullptr;
+    #####:  355:                    break;
+        -:  356:                }
+        -:  357:            }
+        -:  358:        }
+        -:  359:
+    #####:  360:        if (ret)
+branch  0 never executed
+branch  1 never executed
+    #####:  361:            longCastReturnError(ret);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  362:    }
+        -:  363:}
+        -:  364:
+function _ZN9CheckType19longCastAssignErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  365:void CheckType::longCastAssignError(const Token *tok)
+        -:  366:{
+    #####:  367:    reportError(tok,
+call    0 never executed
+        -:  368:                Severity::style,
+        -:  369:                "truncLongCastAssignment",
+        -:  370:                "int result is assigned to long variable. If the variable is long to avoid loss of information, then you have loss of information.\n"
+        -:  371:                "int result is assigned to long variable. If the variable is long to avoid loss of information, then there is loss of information. To avoid loss of information you must cast a calculation operand to long, for example 'l = a * b;' => 'l = (long)a * b;'.", CWE197, false);
+    #####:  372:}
+        -:  373:
+function _ZN9CheckType19longCastReturnErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  374:void CheckType::longCastReturnError(const Token *tok)
+        -:  375:{
+    #####:  376:    reportError(tok,
+call    0 never executed
+        -:  377:                Severity::style,
+        -:  378:                "truncLongCastReturn",
+        -:  379:                "int result is returned as long value. If the return value is long to avoid loss of information, then you have loss of information.\n"
+        -:  380:                "int result is returned as long value. If the return value is long to avoid loss of information, then there is loss of information. To avoid loss of information you must cast a calculation operand to long, for example 'return a*b;' => 'return (long)a*b'.", CWE197, false);
+    #####:  381:}
+        -:  382:
+        -:  383://---------------------------------------------------------------------------
+        -:  384:// Checking for float to integer overflow
+        -:  385://---------------------------------------------------------------------------
+        -:  386:
+function _ZN9CheckType27checkFloatToIntegerOverflowEv called 0 returned 0% blocks executed 0%
+    #####:  387:void CheckType::checkFloatToIntegerOverflow()
+        -:  388:{
+    #####:  389:    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  390:        const ValueType *vtint, *vtfloat;
+        -:  391:        const std::list<ValueFlow::Value> *floatValues;
+        -:  392:
+        -:  393:        // Explicit cast
+    #####:  394:        if (Token::Match(tok, "( %name%") && tok->astOperand1() && !tok->astOperand2()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  395:            vtint = tok->valueType();
+call    0 never executed
+    #####:  396:            vtfloat = tok->astOperand1()->valueType();
+call    0 never executed
+call    1 never executed
+    #####:  397:            floatValues = &tok->astOperand1()->values();
+call    0 never executed
+call    1 never executed
+    #####:  398:            checkFloatToIntegerOverflow(tok, vtint, vtfloat, floatValues);
+call    0 never executed
+        -:  399:        }
+        -:  400:
+        -:  401:        // Assignment
+    #####:  402:        else if (tok->str() == "=" && tok->astOperand1() && tok->astOperand2()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  403:            vtint = tok->astOperand1()->valueType();
+call    0 never executed
+call    1 never executed
+    #####:  404:            vtfloat = tok->astOperand2()->valueType();
+call    0 never executed
+call    1 never executed
+    #####:  405:            floatValues = &tok->astOperand2()->values();
+call    0 never executed
+call    1 never executed
+    #####:  406:            checkFloatToIntegerOverflow(tok, vtint, vtfloat, floatValues);
+call    0 never executed
+        -:  407:        }
+        -:  408:
+    #####:  409:        else if (tok->str() == "return" && tok->astOperand1() && tok->astOperand1()->valueType() && tok->astOperand1()->valueType()->isFloat()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+    #####:  410:            const Scope *scope = tok->scope();
+call    0 never executed
+    #####:  411:            while (scope && scope->type != Scope::ScopeType::eLambda && scope->type != Scope::ScopeType::eFunction)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  412:                scope = scope->nestedIn;
+    #####:  413:            if (scope && scope->type == Scope::ScopeType::eFunction && scope->function && scope->function->retDef) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  414:                const ValueType &valueType = ValueType::parseDecl(scope->function->retDef, mSettings);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  415:                vtfloat = tok->astOperand1()->valueType();
+call    0 never executed
+call    1 never executed
+    #####:  416:                floatValues = &tok->astOperand1()->values();
+call    0 never executed
+call    1 never executed
+    #####:  417:                checkFloatToIntegerOverflow(tok, &valueType, vtfloat, floatValues);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  418:            }
+        -:  419:        }
+        -:  420:    }
+    #####:  421:}
+        -:  422:
+function _ZN9CheckType27checkFloatToIntegerOverflowEPK5TokenPK9ValueTypeS5_PKNSt7__debug4listIN9ValueFlow5ValueESaIS9_EEE called 0 returned 0% blocks executed 0%
+    #####:  423:void CheckType::checkFloatToIntegerOverflow(const Token *tok, const ValueType *vtint, const ValueType *vtfloat, const std::list<ValueFlow::Value> *floatValues)
+        -:  424:{
+        -:  425:    // Conversion of float to integer?
+    #####:  426:    if (!vtint || !vtint->isIntegral())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  427:        return;
+    #####:  428:    if (!vtfloat || !vtfloat->isFloat())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  429:        return;
+        -:  430:
+    #####:  431:    for (const ValueFlow::Value &f : *floatValues) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  432:        if (f.valueType != ValueFlow::Value::ValueType::FLOAT)
+branch  0 never executed
+branch  1 never executed
+    #####:  433:            continue;
+    #####:  434:        if (!mSettings->isEnabled(&f, false))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  435:            continue;
+    #####:  436:        if (f.floatValue > ~0ULL)
+branch  0 never executed
+branch  1 never executed
+    #####:  437:            floatToIntegerOverflowError(tok, f);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  438:        else if ((-f.floatValue) > (1ULL<<62))
+branch  0 never executed
+branch  1 never executed
+    #####:  439:            floatToIntegerOverflowError(tok, f);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  440:        else if (mSettings->platformType != Settings::Unspecified) {
+branch  0 never executed
+branch  1 never executed
+    #####:  441:            int bits = 0;
+    #####:  442:            if (vtint->type == ValueType::Type::CHAR)
+branch  0 never executed
+branch  1 never executed
+    #####:  443:                bits = mSettings->char_bit;
+    #####:  444:            else if (vtint->type == ValueType::Type::SHORT)
+branch  0 never executed
+branch  1 never executed
+    #####:  445:                bits = mSettings->short_bit;
+    #####:  446:            else if (vtint->type == ValueType::Type::INT)
+branch  0 never executed
+branch  1 never executed
+    #####:  447:                bits = mSettings->int_bit;
+    #####:  448:            else if (vtint->type == ValueType::Type::LONG)
+branch  0 never executed
+branch  1 never executed
+    #####:  449:                bits = mSettings->long_bit;
+    #####:  450:            else if (vtint->type == ValueType::Type::LONGLONG)
+branch  0 never executed
+branch  1 never executed
+    #####:  451:                bits = mSettings->long_long_bit;
+        -:  452:            else
+    #####:  453:                continue;
+    #####:  454:            if (bits < MathLib::bigint_bits && f.floatValue >= (((MathLib::biguint)1) << bits))
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  455:                floatToIntegerOverflowError(tok, f);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  456:        }
+        -:  457:    }
+        -:  458:}
+        -:  459:
+function _ZN9CheckType27floatToIntegerOverflowErrorEPK5TokenRKN9ValueFlow5ValueE called 0 returned 0% blocks executed 0%
+    #####:  460:void CheckType::floatToIntegerOverflowError(const Token *tok, const ValueFlow::Value &value)
+        -:  461:{
+    #####:  462:    std::ostringstream errmsg;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  463:    errmsg << "Undefined behaviour: float (" << value.floatValue << ") to integer conversion overflow.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  464:    reportError(getErrorPath(tok, &value, "float to integer conversion"),
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  465:                value.errorSeverity() ? Severity::error : Severity::warning,
+call    0 never executed
+        -:  466:                "floatConversionOverflow",
+    #####:  467:                errmsg.str(), CWE190, value.isInconclusive());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+function _GLOBAL__sub_I__ZN9CheckType23checkTooBigBitwiseShiftEv called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  468:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

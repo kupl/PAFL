@@ -1,0 +1,2225 @@
+        -:    0:Source:/home/workspace/lib/exprengine.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/exprengine.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/exprengine.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:#include "exprengine.h"
+        -:   20:#include "astutils.h"
+        -:   21:#include "settings.h"
+        -:   22:#include "symboldatabase.h"
+        -:   23:#include "tokenize.h"
+        -:   24:
+        -:   25:#include <memory>
+        -:   26:#include <iostream>
+        -:   27:
+function _ZN10ExprEngine3strB5cxx11En called 0 returned 0% blocks executed 0%
+    #####:   28:std::string ExprEngine::str(int128_t value)
+        -:   29:{
+    #####:   30:    std::ostringstream ostr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:   31:#ifdef __GNUC__
+    #####:   32:    if (value == (int)value) {
+branch  0 never executed
+branch  1 never executed
+    #####:   33:        ostr << (int) value;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   34:        return ostr.str();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   35:    }
+    #####:   36:    if (value < 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:   37:        ostr << "-";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   38:        value = -value;
+        -:   39:    }
+        -:   40:
+    #####:   41:    uint64_t high = value >> 64;
+    #####:   42:    uint64_t low = value;
+    #####:   43:    if (high > 0)
+branch  0 never executed
+branch  1 never executed
+    #####:   44:        ostr << "h" << std::hex << high << "l";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:   45:    ostr << std::hex << low;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:   46:#else
+        -:   47:    ostr << value;
+        -:   48:#endif
+    #####:   49:    return ostr.str();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   50:}
+        -:   51:
+        -:   52:static ExprEngine::ValuePtr getValueRangeFromValueType(const std::string &name, const ValueType *vt, const cppcheck::Platform &platform);
+        -:   53:
+        -:   54:namespace {
+function _ZN12_GLOBAL__N_114TrackExecutionD2Ev called 0 returned 0% blocks executed 0%
+    #####:   55:    class TrackExecution {
+call    0 never executed
+        -:   56:    public:
+function _ZN12_GLOBAL__N_114TrackExecutionC2Ev called 0 returned 0% blocks executed 0%
+    #####:   57:        TrackExecution() : mDataIndex(0) {}
+call    0 never executed
+        -:   58:        std::map<const Token *, std::vector<std::string>> map;
+function _ZN12_GLOBAL__N_114TrackExecution15getNewDataIndexEv called 0 returned 0% blocks executed 0%
+    #####:   59:        int getNewDataIndex() {
+    #####:   60:            return mDataIndex++;
+        -:   61:        }
+        -:   62:
+function _ZN12_GLOBAL__N_114TrackExecution8newValueEPK5TokenSt10shared_ptrIN10ExprEngine5ValueEE called 0 returned 0% blocks executed 0%
+    #####:   63:        void newValue(const Token *tok, ExprEngine::ValuePtr value) {
+    #####:   64:            if (!tok)
+branch  0 never executed
+branch  1 never executed
+    #####:   65:                return;
+    #####:   66:            if (!value)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   67:                map[tok].push_back(tok->expressionString() + "=TODO_NO_VALUE");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+        -:   68:            /*
+        -:   69:                        else if (value->name[0] == '$')
+        -:   70:                            map[tok].push_back(tok->expressionString() + "=(" + value->name + "," + value->getRange() + ")");
+        -:   71:                        else
+        -:   72:                            map[tok].push_back(tok->expressionString() + "=" + value->name);
+        -:   73:            */
+        -:   74:        }
+        -:   75:
+function _ZN12_GLOBAL__N_114TrackExecution5stateEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:   76:        void state(const Token *tok, const std::string &s) {
+    #####:   77:            map[tok].push_back(s);
+call    0 never executed
+call    1 never executed
+    #####:   78:        }
+        -:   79:
+function _ZN12_GLOBAL__N_114TrackExecution5printEv called 0 returned 0% blocks executed 0%
+    #####:   80:        void print() {
+    #####:   81:            std::set<std::pair<int,int>> locations;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   82:            for (auto it : map) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:   83:                locations.insert(std::pair<int,int>(it.first->linenr(), it.first->column()));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+        -:   84:            }
+    #####:   85:            for (const std::pair<int,int> &loc : locations) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   86:                int lineNumber = loc.first;
+    #####:   87:                int column = loc.second;
+    #####:   88:                for (auto &it : map) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   89:                    const Token *tok = it.first;
+    #####:   90:                    if (lineNumber != tok->linenr())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   91:                        continue;
+    #####:   92:                    const std::vector<std::string> &dumps = it.second;
+    #####:   93:                    for (const std::string &dump : dumps)
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   94:                        std::cout << lineNumber << ":" << column << ": " << dump << "\n";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+        -:   95:                }
+        -:   96:            }
+    #####:   97:        }
+        -:   98:    private:
+        -:   99:        int mDataIndex;
+        -:  100:    };
+        -:  101:
+function _ZN12_GLOBAL__N_14DataD2Ev called 0 returned 0% blocks executed 0%
+    #####:  102:    class Data {
+call    0 never executed
+        -:  103:    public:
+function _ZN12_GLOBAL__N_14DataC2EPiPK9TokenizerPK8SettingsRKNSt7__debug6vectorISt8functionIFvPK5TokenRKN10ExprEngine5ValueEEESaISJ_EEEPNS_14TrackExecutionE called 0 returned 0% blocks executed 0%
+    #####:  104:        Data(int *symbolValueIndex, const Tokenizer *tokenizer, const Settings *settings, const std::vector<ExprEngine::Callback> &callbacks, TrackExecution *trackExecution)
+    #####:  105:            : symbolValueIndex(symbolValueIndex)
+        -:  106:            , tokenizer(tokenizer)
+        -:  107:            , settings(settings)
+        -:  108:            , callbacks(callbacks)
+        -:  109:            , mTrackExecution(trackExecution)
+    #####:  110:            , mDataIndex(trackExecution->getNewDataIndex()) {}
+call    0 never executed
+call    1 never executed
+        -:  111:        typedef std::map<nonneg int, std::shared_ptr<ExprEngine::Value>> Memory;
+        -:  112:        Memory memory;
+        -:  113:        int * const symbolValueIndex;
+        -:  114:        const Tokenizer * const tokenizer;
+        -:  115:        const Settings * const settings;
+        -:  116:        const std::vector<ExprEngine::Callback> &callbacks;
+        -:  117:
+function _ZN12_GLOBAL__N_14Data7getDataEPK5Tokenb called 0 returned 0% blocks executed 0%
+    #####:  118:        Data getData(const Token *cond, bool trueData) {
+    #####:  119:            Data ret(symbolValueIndex, tokenizer, settings, callbacks, mTrackExecution);
+call    0 never executed
+    #####:  120:            for (Memory::const_iterator mem = memory.cbegin(); mem != memory.cend(); ++mem) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  121:                ret.memory[mem->first] = mem->second;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+        -:  122:
+    #####:  123:                if (cond->isComparisonOp() && cond->astOperand1()->varId() == mem->first && cond->astOperand2()->isNumber()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  124:                    const int128_t rhsValue = MathLib::toLongNumber(cond->astOperand2()->str());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  125:                    if (auto intRange = std::dynamic_pointer_cast<ExprEngine::IntRange>(mem->second)) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  126:                        if (cond->str() == ">") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  127:                            if (trueData && intRange->minValue <= rhsValue) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  128:                                auto val = std::make_shared<ExprEngine::IntRange>(getNewSymbolName(), rhsValue + 1, intRange->maxValue);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  129:                                ret.trackAssignment(cond, val);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  130:                                ret.memory[mem->first] = val;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  131:                            } else if (!trueData && intRange->maxValue > rhsValue) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  132:                                auto val = std::make_shared<ExprEngine::IntRange>(getNewSymbolName(), intRange->minValue, rhsValue);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  133:                                ret.trackAssignment(cond, val);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  134:                                ret.memory[mem->first] = val;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+        -:  135:                            }
+        -:  136:                        }
+        -:  137:                    }
+        -:  138:                }
+        -:  139:            }
+    #####:  140:            return ret;
+call    0 never executed
+        -:  141:        }
+        -:  142:
+function _ZN12_GLOBAL__N_14Data16getNewSymbolNameEv called 0 returned 0% blocks executed 0%
+    #####:  143:        std::string getNewSymbolName() {
+    #####:  144:            return "$" + std::to_string(++(*symbolValueIndex));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  145:        }
+        -:  146:
+function _ZN12_GLOBAL__N_14Data13getArrayValueEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  147:        std::shared_ptr<ExprEngine::ArrayValue> getArrayValue(const Token *tok) {
+    #####:  148:            const Memory::iterator it = memory.find(tok->varId());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  149:            if (it != memory.end())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  150:                return std::dynamic_pointer_cast<ExprEngine::ArrayValue>(it->second);
+call    0 never executed
+call    1 never executed
+    #####:  151:            return std::shared_ptr<ExprEngine::ArrayValue>();
+call    0 never executed
+        -:  152:        }
+        -:  153:
+function _ZN12_GLOBAL__N_14Data8getValueEjPK9ValueTypePK5Token called 0 returned 0% blocks executed 0%
+    #####:  154:        ExprEngine::ValuePtr getValue(unsigned int varId, const ValueType *valueType, const Token *tok) {
+    #####:  155:            const Memory::const_iterator it = memory.find(varId);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  156:            if (it != memory.end())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  157:                return it->second;
+call    0 never executed
+call    1 never executed
+    #####:  158:            if (!valueType)
+branch  0 never executed
+branch  1 never executed
+    #####:  159:                return ExprEngine::ValuePtr();
+call    0 never executed
+    #####:  160:            ExprEngine::ValuePtr value = getValueRangeFromValueType(getNewSymbolName(), valueType, *settings);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  161:            if (value) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  162:                if (tok)
+branch  0 never executed
+branch  1 never executed
+    #####:  163:                    trackAssignment(tok, value);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  164:                memory[varId] = value;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:  165:            }
+    #####:  166:            return value;
+call    0 never executed
+        -:  167:        }
+        -:  168:
+function _ZN12_GLOBAL__N_14Data15trackAssignmentEPK5TokenSt10shared_ptrIN10ExprEngine5ValueEE called 0 returned 0% blocks executed 0%
+    #####:  169:        void trackAssignment(const Token *tok, ExprEngine::ValuePtr value) {
+    #####:  170:            return mTrackExecution->newValue(tok, value);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  171:        }
+        -:  172:
+function _ZN12_GLOBAL__N_14Data17trackProgramStateEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  173:        void trackProgramState(const Token *tok) {
+    #####:  174:            if (memory.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  175:                return;
+    #####:  176:            const SymbolDatabase * const symbolDatabase = tokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  177:            std::ostringstream s;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  178:            s << "{"; // << dataIndex << ":";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  179:            for (auto mem : memory) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  180:                ExprEngine::ValuePtr value = mem.second;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  181:                s << " " << symbolDatabase->getVariableFromVarId(mem.first)->name() << "=";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  182:                if (value->name[0] == '$')
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  183:                    s << "(" << value->name << "," << value->getRange() << ")";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+call   21 never executed
+        -:  184:                else
+    #####:  185:                    s << value->name;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  186:            }
+    #####:  187:            s << "}";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  188:            mTrackExecution->state(tok, s.str());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+        -:  189:        }
+        -:  190:    private:
+        -:  191:        TrackExecution * const mTrackExecution;
+        -:  192:        const int mDataIndex;
+        -:  193:    };
+        -:  194:}
+        -:  195:
+function _ZN10ExprEngine10ArrayValue6assignESt10shared_ptrINS_5ValueEES3_ called 0 returned 0% blocks executed 0%
+    #####:  196:void ExprEngine::ArrayValue::assign(ExprEngine::ValuePtr index, ExprEngine::ValuePtr value)
+        -:  197:{
+    #####:  198:    auto i1 = std::dynamic_pointer_cast<ExprEngine::IntRange>(index);
+call    0 never executed
+call    1 never executed
+    #####:  199:    if (i1) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  200:        if (i1->minValue == i1->maxValue && i1->minValue >= 0 && i1->maxValue < data.size())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  201:            data[i1->minValue] = value;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  202:    }
+    #####:  203:}
+        -:  204:
+function _ZN10ExprEngine10ArrayValue4readESt10shared_ptrINS_5ValueEE called 0 returned 0% blocks executed 0%
+    #####:  205:ExprEngine::ValuePtr ExprEngine::ArrayValue::read(ExprEngine::ValuePtr index)
+        -:  206:{
+    #####:  207:    auto i1 = std::dynamic_pointer_cast<ExprEngine::IntRange>(index);
+call    0 never executed
+call    1 never executed
+    #####:  208:    if (i1) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  209:        if (i1->minValue == i1->maxValue && i1->minValue >= 0 && i1->maxValue < data.size())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  210:            return data[i1->minValue];
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  211:    }
+    #####:  212:    return ExprEngine::ValuePtr();
+call    0 never executed
+        -:  213:}
+        -:  214:
+function _ZNK10ExprEngine11BinOpResult8getRangeB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  215:std::string ExprEngine::BinOpResult::getRange() const
+        -:  216:{
+        -:  217:    int128_t minValue, maxValue;
+    #####:  218:    getRange(&minValue, &maxValue);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  219:    return "[" + str(minValue) + ":" + str(maxValue) + "]";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+call   27 never executed
+        -:  220:}
+        -:  221:
+function _ZNK10ExprEngine11BinOpResult8getRangeEPnS1_ called 0 returned 0% blocks executed 0%
+    #####:  222:void ExprEngine::BinOpResult::getRange(int128_t *minValue, int128_t *maxValue) const
+        -:  223:{
+    #####:  224:    std::map<ValuePtr, int> valueBit;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  225:    // Assign a bit number for each leaf
+    #####:  226:    int bit = 0;
+    #####:  227:    for (ValuePtr v : mLeafs) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  228:        if (auto intRange = std::dynamic_pointer_cast<IntRange>(v)) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  229:            if (intRange->minValue == intRange->maxValue) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  230:                valueBit[v] = 30;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  231:                continue;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  232:            }
+        -:  233:        }
+        -:  234:
+    #####:  235:        valueBit[v] = bit++;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  236:    }
+        -:  237:
+    #####:  238:    if (bit > 24)
+branch  0 never executed
+branch  1 never executed
+    #####:  239:        throw std::runtime_error("Internal error: bits");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  240:
+    #####:  241:    for (int test = 0; test < (1 << bit); ++test) {
+branch  0 never executed
+branch  1 never executed
+    #####:  242:        int128_t result = evaluate(test, valueBit);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  243:        if (test == 0)
+branch  0 never executed
+branch  1 never executed
+    #####:  244:            *minValue = *maxValue = result;
+    #####:  245:        else if (result < *minValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  246:            *minValue = result;
+    #####:  247:        else if (result > *maxValue)
+branch  0 never executed
+branch  1 never executed
+    #####:  248:            *maxValue = result;
+        -:  249:    }
+    #####:  250:}
+        -:  251:
+function _ZNK10ExprEngine11BinOpResult17isIntValueInRangeEi called 0 returned 0% blocks executed 0%
+    #####:  252:bool ExprEngine::BinOpResult::isIntValueInRange(int value) const
+        -:  253:{
+        -:  254:    int128_t minValue, maxValue;
+    #####:  255:    getRange(&minValue, &maxValue);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  256:    return value >= minValue && value <= maxValue;
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  257:}
+        -:  258:
+function _ZNK10ExprEngine11BinOpResult8evaluateEiRKNSt7__debug3mapISt10shared_ptrINS_5ValueEEiSt4lessIS5_ESaISt4pairIKS5_iEEEE called 0 returned 0% blocks executed 0%
+    #####:  259:int128_t ExprEngine::BinOpResult::evaluate(int test, const std::map<ExprEngine::ValuePtr, int> &valueBit) const
+        -:  260:{
+    #####:  261:    const int128_t lhs = evaluateOperand(test, valueBit, op1);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  262:    const int128_t rhs = evaluateOperand(test, valueBit, op2);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  263:    if (binop == "+")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  264:        return lhs + rhs;
+    #####:  265:    if (binop == "-")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  266:        return lhs - rhs;
+    #####:  267:    if (binop == "*")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  268:        return lhs * rhs;
+    #####:  269:    if (binop == "/" && rhs != 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  270:        return lhs / rhs;
+    #####:  271:    if (binop == "%" && rhs != 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  272:        return lhs % rhs;
+    #####:  273:    if (binop == "&")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  274:        return lhs & rhs;
+    #####:  275:    if (binop == "|")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  276:        return lhs | rhs;
+    #####:  277:    if (binop == "^")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  278:        return lhs ^ rhs;
+    #####:  279:    if (binop == "<<")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  280:        return lhs << rhs;
+    #####:  281:    if (binop == ">>")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  282:        return lhs >> rhs;
+    #####:  283:    throw std::runtime_error("Internal error: Unhandled operator;" + binop);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  284:}
+        -:  285:
+function _ZNK10ExprEngine11BinOpResult15evaluateOperandEiRKNSt7__debug3mapISt10shared_ptrINS_5ValueEEiSt4lessIS5_ESaISt4pairIKS5_iEEEES5_ called 0 returned 0% blocks executed 0%
+    #####:  286:int128_t ExprEngine::BinOpResult::evaluateOperand(int test, const std::map<ExprEngine::ValuePtr, int> &valueBit, ExprEngine::ValuePtr value) const
+        -:  287:{
+    #####:  288:    auto binOpResult = std::dynamic_pointer_cast<ExprEngine::BinOpResult>(value);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  289:    if (binOpResult)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  290:        return binOpResult->evaluate(test, valueBit);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  291:
+    #####:  292:    auto it = valueBit.find(value);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  293:    if (it == valueBit.end())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  294:        throw std::runtime_error("Internal error: valueBit not set properly");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  295:
+    #####:  296:    bool valueType = test & (1 << it->second);
+call    0 never executed
+    #####:  297:    if (auto intRange = std::dynamic_pointer_cast<IntRange>(value))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  298:        return valueType ? intRange->minValue : intRange->maxValue;
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  299:    throw std::runtime_error("Internal error: Unhandled value:" + std::to_string((int)value->type()));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+        -:  300:}
+        -:  301:
+        -:  302:// Todo: This is taken from ValueFlow and modified.. we should reuse it
+function _ZL26getValueRangeFromValueTypeRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPK9ValueTypeRKN8cppcheck8PlatformE called 0 returned 0% blocks executed 0%
+    #####:  303:static ExprEngine::ValuePtr getValueRangeFromValueType(const std::string &name, const ValueType *vt, const cppcheck::Platform &platform)
+        -:  304:{
+    #####:  305:    if (!vt || !vt->isIntegral() || vt->pointer)
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  306:        return ExprEngine::ValuePtr();
+call    0 never executed
+        -:  307:
+        -:  308:    int bits;
+    #####:  309:    switch (vt->type) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  310:    case ValueType::Type::BOOL:
+    #####:  311:        bits = 1;
+    #####:  312:        break;
+    #####:  313:    case ValueType::Type::CHAR:
+    #####:  314:        bits = platform.char_bit;
+    #####:  315:        break;
+    #####:  316:    case ValueType::Type::SHORT:
+    #####:  317:        bits = platform.short_bit;
+    #####:  318:        break;
+    #####:  319:    case ValueType::Type::INT:
+    #####:  320:        bits = platform.int_bit;
+    #####:  321:        break;
+    #####:  322:    case ValueType::Type::LONG:
+    #####:  323:        bits = platform.long_bit;
+    #####:  324:        break;
+    #####:  325:    case ValueType::Type::LONGLONG:
+    #####:  326:        bits = platform.long_long_bit;
+    #####:  327:        break;
+    #####:  328:    default:
+    #####:  329:        return ExprEngine::ValuePtr();
+call    0 never executed
+        -:  330:    };
+        -:  331:
+    #####:  332:    if (bits == 1) {
+branch  0 never executed
+branch  1 never executed
+    #####:  333:        return std::make_shared<ExprEngine::IntRange>(name, 0, 1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  334:    } else {
+    #####:  335:        if (vt->sign == ValueType::Sign::UNSIGNED) {
+branch  0 never executed
+branch  1 never executed
+    #####:  336:            return std::make_shared<ExprEngine::IntRange>(name, 0, ((int128_t)1 << bits) - 1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  337:        } else {
+    #####:  338:            return std::make_shared<ExprEngine::IntRange>(name, -((int128_t)1 << (bits - 1)), ((int128_t)1 << (bits - 1)) - 1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  339:        }
+        -:  340:    }
+        -:  341:
+        -:  342:    return ExprEngine::ValuePtr();
+        -:  343:}
+        -:  344:
+function _ZL4callRKNSt7__debug6vectorISt8functionIFvPK5TokenRKN10ExprEngine5ValueEEESaISA_EEES4_St10shared_ptrIS6_E called 0 returned 0% blocks executed 0%
+    #####:  345:static void call(const std::vector<ExprEngine::Callback> &callbacks, const Token *tok, ExprEngine::ValuePtr value)
+        -:  346:{
+    #####:  347:    if (value) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  348:        for (ExprEngine::Callback f : callbacks) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  349:            f(tok, *value);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  350:        }
+        -:  351:    }
+    #####:  352:}
+        -:  353:
+        -:  354:static ExprEngine::ValuePtr executeExpression(const Token *tok, Data &data);
+        -:  355:
+function _ZL13executeReturnPK5TokenRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  356:static ExprEngine::ValuePtr executeReturn(const Token *tok, Data &data)
+        -:  357:{
+    #####:  358:    ExprEngine::ValuePtr retval = executeExpression(tok->astOperand1(), data);
+call    0 never executed
+call    1 never executed
+    #####:  359:    call(data.callbacks, tok, retval);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  360:    return retval;
+        -:  361:}
+        -:  362:
+function _ZL13executeAssignPK5TokenRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  363:static ExprEngine::ValuePtr executeAssign(const Token *tok, Data &data)
+        -:  364:{
+    #####:  365:    ExprEngine::ValuePtr rhsValue = executeExpression(tok->astOperand2(), data);
+call    0 never executed
+call    1 never executed
+    #####:  366:    call(data.callbacks, tok, rhsValue);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  367:
+    #####:  368:    const Token *lhsToken = tok->astOperand1();
+call    0 never executed
+    #####:  369:    data.trackAssignment(lhsToken, rhsValue);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  370:    if (lhsToken->varId() > 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  371:        data.memory[lhsToken->varId()] = rhsValue;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  372:    } else if (lhsToken->str() == "[") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  373:        auto arrayValue = data.getArrayValue(lhsToken->astOperand1());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  374:        if (arrayValue) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  375:            auto indexValue = executeExpression(lhsToken->astOperand2(), data);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  376:            arrayValue->assign(indexValue, rhsValue);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  377:        }
+    #####:  378:    } else if (lhsToken->isUnaryOp("*")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  379:        auto pval = executeExpression(lhsToken->astOperand1(), data);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  380:        if (pval && pval->type() == ExprEngine::ValueType::AddressOfValue) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  381:            auto val = std::dynamic_pointer_cast<ExprEngine::AddressOfValue>(pval);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  382:            if (val)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  383:                data.memory[val->varId] = rhsValue;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+        -:  384:        }
+        -:  385:    }
+    #####:  386:    return rhsValue;
+        -:  387:}
+        -:  388:
+function _ZL19executeFunctionCallPK5TokenRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  389:static ExprEngine::ValuePtr executeFunctionCall(const Token *tok, Data &data)
+        -:  390:{
+    #####:  391:    for (const Token *argtok : getArguments(tok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+    #####:  392:        (void)executeExpression(argtok, data);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  393:    auto val = getValueRangeFromValueType(data.getNewSymbolName(), tok->valueType(), *data.settings);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  394:    call(data.callbacks, tok, val);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  395:    return val;
+        -:  396:}
+        -:  397:
+function _ZL17executeArrayIndexPK5TokenRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  398:static ExprEngine::ValuePtr executeArrayIndex(const Token *tok, Data &data)
+        -:  399:{
+    #####:  400:    auto arrayValue = data.getArrayValue(tok->astOperand1());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  401:    if (arrayValue) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  402:        auto indexValue = executeExpression(tok->astOperand2(), data);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  403:        auto value = arrayValue->read(indexValue);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  404:        call(data.callbacks, tok, value);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  405:        return value;
+call    0 never executed
+        -:  406:    }
+    #####:  407:    return ExprEngine::ValuePtr();
+call    0 never executed
+        -:  408:}
+        -:  409:
+function _ZL10executeDotPK5TokenRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  410:static ExprEngine::ValuePtr executeDot(const Token *tok, Data &data)
+        -:  411:{
+    #####:  412:    if (!tok->astOperand1() || !tok->astOperand1()->varId())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  413:        return ExprEngine::ValuePtr();
+call    0 never executed
+    #####:  414:    std::shared_ptr<ExprEngine::StructValue> structValue = std::dynamic_pointer_cast<ExprEngine::StructValue>(data.getValue(tok->astOperand1()->varId(), nullptr, nullptr));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  415:    if (!structValue)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  416:        return ExprEngine::ValuePtr();
+call    0 never executed
+    #####:  417:    return structValue->getValueOfMember(tok->astOperand2()->str());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  418:}
+        -:  419:
+function _ZL15executeBinaryOpPK5TokenRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  420:static ExprEngine::ValuePtr executeBinaryOp(const Token *tok, Data &data)
+        -:  421:{
+    #####:  422:    ExprEngine::ValuePtr v1 = executeExpression(tok->astOperand1(), data);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  423:    ExprEngine::ValuePtr v2 = executeExpression(tok->astOperand2(), data);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  424:    if (v1 && v2) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  425:        auto result = std::make_shared<ExprEngine::BinOpResult>(tok->str(), v1, v2);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  426:        call(data.callbacks, tok, result);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  427:        return result;
+call    0 never executed
+        -:  428:    }
+    #####:  429:    return ExprEngine::ValuePtr();
+call    0 never executed
+        -:  430:}
+        -:  431:
+function _ZL16executeAddressOfPK5TokenRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  432:static ExprEngine::ValuePtr executeAddressOf(const Token *tok, Data &data)
+        -:  433:{
+    #####:  434:    auto addr = std::make_shared<ExprEngine::AddressOfValue>(data.getNewSymbolName(), tok->astOperand1()->varId());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  435:    call(data.callbacks, tok, addr);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  436:    return addr;
+call    0 never executed
+call    1 never executed
+        -:  437:}
+        -:  438:
+function _ZL12executeDerefPK5TokenRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  439:static ExprEngine::ValuePtr executeDeref(const Token *tok, Data &data)
+        -:  440:{
+    #####:  441:    ExprEngine::ValuePtr pval = executeExpression(tok->astOperand1(), data);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  442:    if (pval) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  443:        auto addressOf = std::dynamic_pointer_cast<ExprEngine::AddressOfValue>(pval);
+call    0 never executed
+call    1 never executed
+    #####:  444:        if (addressOf) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  445:            auto val = data.getValue(addressOf->varId, tok->valueType(), tok);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  446:            call(data.callbacks, tok, val);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  447:            return val;
+call    0 never executed
+        -:  448:        }
+    #####:  449:        auto pointer = std::dynamic_pointer_cast<ExprEngine::PointerValue>(pval);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:  450:        if (pointer) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  451:            auto val = pointer->data;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+    #####:  452:            call(data.callbacks, tok, val);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  453:            return val;
+call    0 never executed
+        -:  454:        }
+        -:  455:    }
+    #####:  456:    return ExprEngine::ValuePtr();
+call    0 never executed
+        -:  457:}
+        -:  458:
+function _ZL15executeVariablePK5TokenRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  459:static ExprEngine::ValuePtr executeVariable(const Token *tok, Data &data)
+        -:  460:{
+    #####:  461:    auto val = data.getValue(tok->varId(), tok->valueType(), tok);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  462:    call(data.callbacks, tok, val);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  463:    return val;
+        -:  464:}
+        -:  465:
+function _ZL13executeNumberPK5Token called 0 returned 0% blocks executed 0%
+    #####:  466:static ExprEngine::ValuePtr executeNumber(const Token *tok)
+        -:  467:{
+    #####:  468:    int128_t value = MathLib::toLongNumber(tok->str());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  469:    return std::make_shared<ExprEngine::IntRange>(tok->str(), value, value);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  470:}
+        -:  471:
+function _ZL17executeExpressionPK5TokenRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  472:static ExprEngine::ValuePtr executeExpression(const Token *tok, Data &data)
+        -:  473:{
+    #####:  474:    if (tok->str() == "return")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  475:        return executeReturn(tok, data);
+call    0 never executed
+        -:  476:
+    #####:  477:    if (tok->str() == "=")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  478:        return executeAssign(tok, data);
+call    0 never executed
+        -:  479:
+    #####:  480:    if (tok->astOperand1() && tok->astOperand2() && tok->str() == "[")
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  481:        return executeArrayIndex(tok, data);
+call    0 never executed
+        -:  482:
+    #####:  483:    if (tok->str() == "(" && tok->astOperand2())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  484:        return executeFunctionCall(tok, data);
+call    0 never executed
+        -:  485:
+    #####:  486:    if (tok->str() == ".")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  487:        return executeDot(tok, data);
+call    0 never executed
+        -:  488:
+    #####:  489:    if (tok->astOperand1() && tok->astOperand2())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  490:        return executeBinaryOp(tok, data);
+call    0 never executed
+        -:  491:
+    #####:  492:    if (tok->isUnaryOp("&") && Token::Match(tok->astOperand1(), "%var%"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+branch 21 never executed
+branch 22 never executed
+branch 23 never executed
+branch 24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+call   29 never executed
+    #####:  493:        return executeAddressOf(tok, data);
+call    0 never executed
+        -:  494:
+    #####:  495:    if (tok->isUnaryOp("*"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+    #####:  496:        return executeDeref(tok, data);
+call    0 never executed
+        -:  497:
+    #####:  498:    if (tok->varId())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  499:        return executeVariable(tok, data);
+call    0 never executed
+        -:  500:
+    #####:  501:    if (tok->isNumber())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  502:        return executeNumber(tok);
+call    0 never executed
+        -:  503:
+    #####:  504:    return ExprEngine::ValuePtr();
+call    0 never executed
+        -:  505:}
+        -:  506:
+function _ZL7executePK5TokenS1_RN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  507:static void execute(const Token *start, const Token *end, Data &data)
+        -:  508:{
+    #####:  509:    for (const Token *tok = start; tok != end; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  510:        if (tok->str() == ";")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  511:            data.trackProgramState(tok);
+call    0 never executed
+    #####:  512:        if (tok->variable() && tok->variable()->nameToken() == tok) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  513:            if (tok->variable()->isArray() && tok->variable()->dimensions().size() == 1 && tok->variable()->dimensions()[0].known) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+    #####:  514:                data.memory[tok->varId()] = std::make_shared<ExprEngine::ArrayValue>(data.getNewSymbolName(), tok->variable()->dimension(0));
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -:  515:            }
+    #####:  516:            if (Token::Match(tok, "%name% ["))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  517:                tok = tok->linkAt(1);
+call    0 never executed
+        -:  518:        }
+    #####:  519:        if (!tok->astParent() && (tok->astOperand1() || tok->astOperand2()))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  520:            executeExpression(tok, data);
+call    0 never executed
+call    1 never executed
+        -:  521:
+    #####:  522:        if (Token::simpleMatch(tok, "if (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  523:            const Token *cond = tok->next()->astOperand2();
+call    0 never executed
+call    1 never executed
+    #####:  524:            /*const ExprEngine::ValuePtr condValue =*/ executeExpression(cond,data);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  525:            Data trueData = data.getData(cond, true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  526:            Data falseData = data.getData(cond, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  527:            const Token *thenStart = tok->linkAt(1)->next();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  528:            const Token *thenEnd = thenStart->link();
+call    0 never executed
+    #####:  529:            execute(thenStart->next(), end, trueData);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  530:            if (Token::simpleMatch(thenEnd, "} else {")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  531:                const Token *elseStart = thenEnd->tokAt(2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  532:                execute(elseStart->next(), end, falseData);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  533:            } else {
+    #####:  534:                execute(thenEnd->next(), end, falseData);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  535:            }
+    #####:  536:            return;
+        -:  537:        }
+        -:  538:
+    #####:  539:        if (Token::simpleMatch(tok, "} else {"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  540:            tok = tok->linkAt(2);
+call    0 never executed
+        -:  541:    }
+        -:  542:}
+        -:  543:
+function _ZN10ExprEngine19executeAllFunctionsEPK9TokenizerPK8SettingsRKNSt7__debug6vectorISt8functionIFvPK5TokenRKNS_5ValueEEESaISG_EEE called 0 returned 0% blocks executed 0%
+    #####:  544:void ExprEngine::executeAllFunctions(const Tokenizer *tokenizer, const Settings *settings, const std::vector<ExprEngine::Callback> &callbacks)
+        -:  545:{
+    #####:  546:    const SymbolDatabase *symbolDatabase = tokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  547:    for (const Scope *functionScope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  548:        executeFunction(functionScope, tokenizer, settings, callbacks);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  549:    }
+    #####:  550:}
+        -:  551:
+        -:  552:static ExprEngine::ValuePtr createVariableValue(const Variable &var, Data &data);
+        -:  553:
+function _ZL15createStructValPK5ScopeRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  554:static ExprEngine::ValuePtr createStructVal(const Scope *structScope, Data &data)
+        -:  555:{
+    #####:  556:    std::shared_ptr<ExprEngine::StructValue> structValue = std::make_shared<ExprEngine::StructValue>(data.getNewSymbolName());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  557:    for (const Variable &member : structScope->varlist) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  558:        ExprEngine::ValuePtr memberValue = createVariableValue(member, data);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  559:        if (memberValue)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  560:            structValue->member[member.name()] = memberValue;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+        -:  561:    }
+    #####:  562:    return structValue;
+call    0 never executed
+call    1 never executed
+        -:  563:}
+        -:  564:
+function _ZL19createVariableValueRK8VariableRN12_GLOBAL__N_14DataE called 0 returned 0% blocks executed 0%
+    #####:  565:static ExprEngine::ValuePtr createVariableValue(const Variable &var, Data &data)
+        -:  566:{
+    #####:  567:    if (!var.nameToken() || !var.valueType())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  568:        return ExprEngine::ValuePtr();
+call    0 never executed
+    #####:  569:    if (var.valueType()->pointer > 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  570:        return std::make_shared<ExprEngine::PointerValue>(data.getNewSymbolName(), std::make_shared<ExprEngine::UninitValue>());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+    #####:  571:    if (var.valueType()->isIntegral())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  572:        return getValueRangeFromValueType(data.getNewSymbolName(), var.valueType(), *data.settings);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  573:    if (var.valueType()->type == ValueType::Type::RECORD)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  574:        return createStructVal(var.valueType()->typeScope, data);
+call    0 never executed
+call    1 never executed
+    #####:  575:    return ExprEngine::ValuePtr();
+call    0 never executed
+        -:  576:}
+        -:  577:
+function _ZN10ExprEngine15executeFunctionEPK5ScopePK9TokenizerPK8SettingsRKNSt7__debug6vectorISt8functionIFvPK5TokenRKNS_5ValueEEESaISJ_EEE called 0 returned 0% blocks executed 0%
+    #####:  578:void ExprEngine::executeFunction(const Scope *functionScope, const Tokenizer *tokenizer, const Settings *settings, const std::vector<ExprEngine::Callback> &callbacks)
+        -:  579:{
+    #####:  580:    if (!functionScope->bodyStart)
+branch  0 never executed
+branch  1 never executed
+    #####:  581:        return;
+    #####:  582:    const Function *function = functionScope->function;
+    #####:  583:    if (!function)
+branch  0 never executed
+branch  1 never executed
+    #####:  584:        return;
+        -:  585:
+    #####:  586:    int symbolValueIndex = 0;
+    #####:  587:    TrackExecution trackExecution;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  588:    Data data(&symbolValueIndex, tokenizer, settings, callbacks, &trackExecution);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  589:
+    #####:  590:    for (const Variable &arg : function->argumentList) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  591:        ValuePtr val = createVariableValue(arg, data);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  592:        if (val) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  593:            data.trackAssignment(arg.nameToken(), val);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  594:            data.memory[arg.declarationId()] = val;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+        -:  595:        }
+        -:  596:    }
+        -:  597:
+    #####:  598:    execute(functionScope->bodyStart, functionScope->bodyEnd, data);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  599:
+    #####:  600:    if (settings->verification) {
+branch  0 never executed
+branch  1 never executed
+        -:  601:        // TODO generate better output!!
+    #####:  602:        trackExecution.print();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  603:    }
+        -:  604:}
+        -:  605:
+function _ZN10ExprEngine9runChecksEP11ErrorLoggerPK9TokenizerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  606:void ExprEngine::runChecks(ErrorLogger *errorLogger, const Tokenizer *tokenizer, const Settings *settings)
+        -:  607:{
+function _ZZN10ExprEngine9runChecksEP11ErrorLoggerPK9TokenizerPK8SettingsENKUlPK5TokenRKNS_5ValueEE_clESA_SD_ called 0 returned 0% blocks executed 0%
+    #####:  608:    std::function<void(const Token *, const ExprEngine::Value &)> divByZero = [&](const Token *tok, const ExprEngine::Value &value) {
+    #####:  609:        if (!Token::simpleMatch(tok->astParent(), "/"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  610:            return;
+    #####:  611:        if (tok->astParent()->astOperand2() == tok && value.isIntValueInRange(0)) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  612:            std::list<const Token*> callstack{tok->astParent()};
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  613:            ErrorLogger::ErrorMessage errmsg(callstack, &tokenizer->list, Severity::SeverityType::error, "verificationDivByZero", "Division by zero", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  614:            errorLogger->reportErr(errmsg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  615:        }
+    #####:  616:    };
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  617:
+function _ZZN10ExprEngine9runChecksEP11ErrorLoggerPK9TokenizerPK8SettingsENKUlPK5TokenRKNS_5ValueEE0_clESA_SD_ called 0 returned 0% blocks executed 0%
+    #####:  618:    std::function<void(const Token *, const ExprEngine::Value &)> integerOverflow = [&](const Token *tok, const ExprEngine::Value &value) {
+        -:  619:        // Integer overflow..
+    #####:  620:        if (value.type() != ExprEngine::ValueType::BinOpResult)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  621:            return;
+call    0 never executed
+    #####:  622:        if (!tok->valueType() || tok->valueType()->pointer != 0 || tok->valueType()->type != ::ValueType::Type::INT)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  623:            return;
+    #####:  624:        const ExprEngine::BinOpResult &b = static_cast<const ExprEngine::BinOpResult &>(value);
+        -:  625:        int128_t minValue, maxValue;
+    #####:  626:        b.getRange(&minValue, &maxValue);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  627:        if (tok->valueType()->sign == ::ValueType::Sign::UNSIGNED && (minValue < 0 || maxValue >= (1LL << 32))) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  628:            std::list<const Token*> callstack{tok};
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  629:            ErrorLogger::ErrorMessage errmsg(callstack, &tokenizer->list, Severity::SeverityType::warning, "verificationIntegerOverflow", "Unsigned integer overflow", false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+    #####:  630:            errorLogger->reportErr(errmsg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  631:        }
+    #####:  632:    };
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  633:    std::vector<ExprEngine::Callback> callbacks;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  634:    callbacks.push_back(divByZero);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  635:    callbacks.push_back(integerOverflow);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  636:    ExprEngine::executeAllFunctions(tokenizer, settings, callbacks);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+function _GLOBAL__sub_I__ZN10ExprEngine3strB5cxx11En called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 100%
+        3:  637:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%

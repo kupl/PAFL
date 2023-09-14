@@ -1,0 +1,420 @@
+        -:    0:Source:/home/workspace/lib/checkexceptionsafety.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkexceptionsafety.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checkexceptionsafety.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19://---------------------------------------------------------------------------
+        -:   20:#ifndef checkexceptionsafetyH
+        -:   21:#define checkexceptionsafetyH
+        -:   22://---------------------------------------------------------------------------
+        -:   23:
+        -:   24:#include "check.h"
+        -:   25:#include "config.h"
+        -:   26:#include "errorlogger.h"
+        -:   27:#include "token.h"
+        -:   28:#include "tokenize.h"
+        -:   29:#include "utils.h"
+        -:   30:
+        -:   31:#include <list>
+        -:   32:#include <string>
+        -:   33:
+        -:   34:class Settings;
+        -:   35:
+        -:   36:// CWE ID used:
+        1:   37:static const struct CWE CWE398(398U);   // Indicator of Poor Code Quality
+call    0 returned 100%
+        1:   38:static const struct CWE CWE703(703U);   // Improper Check or Handling of Exceptional Conditions
+call    0 returned 100%
+        -:   39:
+        -:   40:
+        -:   41:/// @addtogroup Checks
+        -:   42:/// @{
+        -:   43:
+        -:   44:
+        -:   45:/**
+        -:   46: * @brief %Check exception safety (exceptions shouldn't cause leaks nor corrupt data)
+        -:   47: *
+        -:   48: * The problem with these checks is that Cppcheck can't determine what the valid
+        -:   49: * values are for variables. But in some cases (dead pointers) it can be determined
+        -:   50: * that certain variable values are corrupt.
+        -:   51: */
+        -:   52:
+function _ZN20CheckExceptionSafetyD0Ev called 0 returned 0% blocks executed 0%
+function _ZN20CheckExceptionSafetyD2Ev called 0 returned 0% blocks executed 0%
+    #####:   53:class CPPCHECKLIB CheckExceptionSafety : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   54:public:
+        -:   55:    /** This constructor is used when registering the CheckClass */
+function _ZN20CheckExceptionSafetyC2Ev called 1 returned 100% blocks executed 71%
+        1:   56:    CheckExceptionSafety() : Check(myName()) {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 never executed
+        1:   57:    }
+        -:   58:
+        -:   59:    /** This constructor is used when running checks. */
+function _ZN20CheckExceptionSafetyC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   60:    CheckExceptionSafety(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:   61:        : Check(myName(), tokenizer, settings, errorLogger) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   62:    }
+        -:   63:
+function _ZN20CheckExceptionSafety9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   64:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:   65:        if (tokenizer->isC())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   66:            return;
+        -:   67:
+    #####:   68:        CheckExceptionSafety checkExceptionSafety(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   69:        checkExceptionSafety.destructors();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   70:        checkExceptionSafety.deallocThrow();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   71:        checkExceptionSafety.checkRethrowCopy();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   72:        checkExceptionSafety.checkCatchExceptionByValue();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   73:        checkExceptionSafety.nothrowThrows();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   74:        checkExceptionSafety.unhandledExceptionSpecification();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   75:    }
+        -:   76:
+        -:   77:    /** Don't throw exceptions in destructors */
+        -:   78:    void destructors();
+        -:   79:
+        -:   80:    /** deallocating memory and then throw (dead pointer) */
+        -:   81:    void deallocThrow();
+        -:   82:
+        -:   83:    /** Don't rethrow a copy of the caught exception; use a bare throw instead */
+        -:   84:    void checkRethrowCopy();
+        -:   85:
+        -:   86:    /** @brief %Check for exceptions that are caught by value instead of by reference */
+        -:   87:    void checkCatchExceptionByValue();
+        -:   88:
+        -:   89:    /** @brief %Check for functions that throw that shouldn't */
+        -:   90:    void nothrowThrows();
+        -:   91:
+        -:   92:    /** @brief %Check for unhandled exception specification */
+        -:   93:    void unhandledExceptionSpecification();
+        -:   94:
+        -:   95:private:
+        -:   96:    /** Don't throw exceptions in destructors */
+function _ZN20CheckExceptionSafety16destructorsErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:   97:    void destructorsError(const Token * const tok, const std::string &className) {
+    #####:   98:        reportError(tok, Severity::warning, "exceptThrowInDestructor",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   99:                    "Class " + className + " is not safe, destructor throws exception\n"
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  100:                    "The class " + className + " is not safe because its destructor "
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  101:                    "throws an exception. If " + className + " is used and an exception "
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+        -:  102:                    "is thrown that is caught in an outer scope the program will terminate.", CWE398, false);
+    #####:  103:    }
+        -:  104:
+function _ZN20CheckExceptionSafety17deallocThrowErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  105:    void deallocThrowError(const Token * const tok, const std::string &varname) {
+    #####:  106:        reportError(tok, Severity::warning, "exceptDeallocThrow", "Exception thrown in invalid state, '" +
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  107:                    varname + "' points at deallocated memory.", CWE398, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  108:    }
+        -:  109:
+function _ZN20CheckExceptionSafety16rethrowCopyErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  110:    void rethrowCopyError(const Token * const tok, const std::string &varname) {
+    #####:  111:        reportError(tok, Severity::style, "exceptRethrowCopy",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  112:                    "Throwing a copy of the caught exception instead of rethrowing the original exception.\n"
+    #####:  113:                    "Rethrowing an exception with 'throw " + varname + ";' creates an unnecessary copy of '" + varname + "'. "
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+        -:  114:                    "To rethrow the caught exception without unnecessary copying or slicing, use a bare 'throw;'.", CWE398, false);
+    #####:  115:    }
+        -:  116:
+function _ZN20CheckExceptionSafety26catchExceptionByValueErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  117:    void catchExceptionByValueError(const Token *tok) {
+    #####:  118:        reportError(tok, Severity::style,
+call    0 never executed
+        -:  119:                    "catchExceptionByValue", "Exception should be caught by reference.\n"
+        -:  120:                    "The exception is caught by value. It could be caught "
+        -:  121:                    "as a (const) reference which is usually recommended in C++.", CWE398, false);
+    #####:  122:    }
+        -:  123:
+function _ZN20CheckExceptionSafety18noexceptThrowErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:  124:    void noexceptThrowError(const Token * const tok) {
+    #####:  125:        reportError(tok, Severity::error, "throwInNoexceptFunction", "Exception thrown in function declared not to throw exceptions.", CWE398, false);
+call    0 never executed
+    #####:  126:    }
+        -:  127:
+        -:  128:    /** Missing exception specification */
+function _ZN20CheckExceptionSafety36unhandledExceptionSpecificationErrorEPK5TokenS2_RKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  129:    void unhandledExceptionSpecificationError(const Token * const tok1, const Token * const tok2, const std::string & funcname) {
+    #####:  130:        const std::string str1(tok1 ? tok1->str() : "foo");
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    #####:  131:        const std::list<const Token*> locationList = { tok1, tok2 };
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  132:        reportError(locationList, Severity::style, "unhandledExceptionSpecification",
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  133:                    "Unhandled exception specification when calling function " + str1 + "().\n"
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  134:                    "Unhandled exception specification when calling function " + str1 + "(). "
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  135:                    "Either use a try/catch around the function call, or add a exception specification for " + funcname + "() also.", CWE703, true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  136:    }
+        -:  137:
+        -:  138:    /** Generate all possible errors (for --errorlist) */
+function _ZNK20CheckExceptionSafety16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  139:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:  140:        CheckExceptionSafety c(nullptr, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  141:        c.destructorsError(nullptr, "Class");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  142:        c.deallocThrowError(nullptr, "p");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  143:        c.rethrowCopyError(nullptr, "varname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  144:        c.catchExceptionByValueError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  145:        c.noexceptThrowError(nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  146:        c.unhandledExceptionSpecificationError(nullptr, nullptr, "funcname");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  147:    }
+        -:  148:
+        -:  149:    /** Short description of class (for --doc) */
+function _ZN20CheckExceptionSafety6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  150:    static std::string myName() {
+    #####:  151:        return "Exception Safety";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  152:    }
+        -:  153:
+        -:  154:    /** wiki formatted description of the class (for --doc) */
+function _ZNK20CheckExceptionSafety9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  155:    std::string classInfo() const OVERRIDE {
+        -:  156:        return "Checking exception safety\n"
+        -:  157:               "- Throwing exceptions in destructors\n"
+        -:  158:               "- Throwing exception during invalid state\n"
+        -:  159:               "- Throwing a copy of a caught exception instead of rethrowing the original exception\n"
+        -:  160:               "- Exception caught by value instead of by reference\n"
+        -:  161:               "- Throwing exception in noexcept, nothrow(), __attribute__((nothrow)) or __declspec(nothrow) function\n"
+    #####:  162:               "- Unhandled exception specification when calling function foo()\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  163:    }
+        -:  164:};
+        -:  165:/// @}
+        -:  166://---------------------------------------------------------------------------
+        -:  167:#endif // checkexceptionsafetyH

@@ -1,0 +1,260 @@
+        -:    0:Source:/home/workspace/lib/checknullpointer.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checknullpointer.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checknullpointer.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#ifndef checknullpointerH
+        -:   22:#define checknullpointerH
+        -:   23://---------------------------------------------------------------------------
+        -:   24:
+        -:   25:#include "check.h"
+        -:   26:#include "config.h"
+        -:   27:#include "ctu.h"
+        -:   28:#include "valueflow.h"
+        -:   29:
+        -:   30:#include <list>
+        -:   31:#include <string>
+        -:   32:
+        -:   33:class ErrorLogger;
+        -:   34:class Library;
+        -:   35:class Settings;
+        -:   36:class Token;
+        -:   37:class Tokenizer;
+        -:   38:
+        -:   39:
+        -:   40:/// @addtogroup Checks
+        -:   41:/// @{
+        -:   42:
+        -:   43:
+        -:   44:/** @brief check for null pointer dereferencing */
+        -:   45:
+function _ZN16CheckNullPointerD0Ev called 0 returned 0% blocks executed 0%
+function _ZN16CheckNullPointerD2Ev called 0 returned 0% blocks executed 0%
+    #####:   46:class CPPCHECKLIB CheckNullPointer : public Check {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   47:public:
+        -:   48:    /** @brief This constructor is used when registering the CheckNullPointer */
+function _ZN16CheckNullPointerC2Ev called 0 returned 0% blocks executed 0%
+    #####:   49:    CheckNullPointer() : Check(myName()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   50:    }
+        -:   51:
+        -:   52:    /** @brief This constructor is used when running checks. */
+function _ZN16CheckNullPointerC2EPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   53:    CheckNullPointer(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+    #####:   54:        : Check(myName(), tokenizer, settings, errorLogger) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:   55:    }
+        -:   56:
+        -:   57:    /** @brief Run checks against the normal token list */
+function _ZN16CheckNullPointer9runChecksEPK9TokenizerPK8SettingsP11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:   58:    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) OVERRIDE {
+    #####:   59:        CheckNullPointer checkNullPointer(tokenizer, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   60:        checkNullPointer.nullPointer();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   61:        checkNullPointer.arithmetic();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   62:        checkNullPointer.nullConstantDereference();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   63:    }
+        -:   64:
+        -:   65:    /**
+        -:   66:     * @brief parse a function call and extract information about variable usage
+        -:   67:     * @param tok first token
+        -:   68:     * @param var variables that the function read / write.
+        -:   69:     * @param library --library files data
+        -:   70:     */
+        -:   71:    static void parseFunctionCall(const Token &tok,
+        -:   72:                                  std::list<const Token *> &var,
+        -:   73:                                  const Library *library);
+        -:   74:
+        -:   75:    /**
+        -:   76:     * Is there a pointer dereference? Everything that should result in
+        -:   77:     * a nullpointer dereference error message will result in a true
+        -:   78:     * return value. If it's unknown if the pointer is dereferenced false
+        -:   79:     * is returned.
+        -:   80:     * @param tok token for the pointer
+        -:   81:     * @param unknown it is not known if there is a pointer dereference (could be reported as a debug message)
+        -:   82:     * @return true => there is a dereference
+        -:   83:     */
+        -:   84:    bool isPointerDeRef(const Token *tok, bool &unknown) const;
+        -:   85:
+        -:   86:    static bool isPointerDeRef(const Token *tok, bool &unknown, const Settings *settings);
+        -:   87:
+        -:   88:    /** @brief possible null pointer dereference */
+        -:   89:    void nullPointer();
+        -:   90:
+        -:   91:    /** @brief dereferencing null constant (after Tokenizer::simplifyKnownVariables) */
+        -:   92:    void nullConstantDereference();
+        -:   93:
+function _ZN16CheckNullPointer16nullPointerErrorEPK5Token called 0 returned 0% blocks executed 0%
+    #####:   94:    void nullPointerError(const Token *tok) {
+    #####:   95:        ValueFlow::Value v(0);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   96:        v.setKnown();
+call    0 never executed
+    #####:   97:        nullPointerError(tok, "", &v, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:   98:    }
+        -:   99:    void nullPointerError(const Token *tok, const std::string &varname, const ValueFlow::Value* value, bool inconclusive);
+        -:  100:
+        -:  101:    /* data for multifile checking */
+function _ZN16CheckNullPointer10MyFileInfoD0Ev called 0 returned 0% blocks executed 0%
+function _ZN16CheckNullPointer10MyFileInfoD2Ev called 0 returned 0% blocks executed 0%
+function _ZN16CheckNullPointer10MyFileInfoC2Ev called 0 returned 0% blocks executed 0%
+    #####:  102:    class MyFileInfo : public Check::FileInfo {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  103:    public:
+        -:  104:        /** function arguments that are dereferenced without checking if they are null */
+        -:  105:        std::list<CTU::FileInfo::UnsafeUsage> unsafeUsage;
+        -:  106:
+        -:  107:        /** Convert MyFileInfo data into xml string */
+        -:  108:        std::string toString() const OVERRIDE;
+        -:  109:    };
+        -:  110:
+        -:  111:    /** @brief Parse current TU and extract file info */
+        -:  112:    Check::FileInfo *getFileInfo(const Tokenizer *tokenizer, const Settings *settings) const OVERRIDE;
+        -:  113:
+        -:  114:    Check::FileInfo * loadFileInfoFromXml(const tinyxml2::XMLElement *xmlElement) const OVERRIDE;
+        -:  115:
+        -:  116:    /** @brief Analyse all file infos for all TU */
+        -:  117:    bool analyseWholeProgram(const CTU::FileInfo *ctu, const std::list<Check::FileInfo*> &fileInfo, const Settings& settings, ErrorLogger &errorLogger) OVERRIDE;
+        -:  118:
+        -:  119:private:
+        -:  120:    /** Get error messages. Used by --errorlist */
+function _ZNK16CheckNullPointer16getErrorMessagesEP11ErrorLoggerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  121:    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const OVERRIDE {
+    #####:  122:        CheckNullPointer c(nullptr, settings, errorLogger);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  123:        c.nullPointerError(nullptr, "pointer", nullptr, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  124:        c.pointerArithmeticError(nullptr, nullptr, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  125:        c.redundantConditionWarning(nullptr, nullptr, nullptr, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  126:    }
+        -:  127:
+        -:  128:    /** Name of check */
+function _ZN16CheckNullPointer6myNameB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  129:    static std::string myName() {
+    #####:  130:        return "Null pointer";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  131:    }
+        -:  132:
+        -:  133:    /** class info in WIKI format. Used by --doc */
+function _ZNK16CheckNullPointer9classInfoB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  134:    std::string classInfo() const OVERRIDE {
+        -:  135:        return "Null pointers\n"
+        -:  136:               "- null pointer dereferencing\n"
+    #####:  137:               "- undefined null pointer arithmetic\n";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  138:    }
+        -:  139:
+        -:  140:    /**
+        -:  141:     * @brief Does one part of the check for nullPointer().
+        -:  142:     * looping through items in a linked list in a inner loop..
+        -:  143:     */
+        -:  144:    void nullPointerLinkedList();
+        -:  145:
+        -:  146:    /**
+        -:  147:     * @brief Does one part of the check for nullPointer().
+        -:  148:     * Dereferencing a pointer and then checking if it's NULL..
+        -:  149:     */
+        -:  150:    void nullPointerByDeRefAndChec();
+        -:  151:
+        -:  152:    /** undefined null pointer arithmetic */
+        -:  153:    void arithmetic();
+        -:  154:    void pointerArithmeticError(const Token* tok, const ValueFlow::Value *value, bool inconclusive);
+        -:  155:    void redundantConditionWarning(const Token* tok, const ValueFlow::Value *value, const Token *condition, bool inconclusive);
+        -:  156:};
+        -:  157:/// @}
+        -:  158://---------------------------------------------------------------------------
+        -:  159:#endif // checknullpointerH

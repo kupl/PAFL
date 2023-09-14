@@ -1,0 +1,1681 @@
+        -:    0:Source:/home/workspace/externals/picojson.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/importproject.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/importproject.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Copyright 2009-2010 Cybozu Labs, Inc.
+        -:    3: * Copyright 2011-2014 Kazuho Oku
+        -:    4: * All rights reserved.
+        -:    5: *
+        -:    6: * Redistribution and use in source and binary forms, with or without
+        -:    7: * modification, are permitted provided that the following conditions are met:
+        -:    8: *
+        -:    9: * 1. Redistributions of source code must retain the above copyright notice,
+        -:   10: *    this list of conditions and the following disclaimer.
+        -:   11: *
+        -:   12: * 2. Redistributions in binary form must reproduce the above copyright notice,
+        -:   13: *    this list of conditions and the following disclaimer in the documentation
+        -:   14: *    and/or other materials provided with the distribution.
+        -:   15: *
+        -:   16: * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+        -:   17: * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+        -:   18: * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+        -:   19: * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+        -:   20: * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+        -:   21: * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+        -:   22: * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+        -:   23: * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+        -:   24: * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+        -:   25: * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+        -:   26: * POSSIBILITY OF SUCH DAMAGE.
+        -:   27: */
+        -:   28:#ifndef picojson_h
+        -:   29:#define picojson_h
+        -:   30:
+        -:   31:#include <algorithm>
+        -:   32:#include <cstdio>
+        -:   33:#include <cstdlib>
+        -:   34:#include <cstring>
+        -:   35:#include <iostream>
+        -:   36:#include <iterator>
+        -:   37:#include <limits>
+        -:   38:#include <map>
+        -:   39:#include <stdexcept>
+        -:   40:#include <string>
+        -:   41:#include <vector>
+        -:   42:
+        -:   43:// for isnan/isinf
+        -:   44:#if __cplusplus>=201103L
+        -:   45:# include <cmath>
+        -:   46:#else
+        -:   47:extern "C" {
+        -:   48:# ifdef _MSC_VER
+        -:   49:#  include <float.h>
+        -:   50:# elif defined(__INTEL_COMPILER)
+        -:   51:#  include <mathimf.h>
+        -:   52:# else
+        -:   53:#  include <math.h>
+        -:   54:# endif
+        -:   55:}
+        -:   56:#endif
+        -:   57:
+        -:   58:// experimental support for int64_t (see README.mkdn for detail)
+        -:   59:#ifdef PICOJSON_USE_INT64
+        -:   60:# define __STDC_FORMAT_MACROS
+        -:   61:# include <errno.h>
+        -:   62:# include <inttypes.h>
+        -:   63:#endif
+        -:   64:
+        -:   65:// to disable the use of localeconv(3), set PICOJSON_USE_LOCALE to 0
+        -:   66:#ifndef PICOJSON_USE_LOCALE
+        -:   67:# define PICOJSON_USE_LOCALE 1
+        -:   68:#endif
+        -:   69:#if PICOJSON_USE_LOCALE
+        -:   70:extern "C" {
+        -:   71:# include <locale.h>
+        -:   72:}
+        -:   73:#endif
+        -:   74:
+        -:   75:#ifndef PICOJSON_ASSERT
+        -:   76:# define PICOJSON_ASSERT(e) do { if (! (e)) throw std::runtime_error(#e); } while (0)
+        -:   77:#endif
+        -:   78:
+        -:   79:#ifdef _MSC_VER
+        -:   80:    #define SNPRINTF _snprintf_s
+        -:   81:    #pragma warning(push)
+        -:   82:    #pragma warning(disable : 4244) // conversion from int to char
+        -:   83:    #pragma warning(disable : 4127) // conditional expression is constant
+        -:   84:    #pragma warning(disable : 4702) // unreachable code
+        -:   85:#else
+        -:   86:    #define SNPRINTF snprintf
+        -:   87:#endif
+        -:   88:
+        -:   89:namespace picojson {
+        -:   90:  
+        -:   91:  enum {
+        -:   92:    null_type,
+        -:   93:    boolean_type,
+        -:   94:    number_type,
+        -:   95:    string_type,
+        -:   96:    array_type,
+        -:   97:    object_type
+        -:   98:#ifdef PICOJSON_USE_INT64
+        -:   99:    , int64_type
+        -:  100:#endif
+        -:  101:  };
+        -:  102:  
+        -:  103:  enum {
+        -:  104:    INDENT_WIDTH = 2
+        -:  105:  };
+        -:  106:
+        -:  107:  struct null {};
+        -:  108:  
+        -:  109:  class value {
+        -:  110:  public:
+        -:  111:    typedef std::vector<value> array;
+        -:  112:    typedef std::map<std::string, value> object;
+        -:  113:    union _storage {
+        -:  114:      bool boolean_;
+        -:  115:      double number_;
+        -:  116:#ifdef PICOJSON_USE_INT64
+        -:  117:      int64_t int64_;
+        -:  118:#endif
+        -:  119:      std::string* string_;
+        -:  120:      array* array_;
+        -:  121:      object* object_;
+        -:  122:    };
+        -:  123:  protected:
+        -:  124:    int type_;
+        -:  125:    _storage u_;
+        -:  126:  public:
+        -:  127:    value();
+        -:  128:    value(int type, bool);
+        -:  129:    explicit value(bool b);
+        -:  130:#ifdef PICOJSON_USE_INT64
+        -:  131:    explicit value(int64_t i);
+        -:  132:#endif
+        -:  133:    explicit value(double n);
+        -:  134:    explicit value(const std::string& s);
+        -:  135:    explicit value(const array& a);
+        -:  136:    explicit value(const object& o);
+        -:  137:    explicit value(const char* s);
+        -:  138:    value(const char* s, size_t len);
+        -:  139:    ~value();
+        -:  140:    value(const value& x);
+        -:  141:    value& operator=(const value& x);
+        -:  142:    void swap(value& x);
+        -:  143:    template <typename T> bool is() const;
+        -:  144:    template <typename T> const T& get() const;
+        -:  145:    template <typename T> T& get();
+        -:  146:    bool evaluate_as_boolean() const;
+        -:  147:    const value& get(size_t idx) const;
+        -:  148:    const value& get(const std::string& key) const;
+        -:  149:    value& get(size_t idx);
+        -:  150:    value& get(const std::string& key);
+        -:  151:
+        -:  152:    bool contains(size_t idx) const;
+        -:  153:    bool contains(const std::string& key) const;
+        -:  154:    std::string to_str() const;
+        -:  155:    template <typename Iter> void serialize(Iter os, bool prettify = false) const;
+        -:  156:    std::string serialize(bool prettify = false) const;
+        -:  157:  private:
+        -:  158:    template <typename T> value(const T*); // intentionally defined to block implicit conversion of pointer to bool
+        -:  159:    template <typename Iter> static void _indent(Iter os, int indent);
+        -:  160:    template <typename Iter> void _serialize(Iter os, int indent) const;
+        -:  161:    std::string _serialize(int indent) const;
+        -:  162:  };
+        -:  163:  
+        -:  164:  typedef value::array array;
+        -:  165:  typedef value::object object;
+        -:  166:  
+function _ZN8picojson5valueC2Ev called 0 returned 0% blocks executed 0%
+    #####:  167:  inline value::value() : type_(null_type) {}
+        -:  168:  
+function _ZN8picojson5valueC2Eib called 0 returned 0% blocks executed 0%
+    #####:  169:  inline value::value(int type, bool) : type_(type) {
+    #####:  170:    switch (type) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  171:#define INIT(p, v) case p##type: u_.p = v; break
+    #####:  172:      INIT(boolean_, false);
+    #####:  173:      INIT(number_, 0.0);
+        -:  174:#ifdef PICOJSON_USE_INT64
+    #####:  175:      INIT(int64_, 0);
+        -:  176:#endif
+    #####:  177:      INIT(string_, new std::string());
+call    0 never executed
+call    1 never executed
+    #####:  178:      INIT(array_, new array());
+call    0 never executed
+call    1 never executed
+    #####:  179:      INIT(object_, new object());
+call    0 never executed
+call    1 never executed
+        -:  180:#undef INIT
+    #####:  181:    default: break;
+        -:  182:    }
+    #####:  183:  }
+        -:  184:  
+function _ZN8picojson5valueC2Eb called 0 returned 0% blocks executed 0%
+    #####:  185:  inline value::value(bool b) : type_(boolean_type) {
+    #####:  186:    u_.boolean_ = b;
+    #####:  187:  }
+        -:  188:
+        -:  189:#ifdef PICOJSON_USE_INT64
+function _ZN8picojson5valueC2El called 0 returned 0% blocks executed 0%
+    #####:  190:  inline value::value(int64_t i) : type_(int64_type) {
+    #####:  191:    u_.int64_ = i;
+    #####:  192:  }
+        -:  193:#endif
+        -:  194:
+function _ZN8picojson5valueC2Ed called 0 returned 0% blocks executed 0%
+    #####:  195:  inline value::value(double n) : type_(number_type) {
+    #####:  196:    if (
+branch  0 never executed
+branch  1 never executed
+        -:  197:#ifdef _MSC_VER
+        -:  198:        ! _finite(n)
+        -:  199:#elif __cplusplus>=201103L || !(defined(isnan) && defined(isinf))
+    #####:  200:		std::isnan(n) || std::isinf(n)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  201:#else
+        -:  202:        isnan(n) || isinf(n)
+        -:  203:#endif
+        -:  204:        ) {
+    #####:  205:      throw std::overflow_error("");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  206:    }
+    #####:  207:    u_.number_ = n;
+    #####:  208:  }
+        -:  209:  
+        -:  210:  inline value::value(const std::string& s) : type_(string_type) {
+        -:  211:    u_.string_ = new std::string(s);
+        -:  212:  }
+        -:  213:  
+        -:  214:  inline value::value(const array& a) : type_(array_type) {
+        -:  215:    u_.array_ = new array(a);
+        -:  216:  }
+        -:  217:  
+        -:  218:  inline value::value(const object& o) : type_(object_type) {
+        -:  219:    u_.object_ = new object(o);
+        -:  220:  }
+        -:  221:  
+        -:  222:  inline value::value(const char* s) : type_(string_type) {
+        -:  223:    u_.string_ = new std::string(s);
+        -:  224:  }
+        -:  225:  
+        -:  226:  inline value::value(const char* s, size_t len) : type_(string_type) {
+        -:  227:    u_.string_ = new std::string(s, len);
+        -:  228:  }
+        -:  229:  
+function _ZN8picojson5valueD2Ev called 0 returned 0% blocks executed 0%
+    #####:  230:  inline value::~value() {
+    #####:  231:    switch (type_) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  232:#define DEINIT(p) case p##type: delete u_.p; break
+    #####:  233:      DEINIT(string_);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+    #####:  234:      DEINIT(array_);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+    #####:  235:      DEINIT(object_);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+        -:  236:#undef DEINIT
+    #####:  237:    default: break;
+        -:  238:    }
+    #####:  239:  }
+        -:  240:  
+function _ZN8picojson5valueC2ERKS0_ called 0 returned 0% blocks executed 0%
+    #####:  241:  inline value::value(const value& x) : type_(x.type_) {
+    #####:  242:    switch (type_) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  243:#define INIT(p, v) case p##type: u_.p = v; break
+    #####:  244:      INIT(string_, new std::string(*x.u_.string_));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  245:      INIT(array_, new array(*x.u_.array_));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  246:      INIT(object_, new object(*x.u_.object_));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+        -:  247:#undef INIT
+    #####:  248:    default:
+    #####:  249:      u_ = x.u_;
+    #####:  250:      break;
+        -:  251:    }
+    #####:  252:  }
+        -:  253:  
+function _ZN8picojson5valueaSERKS0_ called 0 returned 0% blocks executed 0%
+    #####:  254:  inline value& value::operator=(const value& x) {
+    #####:  255:    if (this != &x) {
+branch  0 never executed
+branch  1 never executed
+    #####:  256:      value t(x);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  257:      swap(t);
+call    0 never executed
+        -:  258:    }
+    #####:  259:    return *this;
+        -:  260:  }
+        -:  261:  
+function _ZN8picojson5value4swapERS0_ called 0 returned 0% blocks executed 0%
+    #####:  262:  inline void value::swap(value& x) {
+    #####:  263:    std::swap(type_, x.type_);
+call    0 never executed
+    #####:  264:    std::swap(u_, x.u_);
+call    0 never executed
+    #####:  265:  }
+        -:  266:  
+        -:  267:#define IS(ctype, jtype)			     \
+        -:  268:  template <> inline bool value::is<ctype>() const { \
+        -:  269:    return type_ == jtype##_type;		     \
+        -:  270:  }
+        -:  271:  IS(null, null)
+        -:  272:  IS(bool, boolean)
+        -:  273:#ifdef PICOJSON_USE_INT64
+        -:  274:  IS(int64_t, int64)
+        -:  275:#endif
+function _ZNK8picojson5value2isINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEbv called 0 returned 0% blocks executed 0%
+    #####:  276:  IS(std::string, string)
+function _ZNK8picojson5value2isINSt7__debug6vectorIS0_SaIS0_EEEEEbv called 0 returned 0% blocks executed 0%
+    #####:  277:  IS(array, array)
+function _ZNK8picojson5value2isINSt7__debug3mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES0_St4lessIS9_ESaISt4pairIKS9_S0_EEEEEEbv called 0 returned 0% blocks executed 0%
+    #####:  278:  IS(object, object)
+        -:  279:#undef IS
+        -:  280:  template <> inline bool value::is<double>() const {
+        -:  281:    return type_ == number_type
+        -:  282:#ifdef PICOJSON_USE_INT64
+        -:  283:      || type_ == int64_type
+        -:  284:#endif
+        -:  285:      ;
+        -:  286:  }
+        -:  287:  
+        -:  288:#define GET(ctype, var)						\
+        -:  289:  template <> inline const ctype& value::get<ctype>() const {	\
+        -:  290:    PICOJSON_ASSERT("type mismatch! call is<type>() before get<type>()" \
+        -:  291:	   && is<ctype>());				        \
+        -:  292:    return var;							\
+        -:  293:  }								\
+        -:  294:  template <> inline ctype& value::get<ctype>() {		\
+        -:  295:    PICOJSON_ASSERT("type mismatch! call is<type>() before get<type>()"	\
+        -:  296:	   && is<ctype>());					\
+        -:  297:    return var;							\
+        -:  298:  }
+        -:  299:  GET(bool, u_.boolean_)
+function _ZN8picojson5value3getINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEERT_v called 0 returned 0% blocks executed 0%
+function _ZNK8picojson5value3getINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEERKT_v called 0 returned 0% blocks executed 0%
+    #####:  300:  GET(std::string, *u_.string_)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+call   17 never executed
+function _ZN8picojson5value3getINSt7__debug6vectorIS0_SaIS0_EEEEERT_v called 0 returned 0% blocks executed 0%
+    #####:  301:  GET(array, *u_.array_)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+function _ZN8picojson5value3getINSt7__debug3mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES0_St4lessIS9_ESaISt4pairIKS9_S0_EEEEEERT_v called 0 returned 0% blocks executed 0%
+function _ZNK8picojson5value3getINSt7__debug3mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES0_St4lessIS9_ESaISt4pairIKS9_S0_EEEEEERKT_v called 0 returned 0% blocks executed 0%
+    #####:  302:  GET(object, *u_.object_)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+call   17 never executed
+        -:  303:#ifdef PICOJSON_USE_INT64
+        -:  304:  GET(double, (type_ == int64_type && (const_cast<value*>(this)->type_ = number_type, const_cast<value*>(this)->u_.number_ = u_.int64_), u_.number_))
+        -:  305:  GET(int64_t, u_.int64_)
+        -:  306:#else
+        -:  307:  GET(double, u_.number_)
+        -:  308:#endif
+        -:  309:#undef GET
+        -:  310:  
+        -:  311:  inline bool value::evaluate_as_boolean() const {
+        -:  312:    switch (type_) {
+        -:  313:    case null_type:
+        -:  314:      return false;
+        -:  315:    case boolean_type:
+        -:  316:      return u_.boolean_;
+        -:  317:    case number_type:
+        -:  318:      return u_.number_ != 0;
+        -:  319:    case string_type:
+        -:  320:      return ! u_.string_->empty();
+        -:  321:    default:
+        -:  322:      return true;
+        -:  323:    }
+        -:  324:  }
+        -:  325:  
+        -:  326:  inline const value& value::get(size_t idx) const {
+        -:  327:    static value s_null;
+        -:  328:    PICOJSON_ASSERT(is<array>());
+        -:  329:    return idx < u_.array_->size() ? (*u_.array_)[idx] : s_null;
+        -:  330:  }
+        -:  331:
+        -:  332:  inline value& value::get(size_t idx) {
+        -:  333:    static value s_null;
+        -:  334:    PICOJSON_ASSERT(is<array>());
+        -:  335:    return idx < u_.array_->size() ? (*u_.array_)[idx] : s_null;
+        -:  336:  }
+        -:  337:
+        -:  338:  inline const value& value::get(const std::string& key) const {
+        -:  339:    static value s_null;
+        -:  340:    PICOJSON_ASSERT(is<object>());
+        -:  341:    object::const_iterator i = u_.object_->find(key);
+        -:  342:    return i != u_.object_->end() ? i->second : s_null;
+        -:  343:  }
+        -:  344:
+        -:  345:  inline value& value::get(const std::string& key) {
+        -:  346:    static value s_null;
+        -:  347:    PICOJSON_ASSERT(is<object>());
+        -:  348:    object::iterator i = u_.object_->find(key);
+        -:  349:    return i != u_.object_->end() ? i->second : s_null;
+        -:  350:  }
+        -:  351:
+        -:  352:  inline bool value::contains(size_t idx) const {
+        -:  353:    PICOJSON_ASSERT(is<array>());
+        -:  354:    return idx < u_.array_->size();
+        -:  355:  }
+        -:  356:
+        -:  357:  inline bool value::contains(const std::string& key) const {
+        -:  358:    PICOJSON_ASSERT(is<object>());
+        -:  359:    object::const_iterator i = u_.object_->find(key);
+        -:  360:    return i != u_.object_->end();
+        -:  361:  }
+        -:  362:  
+        -:  363:  inline std::string value::to_str() const {
+        -:  364:    switch (type_) {
+        -:  365:    case null_type:      return "null";
+        -:  366:    case boolean_type:   return u_.boolean_ ? "true" : "false";
+        -:  367:#ifdef PICOJSON_USE_INT64
+        -:  368:    case int64_type: {
+        -:  369:      char buf[sizeof("-9223372036854775808")];
+        -:  370:      SNPRINTF(buf, sizeof(buf), "%" PRId64, u_.int64_);
+        -:  371:      return buf;
+        -:  372:    }
+        -:  373:#endif
+        -:  374:    case number_type:    {
+        -:  375:      char buf[256];
+        -:  376:      double tmp;
+        -:  377:      SNPRINTF(buf, sizeof(buf), fabs(u_.number_) < (1ULL << 53) && modf(u_.number_, &tmp) == 0 ? "%.f" : "%.17g", u_.number_);
+        -:  378:#if PICOJSON_USE_LOCALE
+        -:  379:      char *decimal_point = localeconv()->decimal_point;
+        -:  380:      if (strcmp(decimal_point, ".") != 0) {
+        -:  381:        size_t decimal_point_len = strlen(decimal_point);
+        -:  382:        for (char *p = buf; *p != '\0'; ++p) {
+        -:  383:          if (strncmp(p, decimal_point, decimal_point_len) == 0) {
+        -:  384:            return std::string(buf, p) + "." + (p + decimal_point_len);
+        -:  385:          }
+        -:  386:        }
+        -:  387:      }
+        -:  388:#endif
+        -:  389:      return buf;
+        -:  390:    }
+        -:  391:    case string_type:    return *u_.string_;
+        -:  392:    case array_type:     return "array";
+        -:  393:    case object_type:    return "object";
+        -:  394:    default:             PICOJSON_ASSERT(0);
+        -:  395:#ifdef _MSC_VER
+        -:  396:      __assume(0);
+        -:  397:#endif
+        -:  398:    }
+        -:  399:    return std::string();
+        -:  400:  }
+        -:  401:  
+        -:  402:  template <typename Iter> void copy(const std::string& s, Iter oi) {
+        -:  403:    std::copy(s.begin(), s.end(), oi);
+        -:  404:  }
+        -:  405:  
+        -:  406:  template <typename Iter> void serialize_str(const std::string& s, Iter oi) {
+        -:  407:    *oi++ = '"';
+        -:  408:    for (std::string::const_iterator i = s.begin(); i != s.end(); ++i) {
+        -:  409:      switch (*i) {
+        -:  410:#define MAP(val, sym) case val: copy(sym, oi); break
+        -:  411:	MAP('"', "\\\"");
+        -:  412:	MAP('\\', "\\\\");
+        -:  413:	MAP('/', "\\/");
+        -:  414:	MAP('\b', "\\b");
+        -:  415:	MAP('\f', "\\f");
+        -:  416:	MAP('\n', "\\n");
+        -:  417:	MAP('\r', "\\r");
+        -:  418:	MAP('\t', "\\t");
+        -:  419:#undef MAP
+        -:  420:      default:
+        -:  421:	if (static_cast<unsigned char>(*i) < 0x20 || *i == 0x7f) {
+        -:  422:	  char buf[7];
+        -:  423:	  SNPRINTF(buf, sizeof(buf), "\\u%04x", *i & 0xff);
+        -:  424:	  copy(buf, buf + 6, oi);
+        -:  425:	  } else {
+        -:  426:	  *oi++ = *i;
+        -:  427:	}
+        -:  428:	break;
+        -:  429:      }
+        -:  430:    }
+        -:  431:    *oi++ = '"';
+        -:  432:  }
+        -:  433:
+        -:  434:  template <typename Iter> void value::serialize(Iter oi, bool prettify) const {
+        -:  435:    return _serialize(oi, prettify ? 0 : -1);
+        -:  436:  }
+        -:  437:  
+        -:  438:  inline std::string value::serialize(bool prettify) const {
+        -:  439:    return _serialize(prettify ? 0 : -1);
+        -:  440:  }
+        -:  441:
+        -:  442:  template <typename Iter> void value::_indent(Iter oi, int indent) {
+        -:  443:    *oi++ = '\n';
+        -:  444:    for (int i = 0; i < indent * INDENT_WIDTH; ++i) {
+        -:  445:      *oi++ = ' ';
+        -:  446:    }
+        -:  447:  }
+        -:  448:
+        -:  449:  template <typename Iter> void value::_serialize(Iter oi, int indent) const {
+        -:  450:    switch (type_) {
+        -:  451:    case string_type:
+        -:  452:      serialize_str(*u_.string_, oi);
+        -:  453:      break;
+        -:  454:    case array_type: {
+        -:  455:      *oi++ = '[';
+        -:  456:      if (indent != -1) {
+        -:  457:        ++indent;
+        -:  458:      }
+        -:  459:      for (array::const_iterator i = u_.array_->begin();
+        -:  460:           i != u_.array_->end();
+        -:  461:           ++i) {
+        -:  462:	if (i != u_.array_->begin()) {
+        -:  463:	  *oi++ = ',';
+        -:  464:	}
+        -:  465:        if (indent != -1) {
+        -:  466:          _indent(oi, indent);
+        -:  467:        }
+        -:  468:	i->_serialize(oi, indent);
+        -:  469:      }
+        -:  470:      if (indent != -1) {
+        -:  471:        --indent;
+        -:  472:        if (! u_.array_->empty()) {
+        -:  473:          _indent(oi, indent);
+        -:  474:        }
+        -:  475:      }
+        -:  476:      *oi++ = ']';
+        -:  477:      break;
+        -:  478:    }
+        -:  479:    case object_type: {
+        -:  480:      *oi++ = '{';
+        -:  481:      if (indent != -1) {
+        -:  482:        ++indent;
+        -:  483:      }
+        -:  484:      for (object::const_iterator i = u_.object_->begin();
+        -:  485:	   i != u_.object_->end();
+        -:  486:	   ++i) {
+        -:  487:	if (i != u_.object_->begin()) {
+        -:  488:	  *oi++ = ',';
+        -:  489:	}
+        -:  490:        if (indent != -1) {
+        -:  491:          _indent(oi, indent);
+        -:  492:        }
+        -:  493:	serialize_str(i->first, oi);
+        -:  494:	*oi++ = ':';
+        -:  495:        if (indent != -1) {
+        -:  496:          *oi++ = ' ';
+        -:  497:        }
+        -:  498:        i->second._serialize(oi, indent);
+        -:  499:      }
+        -:  500:      if (indent != -1) {
+        -:  501:        --indent;
+        -:  502:        if (! u_.object_->empty()) {
+        -:  503:          _indent(oi, indent);
+        -:  504:        }
+        -:  505:      }
+        -:  506:      *oi++ = '}';
+        -:  507:      break;
+        -:  508:    }
+        -:  509:    default:
+        -:  510:      copy(to_str(), oi);
+        -:  511:      break;
+        -:  512:    }
+        -:  513:    if (indent == 0) {
+        -:  514:      *oi++ = '\n';
+        -:  515:    }
+        -:  516:  }
+        -:  517:  
+        -:  518:  inline std::string value::_serialize(int indent) const {
+        -:  519:    std::string s;
+        -:  520:    _serialize(std::back_inserter(s), indent);
+        -:  521:    return s;
+        -:  522:  }
+        -:  523:  
+        -:  524:  template <typename Iter> class input {
+        -:  525:  protected:
+        -:  526:    Iter cur_, end_;
+        -:  527:    int last_ch_;
+        -:  528:    bool ungot_;
+        -:  529:    int line_;
+        -:  530:  public:
+function _ZN8picojson5inputISt19istreambuf_iteratorIcSt11char_traitsIcEEEC2ERKS4_S7_ called 0 returned 0% blocks executed 0%
+    #####:  531:    input(const Iter& first, const Iter& last) : cur_(first), end_(last), last_ch_(-1), ungot_(false), line_(1) {}
+function _ZN8picojson5inputISt19istreambuf_iteratorIcSt11char_traitsIcEEE4getcEv called 0 returned 0% blocks executed 0%
+    #####:  532:    int getc() {
+    #####:  533:      if (ungot_) {
+branch  0 never executed
+branch  1 never executed
+    #####:  534:	ungot_ = false;
+    #####:  535:	return last_ch_;
+        -:  536:      }
+    #####:  537:      if (cur_ == end_) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  538:	last_ch_ = -1;
+    #####:  539:	return -1;
+        -:  540:      }
+    #####:  541:      if (last_ch_ == '\n') {
+branch  0 never executed
+branch  1 never executed
+    #####:  542:	line_++;
+        -:  543:      }
+    #####:  544:      last_ch_ = *cur_ & 0xff;
+call    0 never executed
+    #####:  545:      ++cur_;
+call    0 never executed
+    #####:  546:      return last_ch_;
+        -:  547:    }
+function _ZN8picojson5inputISt19istreambuf_iteratorIcSt11char_traitsIcEEE6ungetcEv called 0 returned 0% blocks executed 0%
+    #####:  548:    void ungetc() {
+    #####:  549:      if (last_ch_ != -1) {
+branch  0 never executed
+branch  1 never executed
+    #####:  550:	PICOJSON_ASSERT(! ungot_);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  551:	ungot_ = true;
+        -:  552:      }
+    #####:  553:    }
+function _ZNK8picojson5inputISt19istreambuf_iteratorIcSt11char_traitsIcEEE3curEv called 0 returned 0% blocks executed 0%
+    #####:  554:    Iter cur() const { return cur_; }
+function _ZNK8picojson5inputISt19istreambuf_iteratorIcSt11char_traitsIcEEE4lineEv called 0 returned 0% blocks executed 0%
+    #####:  555:    int line() const { return line_; }
+function _ZN8picojson5inputISt19istreambuf_iteratorIcSt11char_traitsIcEEE7skip_wsEv called 0 returned 0% blocks executed 0%
+    #####:  556:    void skip_ws() {
+    #####:  557:      while (1) {
+    #####:  558:	int ch = getc();
+call    0 never executed
+    #####:  559:	if (! (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  560:	  ungetc();
+call    0 never executed
+    #####:  561:	  break;
+        -:  562:	}
+        -:  563:      }
+    #####:  564:    }
+function _ZN8picojson5inputISt19istreambuf_iteratorIcSt11char_traitsIcEEE6expectEi called 0 returned 0% blocks executed 0%
+    #####:  565:    bool expect(int expect) {
+    #####:  566:      skip_ws();
+call    0 never executed
+    #####:  567:      if (getc() != expect) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  568:	ungetc();
+call    0 never executed
+    #####:  569:	return false;
+        -:  570:      }
+    #####:  571:      return true;
+        -:  572:    }
+function _ZN8picojson5inputISt19istreambuf_iteratorIcSt11char_traitsIcEEE5matchERKNSt7__cxx1112basic_stringIcS3_SaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  573:    bool match(const std::string& pattern) {
+    #####:  574:      for (std::string::const_iterator pi(pattern.begin());
+call    0 never executed
+call    1 never executed
+    #####:  575:	   pi != pattern.end();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  576:	   ++pi) {
+    #####:  577:	if (getc() != *pi) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  578:	  ungetc();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  579:	  return false;
+        -:  580:	}
+        -:  581:      }
+    #####:  582:      return true;
+        -:  583:    }
+        -:  584:  };
+        -:  585:  
+function _ZN8picojson14_parse_quadhexISt19istreambuf_iteratorIcSt11char_traitsIcEEEEiRNS_5inputIT_EE called 0 returned 0% blocks executed 0%
+    #####:  586:  template<typename Iter> inline int _parse_quadhex(input<Iter> &in) {
+    #####:  587:    int uni_ch = 0, hex;
+    #####:  588:    for (int i = 0; i < 4; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  589:      if ((hex = in.getc()) == -1) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  590:	return -1;
+        -:  591:      }
+    #####:  592:      if ('0' <= hex && hex <= '9') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  593:	hex -= '0';
+    #####:  594:      } else if ('A' <= hex && hex <= 'F') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  595:	hex -= 'A' - 0xa;
+    #####:  596:      } else if ('a' <= hex && hex <= 'f') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  597:	hex -= 'a' - 0xa;
+        -:  598:      } else {
+    #####:  599:	in.ungetc();
+call    0 never executed
+    #####:  600:	return -1;
+        -:  601:      }
+    #####:  602:      uni_ch = uni_ch * 16 + hex;
+        -:  603:    }
+    #####:  604:    return uni_ch;
+        -:  605:  }
+        -:  606:  
+function _ZN8picojson16_parse_codepointINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt19istreambuf_iteratorIcS4_EEEbRT_RNS_5inputIT0_EE called 0 returned 0% blocks executed 0%
+    #####:  607:  template<typename String, typename Iter> inline bool _parse_codepoint(String& out, input<Iter>& in) {
+        -:  608:    int uni_ch;
+    #####:  609:    if ((uni_ch = _parse_quadhex(in)) == -1) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  610:      return false;
+        -:  611:    }
+    #####:  612:    if (0xd800 <= uni_ch && uni_ch <= 0xdfff) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  613:      if (0xdc00 <= uni_ch) {
+branch  0 never executed
+branch  1 never executed
+        -:  614:	// a second 16-bit of a surrogate pair appeared
+    #####:  615:	return false;
+        -:  616:      }
+        -:  617:      // first 16-bit of surrogate pair, get the next one
+    #####:  618:      if (in.getc() != '\\' || in.getc() != 'u') {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  619:	in.ungetc();
+call    0 never executed
+    #####:  620:	return false;
+        -:  621:      }
+    #####:  622:      int second = _parse_quadhex(in);
+call    0 never executed
+    #####:  623:      if (! (0xdc00 <= second && second <= 0xdfff)) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  624:	return false;
+        -:  625:      }
+    #####:  626:      uni_ch = ((uni_ch - 0xd800) << 10) | ((second - 0xdc00) & 0x3ff);
+    #####:  627:      uni_ch += 0x10000;
+        -:  628:    }
+    #####:  629:    if (uni_ch < 0x80) {
+branch  0 never executed
+branch  1 never executed
+    #####:  630:      out.push_back(uni_ch);
+call    0 never executed
+        -:  631:    } else {
+    #####:  632:      if (uni_ch < 0x800) {
+branch  0 never executed
+branch  1 never executed
+    #####:  633:	out.push_back(0xc0 | (uni_ch >> 6));
+call    0 never executed
+        -:  634:      } else {
+    #####:  635:	if (uni_ch < 0x10000) {
+branch  0 never executed
+branch  1 never executed
+    #####:  636:	  out.push_back(0xe0 | (uni_ch >> 12));
+call    0 never executed
+        -:  637:	} else {
+    #####:  638:	  out.push_back(0xf0 | (uni_ch >> 18));
+call    0 never executed
+    #####:  639:	  out.push_back(0x80 | ((uni_ch >> 12) & 0x3f));
+call    0 never executed
+        -:  640:	}
+    #####:  641:	out.push_back(0x80 | ((uni_ch >> 6) & 0x3f));
+call    0 never executed
+        -:  642:      }
+    #####:  643:      out.push_back(0x80 | (uni_ch & 0x3f));
+call    0 never executed
+        -:  644:    }
+    #####:  645:    return true;
+        -:  646:  }
+        -:  647:  
+function _ZN8picojson13_parse_stringINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt19istreambuf_iteratorIcS4_EEEbRT_RNS_5inputIT0_EE called 0 returned 0% blocks executed 0%
+    #####:  648:  template<typename String, typename Iter> inline bool _parse_string(String& out, input<Iter>& in) {
+    #####:  649:    while (1) {
+    #####:  650:      int ch = in.getc();
+call    0 never executed
+    #####:  651:      if (ch < ' ') {
+branch  0 never executed
+branch  1 never executed
+    #####:  652:	in.ungetc();
+call    0 never executed
+    #####:  653:	return false;
+    #####:  654:      } else if (ch == '"') {
+branch  0 never executed
+branch  1 never executed
+    #####:  655:	return true;
+    #####:  656:      } else if (ch == '\\') {
+branch  0 never executed
+branch  1 never executed
+    #####:  657:	if ((ch = in.getc()) == -1) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  658:	  return false;
+        -:  659:	}
+    #####:  660:	switch (ch) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+        -:  661:#define MAP(sym, val) case sym: out.push_back(val); break
+    #####:  662:	  MAP('"', '\"');
+call    0 never executed
+    #####:  663:	  MAP('\\', '\\');
+call    0 never executed
+    #####:  664:	  MAP('/', '/');
+call    0 never executed
+    #####:  665:	  MAP('b', '\b');
+call    0 never executed
+    #####:  666:	  MAP('f', '\f');
+call    0 never executed
+    #####:  667:	  MAP('n', '\n');
+call    0 never executed
+    #####:  668:	  MAP('r', '\r');
+call    0 never executed
+    #####:  669:	  MAP('t', '\t');
+call    0 never executed
+        -:  670:#undef MAP
+    #####:  671:	case 'u':
+    #####:  672:	  if (! _parse_codepoint(out, in)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  673:	    return false;
+        -:  674:	  }
+    #####:  675:	  break;
+    #####:  676:	default:
+    #####:  677:	  return false;
+        -:  678:	}
+        -:  679:      } else {
+    #####:  680:	out.push_back(ch);
+call    0 never executed
+        -:  681:      }
+        -:  682:    }
+        -:  683:    return false;
+        -:  684:  }
+        -:  685:  
+function _ZN8picojson12_parse_arrayINS_21default_parse_contextESt19istreambuf_iteratorIcSt11char_traitsIcEEEEbRT_RNS_5inputIT0_EE called 0 returned 0% blocks executed 0%
+    #####:  686:  template <typename Context, typename Iter> inline bool _parse_array(Context& ctx, input<Iter>& in) {
+    #####:  687:    if (! ctx.parse_array_start()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  688:      return false;
+        -:  689:    }
+    #####:  690:    size_t idx = 0;
+    #####:  691:    if (in.expect(']')) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  692:      return ctx.parse_array_stop(idx);
+call    0 never executed
+        -:  693:    }
+    #####:  694:    do {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  695:      if (! ctx.parse_array_item(in, idx)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  696:	return false;
+        -:  697:      }
+    #####:  698:      idx++;
+        -:  699:    } while (in.expect(','));
+    #####:  700:    return in.expect(']') && ctx.parse_array_stop(idx);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  701:  }
+        -:  702:  
+function _ZN8picojson13_parse_objectINS_21default_parse_contextESt19istreambuf_iteratorIcSt11char_traitsIcEEEEbRT_RNS_5inputIT0_EE called 0 returned 0% blocks executed 0%
+    #####:  703:  template <typename Context, typename Iter> inline bool _parse_object(Context& ctx, input<Iter>& in) {
+    #####:  704:    if (! ctx.parse_object_start()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  705:      return false;
+        -:  706:    }
+    #####:  707:    if (in.expect('}')) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  708:      return true;
+        -:  709:    }
+    #####:  710:    do {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  711:      std::string key;
+call    0 never executed
+call    1 never executed
+    #####:  712:      if (! in.expect('"')
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  713:	  || ! _parse_string(key, in)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  714:	  || ! in.expect(':')) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  715:	return false;
+        -:  716:      }
+    #####:  717:      if (! ctx.parse_object_item(in, key)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  718:	return false;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  719:      }
+        -:  720:    } while (in.expect(','));
+    #####:  721:    return in.expect('}');
+call    0 never executed
+        -:  722:  }
+        -:  723:  
+function _ZN8picojson13_parse_numberISt19istreambuf_iteratorIcSt11char_traitsIcEEEENSt7__cxx1112basic_stringIcS3_SaIcEEERNS_5inputIT_EE called 0 returned 0% blocks executed 0%
+    #####:  724:  template <typename Iter> inline std::string _parse_number(input<Iter>& in) {
+    #####:  725:    std::string num_str;
+call    0 never executed
+    #####:  726:    while (1) {
+    #####:  727:      int ch = in.getc();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  728:      if (('0' <= ch && ch <= '9') || ch == '+' || ch == '-'
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  729:          || ch == 'e' || ch == 'E') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  730:        num_str.push_back(ch);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  731:      } else if (ch == '.') {
+branch  0 never executed
+branch  1 never executed
+        -:  732:#if PICOJSON_USE_LOCALE
+    #####:  733:        num_str += localeconv()->decimal_point;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  734:#else
+        -:  735:        num_str.push_back('.');
+        -:  736:#endif
+        -:  737:      } else {
+    #####:  738:	in.ungetc();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  739:	break;
+        -:  740:      }
+        -:  741:    }
+    #####:  742:    return num_str;
+call    0 never executed
+        -:  743:  }
+        -:  744:  
+function _ZN8picojson6_parseINS_21default_parse_contextESt19istreambuf_iteratorIcSt11char_traitsIcEEEEbRT_RNS_5inputIT0_EE called 0 returned 0% blocks executed 0%
+    #####:  745:  template <typename Context, typename Iter> inline bool _parse(Context& ctx, input<Iter>& in) {
+    #####:  746:    in.skip_ws();
+call    0 never executed
+    #####:  747:    int ch = in.getc();
+call    0 never executed
+    #####:  748:    switch (ch) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  749:#define IS(ch, text, op) case ch: \
+        -:  750:      if (in.match(text) && op) { \
+        -:  751:	return true; \
+        -:  752:      } else { \
+        -:  753:	return false; \
+        -:  754:      }
+    #####:  755:      IS('n', "ull", ctx.set_null());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+call   28 never executed
+    #####:  756:      IS('f', "alse", ctx.set_bool(false));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+call   28 never executed
+    #####:  757:      IS('t', "rue", ctx.set_bool(true));
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+call   28 never executed
+        -:  758:#undef IS
+    #####:  759:    case '"':
+    #####:  760:      return ctx.parse_string(in);
+call    0 never executed
+    #####:  761:    case '[':
+    #####:  762:      return _parse_array(ctx, in);
+call    0 never executed
+    #####:  763:    case '{':
+    #####:  764:      return _parse_object(ctx, in);
+call    0 never executed
+    #####:  765:    default:
+    #####:  766:      if (('0' <= ch && ch <= '9') || ch == '-') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  767:        double f;
+        -:  768:        char *endp;
+    #####:  769:	in.ungetc();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  770:        std::string num_str = _parse_number(in);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  771:        if (num_str.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  772:          return false;
+        -:  773:        }
+        -:  774:#ifdef PICOJSON_USE_INT64
+        -:  775:        {
+    #####:  776:          errno = 0;
+    #####:  777:          intmax_t ival = strtoimax(num_str.c_str(), &endp, 10);
+call    0 never executed
+call    1 never executed
+    #####:  778:          if (errno == 0
+branch  0 never executed
+branch  1 never executed
+    #####:  779:              && std::numeric_limits<int64_t>::min() <= ival
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  780:              && ival <= std::numeric_limits<int64_t>::max()
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  781:              && endp == num_str.c_str() + num_str.size()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  782:            ctx.set_int64(ival);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  783:            return true;
+        -:  784:          }
+        -:  785:        }
+        -:  786:#endif
+    #####:  787:        f = strtod(num_str.c_str(), &endp);
+call    0 never executed
+call    1 never executed
+    #####:  788:        if (endp == num_str.c_str() + num_str.size()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  789:          ctx.set_number(f);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  790:          return true;
+        -:  791:        }
+    #####:  792:        return false;
+        -:  793:      }
+    #####:  794:      break;
+        -:  795:    }
+    #####:  796:    in.ungetc();
+call    0 never executed
+    #####:  797:    return false;
+        -:  798:  }
+        -:  799:  
+        -:  800:  class deny_parse_context {
+        -:  801:  public:
+        -:  802:    bool set_null() { return false; }
+        -:  803:    bool set_bool(bool) { return false; }
+        -:  804:#ifdef PICOJSON_USE_INT64
+        -:  805:    bool set_int64(int64_t) { return false; }
+        -:  806:#endif
+        -:  807:    bool set_number(double) { return false; }
+        -:  808:    template <typename Iter> bool parse_string(input<Iter>&) { return false; }
+        -:  809:    bool parse_array_start() { return false; }
+        -:  810:    template <typename Iter> bool parse_array_item(input<Iter>&, size_t) {
+        -:  811:      return false;
+        -:  812:    }
+        -:  813:    bool parse_array_stop(size_t) { return false; }
+        -:  814:    bool parse_object_start() { return false; }
+        -:  815:    template <typename Iter> bool parse_object_item(input<Iter>&, const std::string&) {
+        -:  816:      return false;
+        -:  817:    }
+        -:  818:  };
+        -:  819:  
+        -:  820:  class default_parse_context {
+        -:  821:  protected:
+        -:  822:    value* out_;
+        -:  823:  public:
+function _ZN8picojson21default_parse_contextC2EPNS_5valueE called 0 returned 0% blocks executed 0%
+    #####:  824:    default_parse_context(value* out) : out_(out) {}
+function _ZN8picojson21default_parse_context8set_nullEv called 0 returned 0% blocks executed 0%
+    #####:  825:    bool set_null() {
+    #####:  826:      *out_ = value();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  827:      return true;
+        -:  828:    }
+function _ZN8picojson21default_parse_context8set_boolEb called 0 returned 0% blocks executed 0%
+    #####:  829:    bool set_bool(bool b) {
+    #####:  830:      *out_ = value(b);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  831:      return true;
+        -:  832:    }
+        -:  833:#ifdef PICOJSON_USE_INT64
+function _ZN8picojson21default_parse_context9set_int64El called 0 returned 0% blocks executed 0%
+    #####:  834:    bool set_int64(int64_t i) {
+    #####:  835:      *out_ = value(i);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  836:      return true;
+        -:  837:    }
+        -:  838:#endif
+function _ZN8picojson21default_parse_context10set_numberEd called 0 returned 0% blocks executed 0%
+    #####:  839:    bool set_number(double f) {
+    #####:  840:      *out_ = value(f);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  841:      return true;
+        -:  842:    }
+function _ZN8picojson21default_parse_context12parse_stringISt19istreambuf_iteratorIcSt11char_traitsIcEEEEbRNS_5inputIT_EE called 0 returned 0% blocks executed 0%
+    #####:  843:    template<typename Iter> bool parse_string(input<Iter>& in) {
+    #####:  844:      *out_ = value(string_type, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  845:      return _parse_string(out_->get<std::string>(), in);
+call    0 never executed
+call    1 never executed
+        -:  846:    }
+function _ZN8picojson21default_parse_context17parse_array_startEv called 0 returned 0% blocks executed 0%
+    #####:  847:    bool parse_array_start() {
+    #####:  848:      *out_ = value(array_type, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  849:      return true;
+        -:  850:    }
+function _ZN8picojson21default_parse_context16parse_array_itemISt19istreambuf_iteratorIcSt11char_traitsIcEEEEbRNS_5inputIT_EEm called 0 returned 0% blocks executed 0%
+    #####:  851:    template <typename Iter> bool parse_array_item(input<Iter>& in, size_t) {
+    #####:  852:      array& a = out_->get<array>();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  853:      a.push_back(value());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  854:      default_parse_context ctx(&a.back());
+call    0 never executed
+call    1 never executed
+    #####:  855:      return _parse(ctx, in);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  856:    }
+function _ZN8picojson21default_parse_context16parse_array_stopEm called 0 returned 0% blocks executed 0%
+    #####:  857:    bool parse_array_stop(size_t) { return true; }
+function _ZN8picojson21default_parse_context18parse_object_startEv called 0 returned 0% blocks executed 0%
+    #####:  858:    bool parse_object_start() {
+    #####:  859:      *out_ = value(object_type, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  860:      return true;
+        -:  861:    }
+function _ZN8picojson21default_parse_context17parse_object_itemISt19istreambuf_iteratorIcSt11char_traitsIcEEEEbRNS_5inputIT_EERKNSt7__cxx1112basic_stringIcS4_SaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  862:    template <typename Iter> bool parse_object_item(input<Iter>& in, const std::string& key) {
+    #####:  863:      object& o = out_->get<object>();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  864:      default_parse_context ctx(&o[key]);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  865:      return _parse(ctx, in);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  866:    }
+        -:  867:  private:
+        -:  868:    default_parse_context(const default_parse_context&);
+        -:  869:    default_parse_context& operator=(const default_parse_context&);
+        -:  870:  };
+        -:  871:
+        -:  872:  class null_parse_context {
+        -:  873:  public:
+        -:  874:    struct dummy_str {
+        -:  875:      void push_back(int) {}
+        -:  876:    };
+        -:  877:  public:
+        -:  878:    null_parse_context() {}
+        -:  879:    bool set_null() { return true; }
+        -:  880:    bool set_bool(bool) { return true; }
+        -:  881:#ifdef PICOJSON_USE_INT64
+        -:  882:    bool set_int64(int64_t) { return true; }
+        -:  883:#endif
+        -:  884:    bool set_number(double) { return true; }
+        -:  885:    template <typename Iter> bool parse_string(input<Iter>& in) {
+        -:  886:      dummy_str s;
+        -:  887:      return _parse_string(s, in);
+        -:  888:    }
+        -:  889:    bool parse_array_start() { return true; }
+        -:  890:    template <typename Iter> bool parse_array_item(input<Iter>& in, size_t) {
+        -:  891:      return _parse(*this, in);
+        -:  892:    }
+        -:  893:    bool parse_array_stop(size_t) { return true; }
+        -:  894:    bool parse_object_start() { return true; }
+        -:  895:    template <typename Iter> bool parse_object_item(input<Iter>& in, const std::string&) {
+        -:  896:      return _parse(*this, in);
+        -:  897:    }
+        -:  898:  private:
+        -:  899:    null_parse_context(const null_parse_context&);
+        -:  900:    null_parse_context& operator=(const null_parse_context&);
+        -:  901:  };
+        -:  902:  
+        -:  903:  // obsolete, use the version below
+        -:  904:  template <typename Iter> inline std::string parse(value& out, Iter& pos, const Iter& last) {
+        -:  905:    std::string err;
+        -:  906:    pos = parse(out, pos, last, &err);
+        -:  907:    return err;
+        -:  908:  }
+        -:  909:  
+function _ZN8picojson6_parseINS_21default_parse_contextESt19istreambuf_iteratorIcSt11char_traitsIcEEEET0_RT_RKS6_SA_PNSt7__cxx1112basic_stringIcS4_SaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  910:  template <typename Context, typename Iter> inline Iter _parse(Context& ctx, const Iter& first, const Iter& last, std::string* err) {
+    #####:  911:    input<Iter> in(first, last);
+call    0 never executed
+    #####:  912:    if (! _parse(ctx, in) && err != NULL) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+        -:  913:      char buf[64];
+    #####:  914:      SNPRINTF(buf, sizeof(buf), "syntax error at line %d near: ", in.line());
+call    0 never executed
+    #####:  915:      *err = buf;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  916:      while (1) {
+    #####:  917:	int ch = in.getc();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  918:	if (ch == -1 || ch == '\n') {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  919:	  break;
+    #####:  920:	} else if (ch >= ' ') {
+branch  0 never executed
+branch  1 never executed
+    #####:  921:	  err->push_back(ch);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  922:	}
+        -:  923:      }
+        -:  924:    }
+    #####:  925:    return in.cur();
+call    0 never executed
+        -:  926:  }
+        -:  927:  
+function _ZN8picojson5parseISt19istreambuf_iteratorIcSt11char_traitsIcEEEET_RNS_5valueERKS5_S9_PNSt7__cxx1112basic_stringIcS3_SaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  928:  template <typename Iter> inline Iter parse(value& out, const Iter& first, const Iter& last, std::string* err) {
+    #####:  929:    default_parse_context ctx(&out);
+call    0 never executed
+    #####:  930:    return _parse(ctx, first, last, err);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  931:  }
+        -:  932:  
+        -:  933:  inline std::string parse(value& out, const std::string& s) {
+        -:  934:    std::string err;
+        -:  935:    parse(out, s.begin(), s.end(), &err);
+        -:  936:    return err;
+        -:  937:  }
+        -:  938:
+function _ZN8picojson5parseB5cxx11ERNS_5valueERSi called 0 returned 0% blocks executed 0%
+    #####:  939:  inline std::string parse(value& out, std::istream& is) {
+    #####:  940:    std::string err;
+call    0 never executed
+    #####:  941:    parse(out, std::istreambuf_iterator<char>(is.rdbuf()),
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  942:	  std::istreambuf_iterator<char>(), &err);
+call    0 never executed
+call    1 never executed
+    #####:  943:    return err;
+        -:  944:  }
+        -:  945:  
+        -:  946:  template <typename T> struct last_error_t {
+        -:  947:    static std::string s;
+        -:  948:  };
+        1:  949:  template <typename T> std::string last_error_t<T>::s;
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+call    3 never executed
+        -:  950:  
+function _ZN8picojson14set_last_errorERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE called 0 returned 0% blocks executed 0%
+    #####:  951:  inline void set_last_error(const std::string& s) {
+    #####:  952:    last_error_t<bool>::s = s;
+call    0 never executed
+    #####:  953:  }
+        -:  954:  
+        -:  955:  inline const std::string& get_last_error() {
+        -:  956:    return last_error_t<bool>::s;
+        -:  957:  }
+        -:  958:
+        -:  959:  inline bool operator==(const value& x, const value& y) {
+        -:  960:    if (x.is<null>())
+        -:  961:      return y.is<null>();
+        -:  962:#define PICOJSON_CMP(type)					\
+        -:  963:    if (x.is<type>())						\
+        -:  964:      return y.is<type>() && x.get<type>() == y.get<type>()
+        -:  965:    PICOJSON_CMP(bool);
+        -:  966:    PICOJSON_CMP(double);
+        -:  967:    PICOJSON_CMP(std::string);
+        -:  968:    PICOJSON_CMP(array);
+        -:  969:    PICOJSON_CMP(object);
+        -:  970:#undef PICOJSON_CMP
+        -:  971:    PICOJSON_ASSERT(0);
+        -:  972:#ifdef _MSC_VER
+        -:  973:    __assume(0);
+        -:  974:#endif
+        -:  975:    return false;
+        -:  976:  }
+        -:  977:  
+        -:  978:  inline bool operator!=(const value& x, const value& y) {
+        -:  979:    return ! (x == y);
+        -:  980:  }
+        -:  981:}
+        -:  982:
+        -:  983:namespace std {
+        -:  984:  template<> inline void swap(picojson::value& x, picojson::value& y)
+        -:  985:    {
+        -:  986:      x.swap(y);
+        -:  987:    }
+        -:  988:}
+        -:  989:
+function _ZrsRSiRN8picojson5valueE called 0 returned 0% blocks executed 0%
+    #####:  990:inline std::istream& operator>>(std::istream& is, picojson::value& x)
+        -:  991:{
+    #####:  992:  picojson::set_last_error(std::string());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+    #####:  993:  std::string err = picojson::parse(x, is);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  994:  if (! err.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  995:    picojson::set_last_error(err);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  996:    is.setstate(std::ios::failbit);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  997:  }
+    #####:  998:  return is;
+        -:  999:}
+        -: 1000:
+        -: 1001:inline std::ostream& operator<<(std::ostream& os, const picojson::value& x)
+        -: 1002:{
+        -: 1003:  x.serialize(std::ostream_iterator<char>(os));
+        -: 1004:  return os;
+        -: 1005:}
+        -: 1006:#ifdef _MSC_VER
+        -: 1007:    #pragma warning(pop)
+        -: 1008:#endif
+        -: 1009:
+        -: 1010:#endif

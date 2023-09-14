@@ -1,0 +1,393 @@
+        -:    0:Source:/usr/include/c++/7/debug/helper_functions.h
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/valueflow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:// Debugging support implementation -*- C++ -*-
+        -:    2:
+        -:    3:// Copyright (C) 2003-2017 Free Software Foundation, Inc.
+        -:    4://
+        -:    5:// This file is part of the GNU ISO C++ Library.  This library is free
+        -:    6:// software; you can redistribute it and/or modify it under the
+        -:    7:// terms of the GNU General Public License as published by the
+        -:    8:// Free Software Foundation; either version 3, or (at your option)
+        -:    9:// any later version.
+        -:   10:
+        -:   11:// This library is distributed in the hope that it will be useful,
+        -:   12:// but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   13:// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   14:// GNU General Public License for more details.
+        -:   15:
+        -:   16:// Under Section 7 of GPL version 3, you are granted additional
+        -:   17:// permissions described in the GCC Runtime Library Exception, version
+        -:   18:// 3.1, as published by the Free Software Foundation.
+        -:   19:
+        -:   20:// You should have received a copy of the GNU General Public License and
+        -:   21:// a copy of the GCC Runtime Library Exception along with this program;
+        -:   22:// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+        -:   23:// <http://www.gnu.org/licenses/>.
+        -:   24:
+        -:   25:/** @file debug/helper_functions.h
+        -:   26: *  This file is a GNU debug extension to the Standard C++ Library.
+        -:   27: */
+        -:   28:
+        -:   29:#ifndef _GLIBCXX_DEBUG_HELPER_FUNCTIONS_H
+        -:   30:#define _GLIBCXX_DEBUG_HELPER_FUNCTIONS_H 1
+        -:   31:
+        -:   32:#include <bits/stl_iterator_base_types.h>	// for iterator_traits,
+        -:   33:						// categories and _Iter_base
+        -:   34:#include <bits/cpp_type_traits.h>		// for __is_integer
+        -:   35:
+        -:   36:#include <bits/stl_pair.h>			// for pair
+        -:   37:
+        -:   38:namespace __gnu_debug
+        -:   39:{
+        -:   40:  /** The precision to which we can calculate the distance between
+        -:   41:   *  two iterators.
+        -:   42:   */
+        -:   43:  enum _Distance_precision
+        -:   44:    {
+        -:   45:      __dp_none,	// Not even an iterator type
+        -:   46:      __dp_equality,	//< Can compare iterator equality, only
+        -:   47:      __dp_sign,	//< Can determine equality and ordering
+        -:   48:      __dp_exact	//< Can determine distance precisely
+        -:   49:    };
+        -:   50:
+        -:   51:  template<typename _Iterator,
+        -:   52:	   typename = typename std::__is_integer<_Iterator>::__type>
+        -:   53:    struct _Distance_traits
+        -:   54:    {
+        -:   55:    private:
+        -:   56:      typedef
+        -:   57:      typename std::iterator_traits<_Iterator>::difference_type _ItDiffType;
+        -:   58:
+        -:   59:      template<typename _DiffType,
+        -:   60:	       typename = typename std::__is_void<_DiffType>::__type>
+        -:   61:	struct _DiffTraits
+        -:   62:	{ typedef _DiffType __type; };
+        -:   63:
+        -:   64:      template<typename _DiffType>
+        -:   65:	struct _DiffTraits<_DiffType, std::__true_type>
+        -:   66:	{ typedef std::ptrdiff_t __type; };
+        -:   67:
+        -:   68:      typedef typename _DiffTraits<_ItDiffType>::__type _DiffType;
+        -:   69:
+        -:   70:    public:
+        -:   71:      typedef std::pair<_DiffType, _Distance_precision> __type;
+        -:   72:    };
+        -:   73:
+        -:   74:  template<typename _Integral>
+        -:   75:    struct _Distance_traits<_Integral, std::__true_type>
+        -:   76:    { typedef std::pair<std::ptrdiff_t, _Distance_precision> __type; };
+        -:   77:
+        -:   78:  /** Determine the distance between two iterators with some known
+        -:   79:   *	precision.
+        -:   80:  */
+        -:   81:  template<typename _Iterator>
+        -:   82:    inline typename _Distance_traits<_Iterator>::__type
+function _ZN11__gnu_debug14__get_distanceIPxEENS_16_Distance_traitsIT_NSt12__is_integerIS3_E6__typeEE6__typeERKS3_SA_St26random_access_iterator_tag called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceIPPK5TokenEENS_16_Distance_traitsIT_NSt12__is_integerIS6_E6__typeEE6__typeERKS6_SD_St26random_access_iterator_tag called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceIPPP5TokenEENS_16_Distance_traitsIT_NSt12__is_integerIS6_E6__typeEE6__typeERKS6_SD_St26random_access_iterator_tag called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceIN9__gnu_cxx17__normal_iteratorIP13LifetimeTokenNSt9__cxx19986vectorIS3_SaIS3_EEEEEEENS_16_Distance_traitsIT_NSt12__is_integerISB_E6__typeEE6__typeERKSB_SI_St26random_access_iterator_tag called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceIP13LifetimeTokenEENS_16_Distance_traitsIT_NSt12__is_integerIS4_E6__typeEE6__typeERKS4_SB_St26random_access_iterator_tag called 0 returned 0% blocks executed 0%
+    #####:   83:    __get_distance(const _Iterator& __lhs, const _Iterator& __rhs,
+        -:   84:		   std::random_access_iterator_tag)
+    #####:   85:    { return std::make_pair(__rhs - __lhs, __dp_exact); }
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+        -:   86:
+        -:   87:  template<typename _Iterator>
+        -:   88:    inline typename _Distance_traits<_Iterator>::__type
+        -:   89:    __get_distance(const _Iterator& __lhs, const _Iterator& __rhs,
+        -:   90:		   std::input_iterator_tag)
+        -:   91:    {
+        -:   92:      if (__lhs == __rhs)
+        -:   93:	return std::make_pair(0, __dp_exact);
+        -:   94:
+        -:   95:      return std::make_pair(1, __dp_equality);
+        -:   96:    }
+        -:   97:
+        -:   98:  template<typename _Iterator>
+        -:   99:    inline typename _Distance_traits<_Iterator>::__type
+function _ZN11__gnu_debug14__get_distanceIPxEENS_16_Distance_traitsIT_NSt12__is_integerIS3_E6__typeEE6__typeERKS3_SA_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceIPPK5TokenEENS_16_Distance_traitsIT_NSt12__is_integerIS6_E6__typeEE6__typeERKS6_SD_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceIPPP5TokenEENS_16_Distance_traitsIT_NSt12__is_integerIS6_E6__typeEE6__typeERKS6_SD_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceIN9__gnu_cxx17__normal_iteratorIP13LifetimeTokenNSt9__cxx19986vectorIS3_SaIS3_EEEEEEENS_16_Distance_traitsIT_NSt12__is_integerISB_E6__typeEE6__typeERKSB_SI_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceIP13LifetimeTokenEENS_16_Distance_traitsIT_NSt12__is_integerIS4_E6__typeEE6__typeERKS4_SB_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceINS_14_Safe_iteratorINSt9__cxx199820_List_const_iteratorI8VariableEENSt7__debug4listIS4_SaIS4_EEEEEEENS_16_Distance_traitsIT_NSt12__is_integerISC_E6__typeEE6__typeERKSC_SJ_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceINS_14_Safe_iteratorINSt9__cxx199820_List_const_iteratorIN9ValueFlow5ValueEEENSt7__debug4listIS5_SaIS5_EEEEEEENS_16_Distance_traitsIT_NSt12__is_integerISD_E6__typeEE6__typeERKSD_SK_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceINS_14_Safe_iteratorINSt9__cxx199814_List_iteratorIN9ValueFlow5ValueEEENSt7__debug4listIS5_SaIS5_EEEEEEENS_16_Distance_traitsIT_NSt12__is_integerISD_E6__typeEE6__typeERKSD_SK_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceINS_14_Safe_iteratorINSt9__cxx199820_List_const_iteratorISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEENSt7__debug4listISE_SaISE_EEEEEEENS_16_Distance_traitsIT_NSt12__is_integerISM_E6__typeEE6__typeERKSM_ST_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceINS_14_Safe_iteratorIN9__gnu_cxx17__normal_iteratorIP13LifetimeTokenNSt9__cxx19986vectorIS4_SaIS4_EEEEENSt7__debug6vectorIS4_S8_EEEEEENS_16_Distance_traitsIT_NSt12__is_integerISG_E6__typeEE6__typeERKSG_SN_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug14__get_distanceINS_14_Safe_iteratorINSt9__cxx199814_List_iteratorISt4pairIPK5TokenNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEENSt7__debug4listISE_SaISE_EEEEEEENS_16_Distance_traitsIT_NSt12__is_integerISM_E6__typeEE6__typeERKSM_ST_ called 0 returned 0% blocks executed 0%
+    #####:  100:    __get_distance(const _Iterator& __lhs, const _Iterator& __rhs)
+    #####:  101:    { return __get_distance(__lhs, __rhs, std::__iterator_category(__lhs)); }
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+call   16 never executed
+call   17 never executed
+branch 18 never executed
+branch 19 never executed
+call   20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+call   25 never executed
+branch 26 never executed
+branch 27 never executed
+call   28 never executed
+call   29 never executed
+branch 30 never executed
+branch 31 never executed
+call   32 never executed
+call   33 never executed
+branch 34 never executed
+branch 35 never executed
+call   36 never executed
+call   37 never executed
+branch 38 never executed
+branch 39 never executed
+call   40 never executed
+call   41 never executed
+branch 42 never executed
+branch 43 never executed
+        -:  102:
+        -:  103:  /** We say that integral types for a valid range, and defer to other
+        -:  104:   *  routines to realize what to do with integral types instead of
+        -:  105:   *  iterators.
+        -:  106:  */
+        -:  107:  template<typename _Integral>
+        -:  108:    inline bool
+        -:  109:    __valid_range_aux(const _Integral&, const _Integral&,
+        -:  110:		      typename _Distance_traits<_Integral>::__type& __dist,
+        -:  111:		      std::__true_type)
+        -:  112:    {
+        -:  113:      __dist = std::make_pair(0, __dp_none);
+        -:  114:      return true;
+        -:  115:    }
+        -:  116:
+        -:  117:  /** We have iterators, so figure out what kind of iterators that are
+        -:  118:   *  to see if we can check the range ahead of time.
+        -:  119:  */
+        -:  120:  template<typename _InputIterator>
+        -:  121:    inline bool
+function _ZN11__gnu_debug17__valid_range_auxIPxEEbRKT_S4_RNS_16_Distance_traitsIS2_NSt12__is_integerIS2_E6__typeEE6__typeESt12__false_type called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug17__valid_range_auxIPPK5TokenEEbRKT_S7_RNS_16_Distance_traitsIS5_NSt12__is_integerIS5_E6__typeEE6__typeESt12__false_type called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug17__valid_range_auxIPPP5TokenEEbRKT_S7_RNS_16_Distance_traitsIS5_NSt12__is_integerIS5_E6__typeEE6__typeESt12__false_type called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug17__valid_range_auxIN9__gnu_cxx17__normal_iteratorIP13LifetimeTokenNSt9__cxx19986vectorIS3_SaIS3_EEEEEEEbRKT_SC_RNS_16_Distance_traitsISA_NSt12__is_integerISA_E6__typeEE6__typeESt12__false_type called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug17__valid_range_auxIP13LifetimeTokenEEbRKT_S5_RNS_16_Distance_traitsIS3_NSt12__is_integerIS3_E6__typeEE6__typeESt12__false_type called 0 returned 0% blocks executed 0%
+    #####:  122:    __valid_range_aux(const _InputIterator& __first,
+        -:  123:		      const _InputIterator& __last,
+        -:  124:		      typename _Distance_traits<_InputIterator>::__type& __dist,
+        -:  125:		      std::__false_type)
+        -:  126:    {
+    #####:  127:      __dist = __get_distance(__first, __last);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+    #####:  128:      switch (__dist.second)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+        -:  129:	{
+    #####:  130:	case __dp_none:
+    #####:  131:	  break;
+    #####:  132:	case __dp_equality:
+    #####:  133:	  if (__dist.first == 0)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  134:	    return true;
+    #####:  135:	  break;
+    #####:  136:	case __dp_sign:
+        -:  137:	case __dp_exact:
+    #####:  138:	  return __dist.first >= 0;
+        -:  139:	}
+        -:  140:
+        -:  141:      // Can't tell so assume it is fine.
+    #####:  142:      return true;
+        -:  143:    }
+        -:  144:
+        -:  145:  /** Don't know what these iterators are, or if they are even
+        -:  146:   *  iterators (we may get an integral type for InputIterator), so
+        -:  147:   *  see if they are integral and pass them on to the next phase
+        -:  148:   *  otherwise.
+        -:  149:  */
+        -:  150:  template<typename _InputIterator>
+        -:  151:    inline bool
+function _ZN11__gnu_debug13__valid_rangeIPxEEbRKT_S4_RNS_16_Distance_traitsIS2_NSt12__is_integerIS2_E6__typeEE6__typeE called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeIPPK5TokenEEbRKT_S7_RNS_16_Distance_traitsIS5_NSt12__is_integerIS5_E6__typeEE6__typeE called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeIPPP5TokenEEbRKT_S7_RNS_16_Distance_traitsIS5_NSt12__is_integerIS5_E6__typeEE6__typeE called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeIN9__gnu_cxx17__normal_iteratorIP13LifetimeTokenNSt9__cxx19986vectorIS3_SaIS3_EEEEEEEbRKT_SC_RNS_16_Distance_traitsISA_NSt12__is_integerISA_E6__typeEE6__typeE called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeIP13LifetimeTokenEEbRKT_S5_RNS_16_Distance_traitsIS3_NSt12__is_integerIS3_E6__typeEE6__typeE called 0 returned 0% blocks executed 0%
+    #####:  152:    __valid_range(const _InputIterator& __first, const _InputIterator& __last,
+        -:  153:		  typename _Distance_traits<_InputIterator>::__type& __dist)
+        -:  154:    {
+        -:  155:      typedef typename std::__is_integer<_InputIterator>::__type _Integral;
+    #####:  156:      return __valid_range_aux(__first, __last, __dist, _Integral());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+        -:  157:    }
+        -:  158:
+        -:  159:  template<typename _InputIterator>
+        -:  160:    inline bool
+function _ZN11__gnu_debug13__valid_rangeISt13move_iteratorIPxEEEbRKT_S6_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeISt13move_iteratorIPPK5TokenEEEbRKT_S9_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeIPPP5TokenEEbRKT_S7_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeINS_14_Safe_iteratorIN9__gnu_cxx17__normal_iteratorIP13LifetimeTokenNSt9__cxx19986vectorIS4_SaIS4_EEEEENSt7__debug6vectorIS4_S8_EEEEEEbRKT_SH_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeIN9__gnu_cxx17__normal_iteratorIP13LifetimeTokenNSt9__cxx19986vectorIS3_SaIS3_EEEEEEEbRKT_SC_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeIP13LifetimeTokenEEbRKT_S5_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeINS_14_Safe_iteratorINSt9__cxx199820_List_const_iteratorI8VariableEENSt7__debug4listIS4_SaIS4_EEEEEEEbRKT_SD_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeINS_14_Safe_iteratorINSt9__cxx199820_List_const_iteratorIN9ValueFlow5ValueEEENSt7__debug4listIS5_SaIS5_EEEEEEEbRKT_SE_ called 0 returned 0% blocks executed 0%
+function _ZN11__gnu_debug13__valid_rangeINS_14_Safe_iteratorINSt9__cxx199814_List_iteratorIN9ValueFlow5ValueEEENSt7__debug4listIS5_SaIS5_EEEEEEEbRKT_SE_ called 0 returned 0% blocks executed 0%
+    #####:  161:    __valid_range(const _InputIterator& __first, const _InputIterator& __last)
+        -:  162:    {
+    #####:  163:      typename _Distance_traits<_InputIterator>::__type __dist;
+    #####:  164:      return __valid_range(__first, __last, __dist);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+call   21 never executed
+branch 22 never executed
+branch 23 never executed
+call   24 never executed
+branch 25 never executed
+branch 26 never executed
+        -:  165:    }
+        -:  166:
+        -:  167:#if __cplusplus < 201103L
+        -:  168:  // Helper struct to detect random access safe iterators.
+        -:  169:  template<typename _Iterator>
+        -:  170:    struct __is_safe_random_iterator
+        -:  171:    {
+        -:  172:      enum { __value = 0 };
+        -:  173:      typedef std::__false_type __type;
+        -:  174:    };
+        -:  175:
+        -:  176:  template<typename _Iterator>
+        -:  177:    struct _Siter_base
+        -:  178:    : std::_Iter_base<_Iterator, __is_safe_random_iterator<_Iterator>::__value>
+        -:  179:    { };
+        -:  180:
+        -:  181:  /** Helper function to extract base iterator of random access safe iterator
+        -:  182:      in order to reduce performance impact of debug mode.  Limited to random
+        -:  183:      access iterator because it is the only category for which it is possible
+        -:  184:      to check for correct iterators order in the __valid_range function
+        -:  185:      thanks to the < operator.
+        -:  186:  */
+        -:  187:  template<typename _Iterator>
+        -:  188:    inline typename _Siter_base<_Iterator>::iterator_type
+        -:  189:    __base(_Iterator __it)
+        -:  190:    { return _Siter_base<_Iterator>::_S_base(__it); }
+        -:  191:#else
+        -:  192:  template<typename _Iterator>
+        -:  193:    inline _Iterator
+        -:  194:    __base(_Iterator __it)
+        -:  195:    { return __it; }
+        -:  196:#endif
+        -:  197:
+        -:  198:#if __cplusplus < 201103L
+        -:  199:  template<typename _Iterator>
+        -:  200:    struct _Unsafe_type
+        -:  201:    { typedef _Iterator _Type; };
+        -:  202:#endif
+        -:  203:
+        -:  204:  /* Remove debug mode safe iterator layer, if any. */
+        -:  205:  template<typename _Iterator>
+        -:  206:    inline _Iterator
+        -:  207:    __unsafe(_Iterator __it)
+        -:  208:    { return __it; }
+        -:  209:}
+        -:  210:
+        -:  211:#endif

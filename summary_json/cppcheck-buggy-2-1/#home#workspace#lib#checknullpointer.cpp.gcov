@@ -1,0 +1,2402 @@
+        -:    0:Source:/home/workspace/lib/checknullpointer.cpp
+        -:    0:Graph:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checknullpointer.gcno
+        -:    0:Data:/home/workspace/build/lib/CMakeFiles/lib_objs.dir/checknullpointer.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Cppcheck - A tool for static C/C++ code analysis
+        -:    3: * Copyright (C) 2007-2019 Cppcheck team.
+        -:    4: *
+        -:    5: * This program is free software: you can redistribute it and/or modify
+        -:    6: * it under the terms of the GNU General Public License as published by
+        -:    7: * the Free Software Foundation, either version 3 of the License, or
+        -:    8: * (at your option) any later version.
+        -:    9: *
+        -:   10: * This program is distributed in the hope that it will be useful,
+        -:   11: * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   12: * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   13: * GNU General Public License for more details.
+        -:   14: *
+        -:   15: * You should have received a copy of the GNU General Public License
+        -:   16: * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   17: */
+        -:   18:
+        -:   19:
+        -:   20://---------------------------------------------------------------------------
+        -:   21:#include "checknullpointer.h"
+        -:   22:
+        -:   23:#include "astutils.h"
+        -:   24:#include "errorlogger.h"
+        -:   25:#include "library.h"
+        -:   26:#include "settings.h"
+        -:   27:#include "symboldatabase.h"
+        -:   28:#include "token.h"
+        -:   29:#include "tokenize.h"
+        -:   30:#include "utils.h"
+        -:   31:
+        -:   32:#include <algorithm>
+        -:   33:#include <cctype>
+        -:   34:#include <cstddef>
+        -:   35:#include <set>
+        -:   36://---------------------------------------------------------------------------
+        -:   37:
+        -:   38:// Register this check class (by creating a static instance of it)
+        -:   39:namespace {
+        1:   40:    CheckNullPointer instance;
+call    0 returned 100%
+call    1 returned 100%
+        -:   41:}
+        -:   42:
+        1:   43:static const CWE CWE476(476U);  // NULL Pointer Dereference
+call    0 returned 100%
+        1:   44:static const CWE CWE682(682U);  // Incorrect Calculation
+call    0 returned 100%
+        -:   45:
+        -:   46://---------------------------------------------------------------------------
+        -:   47:
+function _ZL40checkNullpointerFunctionCallPlausibilityPK8Functionj called 0 returned 0% blocks executed 0%
+    #####:   48:static bool checkNullpointerFunctionCallPlausibility(const Function* func, unsigned int arg)
+        -:   49:{
+    #####:   50:    return !func || (func->argCount() >= arg && func->getArgumentVar(arg - 1) && func->getArgumentVar(arg - 1)->isPointer());
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+        -:   51:}
+        -:   52:
+        -:   53:/**
+        -:   54: * @brief parse a function call and extract information about variable usage
+        -:   55: * @param tok first token
+        -:   56: * @param var variables that the function read / write.
+        -:   57: * @param library --library files data
+        -:   58: */
+function _ZN16CheckNullPointer17parseFunctionCallERK5TokenRNSt7__debug4listIPS1_SaIS5_EEEPK7Library called 0 returned 0% blocks executed 0%
+    #####:   59:void CheckNullPointer::parseFunctionCall(const Token &tok, std::list<const Token *> &var, const Library *library)
+        -:   60:{
+    #####:   61:    if (Token::Match(&tok, "%name% ( )") || !tok.tokAt(2))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:   62:        return;
+        -:   63:
+    #####:   64:    const std::vector<const Token *> args = getArguments(&tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+        -:   65:
+    #####:   66:    if (library || tok.function() != nullptr) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:   67:        for (int argnr = 1; argnr <= args.size(); ++argnr) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   68:            const Token *param = args[argnr - 1];
+call    0 never executed
+    #####:   69:            if (library && library->isnullargbad(&tok, argnr) && checkNullpointerFunctionCallPlausibility(tok.function(), argnr))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+    #####:   70:                var.push_back(param);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   71:            else if (tok.function()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   72:                const Variable* argVar = tok.function()->getArgumentVar(argnr-1);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   73:                if (argVar && argVar->isStlStringType() && !argVar->isArrayOrPointer())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:   74:                    var.push_back(param);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   75:            }
+        -:   76:        }
+        -:   77:    }
+        -:   78:
+    #####:   79:    if (library && library->formatstr_function(&tok)) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:   80:        const int formatStringArgNr = library->formatstr_argno(&tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   81:        if (formatStringArgNr < 0 || formatStringArgNr >= args.size())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:   82:            return;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   83:
+        -:   84:        // 1st parameter..
+    #####:   85:        if (Token::Match(&tok, "snprintf|vsnprintf|fnprintf|vfnprintf") && args.size() > 1 && !(args[1] && args[1]->hasKnownIntValue() && args[1]->getKnownIntValue() == 0)) // Only if length (second parameter) is not zero
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+    #####:   86:            var.push_back(args[0]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:   87:
+    #####:   88:        if (args[formatStringArgNr]->tokType() != Token::eString)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   89:            return;
+    #####:   90:        const std::string &formatString = args[formatStringArgNr]->strValue();
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+    #####:   91:        int argnr = formatStringArgNr + 1;
+    #####:   92:        const bool scan = library->formatstr_scan(&tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:   93:
+    #####:   94:        bool percent = false;
+    #####:   95:        for (std::string::const_iterator i = formatString.begin(); i != formatString.end(); ++i) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+    #####:   96:            if (*i == '%') {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   97:                percent = !percent;
+    #####:   98:            } else if (percent) {
+branch  0 never executed
+branch  1 never executed
+    #####:   99:                percent = false;
+        -:  100:
+    #####:  101:                bool _continue = false;
+    #####:  102:                while (!std::isalpha((unsigned char)*i)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  103:                    if (*i == '*') {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  104:                        if (scan)
+branch  0 never executed
+branch  1 never executed
+    #####:  105:                            _continue = true;
+        -:  106:                        else
+    #####:  107:                            argnr++;
+        -:  108:                    }
+    #####:  109:                    ++i;
+call    0 never executed
+    #####:  110:                    if (i == formatString.end())
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  111:                        return;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  112:                }
+    #####:  113:                if (_continue)
+branch  0 never executed
+branch  1 never executed
+    #####:  114:                    continue;
+        -:  115:
+    #####:  116:                if (argnr < args.size() && (*i == 'n' || *i == 's' || scan))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  117:                    var.push_back(args[argnr]);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  118:
+    #####:  119:                if (*i != 'm') // %m is a non-standard glibc extension that requires no parameter
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  120:                    argnr++;
+        -:  121:            }
+        -:  122:        }
+        -:  123:    }
+        -:  124:}
+        -:  125:
+        -:  126:namespace {
+       13:  127:    const std::set<std::string> stl_stream = {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0% (throw)
+call    8 returned 100%
+call    9 returned 100%
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0% (throw)
+call   12 returned 100%
+call   13 returned 100%
+branch 14 taken 100% (fallthrough)
+branch 15 taken 0% (throw)
+call   16 returned 100%
+call   17 returned 100%
+branch 18 taken 100% (fallthrough)
+branch 19 taken 0% (throw)
+call   20 returned 100%
+call   21 returned 100%
+branch 22 taken 100% (fallthrough)
+branch 23 taken 0% (throw)
+call   24 returned 100%
+call   25 returned 100%
+branch 26 taken 100% (fallthrough)
+branch 27 taken 0% (throw)
+call   28 returned 100%
+call   29 returned 100%
+branch 30 taken 100% (fallthrough)
+branch 31 taken 0% (throw)
+call   32 returned 100%
+call   33 returned 100%
+branch 34 taken 100% (fallthrough)
+branch 35 taken 0% (throw)
+call   36 returned 100%
+call   37 returned 100%
+branch 38 taken 100% (fallthrough)
+branch 39 taken 0% (throw)
+call   40 returned 100%
+call   41 returned 100%
+branch 42 taken 100% (fallthrough)
+branch 43 taken 0% (throw)
+call   44 returned 100%
+call   45 returned 100%
+branch 46 taken 100% (fallthrough)
+branch 47 taken 0% (throw)
+call   48 returned 100%
+call   49 returned 100%
+branch 50 taken 100% (fallthrough)
+branch 51 taken 0% (throw)
+call   52 returned 100%
+branch 53 taken 92% (fallthrough)
+branch 54 taken 8%
+call   55 returned 100%
+call   56 returned 100%
+call   57 returned 100%
+call   58 returned 100%
+call   59 returned 100%
+call   60 returned 100%
+call   61 returned 100%
+call   62 returned 100%
+call   63 returned 100%
+call   64 returned 100%
+call   65 returned 100%
+call   66 returned 100%
+call   67 returned 100%
+call   68 never executed
+branch 69 never executed
+branch 70 never executed
+call   71 never executed
+call   72 never executed
+call   73 never executed
+call   74 never executed
+call   75 never executed
+call   76 never executed
+call   77 never executed
+call   78 never executed
+call   79 never executed
+call   80 never executed
+call   81 never executed
+call   82 never executed
+call   83 never executed
+        -:  128:        "fstream", "ifstream", "iostream", "istream",
+        -:  129:        "istringstream", "ofstream", "ostream", "ostringstream",
+        -:  130:        "stringstream", "wistringstream", "wostringstream", "wstringstream"
+       12:  131:    };
+call    0 returned 100%
+call    1 never executed
+        -:  132:}
+        -:  133:
+        -:  134:/**
+        -:  135: * Is there a pointer dereference? Everything that should result in
+        -:  136: * a nullpointer dereference error message will result in a true
+        -:  137: * return value. If it's unknown if the pointer is dereferenced false
+        -:  138: * is returned.
+        -:  139: * @param tok token for the pointer
+        -:  140: * @param unknown it is not known if there is a pointer dereference (could be reported as a debug message)
+        -:  141: * @return true => there is a dereference
+        -:  142: */
+function _ZNK16CheckNullPointer14isPointerDeRefEPK5TokenRb called 0 returned 0% blocks executed 0%
+    #####:  143:bool CheckNullPointer::isPointerDeRef(const Token *tok, bool &unknown) const
+        -:  144:{
+    #####:  145:    return isPointerDeRef(tok, unknown, mSettings);
+call    0 never executed
+        -:  146:}
+        -:  147:
+function _ZN16CheckNullPointer14isPointerDeRefEPK5TokenRbPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  148:bool CheckNullPointer::isPointerDeRef(const Token *tok, bool &unknown, const Settings *settings)
+        -:  149:{
+    #####:  150:    unknown = false;
+        -:  151:
+        -:  152:    // Is pointer used as function parameter?
+    #####:  153:    if (Token::Match(tok->previous(), "[(,] %name% [,)]") && settings) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  154:        const Token *ftok = tok->previous();
+call    0 never executed
+    #####:  155:        while (ftok && ftok->str() != "(") {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  156:            if (ftok->str() == ")")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  157:                ftok = ftok->link();
+call    0 never executed
+    #####:  158:            ftok = ftok->previous();
+call    0 never executed
+        -:  159:        }
+    #####:  160:        if (ftok && ftok->previous()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  161:            std::list<const Token *> varlist;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  162:            parseFunctionCall(*ftok->previous(), varlist, &settings->library);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  163:            if (std::find(varlist.begin(), varlist.end(), tok) != varlist.end()) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  164:                return true;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  165:            }
+        -:  166:        }
+        -:  167:    }
+        -:  168:
+    #####:  169:    const Token* parent = tok->astParent();
+call    0 never executed
+    #####:  170:    if (!parent)
+branch  0 never executed
+branch  1 never executed
+    #####:  171:        return false;
+    #####:  172:    if (parent->str() == "." && parent->astOperand2() == tok)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  173:        return isPointerDeRef(parent, unknown, settings);
+call    0 never executed
+    #####:  174:    const bool firstOperand = parent->astOperand1() == tok;
+call    0 never executed
+    #####:  175:    while (parent->str() == "(" && (parent->astOperand2() == nullptr && parent->strAt(1) != ")")) { // Skip over casts
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  176:        parent = parent->astParent();
+call    0 never executed
+    #####:  177:        if (!parent)
+branch  0 never executed
+branch  1 never executed
+    #####:  178:            return false;
+        -:  179:    }
+        -:  180:
+        -:  181:    // Dereferencing pointer..
+    #####:  182:    if (parent->isUnaryOp("*") && !Token::Match(parent->tokAt(-2), "sizeof|decltype|typeof"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+call   22 never executed
+branch 23 never executed
+branch 24 never executed
+branch 25 never executed
+branch 26 never executed
+call   27 never executed
+branch 28 never executed
+branch 29 never executed
+call   30 never executed
+call   31 never executed
+    #####:  183:        return true;
+        -:  184:
+        -:  185:    // array access
+    #####:  186:    if (firstOperand && parent->str() == "[" && (!parent->astParent() || parent->astParent()->str() != "&"))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+    #####:  187:        return true;
+        -:  188:
+        -:  189:    // address of member variable / array element
+    #####:  190:    const Token *parent2 = parent;
+    #####:  191:    while (Token::Match(parent2, "[|."))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  192:        parent2 = parent2->astParent();
+call    0 never executed
+    #####:  193:    if (parent2 != parent && parent2 && parent2->isUnaryOp("&"))
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+branch 21 never executed
+branch 22 never executed
+call   23 never executed
+branch 24 never executed
+branch 25 never executed
+call   26 never executed
+    #####:  194:        return false;
+        -:  195:
+        -:  196:    // read/write member variable
+    #####:  197:    if (firstOperand && parent->str() == "." && (!parent->astParent() || parent->astParent()->str() != "&")) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+branch 14 never executed
+branch 15 never executed
+    #####:  198:        if (!parent->astParent() || parent->astParent()->str() != "(" || parent->astParent() == tok->previous())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  199:            return true;
+    #####:  200:        unknown = true;
+    #####:  201:        return false;
+        -:  202:    }
+        -:  203:
+    #####:  204:    if (Token::Match(tok, "%name% ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  205:        return true;
+        -:  206:
+    #####:  207:    if (Token::Match(tok, "%var% = %var% .") &&
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  208:        tok->varId() == tok->tokAt(2)->varId())
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  209:        return true;
+        -:  210:
+        -:  211:    // std::string dereferences nullpointers
+    #####:  212:    if (Token::Match(parent->tokAt(-3), "std :: string|wstring (") && tok->strAt(1) == ")")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  213:        return true;
+    #####:  214:    if (Token::Match(parent->previous(), "%name% (") && tok->strAt(1) == ")") {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  215:        const Variable* var = tok->tokAt(-2)->variable();
+call    0 never executed
+call    1 never executed
+    #####:  216:        if (var && !var->isPointer() && !var->isArray() && var->isStlStringType())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  217:            return true;
+        -:  218:    }
+        -:  219:
+        -:  220:    // streams dereference nullpointers
+    #####:  221:    if (Token::Match(parent, "<<|>>") && !firstOperand) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  222:        const Variable* var = tok->variable();
+call    0 never executed
+    #####:  223:        if (var && var->isPointer() && Token::Match(var->typeStartToken(), "char|wchar_t")) { // Only outputting or reading to char* can cause problems
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  224:            const Token* tok2 = parent; // Find start of statement
+    #####:  225:            for (; tok2; tok2 = tok2->previous()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  226:                if (Token::Match(tok2->previous(), ";|{|}|:"))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  227:                    break;
+        -:  228:            }
+    #####:  229:            if (Token::Match(tok2, "std :: cout|cin|cerr"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  230:                return true;
+    #####:  231:            if (tok2 && tok2->varId() != 0) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  232:                const Variable* var2 = tok2->variable();
+call    0 never executed
+    #####:  233:                if (var2 && var2->isStlType(stl_stream))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  234:                    return true;
+        -:  235:            }
+        -:  236:        }
+        -:  237:    }
+        -:  238:
+    #####:  239:    const Variable *ovar = nullptr;
+    #####:  240:    if (Token::Match(parent, "+|==|!=") || (parent->str() == "=" && !firstOperand)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  241:        if (parent->astOperand1() == tok && parent->astOperand2())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  242:            ovar = parent->astOperand2()->variable();
+call    0 never executed
+call    1 never executed
+    #####:  243:        else if (parent->astOperand1() && parent->astOperand2() == tok)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  244:            ovar = parent->astOperand1()->variable();
+call    0 never executed
+call    1 never executed
+        -:  245:    }
+    #####:  246:    if (ovar && !ovar->isPointer() && !ovar->isArray() && ovar->isStlStringType())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  247:        return true;
+        -:  248:
+        -:  249:    // assume that it's not a dereference (no false positives)
+    #####:  250:    return false;
+        -:  251:}
+        -:  252:
+        -:  253:
+function _ZN16CheckNullPointer21nullPointerLinkedListEv called 0 returned 0% blocks executed 0%
+    #####:  254:void CheckNullPointer::nullPointerLinkedList()
+        -:  255:{
+        -:  256:
+    #####:  257:    if (!mSettings->isEnabled(Settings::WARNING))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  258:        return;
+        -:  259:
+    #####:  260:    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+        -:  261:
+        -:  262:    // looping through items in a linked list in a inner loop.
+        -:  263:    // Here is an example:
+        -:  264:    //    for (const Token *tok = tokens; tok; tok = tok->next) {
+        -:  265:    //        if (tok->str() == "hello")
+        -:  266:    //            tok = tok->next;   // <- tok might become a null pointer!
+        -:  267:    //    }
+    #####:  268:    for (const Scope &forScope : symbolDatabase->scopeList) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  269:        const Token* const tok1 = forScope.classDef;
+        -:  270:        // search for a "for" scope..
+    #####:  271:        if (forScope.type != Scope::eFor || !tok1)
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  272:            continue;
+        -:  273:
+        -:  274:        // is there any dereferencing occurring in the for statement
+    #####:  275:        const Token* end2 = tok1->linkAt(1);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  276:        for (const Token *tok2 = tok1->tokAt(2); tok2 != end2; tok2 = tok2->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+        -:  277:            // Dereferencing a variable inside the "for" parentheses..
+    #####:  278:            if (Token::Match(tok2, "%var% . %name%")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  279:                // Is this variable a pointer?
+    #####:  280:                const Variable *var = tok2->variable();
+call    0 never executed
+    #####:  281:                if (!var || !var->isPointer())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  282:                    continue;
+        -:  283:
+        -:  284:                // Variable id for dereferenced variable
+    #####:  285:                const unsigned int varid(tok2->varId());
+call    0 never executed
+        -:  286:
+    #####:  287:                if (Token::Match(tok2->tokAt(-2), "%varid% ?", varid))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  288:                    continue;
+        -:  289:
+        -:  290:                // Check usage of dereferenced variable in the loop..
+        -:  291:                // TODO: Move this to ValueFlow
+    #####:  292:                for (const Scope *innerScope : forScope.nestedList) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  293:                    if (innerScope->type != Scope::eWhile)
+branch  0 never executed
+branch  1 never executed
+    #####:  294:                        continue;
+        -:  295:
+        -:  296:                    // TODO: are there false negatives for "while ( %varid% ||"
+    #####:  297:                    if (Token::Match(innerScope->classDef->next(), "( %varid% &&|)", varid)) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  298:                        // Make sure there is a "break" or "return" inside the loop.
+        -:  299:                        // Without the "break" a null pointer could be dereferenced in the
+        -:  300:                        // for statement.
+    #####:  301:                        for (const Token *tok4 = innerScope->bodyStart; tok4; tok4 = tok4->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  302:                            if (tok4 == forScope.bodyEnd) {
+branch  0 never executed
+branch  1 never executed
+    #####:  303:                                const ValueFlow::Value v(innerScope->classDef, 0LL);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  304:                                nullPointerError(tok1, var->name(), &v, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  305:                                break;
+        -:  306:                            }
+        -:  307:
+        -:  308:                            // There is a "break" or "return" inside the loop.
+        -:  309:                            // TODO: there can be false negatives. There could still be
+        -:  310:                            //       execution paths that are not properly terminated
+    #####:  311:                            else if (tok4->str() == "break" || tok4->str() == "return")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  312:                                break;
+        -:  313:                        }
+        -:  314:                    }
+        -:  315:                }
+        -:  316:            }
+        -:  317:        }
+        -:  318:    }
+        -:  319:}
+        -:  320:
+function _ZL17isNullablePointerPK5TokenPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  321:static bool isNullablePointer(const Token* tok, const Settings* settings)
+        -:  322:{
+    #####:  323:    if (!tok)
+branch  0 never executed
+branch  1 never executed
+    #####:  324:        return false;
+    #####:  325:    if (astIsPointer(tok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  326:        return true;
+    #####:  327:    if (astIsSmartPointer(tok))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  328:        return true;
+    #####:  329:    if (Token::simpleMatch(tok, "."))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  330:        return isNullablePointer(tok->astOperand2(), settings);
+call    0 never executed
+call    1 never executed
+    #####:  331:    if (const Variable* var = tok->variable()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  332:        return (var->isPointer() || var->isSmartPointer());
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  333:    }
+    #####:  334:    return false;
+        -:  335:}
+        -:  336:
+function _ZN16CheckNullPointer25nullPointerByDeRefAndChecEv called 0 returned 0% blocks executed 0%
+    #####:  337:void CheckNullPointer::nullPointerByDeRefAndChec()
+        -:  338:{
+    #####:  339:    const bool printInconclusive = (mSettings->inconclusive);
+        -:  340:
+    #####:  341:    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  342:        if (Token::Match(tok, "sizeof|decltype|typeid|typeof (")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  343:            tok = tok->next()->link();
+call    0 never executed
+call    1 never executed
+    #####:  344:            continue;
+        -:  345:        }
+        -:  346:
+    #####:  347:        if (Token::Match(tok, "%num%|%char%|%str%"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  348:            continue;
+        -:  349:
+    #####:  350:        if (!isNullablePointer(tok, mSettings))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  351:            continue;
+        -:  352:
+        -:  353:        // Can pointer be NULL?
+    #####:  354:        const ValueFlow::Value *value = tok->getValue(0);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  355:        if (!value)
+branch  0 never executed
+branch  1 never executed
+    #####:  356:            continue;
+        -:  357:
+    #####:  358:        if (!printInconclusive && value->isInconclusive())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  359:            continue;
+        -:  360:
+        -:  361:        // Pointer dereference.
+    #####:  362:        bool unknown = false;
+    #####:  363:        if (!isPointerDeRef(tok,unknown)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  364:            if (unknown)
+branch  0 never executed
+branch  1 never executed
+    #####:  365:                nullPointerError(tok, tok->expressionString(), value, true);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  366:            continue;
+        -:  367:        }
+        -:  368:
+    #####:  369:        nullPointerError(tok, tok->expressionString(), value, value->isInconclusive());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+        -:  370:    }
+    #####:  371:}
+        -:  372:
+function _ZN16CheckNullPointer11nullPointerEv called 0 returned 0% blocks executed 0%
+    #####:  373:void CheckNullPointer::nullPointer()
+        -:  374:{
+    #####:  375:    nullPointerLinkedList();
+call    0 never executed
+    #####:  376:    nullPointerByDeRefAndChec();
+call    0 never executed
+    #####:  377:}
+        -:  378:
+        -:  379:namespace {
+        9:  380:    const std::set<std::string> stl_istream = {
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 returned 100%
+call    5 returned 100%
+branch  6 taken 100% (fallthrough)
+branch  7 taken 0% (throw)
+call    8 returned 100%
+call    9 returned 100%
+branch 10 taken 100% (fallthrough)
+branch 11 taken 0% (throw)
+call   12 returned 100%
+call   13 returned 100%
+branch 14 taken 100% (fallthrough)
+branch 15 taken 0% (throw)
+call   16 returned 100%
+call   17 returned 100%
+branch 18 taken 100% (fallthrough)
+branch 19 taken 0% (throw)
+call   20 returned 100%
+call   21 returned 100%
+branch 22 taken 100% (fallthrough)
+branch 23 taken 0% (throw)
+call   24 returned 100%
+call   25 returned 100%
+branch 26 taken 100% (fallthrough)
+branch 27 taken 0% (throw)
+call   28 returned 100%
+call   29 returned 100%
+branch 30 taken 100% (fallthrough)
+branch 31 taken 0% (throw)
+call   32 returned 100%
+call   33 returned 100%
+branch 34 taken 100% (fallthrough)
+branch 35 taken 0% (throw)
+call   36 returned 100%
+branch 37 taken 89% (fallthrough)
+branch 38 taken 11%
+call   39 returned 100%
+call   40 returned 100%
+call   41 returned 100%
+call   42 returned 100%
+call   43 returned 100%
+call   44 returned 100%
+call   45 returned 100%
+call   46 returned 100%
+call   47 returned 100%
+call   48 never executed
+branch 49 never executed
+branch 50 never executed
+call   51 never executed
+call   52 never executed
+call   53 never executed
+call   54 never executed
+call   55 never executed
+call   56 never executed
+call   57 never executed
+call   58 never executed
+        -:  381:        "fstream", "ifstream", "iostream", "istream",
+        -:  382:        "istringstream", "stringstream", "wistringstream", "wstringstream"
+        8:  383:    };
+call    0 returned 100%
+call    1 never executed
+        -:  384:}
+        -:  385:
+        -:  386:/** Dereferencing null constant (simplified token list) */
+function _ZN16CheckNullPointer23nullConstantDereferenceEv called 0 returned 0% blocks executed 0%
+    #####:  387:void CheckNullPointer::nullConstantDereference()
+        -:  388:{
+    #####:  389:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+        -:  390:
+    #####:  391:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  392:        if (scope->function == nullptr || !scope->function->hasBody()) // We only look for functions with a body
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  393:            continue;
+        -:  394:
+    #####:  395:        const Token *tok = scope->bodyStart;
+        -:  396:
+    #####:  397:        if (scope->function->isConstructor())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  398:            tok = scope->function->token; // Check initialization list
+        -:  399:
+    #####:  400:        for (; tok != scope->bodyEnd; tok = tok->next()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  401:            if (Token::Match(tok, "sizeof|decltype|typeid|typeof ("))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  402:                tok = tok->next()->link();
+call    0 never executed
+call    1 never executed
+        -:  403:
+    #####:  404:            else if (Token::simpleMatch(tok, "* 0")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  405:                if (Token::Match(tok->previous(), "return|throw|;|{|}|:|[|(|,") || tok->previous()->isOp()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+branch 13 never executed
+    #####:  406:                    nullPointerError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  407:                }
+        -:  408:            }
+        -:  409:
+    #####:  410:            else if (Token::Match(tok, "0 [") && (tok->previous()->str() != "&" || !Token::Match(tok->next()->link()->next(), "[.(]")))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+branch 19 never executed
+    #####:  411:                nullPointerError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  412:
+    #####:  413:            else if (Token::Match(tok->previous(), "!!. %name% (") && (tok->previous()->str() != "::" || tok->strAt(-2) == "std")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+    #####:  414:                if (Token::Match(tok->tokAt(2), "0|NULL|nullptr )") && tok->varId()) { // constructor call
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  415:                    const Variable *var = tok->variable();
+call    0 never executed
+    #####:  416:                    if (var && !var->isPointer() && !var->isArray() && var->isStlStringType())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  417:                        nullPointerError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  418:                } else { // function call
+    #####:  419:                    std::list<const Token *> var;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  420:                    parseFunctionCall(*tok, var, &mSettings->library);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  421:
+        -:  422:                    // is one of the var items a NULL pointer?
+    #####:  423:                    for (const Token *vartok : var) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  424:                        if (vartok->hasKnownIntValue() && vartok->getKnownIntValue() == 0)
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+    #####:  425:                            nullPointerError(vartok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  426:                    }
+        -:  427:                }
+    #####:  428:            } else if (Token::Match(tok, "std :: string|wstring ( 0|NULL|nullptr )"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  429:                nullPointerError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  430:
+    #####:  431:            else if (Token::Match(tok->previous(), "::|. %name% (")) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  432:                const std::vector<const Token *> &args = getArguments(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  433:                for (int argnr = 0; argnr < args.size(); ++argnr) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  434:                    const Token *argtok = args[argnr];
+call    0 never executed
+    #####:  435:                    if (!argtok->hasKnownIntValue())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  436:                        continue;
+    #####:  437:                    if (argtok->values().front().intvalue != 0)
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  438:                        continue;
+    #####:  439:                    if (mSettings->library.isnullargbad(tok, argnr+1))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  440:                        nullPointerError(argtok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  441:                }
+        -:  442:            }
+        -:  443:
+    #####:  444:            else if (Token::Match(tok->previous(), ">> 0|NULL|nullptr")) { // Only checking input stream operations is safe here, because otherwise 0 can be an integer as well
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  445:                const Token* tok2 = tok->previous(); // Find start of statement
+call    0 never executed
+    #####:  446:                for (; tok2; tok2 = tok2->previous()) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+    #####:  447:                    if (Token::Match(tok2->previous(), ";|{|}|:|("))
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  448:                        break;
+        -:  449:                }
+    #####:  450:                if (tok2 && tok2->previous() && tok2->previous()->str()=="(")
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  451:                    continue;
+    #####:  452:                if (Token::simpleMatch(tok2, "std :: cin"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  453:                    nullPointerError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  454:                if (tok2 && tok2->varId() != 0) {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  455:                    const Variable *var = tok2->variable();
+call    0 never executed
+    #####:  456:                    if (var && var->isStlType(stl_istream))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  457:                        nullPointerError(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  458:                }
+        -:  459:            }
+        -:  460:
+    #####:  461:            const Variable *ovar = nullptr;
+    #####:  462:            const Token *tokNull = nullptr;
+    #####:  463:            if (Token::Match(tok, "0|NULL|nullptr ==|!=|>|>=|<|<= %var%")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  464:                if (!Token::Match(tok->tokAt(3),".|[")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  465:                    ovar = tok->tokAt(2)->variable();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  466:                    tokNull = tok;
+        -:  467:                }
+    #####:  468:            } else if (Token::Match(tok, "%var% ==|!=|>|>=|<|<= 0|NULL|nullptr") ||
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+    #####:  469:                       Token::Match(tok, "%var% =|+ 0|NULL|nullptr )|]|,|;|+")) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  470:                ovar = tok->variable();
+call    0 never executed
+    #####:  471:                tokNull = tok->tokAt(2);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  472:            }
+    #####:  473:            if (ovar && !ovar->isPointer() && !ovar->isArray() && ovar->isStlStringType() && tokNull && tokNull->originalName() != "'\\0'")
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+branch 17 never executed
+branch 18 never executed
+    #####:  474:                nullPointerError(tokNull);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  475:        }
+        -:  476:    }
+    #####:  477:}
+        -:  478:
+function _ZN16CheckNullPointer16nullPointerErrorEPK5TokenRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPKN9ValueFlow5ValueEb called 0 returned 0% blocks executed 0%
+    #####:  479:void CheckNullPointer::nullPointerError(const Token *tok, const std::string &varname, const ValueFlow::Value *value, bool inconclusive)
+        -:  480:{
+    #####:  481:    const std::string errmsgcond("$symbol:" + varname + '\n' + ValueFlow::eitherTheConditionIsRedundant(value ? value->condition : nullptr) + " or there is possible null pointer dereference: $symbol.");
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+call   20 never executed
+call   21 never executed
+call   22 never executed
+call   23 never executed
+call   24 never executed
+call   25 never executed
+call   26 never executed
+    #####:  482:    const std::string errmsgdefarg("$symbol:" + varname + "\nPossible null pointer dereference if the default parameter value is used: $symbol");
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+        -:  483:
+    #####:  484:    if (!tok) {
+branch  0 never executed
+branch  1 never executed
+    #####:  485:        reportError(tok, Severity::error, "nullPointer", "Null pointer dereference", CWE476, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  486:        reportError(tok, Severity::warning, "nullPointerDefaultArg", errmsgdefarg, CWE476, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+    #####:  487:        reportError(tok, Severity::warning, "nullPointerRedundantCheck", errmsgcond, CWE476, false);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  488:        return;
+        -:  489:    }
+        -:  490:
+    #####:  491:    if (!value) {
+branch  0 never executed
+branch  1 never executed
+    #####:  492:        reportError(tok, Severity::error, "nullPointer", "Null pointer dereference", CWE476, inconclusive);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  493:        return;
+        -:  494:    }
+        -:  495:
+    #####:  496:    if (!mSettings->isEnabled(value, inconclusive))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  497:        return;
+        -:  498:
+    #####:  499:    const ErrorPath errorPath = getErrorPath(tok, value, "Null pointer dereference");
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+call   13 never executed
+call   14 never executed
+        -:  500:
+    #####:  501:    if (value->condition) {
+branch  0 never executed
+branch  1 never executed
+    #####:  502:        reportError(errorPath, Severity::warning, "nullPointerRedundantCheck", errmsgcond, CWE476, inconclusive || value->isInconclusive());
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  503:    } else if (value->defaultArg) {
+branch  0 never executed
+branch  1 never executed
+    #####:  504:        reportError(errorPath, Severity::warning, "nullPointerDefaultArg", errmsgdefarg, CWE476, inconclusive || value->isInconclusive());
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+branch  6 never executed
+branch  7 never executed
+        -:  505:    } else {
+    #####:  506:        std::string errmsg;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  507:        errmsg = std::string(value->isKnown() ? "Null" : "Possible null") + " pointer dereference";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+    #####:  508:        if (!varname.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  509:            errmsg = "$symbol:" + varname + '\n' + errmsg + ": $symbol";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+        -:  510:
+    #####:  511:        reportError(errorPath,
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  512:                    value->isKnown() ? Severity::error : Severity::warning,
+call    0 never executed
+        -:  513:                    "nullPointer",
+        -:  514:                    errmsg,
+    #####:  515:                    CWE476, inconclusive || value->isInconclusive());
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:  516:    }
+        -:  517:}
+        -:  518:
+function _ZN16CheckNullPointer10arithmeticEv called 0 returned 0% blocks executed 0%
+    #####:  519:void CheckNullPointer::arithmetic()
+        -:  520:{
+    #####:  521:    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+call    0 never executed
+    #####:  522:    for (const Scope * scope : symbolDatabase->functionScopes) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  523:        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  524:            if (!Token::Match(tok, "-|+|+=|-=|++|--"))
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  525:                continue;
+        -:  526:            const Token *pointerOperand;
+        -:  527:            const Token *numericOperand;
+    #####:  528:            if (tok->astOperand1() && tok->astOperand1()->valueType() && tok->astOperand1()->valueType()->pointer != 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  529:                pointerOperand = tok->astOperand1();
+call    0 never executed
+    #####:  530:                numericOperand = tok->astOperand2();
+call    0 never executed
+    #####:  531:            } else if (tok->astOperand2() && tok->astOperand2()->valueType() && tok->astOperand2()->valueType()->pointer != 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+branch 11 never executed
+branch 12 never executed
+    #####:  532:                pointerOperand = tok->astOperand2();
+call    0 never executed
+    #####:  533:                numericOperand = tok->astOperand1();
+call    0 never executed
+        -:  534:            } else
+    #####:  535:                continue;
+    #####:  536:            if (numericOperand && numericOperand->valueType() && !numericOperand->valueType()->isIntegral())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  537:                continue;
+    #####:  538:            MathLib::bigint checkValue = 0;
+        -:  539:            // When using an assign op, the value read from
+        -:  540:            // valueflow has already been updated, so instead of
+        -:  541:            // checking for zero we check that the value is equal
+        -:  542:            // to RHS
+    #####:  543:            if (tok->astOperand2() && tok->astOperand2()->hasKnownIntValue()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+branch  8 never executed
+branch  9 never executed
+branch 10 never executed
+    #####:  544:                if (tok->str() == "-=")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  545:                    checkValue -= tok->astOperand2()->values().front().intvalue;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  546:                else if (tok->str() == "+=")
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  547:                    checkValue = tok->astOperand2()->values().front().intvalue;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  548:            }
+    #####:  549:            const ValueFlow::Value *value = pointerOperand->getValue(checkValue);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  550:            if (!value)
+branch  0 never executed
+branch  1 never executed
+    #####:  551:                continue;
+    #####:  552:            if (!mSettings->inconclusive && value->isInconclusive())
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  553:                continue;
+    #####:  554:            if (value->condition && !mSettings->isEnabled(Settings::WARNING))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  555:                continue;
+    #####:  556:            if (value->condition)
+branch  0 never executed
+branch  1 never executed
+    #####:  557:                redundantConditionWarning(tok, value, value->condition, value->isInconclusive());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  558:            else
+    #####:  559:                pointerArithmeticError(tok, value, value->isInconclusive());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+        -:  560:        }
+        -:  561:    }
+    #####:  562:}
+        -:  563:
+function _ZL20arithmeticTypeStringPK5Token called 0 returned 0% blocks executed 0%
+    #####:  564:static std::string arithmeticTypeString(const Token *tok)
+        -:  565:{
+    #####:  566:    if (tok && tok->str()[0] == '-')
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  567:        return "subtraction";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+    #####:  568:    else if (tok && tok->str()[0] == '+')
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  569:        return "addition";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+call    6 never executed
+        -:  570:    else
+    #####:  571:        return "arithmetic";
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+call    5 never executed
+        -:  572:}
+        -:  573:
+function _ZN16CheckNullPointer22pointerArithmeticErrorEPK5TokenPKN9ValueFlow5ValueEb called 0 returned 0% blocks executed 0%
+    #####:  574:void CheckNullPointer::pointerArithmeticError(const Token* tok, const ValueFlow::Value *value, bool inconclusive)
+        -:  575:{
+    #####:  576:    std::string arithmetic = arithmeticTypeString(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  577:    std::string errmsg;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  578:    if (tok && tok->str()[0] == '-') {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  579:        errmsg = "Overflow in pointer arithmetic, NULL pointer is subtracted.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  580:    } else {
+    #####:  581:        errmsg = "Pointer " + arithmetic + " with NULL pointer.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  582:    }
+    #####:  583:    const ErrorPath errorPath = getErrorPath(tok, value, "Null pointer " + arithmetic);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  584:    reportError(errorPath,
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  585:                Severity::error,
+        -:  586:                "nullPointerArithmetic",
+        -:  587:                errmsg,
+        -:  588:                CWE682,
+        -:  589:                inconclusive);
+    #####:  590:}
+        -:  591:
+function _ZN16CheckNullPointer25redundantConditionWarningEPK5TokenPKN9ValueFlow5ValueES2_b called 0 returned 0% blocks executed 0%
+    #####:  592:void CheckNullPointer::redundantConditionWarning(const Token* tok, const ValueFlow::Value *value, const Token *condition, bool inconclusive)
+        -:  593:{
+    #####:  594:    std::string arithmetic = arithmeticTypeString(tok);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  595:    std::string errmsg;
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  596:    if (tok && tok->str()[0] == '-') {
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:  597:        errmsg = ValueFlow::eitherTheConditionIsRedundant(condition) + " or there is overflow in pointer " + arithmetic + ".";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+call   13 never executed
+call   14 never executed
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+call   19 never executed
+        -:  598:    } else {
+    #####:  599:        errmsg = ValueFlow::eitherTheConditionIsRedundant(condition) + " or there is pointer arithmetic with NULL pointer.";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  600:    }
+    #####:  601:    const ErrorPath errorPath = getErrorPath(tok, value, "Null pointer " + arithmetic);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+    #####:  602:    reportError(errorPath,
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  603:                Severity::warning,
+        -:  604:                "nullPointerArithmeticRedundantCheck",
+        -:  605:                errmsg,
+        -:  606:                CWE682,
+        -:  607:                inconclusive);
+    #####:  608:}
+        -:  609:
+function _ZNK16CheckNullPointer10MyFileInfo8toStringB5cxx11Ev called 0 returned 0% blocks executed 0%
+    #####:  610:std::string CheckNullPointer::MyFileInfo::toString() const
+        -:  611:{
+    #####:  612:    return CTU::toString(unsafeUsage);
+call    0 never executed
+        -:  613:}
+        -:  614:
+function _ZL13isUnsafeUsagePK5CheckPK5TokenPx called 0 returned 0% blocks executed 0%
+    #####:  615:static bool isUnsafeUsage(const Check *check, const Token *vartok, MathLib::bigint *value)
+        -:  616:{
+        -:  617:    (void)value;
+    #####:  618:    const CheckNullPointer *checkNullPointer = dynamic_cast<const CheckNullPointer *>(check);
+branch  0 never executed
+branch  1 never executed
+    #####:  619:    bool unknown = false;
+    #####:  620:    return checkNullPointer && checkNullPointer->isPointerDeRef(vartok, unknown);
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+        -:  621:}
+        -:  622:
+function _ZNK16CheckNullPointer11getFileInfoEPK9TokenizerPK8Settings called 0 returned 0% blocks executed 0%
+    #####:  623:Check::FileInfo *CheckNullPointer::getFileInfo(const Tokenizer *tokenizer, const Settings *settings) const
+        -:  624:{
+    #####:  625:    CheckNullPointer check(tokenizer, settings, nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  626:    const std::list<CTU::FileInfo::UnsafeUsage> &unsafeUsage = CTU::getUnsafeUsage(tokenizer, settings, &check, ::isUnsafeUsage);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  627:    if (unsafeUsage.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  628:        return nullptr;
+        -:  629:
+    #####:  630:    MyFileInfo *fileInfo = new MyFileInfo;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  631:    fileInfo->unsafeUsage = unsafeUsage;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  632:    return fileInfo;
+        -:  633:}
+        -:  634:
+function _ZNK16CheckNullPointer19loadFileInfoFromXmlEPKN8tinyxml210XMLElementE called 0 returned 0% blocks executed 0%
+    #####:  635:Check::FileInfo * CheckNullPointer::loadFileInfoFromXml(const tinyxml2::XMLElement *xmlElement) const
+        -:  636:{
+    #####:  637:    const std::list<CTU::FileInfo::UnsafeUsage> &unsafeUsage = CTU::loadUnsafeUsageListFromXml(xmlElement);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  638:    if (unsafeUsage.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  639:        return nullptr;
+        -:  640:
+    #####:  641:    MyFileInfo *fileInfo = new MyFileInfo;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  642:    fileInfo->unsafeUsage = unsafeUsage;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  643:    return fileInfo;
+        -:  644:}
+        -:  645:
+function _ZN16CheckNullPointer19analyseWholeProgramEPKN3CTU8FileInfoERKNSt7__debug4listIPN5Check8FileInfoESaIS8_EEERK8SettingsR11ErrorLogger called 0 returned 0% blocks executed 0%
+    #####:  646:bool CheckNullPointer::analyseWholeProgram(const CTU::FileInfo *ctu, const std::list<Check::FileInfo*> &fileInfo, const Settings& settings, ErrorLogger &errorLogger)
+        -:  647:{
+    #####:  648:    if (!ctu)
+branch  0 never executed
+branch  1 never executed
+    #####:  649:        return false;
+    #####:  650:    bool foundErrors = false;
+        -:  651:    (void)settings; // This argument is unused
+        -:  652:
+    #####:  653:    const std::map<std::string, std::list<const CTU::FileInfo::CallBase *>> callsMap = ctu->getCallsMap();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+call    5 never executed
+        -:  654:
+    #####:  655:    for (Check::FileInfo *fi1 : fileInfo) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  656:        const MyFileInfo *fi = dynamic_cast<MyFileInfo*>(fi1);
+branch  0 never executed
+branch  1 never executed
+    #####:  657:        if (!fi)
+branch  0 never executed
+branch  1 never executed
+    #####:  658:            continue;
+    #####:  659:        for (const CTU::FileInfo::UnsafeUsage &unsafeUsage : fi->unsafeUsage) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+call    5 never executed
+call    6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  660:            for (int warning = 0; warning <= 1; warning++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  661:                if (warning == 1 && !settings.isEnabled(Settings::WARNING))
+branch  0 never executed
+branch  1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:  662:                    break;
+        -:  663:
+        -:  664:                const std::list<ErrorLogger::ErrorMessage::FileLocation> &locationList =
+        -:  665:                    ctu->getErrorPath(CTU::FileInfo::InvalidValueType::null,
+        -:  666:                                      unsafeUsage,
+        -:  667:                                      callsMap,
+        -:  668:                                      "Dereferencing argument ARG that is null",
+        -:  669:                                      nullptr,
+    #####:  670:                                      warning);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+    #####:  671:                if (locationList.empty())
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  672:                    continue;
+        -:  673:
+        -:  674:                const ErrorLogger::ErrorMessage errmsg(locationList,
+        -:  675:                                                       emptyString,
+        -:  676:                                                       warning ? Severity::warning : Severity::error,
+    #####:  677:                                                       "Null pointer dereference: " + unsafeUsage.myArgumentName,
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  678:                                                       "ctunullpointer",
+    #####:  679:                                                       CWE476, false);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+call   16 never executed
+    #####:  680:                errorLogger.reportErr(errmsg);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  681:
+    #####:  682:                foundErrors = true;
+    #####:  683:                break;
+        -:  684:            }
+        -:  685:        }
+        -:  686:    }
+        -:  687:
+    #####:  688:    return foundErrors;
+function _GLOBAL__sub_I__ZN16CheckNullPointer17parseFunctionCallERK5TokenRNSt7__debug4listIPS1_SaIS5_EEEPK7Library called 1 returned 100% blocks executed 100%
+function _Z41__static_initialization_and_destruction_0ii called 1 returned 100% blocks executed 52%
+        3:  689:}
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+branch  3 taken 100% (fallthrough)
+branch  4 taken 0%
