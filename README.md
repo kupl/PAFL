@@ -21,3 +21,8 @@ docker run --rm -it -v $(pwd):/workspace pafl
 | `-v $(pwd):/workspace` | mount `$(pwd)` in host machine to `/workspace` in container |
 | `pafl`                 | create a container from the `pafl` image                    |
 
+
+### example cmd
+```sh
+./main example:cpp 1-3 pafl,ochiai -P/home/minseok/PAFL/my_example/example/ -T/home/minseok/my_example/test_example/ -B/home/minseok/my_example/_bug_info/
+```
