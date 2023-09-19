@@ -4,6 +4,7 @@ RUN apt-get update \
     && apt-get install -y \
         build-essential \
         clang \
+        vim \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/list/*
 
 WORKDIR /opt/pafl
