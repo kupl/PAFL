@@ -1,0 +1,427 @@
+10 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+11 :	"pj_err_list"
+		- NEIGH  = { pj_err_list , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+76 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+76 :	"pj_strerrno"
+		- NEIGH  = { pj_strerrno , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+76 :	"err"
+		- NEIGH  = { err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+77 :	"max_error"
+		- NEIGH  = { max_error , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { note , }
+
+78 :	"note"
+		- NEIGH  = { note , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { max_error , }
+		- SUCC   = { adjusted_err , size_t , }
+
+79 :	"size_t"
+		- NEIGH  = { adjusted_err , size_t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { note , }
+		- SUCC   = { err , == , if , }
+
+79 :	"adjusted_err"
+		- NEIGH  = { adjusted_err , size_t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { note , }
+		- SUCC   = { err , == , if , }
+
+81 :	"if"
+		- NEIGH  = { err , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { adjusted_err , size_t , }
+		- SUCC   = { > , err , if , }
+
+81 :	"=="
+		- NEIGH  = { err , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { adjusted_err , size_t , }
+		- SUCC   = { > , err , if , }
+
+81 :	"err"
+		- NEIGH  = { err , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { adjusted_err , size_t , }
+		- SUCC   = { > , err , if , }
+
+82 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { err , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+85 :	"if"
+		- NEIGH  = { > , err , if , }
+		- PARENT = { }
+		- CHILD  = { max_error , < , err , note , return , sprintf , }
+		- PRED   = { err , == , if , }
+		- SUCC   = { - , < , err , max_error , adjusted_err , }
+
+85 :	"err"
+		- NEIGH  = { > , err , if , }
+		- PARENT = { }
+		- CHILD  = { max_error , < , err , note , return , sprintf , }
+		- PRED   = { err , == , if , }
+		- SUCC   = { - , < , err , max_error , adjusted_err , }
+
+85 :	">"
+		- NEIGH  = { > , err , if , }
+		- PARENT = { }
+		- CHILD  = { max_error , < , err , note , return , sprintf , }
+		- PRED   = { err , == , if , }
+		- SUCC   = { - , < , err , max_error , adjusted_err , }
+
+91 :	"sprintf"
+		- NEIGH  = { max_error , < , err , note , sprintf , }
+		- PARENT = { > , err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { note , return , }
+
+91 :	"note"
+		- NEIGH  = { max_error , < , err , note , sprintf , }
+		- PARENT = { > , err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { note , return , }
+
+92 :	"err"
+		- NEIGH  = { max_error , < , err , note , sprintf , }
+		- PARENT = { > , err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { note , return , }
+
+92 :	"<"
+		- NEIGH  = { max_error , < , err , note , sprintf , }
+		- PARENT = { > , err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { note , return , }
+
+92 :	"max_error"
+		- NEIGH  = { max_error , < , err , note , sprintf , }
+		- PARENT = { > , err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { note , return , }
+
+92 :	"err"
+		- NEIGH  = { max_error , < , err , note , sprintf , }
+		- PARENT = { > , err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { note , return , }
+
+92 :	"max_error"
+		- NEIGH  = { max_error , < , err , note , sprintf , }
+		- PARENT = { > , err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { note , return , }
+
+93 :	"return"
+		- NEIGH  = { note , return , }
+		- PARENT = { > , err , if , }
+		- CHILD  = { }
+		- PRED   = { max_error , < , err , note , sprintf , }
+		- SUCC   = { }
+
+93 :	"note"
+		- NEIGH  = { note , return , }
+		- PARENT = { > , err , if , }
+		- CHILD  = { }
+		- PRED   = { max_error , < , err , note , sprintf , }
+		- SUCC   = { }
+
+98 :	"adjusted_err"
+		- NEIGH  = { - , < , err , max_error , adjusted_err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , err , if , }
+		- SUCC   = { < , / , * , pj_err_list , adjusted_err , if , }
+
+98 :	"err"
+		- NEIGH  = { - , < , err , max_error , adjusted_err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , err , if , }
+		- SUCC   = { < , / , * , pj_err_list , adjusted_err , if , }
+
+98 :	"<"
+		- NEIGH  = { - , < , err , max_error , adjusted_err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , err , if , }
+		- SUCC   = { < , / , * , pj_err_list , adjusted_err , if , }
+
+98 :	"-"
+		- NEIGH  = { - , < , err , max_error , adjusted_err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , err , if , }
+		- SUCC   = { < , / , * , pj_err_list , adjusted_err , if , }
+
+98 :	"max_error"
+		- NEIGH  = { - , < , err , max_error , adjusted_err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , err , if , }
+		- SUCC   = { < , / , * , pj_err_list , adjusted_err , if , }
+
+98 :	"max_error"
+		- NEIGH  = { - , < , err , max_error , adjusted_err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , err , if , }
+		- SUCC   = { < , / , * , pj_err_list , adjusted_err , if , }
+
+98 :	"-"
+		- NEIGH  = { - , < , err , max_error , adjusted_err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , err , if , }
+		- SUCC   = { < , / , * , pj_err_list , adjusted_err , if , }
+
+98 :	"err"
+		- NEIGH  = { - , < , err , max_error , adjusted_err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , err , if , }
+		- SUCC   = { < , / , * , pj_err_list , adjusted_err , if , }
+
+98 :	"-"
+		- NEIGH  = { - , < , err , max_error , adjusted_err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , err , if , }
+		- SUCC   = { < , / , * , pj_err_list , adjusted_err , if , }
+
+99 :	"if"
+		- NEIGH  = { < , / , * , pj_err_list , adjusted_err , if , }
+		- PARENT = { }
+		- CHILD  = { * , adjusted_err , pj_err_list , return , }
+		- PRED   = { - , < , err , max_error , adjusted_err , }
+		- SUCC   = { max_error , sprintf , - , > , err , note , }
+
+99 :	"adjusted_err"
+		- NEIGH  = { < , / , * , pj_err_list , adjusted_err , if , }
+		- PARENT = { }
+		- CHILD  = { * , adjusted_err , pj_err_list , return , }
+		- PRED   = { - , < , err , max_error , adjusted_err , }
+		- SUCC   = { max_error , sprintf , - , > , err , note , }
+
+99 :	"<"
+		- NEIGH  = { < , / , * , pj_err_list , adjusted_err , if , }
+		- PARENT = { }
+		- CHILD  = { * , adjusted_err , pj_err_list , return , }
+		- PRED   = { - , < , err , max_error , adjusted_err , }
+		- SUCC   = { max_error , sprintf , - , > , err , note , }
+
+99 :	"pj_err_list"
+		- NEIGH  = { < , / , * , pj_err_list , adjusted_err , if , }
+		- PARENT = { }
+		- CHILD  = { * , adjusted_err , pj_err_list , return , }
+		- PRED   = { - , < , err , max_error , adjusted_err , }
+		- SUCC   = { max_error , sprintf , - , > , err , note , }
+
+99 :	"/"
+		- NEIGH  = { < , / , * , pj_err_list , adjusted_err , if , }
+		- PARENT = { }
+		- CHILD  = { * , adjusted_err , pj_err_list , return , }
+		- PRED   = { - , < , err , max_error , adjusted_err , }
+		- SUCC   = { max_error , sprintf , - , > , err , note , }
+
+99 :	"*"
+		- NEIGH  = { < , / , * , pj_err_list , adjusted_err , if , }
+		- PARENT = { }
+		- CHILD  = { * , adjusted_err , pj_err_list , return , }
+		- PRED   = { - , < , err , max_error , adjusted_err , }
+		- SUCC   = { max_error , sprintf , - , > , err , note , }
+
+100 :	"return"
+		- NEIGH  = { * , adjusted_err , pj_err_list , return , }
+		- PARENT = { < , / , * , pj_err_list , adjusted_err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+100 :	"*"
+		- NEIGH  = { * , adjusted_err , pj_err_list , return , }
+		- PARENT = { < , / , * , pj_err_list , adjusted_err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+100 :	"pj_err_list"
+		- NEIGH  = { * , adjusted_err , pj_err_list , return , }
+		- PARENT = { < , / , * , pj_err_list , adjusted_err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+100 :	"adjusted_err"
+		- NEIGH  = { * , adjusted_err , pj_err_list , return , }
+		- PARENT = { < , / , * , pj_err_list , adjusted_err , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+102 :	"sprintf"
+		- NEIGH  = { max_error , sprintf , - , > , err , note , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , / , * , pj_err_list , adjusted_err , if , }
+		- SUCC   = { note , return , }
+
+102 :	"note"
+		- NEIGH  = { max_error , sprintf , - , > , err , note , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , / , * , pj_err_list , adjusted_err , if , }
+		- SUCC   = { note , return , }
+
+103 :	"err"
+		- NEIGH  = { max_error , sprintf , - , > , err , note , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , / , * , pj_err_list , adjusted_err , if , }
+		- SUCC   = { note , return , }
+
+103 :	">"
+		- NEIGH  = { max_error , sprintf , - , > , err , note , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , / , * , pj_err_list , adjusted_err , if , }
+		- SUCC   = { note , return , }
+
+103 :	"-"
+		- NEIGH  = { max_error , sprintf , - , > , err , note , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , / , * , pj_err_list , adjusted_err , if , }
+		- SUCC   = { note , return , }
+
+103 :	"max_error"
+		- NEIGH  = { max_error , sprintf , - , > , err , note , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , / , * , pj_err_list , adjusted_err , if , }
+		- SUCC   = { note , return , }
+
+103 :	"err"
+		- NEIGH  = { max_error , sprintf , - , > , err , note , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , / , * , pj_err_list , adjusted_err , if , }
+		- SUCC   = { note , return , }
+
+103 :	"-"
+		- NEIGH  = { max_error , sprintf , - , > , err , note , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , / , * , pj_err_list , adjusted_err , if , }
+		- SUCC   = { note , return , }
+
+103 :	"max_error"
+		- NEIGH  = { max_error , sprintf , - , > , err , note , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , / , * , pj_err_list , adjusted_err , if , }
+		- SUCC   = { note , return , }
+
+104 :	"return"
+		- NEIGH  = { note , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { max_error , sprintf , - , > , err , note , }
+		- SUCC   = { }
+
+104 :	"note"
+		- NEIGH  = { note , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { max_error , sprintf , - , > , err , note , }
+		- SUCC   = { }
+
+107 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+107 :	"proj_errno_string"
+		- NEIGH  = { proj_errno_string , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+107 :	"err"
+		- NEIGH  = { err , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+108 :	"return"
+		- NEIGH  = { err , pj_strerrno , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+108 :	"pj_strerrno"
+		- NEIGH  = { err , pj_strerrno , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+108 :	"err"
+		- NEIGH  = { err , pj_strerrno , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+

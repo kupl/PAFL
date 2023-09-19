@@ -15221,137 +15221,137 @@
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { }
 		- PRED   = { break , }
-		- SUCC   = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- SUCC   = { strAt , tok , num , value , MathLib , }
 
 868 :	"eNumber"
 		- NEIGH  = { eNumber , Token , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { }
 		- PRED   = { break , }
-		- SUCC   = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- SUCC   = { strAt , tok , num , value , MathLib , }
 
 869 :	"MathLib"
-		- NEIGH  = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- NEIGH  = { strAt , tok , num , value , MathLib , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { }
 		- PRED   = { eNumber , Token , }
-		- SUCC   = { break , }
+		- SUCC   = { isFloat , num , if , }
 
 869 :	"value"
-		- NEIGH  = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- NEIGH  = { strAt , tok , num , value , MathLib , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { }
 		- PRED   = { eNumber , Token , }
-		- SUCC   = { break , }
+		- SUCC   = { isFloat , num , if , }
 
 869 :	"num"
-		- NEIGH  = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- NEIGH  = { strAt , tok , num , value , MathLib , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { }
 		- PRED   = { eNumber , Token , }
-		- SUCC   = { break , }
+		- SUCC   = { isFloat , num , if , }
 
 869 :	"tok"
-		- NEIGH  = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- NEIGH  = { strAt , tok , num , value , MathLib , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { }
 		- PRED   = { eNumber , Token , }
-		- SUCC   = { break , }
+		- SUCC   = { isFloat , num , if , }
 
 869 :	"strAt"
-		- NEIGH  = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- NEIGH  = { strAt , tok , num , value , MathLib , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { }
 		- PRED   = { eNumber , Token , }
-		- SUCC   = { break , }
+		- SUCC   = { isFloat , num , if , }
 
 870 :	"if"
-		- NEIGH  = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- NEIGH  = { isFloat , num , if , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { isInt , == , if , || , back , strAt , num , tok , suffix , }
-		- PRED   = { eNumber , Token , }
+		- PRED   = { strAt , tok , num , value , MathLib , }
 		- SUCC   = { break , }
 
 870 :	"num"
-		- NEIGH  = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- NEIGH  = { isFloat , num , if , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { isInt , == , if , || , back , strAt , num , tok , suffix , }
-		- PRED   = { eNumber , Token , }
+		- PRED   = { strAt , tok , num , value , MathLib , }
 		- SUCC   = { break , }
 
 870 :	"isFloat"
-		- NEIGH  = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- NEIGH  = { isFloat , num , if , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { isInt , == , if , || , back , strAt , num , tok , suffix , }
-		- PRED   = { eNumber , Token , }
+		- PRED   = { strAt , tok , num , value , MathLib , }
 		- SUCC   = { break , }
 
 872 :	"suffix"
 		- NEIGH  = { back , strAt , tok , suffix , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { || , == , suffix , if , }
 
 872 :	"tok"
 		- NEIGH  = { back , strAt , tok , suffix , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { || , == , suffix , if , }
 
 872 :	"strAt"
 		- NEIGH  = { back , strAt , tok , suffix , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { || , == , suffix , if , }
 
 872 :	"back"
 		- NEIGH  = { back , strAt , tok , suffix , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { || , == , suffix , if , }
 
 873 :	"if"
 		- NEIGH  = { || , == , suffix , if , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { if , || , insertToken , == , suffix , tok , }
 		- PRED   = { back , strAt , tok , suffix , }
 		- SUCC   = { }
 
 873 :	"suffix"
 		- NEIGH  = { || , == , suffix , if , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { if , || , insertToken , == , suffix , tok , }
 		- PRED   = { back , strAt , tok , suffix , }
 		- SUCC   = { }
 
 873 :	"=="
 		- NEIGH  = { || , == , suffix , if , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { if , || , insertToken , == , suffix , tok , }
 		- PRED   = { back , strAt , tok , suffix , }
 		- SUCC   = { }
 
 873 :	"||"
 		- NEIGH  = { || , == , suffix , if , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { if , || , insertToken , == , suffix , tok , }
 		- PRED   = { back , strAt , tok , suffix , }
 		- SUCC   = { }
 
 873 :	"suffix"
 		- NEIGH  = { || , == , suffix , if , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { if , || , insertToken , == , suffix , tok , }
 		- PRED   = { back , strAt , tok , suffix , }
 		- SUCC   = { }
 
 873 :	"=="
 		- NEIGH  = { || , == , suffix , if , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { if , || , insertToken , == , suffix , tok , }
 		- PRED   = { back , strAt , tok , suffix , }
 		- SUCC   = { }
@@ -15456,21 +15456,21 @@
 
 880 :	"if"
 		- NEIGH  = { num , isInt , if , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { npos , if , strAt , != , tok , getSuffix , find , string , MathLib , suffix , std , }
 		- PRED   = { }
 		- SUCC   = { }
 
 880 :	"num"
 		- NEIGH  = { num , isInt , if , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { npos , if , strAt , != , tok , getSuffix , find , string , MathLib , suffix , std , }
 		- PRED   = { }
 		- SUCC   = { }
 
 880 :	"isInt"
 		- NEIGH  = { num , isInt , if , }
-		- PARENT = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PARENT = { isFloat , num , if , }
 		- CHILD  = { npos , if , strAt , != , tok , getSuffix , find , string , MathLib , suffix , std , }
 		- PRED   = { }
 		- SUCC   = { }
@@ -15745,14 +15745,14 @@
 		- NEIGH  = { break , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { }
-		- PRED   = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PRED   = { isFloat , num , if , }
 		- SUCC   = { }
 
 895 :	"break"
 		- NEIGH  = { break , }
 		- PARENT = { tokType , tokAt , tok , switch , }
 		- CHILD  = { }
-		- PRED   = { isFloat , if , strAt , tok , num , value , MathLib , }
+		- PRED   = { }
 		- SUCC   = { }
 
 897 :	"tok"

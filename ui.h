@@ -32,6 +32,8 @@ public:
     const method_set& getMethodSet() const
         { return _method; }
     
+    const fs::path& getExePath() const
+        { return _exe_path; }
     const fs::path& getProjectPath(size_t iter) const
         { return _src_path[iter]; }
     const fault_loc& getFaultLocation(size_t iter) const
@@ -51,7 +53,7 @@ public:
 
 private:
     void _throwInvalidInput()
-        { throw "Invalid arguments"; }
+        { std::cerr << "Invalid arguments\n"; throw "Invalid arguments"; }
 
     void _readIn(int argc, char *argv[]);
     void _setContainer();
@@ -61,6 +63,7 @@ private:
     std::vector<size_t> _version;
     std::set<Method> _method;
 
+    fs::path _exe_path;
     fs::path _project_path;
     fs::path _testsuite_path;
     fs::path _bug_info_path;
@@ -132,6 +135,10 @@ void UI::_readIn(int argc, char *argv[])
 {
     if (argc <= 3)
         _throwInvalidInput();
+
+    {// Execution location
+        _exe_path = fs::path(argv[0]).parent_path();
+    }
 
     {// <PROJECT>:<METHOD>
         std::string arg(argv[1]);

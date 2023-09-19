@@ -1,1202 +1,1458 @@
-/*
- * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2019 Cppcheck team.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/***********************************************************************
 
-#include "cmdlineparser.h"
+       gie - The Geospatial Integrity Investigation Environment
 
-#include "check.h"
-#include "cppcheckexecutor.h"
-#include "filelister.h"
-#include "importproject.h"
-#include "path.h"
-#include "platform.h"
-#include "settings.h"
-#include "standards.h"
-#include "suppressions.h"
-#include "threadexecutor.h" // Threading model
-#include "timer.h"
-#include "utils.h"
+************************************************************************
 
-#include <algorithm>
-#include <cstdio>
-#include <cstdlib> // EXIT_FAILURE
-#include <cstring>
-#include <iostream>
-#include <list>
-#include <set>
+The Geospatial Integrity Investigation Environment "gie" is a modest
+regression testing environment for the PROJ.4 transformation library.
 
-#ifdef HAVE_RULES
-// xml is used for rules
-#include <tinyxml2.h>
-#endif
+Its primary design goal was to be able to replace those thousands of
+lines of regression testing code that are (at time of writing) part
+of PROJ.4, while not requiring any other kind of tooling than the same
+C compiler already employed for compiling the library.
 
-static void addFilesToList(const std::string& FileList, std::vector<std::string>& PathNames)
-{
-    // To keep things initially simple, if the file can't be opened, just be silent and move on.
-    std::istream *Files;
-    std::ifstream Infile;
-    if (FileList == "-") { // read from stdin
-        Files = &std::cin;
+The basic functionality of the gie command language is implemented
+through just 3 command verbs:
+
+operation,     which defines the PROJ.4 operation to test,
+accept,        which defines the input coordinate to read, and
+expect,        which defines the result to expect.
+
+E.g:
+
+operation  +proj=utm  +zone=32  +ellps=GRS80
+accept     12  55
+expect     691_875.632_14   6_098_907.825_05
+
+Note that gie accepts the underscore ("_") as a thousands separator.
+It is not required (in fact, it is entirely ignored by the input
+routine), but it significantly improves the readability of the very
+long strings of numbers typically required in projected coordinates.
+
+By default, gie considers the EXPECTation met, if the result comes to
+within 0.5 mm of the expected. This default can be changed using the
+'tolerance' command verb (and yes, I know, linguistically speaking, both
+"operation" and "tolerance" are nouns, not verbs). See the first
+few hundred lines of the "builtins.gie" test file for more details of
+the command verbs available (verbs of both the VERBal and NOUNistic
+persuation).
+
+--
+
+But more importantly than being an acronym for "Geospatial Integrity
+Investigation Environment", gie were also the initials, user id, and
+USGS email address of Gerald Ian Evenden (1935--2016), the geospatial
+visionary, who, already in the 1980s, started what was to become the
+PROJ.4 of today.
+
+Gerald's clear vision was that map projections are *just special
+functions*. Some of them rather complex, most of them of two variables,
+but all of them *just special functions*, and not particularly more
+special than the sin(), cos(), tan(), and hypot() already available in
+the C standard library.
+
+And hence, according to Gerald, *they should not be particularly much
+harder to use*, for a programmer, than the sin()s, tan()s and hypot()s
+so readily available.
+
+Gerald's ingenuity also showed in the implementation of the vision,
+where he devised a comprehensive, yet simple, system of key-value
+pairs for parameterising a map projection, and the highly flexible
+PJ struct, storing run-time compiled versions of those key-value pairs,
+hence making a map projection function call, pj_fwd(PJ, point), as easy
+as a traditional function call like hypot(x,y).
+
+While today, we may have more formally well defined metadata systems
+(most prominent the OGC WKT2 representation), nothing comes close being
+as easily readable ("human compatible") as Gerald's key-value system.
+This system in particular, and the PROJ.4 system in general, was
+Gerald's great gift to anyone using and/or communicating about geodata.
+
+It is only reasonable to name a program, keeping an eye on the integrity
+of the PROJ.4 system, in honour of Gerald.
+
+So in honour, and hopefully also in the spirit, of Gerald Ian Evenden
+(1935--2016), this is the Geospatial Integrity Investigation Environment.
+
+************************************************************************
+
+Thomas Knudsen, thokn@sdfe.dk, 2017-10-01/2017-10-08
+
+************************************************************************
+
+* Copyright (c) 2017 Thomas Knudsen
+* Copyright (c) 2017, SDFE
+*
+* Permission is hereby granted, free of charge, to any person obtaining a
+* copy of this software and associated documentation files (the "Software"),
+* to deal in the Software without restriction, including without limitation
+* the rights to use, copy, modify, merge, publish, distribute, sublicense,
+* and/or sell copies of the Software, and to permit persons to whom the
+* Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included
+* in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+* OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+* THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+* DEALINGS IN THE SOFTWARE.
+
+***********************************************************************/
+
+#include <ctype.h>
+#include <errno.h>
+#include <math.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "proj.h"
+#include "proj_internal.h"
+#include "proj_math.h"
+#include "proj_strtod.h"
+#include "proj_internal.h"
+
+#include "optargpm.h"
+
+/* Package for flexible format I/O - ffio */
+typedef struct ffio {
+    FILE *f;
+    const char **tags;
+    const char *tag;
+    char *args;
+    char *next_args;
+    size_t n_tags;
+    size_t args_size;
+    size_t next_args_size;
+    size_t argc;
+    size_t lineno, next_lineno;
+    size_t level;
+}  ffio;
+
+static int get_inp (ffio *G);
+static int skip_to_next_tag (ffio *G);
+static int step_into_gie_block (ffio *G);
+static int locate_tag (ffio *G, const char *tag);
+static int nextline (ffio *G);
+static int at_end_delimiter (ffio *G);
+static const char *at_tag (ffio *G);
+static int at_decorative_element (ffio *G);
+static ffio *ffio_destroy (ffio *G);
+static ffio *ffio_create (const char **tags, size_t n_tags, size_t max_record_size);
+
+static const char *gie_tags[] = {
+    "<gie>", "operation", "use_proj4_init_rules",
+    "accept", "expect", "roundtrip", "banner", "verbose",
+    "direction", "tolerance", "ignore", "require_grid", "echo", "skip", "</gie>"
+};
+
+static const size_t n_gie_tags = sizeof gie_tags / sizeof gie_tags[0];
+
+
+int   main(int argc, char **argv);
+
+static int   dispatch (const char *cmnd, const char *args);
+static int   errmsg (int errlev, const char *msg, ...);
+static int   errno_from_err_const (const char *err_const);
+static int   list_err_codes (void);
+static int   process_file (const char *fname);
+
+static const char *column (const char *buf, int n);
+static const char *err_const_from_errno (int err);
+
+
+
+#define SKIP -1
+
+#define MAX_OPERATION 10000
+
+typedef struct {
+    char operation[MAX_OPERATION+1];
+    PJ *P;
+    PJ_COORD a, b, c, e;
+    PJ_DIRECTION dir;
+    int verbosity;
+    int skip;
+    int op_id;
+    int op_ok,    op_ko,    op_skip;
+    int total_ok, total_ko, total_skip;
+    int grand_ok, grand_ko, grand_skip;
+    size_t operation_lineno;
+    size_t dimensions_given, dimensions_given_at_last_accept;
+    double tolerance;
+    int use_proj4_init_rules;
+    int ignore;
+    int skip_test;
+    const char *curr_file;
+    FILE *fout;
+} gie_ctx;
+
+ffio *F = nullptr;
+
+static gie_ctx T;
+int tests=0, succs=0, succ_fails=0, fail_fails=0, succ_rtps=0, fail_rtps=0;
+
+static const char delim[] = {"-------------------------------------------------------------------------------\n"};
+
+
+static const char usage[] = {
+    "--------------------------------------------------------------------------------\n"
+    "Usage: %s [-options]... infile...\n"
+    "--------------------------------------------------------------------------------\n"
+    "Options:\n"
+    "--------------------------------------------------------------------------------\n"
+    "    -h                Help: print this usage information\n"
+    "    -o /path/to/file  Specify output file name\n"
+    "    -v                Verbose: Provide non-essential informational output.\n"
+    "                      Repeat -v for more verbosity (e.g. -vv)\n"
+    "    -q                Quiet: Opposite of verbose. In quiet mode not even errors\n"
+    "                      are reported. Only interaction is through the return code\n"
+    "                      (0 on success, non-zero indicates number of FAILED tests)\n"
+    "    -l                List the PROJ internal system error codes\n"
+    "--------------------------------------------------------------------------------\n"
+    "Long Options:\n"
+    "--------------------------------------------------------------------------------\n"
+    "    --output          Alias for -o\n"
+    "    --verbose         Alias for -v\n"
+    "    --help            Alias for -h\n"
+    "    --list            Alias for -l\n"
+    "    --version         Print version number\n"
+    "--------------------------------------------------------------------------------\n"
+    "Examples:\n"
+    "--------------------------------------------------------------------------------\n"
+    "1. Run all tests in file \"corner-cases.gie\", providing much extra information\n"
+    "       gie -vvvv corner-cases.gie\n"
+    "2. Run all tests in files \"foo\" and \"bar\", providing info on failures only\n"
+    "       gie foo bar\n"
+    "--------------------------------------------------------------------------------\n"
+};
+
+int main (int argc, char **argv) {
+    int  i;
+    const char *longflags[]  = {"v=verbose", "q=quiet", "h=help", "l=list", "version", nullptr};
+    const char *longkeys[]   = {"o=output", nullptr};
+    OPTARGS *o;
+
+    memset (&T, 0, sizeof (T));
+    T.dir = PJ_FWD;
+    T.verbosity = 1;
+    T.tolerance = 5e-4;
+    T.ignore = 5555; /* Error code that will not be issued by proj_create() */
+    T.use_proj4_init_rules = FALSE;
+
+    o = opt_parse (argc, argv, "hlvq", "o", longflags, longkeys);
+    if (nullptr==o)
+        return 0;
+
+    if (opt_given (o, "h") || argc==1) {
+        printf (usage, o->progname);
+        free (o);
+        return 0;
+    }
+
+
+    if (opt_given (o, "version")) {
+        fprintf (stdout, "%s: %s\n", o->progname, pj_get_release ());
+        free (o);
+        return 0;
+    }
+
+    T.verbosity = opt_given (o, "q");
+    if (T.verbosity)
+        T.verbosity = -1;
+    if (T.verbosity != -1)
+        T.verbosity = opt_given (o, "v") + 1;
+
+    T.fout = stdout;
+    if (opt_given (o, "o"))
+        T.fout = fopen (opt_arg (o, "output"), "rt");
+
+    if (nullptr==T.fout) {
+        fprintf (stderr, "%s: Cannot open '%s' for output\n", o->progname, opt_arg (o, "output"));
+        free (o);
+        return 1;
+    }
+
+    if (opt_given (o, "l")) {
+        free (o);
+        return list_err_codes ();
+    }
+
+    if (0==o->fargc) {
+        if (T.verbosity==-1)
+            return -1;
+        fprintf (T.fout, "Nothing to do\n");
+        free (o);
+        return 0;
+    }
+
+    F = ffio_create (gie_tags, n_gie_tags, 1000);
+    if (nullptr==F) {
+        fprintf (stderr, "%s: No memory\n", o->progname);
+        free (o);
+        return 1;
+    }
+
+    for (i = 0;  i < o->fargc;  i++)
+        process_file (o->fargv[i]);
+
+    if (T.verbosity > 0) {
+        if (o->fargc > 1) {
+            fprintf (T.fout, "%sGrand total: %d. Success: %d, Skipped: %d, Failure: %d\n",
+                     delim, T.grand_ok+T.grand_ko+T.grand_skip, T.grand_ok, T.grand_skip,
+                     T.grand_ko);
+        }
+        fprintf (T.fout, "%s", delim);
+        if (T.verbosity > 1) {
+            fprintf (T.fout, "Failing roundtrips: %4d,    Succeeding roundtrips: %4d\n", fail_rtps, succ_rtps);
+            fprintf (T.fout, "Failing failures:   %4d,    Succeeding failures:   %4d\n", fail_fails, succ_fails);
+            fprintf (T.fout, "Internal counters:                            %4.4d(%4.4d)\n", tests, succs);
+            fprintf (T.fout, "%s", delim);
+        }
+    }
+    else
+        if (T.grand_ko)
+            fprintf (T.fout, "Failures: %d", T.grand_ko);
+
+    if (stdout != T.fout)
+        fclose (T.fout);
+
+    free (o);
+    ffio_destroy (F);
+    return T.grand_ko;
+}
+
+static int another_failure (void) {
+    T.op_ko++;
+    T.total_ko++;
+    proj_errno_reset (T.P);
+    return 0;
+}
+
+static int another_skip (void) {
+    T.op_skip++;
+    T.total_skip++;
+    return 0;
+}
+
+static int another_success (void) {
+    T.op_ok++;
+    T.total_ok++;
+    proj_errno_reset (T.P);
+    return 0;
+}
+
+static int another_succeeding_failure (void) {
+    succ_fails++;
+    return another_success ();
+}
+
+static int another_failing_failure (void) {
+    fail_fails++;
+    return another_failure ();
+}
+
+static int another_succeeding_roundtrip (void) {
+    succ_rtps++;
+    return another_success ();
+}
+
+static int another_failing_roundtrip (void) {
+    fail_rtps++;
+    return another_failure ();
+}
+
+static int process_file (const char *fname) {
+    FILE *f;
+
+    F->lineno = F->next_lineno = F->level = 0;
+    T.op_ok = T.total_ok = 0;
+    T.op_ko = T.total_ko = 0;
+    T.op_skip = T.total_skip = 0;
+
+    if (T.skip) {
+        proj_destroy (T.P);
+        T.P = nullptr;
+        return 0;
+    }
+
+    f = fopen (fname, "rt");
+    if (nullptr==f) {
+        if (T.verbosity > 0) {
+            fprintf (T.fout, "%sCannot open spec'd input file '%s' - bye!\n", delim, fname);
+            return 2;
+        }
+        errmsg (2, "Cannot open spec'd input file '%s' - bye!\n", fname);
+    }
+    F->f = f;
+
+    if (T.verbosity > 0)
+        fprintf (T.fout, "%sReading file '%s'\n", delim, fname);
+    T.curr_file = fname;
+
+    while (get_inp(F)) {
+        if (SKIP==dispatch (F->tag, F->args)) {
+            proj_destroy (T.P);
+            T.P = nullptr;
+            return 0;
+        }
+    }
+
+    fclose (f);
+    F->lineno = F->next_lineno = 0;
+
+    T.grand_ok   += T.total_ok;
+    T.grand_ko   += T.total_ko;
+    T.grand_skip += T.grand_skip;
+    if (T.verbosity > 0) {
+        fprintf (T.fout, "%stotal: %2d tests succeeded, %2d tests skipped, %2d tests %s\n",
+                 delim, T.total_ok, T.total_skip, T.total_ko,
+                 T.total_ko? "FAILED!": "failed.");
+    }
+    if (F->level==0)
+        return errmsg (-3, "File '%s':Missing '<gie>' cmnd - bye!\n", fname);
+    if (F->level && F->level%2)
+        return errmsg (-4, "File '%s':Missing '</gie>' cmnd - bye!\n", fname);
+    return 0;
+}
+
+
+/*****************************************************************************/
+const char *column (const char *buf, int n) {
+/*****************************************************************************
+Return a pointer to the n'th column of buf. Column numbers start at 0.
+******************************************************************************/
+    int i;
+    if (n <= 0)
+        return buf;
+    for (i = 0;  i < n;  i++) {
+        while (isspace(*buf))
+            buf++;
+        if (i == n - 1)
+            break;
+        while ((0 != *buf) && !isspace(*buf))
+            buf++;
+    }
+    return buf;
+}
+
+
+/*****************************************************************************/
+static double strtod_scaled (const char *args, double default_scale) {
+/*****************************************************************************
+Interpret <args> as a numeric followed by a linear decadal prefix.
+Return the properly scaled numeric
+******************************************************************************/
+    double s;
+    const double GRS80_DEG = 111319.4908; /* deg-to-m at equator of GRS80 */
+    const char *endp = args;
+    s = proj_strtod (args, (char **) &endp);
+    if (args==endp)
+        return HUGE_VAL;
+
+    endp = column (args, 2);
+
+    if (0==strcmp(endp, "km"))
+        s *= 1000;
+    else if (0==strcmp(endp, "m"))
+        s *= 1;
+    else if (0==strcmp(endp, "dm"))
+        s /= 10;
+    else if (0==strcmp(endp, "cm"))
+        s /= 100;
+    else if (0==strcmp(endp, "mm"))
+        s /= 1000;
+    else if (0==strcmp(endp, "um"))
+        s /= 1e6;
+    else if (0==strcmp(endp, "nm"))
+        s /= 1e9;
+    else if (0==strcmp(endp, "rad"))
+        s = GRS80_DEG * proj_todeg (s);
+    else if (0==strcmp(endp, "deg"))
+        s = GRS80_DEG * s;
+    else
+        s *= default_scale;
+    return s;
+}
+
+
+static int banner (const char *args) {
+    char dots[] = {"..."}, nodots[] = {""}, *thedots = nodots;
+    if (strlen(args) > 70)
+        thedots = dots;
+    fprintf (T.fout, "%s%-70.70s%s\n", delim, args, thedots);
+    return 0;
+}
+
+
+static int tolerance (const char *args) {
+    T.tolerance = strtod_scaled (args, 1);
+    if (HUGE_VAL==T.tolerance) {
+        T.tolerance = 0.0005;
+        return 1;
+    }
+    return 0;
+}
+
+
+static int use_proj4_init_rules (const char *args) {
+    T.use_proj4_init_rules = strcmp(args, "true") == 0;
+    return 0;
+}
+
+static int ignore (const char *args) {
+    T.ignore = errno_from_err_const (column (args, 1));
+    return 0;
+}
+
+static int require_grid (const char *args) {
+    PJ_GRID_INFO grid_info;
+    const char* grid_filename = column (args, 1);
+    grid_info = proj_grid_info(grid_filename);
+    if( strlen(grid_info.filename) == 0 ) {
+        if (T.verbosity > 1) {
+            fprintf (T.fout, "Test skipped because of missing grid %s\n",
+                    grid_filename);
+        }
+        T.skip_test = 1;
+    }
+    return 0;
+}
+
+static int direction (const char *args) {
+    const char *endp = args;
+    while (isspace (*endp))
+        endp++;
+    switch (*endp) {
+        case 'F':
+        case 'f':
+        T.dir = PJ_FWD;
+            break;
+        case 'I':
+        case 'i':
+        case 'R':
+        case 'r':
+            T.dir = PJ_INV;
+            break;
+        default:
+            return 1;
+    }
+
+    return 0;
+}
+
+
+static void finish_previous_operation (const char *args) {
+    if (T.verbosity > 1 && T.op_id > 1 && T.op_ok+T.op_ko)
+        fprintf (T.fout, "%s     %d tests succeeded,  %d tests skipped, %d tests %s\n",
+                 delim, T.op_ok, T.op_skip, T.op_ko, T.op_ko? "FAILED!": "failed.");
+    (void) args;
+}
+
+
+
+/*****************************************************************************/
+static int operation (char *args) {
+/*****************************************************************************
+Define the operation to apply to the input data (in ISO 19100 lingo,
+an operation is the general term describing something that can be
+either a conversion or a transformation)
+******************************************************************************/
+    T.op_id++;
+
+    T.operation_lineno = F->lineno;
+
+    strncpy (&(T.operation[0]), F->args, MAX_OPERATION);
+    T.operation[MAX_OPERATION] = '\0';
+
+    if (T.verbosity > 1) {
+        finish_previous_operation (F->args);
+        banner (args);
+    }
+
+
+    T.op_ok = 0;
+    T.op_ko = 0;
+    T.op_skip = 0;
+    T.skip_test = 0;
+
+    direction ("forward");
+    tolerance ("0.5 mm");
+    ignore ("pjd_err_dont_skip");
+
+    proj_errno_reset (T.P);
+
+    if (T.P)
+        proj_destroy (T.P);
+    proj_errno_reset (nullptr);
+    proj_context_use_proj4_init_rules(nullptr, T.use_proj4_init_rules);
+
+    T.P = proj_create (nullptr, F->args);
+
+    /* Checking that proj_create succeeds is first done at "expect" time, */
+    /* since we want to support "expect"ing specific error codes */
+
+    return 0;
+}
+
+static PJ_COORD torad_coord (PJ *P, PJ_DIRECTION dir, PJ_COORD a) {
+    size_t i, n;
+    const char *axis = "enut";
+    paralist *l = pj_param_exists (P->params, "axis");
+    if (l && dir==PJ_INV)
+        axis = l->param + strlen ("axis=");
+    n = strlen (axis);
+    for (i = 0;  i < n;  i++)
+        if (strchr ("news", axis[i]))
+            a.v[i] = proj_torad (a.v[i]);
+    return a;
+}
+
+
+static PJ_COORD todeg_coord (PJ *P, PJ_DIRECTION dir, PJ_COORD a) {
+    size_t i, n;
+    const char *axis = "enut";
+    paralist *l = pj_param_exists (P->params, "axis");
+    if (l && dir==PJ_FWD)
+        axis = l->param + strlen ("axis=");
+    n = strlen (axis);
+    for (i = 0;  i < n;  i++)
+        if (strchr ("news", axis[i]))
+            a.v[i] = proj_todeg (a.v[i]);
+    return a;
+}
+
+
+
+/*****************************************************************************/
+static PJ_COORD parse_coord (const char *args) {
+/*****************************************************************************
+Attempt to interpret args as a PJ_COORD.
+******************************************************************************/
+    int i;
+    const char *endp;
+    const char *dmsendp;
+    const char *prev = args;
+    PJ_COORD a = proj_coord (0,0,0,0);
+
+    T.dimensions_given = 0;
+    for (i = 0;   i < 4;   i++) {
+        /* proj_strtod doesn't read values like 123d45'678W so we need a bit */
+        /* of help from proj_dmstor. proj_strtod effectively ignores what    */
+        /* comes after "d", so we use that fact that when dms is larger than */
+        /* d the value was stated in "dms" form.                             */
+        /* This could be avoided if proj_dmstor used the same proj_strtod()  */
+        /* as gie, but that is not the case (yet). When we remove projects.h */
+        /* from the public API we can change that.                           */
+        double d = proj_strtod(prev,  (char **) &endp);
+        double dms = PJ_TODEG(proj_dmstor (prev, (char **) &dmsendp));
+       /* TODO: When projects.h is removed, call proj_dmstor() in all cases */
+        if (d != dms && fabs(d) < fabs(dms) && fabs(dms) < fabs(d) + 1) {
+            d = dms;
+            endp = dmsendp;
+        }
+        /* A number like -81d00'00.000 will be parsed correctly by both */
+        /* proj_strtod and proj_dmstor but only the latter will return  */
+        /* the correct end-pointer.                                     */
+        if (d == dms && endp != dmsendp)
+            endp = dmsendp;
+
+        /* Break out if there were no more numerals */
+        if (prev==endp)
+            return i > 1? a: proj_coord_error ();
+
+        a.v[i] = d;
+        prev = endp;
+        T.dimensions_given++;
+    }
+
+    return a;
+}
+
+
+/*****************************************************************************/
+static int accept (const char *args) {
+/*****************************************************************************
+Read ("ACCEPT") a 2, 3, or 4 dimensional input coordinate.
+******************************************************************************/
+    T.a = parse_coord (args);
+    if (T.verbosity > 3)
+        fprintf (T.fout, "#  %s\n", args);
+    T.dimensions_given_at_last_accept = T.dimensions_given;
+    return 0;
+}
+
+
+/*****************************************************************************/
+static int roundtrip (const char *args) {
+/*****************************************************************************
+Check how far we go from the ACCEPTed point when doing successive
+back/forward transformation pairs.
+
+Without args, roundtrip defaults to 100 iterations:
+
+  roundtrip
+
+With one arg, roundtrip will default to a tolerance of T.tolerance:
+
+  roundtrip ntrips
+
+With two args:
+
+  roundtrip ntrips tolerance
+
+Always returns 0.
+******************************************************************************/
+    int ntrips;
+    double d, r, ans;
+    char *endp;
+    PJ_COORD coo;
+
+    if (nullptr==T.P) {
+        if (T.ignore == proj_errno(T.P))
+            return another_skip();
+
+        return another_failure ();
+    }
+
+    ans = proj_strtod (args, &endp);
+    if (endp==args) {
+        /* Default to 100 iterations if not args. */
+        ntrips = 100;
     } else {
-        Infile.open(FileList);
-        Files = &Infile;
-    }
-    if (Files && *Files) {
-        std::string FileName;
-        while (std::getline(*Files, FileName)) { // next line
-            if (!FileName.empty()) {
-                PathNames.push_back(FileName);
-            }
+        if (ans < 1.0 || ans > 1000000.0) {
+            errmsg (2, "Invalid number of roundtrips: %lf\n", ans);
+            return another_failing_roundtrip ();
         }
+        ntrips = (int)ans;
     }
+
+    d = strtod_scaled (endp, 1);
+    d = d==HUGE_VAL?  T.tolerance:  d;
+
+    /* input ("accepted") values - probably in degrees */
+    coo = proj_angular_input  (T.P, T.dir)? torad_coord (T.P, T.dir, T.a):  T.a;
+
+    r = proj_roundtrip (T.P, T.dir, ntrips, &coo);
+    if (r <= d)
+        return another_succeeding_roundtrip ();
+
+    if (T.verbosity > -1) {
+        if (0==T.op_ko && T.verbosity < 2)
+            banner (T.operation);
+        fprintf (T.fout, "%s", T.op_ko? "     -----\n": delim);
+        fprintf (T.fout, "     FAILURE in %s(%d):\n", opt_strip_path (T.curr_file), (int) F->lineno);
+        fprintf (T.fout, "     roundtrip deviation: %.6f mm, expected: %.6f mm\n", 1000*r, 1000*d);
+    }
+    return another_failing_roundtrip ();
 }
 
-static bool addIncludePathsToList(const std::string& FileList, std::list<std::string>* PathNames)
-{
-    std::ifstream Files(FileList);
-    if (Files) {
-        std::string PathName;
-        while (std::getline(Files, PathName)) { // next line
-            if (!PathName.empty()) {
-                PathName = Path::removeQuotationMarks(PathName);
-                PathName = Path::fromNativeSeparators(PathName);
 
-                // If path doesn't end with / or \, add it
-                if (!endsWith(PathName, '/'))
-                    PathName += '/';
+static int expect_message (double d, const char *args) {
+    another_failure ();
 
-                PathNames->push_back(PathName);
-            }
+    if (T.verbosity < 0)
+        return 1;
+    if (d > 1e6)
+        d = 999999.999999;
+    if (0==T.op_ko && T.verbosity < 2)
+        banner (T.operation);
+    fprintf (T.fout, "%s", T.op_ko? "     -----\n": delim);
+
+    fprintf (T.fout, "     FAILURE in %s(%d):\n", opt_strip_path (T.curr_file), (int) F->lineno);
+    fprintf (T.fout, "     expected: %s\n", args);
+    fprintf (T.fout, "     got:      %.12f   %.12f", T.b.xy.x,  T.b.xy.y);
+    if (T.b.xyzt.t!=0 || T.b.xyzt.z!=0)
+        fprintf (T.fout, "   %.9f", T.b.xyz.z);
+    if (T.b.xyzt.t!=0)
+        fprintf (T.fout, "   %.9f", T.b.xyzt.t);
+    fprintf (T.fout, "\n");
+    fprintf (T.fout, "     deviation:  %.6f mm,  expected:  %.6f mm\n", 1000*d, 1000*T.tolerance);
+    return 1;
+}
+
+
+static int expect_message_cannot_parse (const char *args) {
+    another_failure ();
+    if (T.verbosity > -1) {
+        if (0==T.op_ko && T.verbosity < 2)
+            banner (T.operation);
+        fprintf (T.fout, "%s", T.op_ko? "     -----\n": delim);
+        fprintf (T.fout, "     FAILURE in %s(%d):\n     Too few args: %s\n", opt_strip_path (T.curr_file), (int) F->lineno, args);
+    }
+    return 1;
+}
+
+static int expect_failure_with_errno_message (int expected, int got) {
+    another_failing_failure ();
+
+    if (T.verbosity < 0)
+        return 1;
+    if (0==T.op_ko && T.verbosity < 2)
+        banner (T.operation);
+    fprintf (T.fout, "%s", T.op_ko? "     -----\n": delim);
+    fprintf (T.fout, "     FAILURE in %s(%d):\n",    opt_strip_path (T.curr_file), (int) F->lineno);
+    fprintf (T.fout, "     got errno %s (%d): %s\n", err_const_from_errno(got), got,  pj_strerrno (got));
+    fprintf (T.fout, "     expected %s (%d):  %s",   err_const_from_errno(expected), expected, pj_strerrno (expected));
+    fprintf (T.fout, "\n");
+    return 1;
+}
+
+
+/* For test purposes, we want to call a transformation of the same */
+/* dimensionality as the number of dimensions given in accept */
+static PJ_COORD expect_trans_n_dim (PJ_COORD ci) {
+    if (4==T.dimensions_given_at_last_accept)
+        return proj_trans (T.P, T.dir, ci);
+
+    if (3==T.dimensions_given_at_last_accept)
+        return pj_approx_3D_trans (T.P, T.dir, ci);
+
+    return pj_approx_2D_trans (T.P, T.dir, ci);
+}
+
+
+/*****************************************************************************/
+static int expect (const char *args) {
+/*****************************************************************************
+Tell GIE what to expect, when transforming the ACCEPTed input
+******************************************************************************/
+    PJ_COORD ci, co, ce;
+    double d;
+    int expect_failure = 0;
+    int expect_failure_with_errno = 0;
+
+    if (0==strncmp (args, "failure", 7)) {
+        expect_failure = 1;
+
+        /* Option: Fail with an expected errno (syntax: expect failure errno -33) */
+        if (0==strncmp (column (args, 2), "errno", 5))
+            expect_failure_with_errno = errno_from_err_const (column (args, 3));
+    }
+
+    if (T.ignore==proj_errno(T.P))
+        return another_skip ();
+
+    if (nullptr==T.P) {
+        /* If we expect failure, and fail, then it's a success... */
+        if (expect_failure) {
+            /* Failed to fail correctly? */
+            if (expect_failure_with_errno && proj_errno (T.P)!=expect_failure_with_errno)
+                return expect_failure_with_errno_message (expect_failure_with_errno, proj_errno(T.P));
+
+            return another_succeeding_failure ();
         }
-        return true;
+
+        /* Otherwise, it's a true failure */
+        banner (T.operation);
+        errmsg (3, "%sInvalid operation definition in line no. %d:\n       %s (errno=%s/%d)\n",
+            delim, (int) T.operation_lineno, pj_strerrno(proj_errno(T.P)),
+            err_const_from_errno (proj_errno(T.P)), proj_errno(T.P)
+        );
+        return another_failing_failure ();
     }
-    return false;
-}
 
-static bool addPathsToSet(const std::string& FileName, std::set<std::string>* set)
-{
-    std::list<std::string> templist;
-    if (!addIncludePathsToList(FileName, &templist))
-        return false;
-    set->insert(templist.begin(), templist.end());
-    return true;
-}
-
-CmdLineParser::CmdLineParser(Settings *settings)
-    : mSettings(settings)
-    , mShowHelp(false)
-    , mShowVersion(false)
-    , mShowErrorMessages(false)
-    , mExitAfterPrint(false)
-{
-}
-
-void CmdLineParser::printMessage(const std::string &message)
-{
-    std::cout << message << std::endl;
-}
-
-void CmdLineParser::printMessage(const char* message)
-{
-    std::cout << message << std::endl;
-}
-
-bool CmdLineParser::parseFromArgs(int argc, const char* const argv[])
-{
-    bool def = false;
-    bool maxconfigs = false;
-
-    mSettings->exename = argv[0];
-
-    for (int i = 1; i < argc; i++) {
-        if (argv[i][0] == '-') {
-            if (std::strcmp(argv[i], "--version") == 0) {
-                mShowVersion = true;
-                mExitAfterPrint = true;
-                return true;
-            }
-
-            else if (std::strncmp(argv[i], "--addon=", 8) == 0)
-                mSettings->addons.emplace_back(argv[i]+8);
-
-            else if (std::strncmp(argv[i], "--cppcheck-build-dir=", 21) == 0) {
-                mSettings->buildDir = Path::fromNativeSeparators(argv[i] + 21);
-                if (endsWith(mSettings->buildDir, '/'))
-                    mSettings->buildDir.erase(mSettings->buildDir.size() - 1U);
-            }
-
-            // Flag used for various purposes during debugging
-            else if (std::strcmp(argv[i], "--debug-simplified") == 0)
-                mSettings->debugSimplified = true;
-
-            // Show --debug output after the first simplifications
-            else if (std::strcmp(argv[i], "--debug") == 0 ||
-                     std::strcmp(argv[i], "--debug-normal") == 0)
-                mSettings->debugnormal = true;
-
-            // Show debug warnings
-            else if (std::strcmp(argv[i], "--debug-warnings") == 0)
-                mSettings->debugwarnings = true;
-
-            // Show template information
-            else if (std::strcmp(argv[i], "--debug-template") == 0)
-                mSettings->debugtemplate = true;
-
-            // dump cppcheck data
-            else if (std::strcmp(argv[i], "--dump") == 0)
-                mSettings->dump = true;
-
-            // max ctu depth
-            else if (std::strncmp(argv[i], "--max-ctu-depth=", 16) == 0)
-                mSettings->maxCtuDepth = std::atoi(argv[i] + 16);
-
-            else if (std::strcmp(argv[i], "--experimental-fast") == 0)
-                // TODO: Reomve this flag!
-                ;
-
-            // (Experimental) exception handling inside cppcheck client
-            else if (std::strcmp(argv[i], "--exception-handling") == 0)
-                mSettings->exceptionHandling = true;
-            else if (std::strncmp(argv[i], "--exception-handling=", 21) == 0) {
-                mSettings->exceptionHandling = true;
-                const std::string exceptionOutfilename = &(argv[i][21]);
-                CppCheckExecutor::setExceptionOutput((exceptionOutfilename=="stderr") ? stderr : stdout);
-            }
-
-            // Inconclusive checking
-            else if (std::strcmp(argv[i], "--inconclusive") == 0)
-                mSettings->inconclusive = true;
-
-            // Experimental: Safe checking
-            else if (std::strcmp(argv[i], "--safe-classes") == 0)
-                mSettings->safeChecks.classes = true;
-
-            // Experimental: Safe checking
-            else if (std::strcmp(argv[i], "--safe-functions") == 0)
-                mSettings->safeChecks.externalFunctions = mSettings->safeChecks.internalFunctions = true;
-
-            // Experimental: Verify
-            else if (std::strcmp(argv[i], "--verify") == 0)
-                mSettings->verification = true;
-
-            // Enforce language (--language=, -x)
-            else if (std::strncmp(argv[i], "--language=", 11) == 0 || std::strcmp(argv[i], "-x") == 0) {
-                std::string str;
-                if (argv[i][2]) {
-                    str = argv[i]+11;
-                } else {
-                    i++;
-                    if (i >= argc || argv[i][0] == '-') {
-                        printMessage("cppcheck: No language given to '-x' option.");
-                        return false;
-                    }
-                    str = argv[i];
-                }
-
-                if (str == "c")
-                    mSettings->enforcedLang = Settings::C;
-                else if (str == "c++")
-                    mSettings->enforcedLang = Settings::CPP;
-                else {
-                    printMessage("cppcheck: Unknown language '" + str + "' enforced.");
-                    return false;
-                }
-            }
-
-            // Filter errors
-            else if (std::strncmp(argv[i], "--exitcode-suppressions=", 24) == 0) {
-                // exitcode-suppressions=filename.txt
-                std::string filename = 24 + argv[i];
-
-                std::ifstream f(filename);
-                if (!f.is_open()) {
-                    printMessage("cppcheck: Couldn't open the file: \"" + filename + "\".");
-                    return false;
-                }
-                const std::string errmsg(mSettings->nofail.parseFile(f));
-                if (!errmsg.empty()) {
-                    printMessage(errmsg);
-                    return false;
-                }
-            }
-
-            // Filter errors
-            else if (std::strncmp(argv[i], "--suppressions-list=", 20) == 0) {
-                std::string filename = argv[i]+20;
-                std::ifstream f(filename);
-                if (!f.is_open()) {
-                    std::string message("cppcheck: Couldn't open the file: \"");
-                    message += filename;
-                    message += "\".";
-                    if (std::count(filename.begin(), filename.end(), ',') > 0 ||
-                        std::count(filename.begin(), filename.end(), '.') > 1) {
-                        // If user tried to pass multiple files (we can only guess that)
-                        // e.g. like this: --suppressions-list=a.txt,b.txt
-                        // print more detailed error message to tell user how he can solve the problem
-                        message += "\nIf you want to pass two files, you can do it e.g. like this:";
-                        message += "\n    cppcheck --suppressions-list=a.txt --suppressions-list=b.txt file.cpp";
-                    }
-
-                    printMessage(message);
-                    return false;
-                }
-                const std::string errmsg(mSettings->nomsg.parseFile(f));
-                if (!errmsg.empty()) {
-                    printMessage(errmsg);
-                    return false;
-                }
-            }
-
-            else if (std::strncmp(argv[i], "--suppress-xml=", 15) == 0) {
-                const char * filename = argv[i] + 15;
-                const std::string errmsg(mSettings->nomsg.parseXmlFile(filename));
-                if (!errmsg.empty()) {
-                    printMessage(errmsg);
-                    return false;
-                }
-            }
-
-            else if (std::strncmp(argv[i], "--suppress=", 11) == 0) {
-                const std::string suppression = argv[i]+11;
-                const std::string errmsg(mSettings->nomsg.addSuppressionLine(suppression));
-                if (!errmsg.empty()) {
-                    printMessage(errmsg);
-                    return false;
-                }
-            }
-
-            // Enables inline suppressions.
-            else if (std::strcmp(argv[i], "--inline-suppr") == 0)
-                mSettings->inlineSuppressions = true;
-
-            // Verbose error messages (configuration info)
-            else if (std::strcmp(argv[i], "-v") == 0 || std::strcmp(argv[i], "--verbose") == 0)
-                mSettings->verbose = true;
-
-            // Force checking of files that have "too many" configurations
-            else if (std::strcmp(argv[i], "-f") == 0 || std::strcmp(argv[i], "--force") == 0)
-                mSettings->force = true;
-
-            // Output relative paths
-            else if (std::strcmp(argv[i], "-rp") == 0 || std::strcmp(argv[i], "--relative-paths") == 0)
-                mSettings->relativePaths = true;
-            else if (std::strncmp(argv[i], "-rp=", 4) == 0 || std::strncmp(argv[i], "--relative-paths=", 17) == 0) {
-                mSettings->relativePaths = true;
-                if (argv[i][argv[i][3]=='='?4:17] != 0) {
-                    std::string paths = argv[i]+(argv[i][3]=='='?4:17);
-                    for (;;) {
-                        const std::string::size_type pos = paths.find(';');
-                        if (pos == std::string::npos) {
-                            mSettings->basePaths.push_back(Path::fromNativeSeparators(paths));
-                            break;
-                        }
-                        mSettings->basePaths.push_back(Path::fromNativeSeparators(paths.substr(0, pos)));
-                        paths.erase(0, pos + 1);
-                    }
-                } else {
-                    printMessage("cppcheck: No paths specified for the '" + std::string(argv[i]) + "' option.");
-                    return false;
-                }
-            }
-
-            // Write results in file
-            else if (std::strncmp(argv[i], "--output-file=", 14) == 0)
-                mSettings->outputFile = Path::simplifyPath(Path::fromNativeSeparators(argv[i] + 14));
-
-            // Write results in results.plist
-            else if (std::strncmp(argv[i], "--plist-output=", 15) == 0) {
-                mSettings->plistOutput = Path::simplifyPath(Path::fromNativeSeparators(argv[i] + 15));
-                if (mSettings->plistOutput.empty())
-                    mSettings->plistOutput = "./";
-                else if (!endsWith(mSettings->plistOutput,'/'))
-                    mSettings->plistOutput += '/';
-            }
-
-            // Write results in results.xml
-            else if (std::strcmp(argv[i], "--xml") == 0)
-                mSettings->xml = true;
-
-            // Define the XML file version (and enable XML output)
-            else if (std::strncmp(argv[i], "--xml-version=", 14) == 0) {
-                const std::string numberString(argv[i]+14);
-
-                std::istringstream iss(numberString);
-                if (!(iss >> mSettings->xml_version)) {
-                    printMessage("cppcheck: argument to '--xml-version' is not a number.");
-                    return false;
-                }
-
-                if (mSettings->xml_version != 2) {
-                    // We only have xml version 2
-                    printMessage("cppcheck: '--xml-version' can only be 2.");
-                    return false;
-                }
-
-                // Enable also XML if version is set
-                mSettings->xml = true;
-            }
-
-            // Only print something when there are errors
-            else if (std::strcmp(argv[i], "-q") == 0 || std::strcmp(argv[i], "--quiet") == 0)
-                mSettings->quiet = true;
-
-            // Check configuration
-            else if (std::strcmp(argv[i], "--check-config") == 0) {
-                mSettings->checkConfiguration = true;
-            }
-
-            // Check library definitions
-            else if (std::strcmp(argv[i], "--check-library") == 0) {
-                mSettings->checkLibrary = true;
-            }
-
-            else if (std::strncmp(argv[i], "--enable=", 9) == 0) {
-                const std::string errmsg = mSettings->addEnabled(argv[i] + 9);
-                if (!errmsg.empty()) {
-                    printMessage(errmsg);
-                    return false;
-                }
-                // when "style" is enabled, also enable "warning", "performance" and "portability"
-                if (mSettings->isEnabled(Settings::STYLE)) {
-                    mSettings->addEnabled("warning");
-                    mSettings->addEnabled("performance");
-                    mSettings->addEnabled("portability");
-                }
-            }
-
-            // --error-exitcode=1
-            else if (std::strncmp(argv[i], "--error-exitcode=", 17) == 0) {
-                const std::string temp = argv[i]+17;
-                std::istringstream iss(temp);
-                if (!(iss >> mSettings->exitCode)) {
-                    mSettings->exitCode = 0;
-                    printMessage("cppcheck: Argument must be an integer. Try something like '--error-exitcode=1'.");
-                    return false;
-                }
-            }
-
-            // User define
-            else if (std::strncmp(argv[i], "-D", 2) == 0) {
-                std::string define;
-
-                // "-D define"
-                if (std::strcmp(argv[i], "-D") == 0) {
-                    ++i;
-                    if (i >= argc || argv[i][0] == '-') {
-                        printMessage("cppcheck: argument to '-D' is missing.");
-                        return false;
-                    }
-
-                    define = argv[i];
-                }
-                // "-Ddefine"
-                else {
-                    define = 2 + argv[i];
-                }
-
-                // No "=", append a "=1"
-                if (define.find('=') == std::string::npos)
-                    define += "=1";
-
-                if (!mSettings->userDefines.empty())
-                    mSettings->userDefines += ";";
-                mSettings->userDefines += define;
-
-                def = true;
-            }
-            // User undef
-            else if (std::strncmp(argv[i], "-U", 2) == 0) {
-                std::string undef;
-
-                // "-U undef"
-                if (std::strcmp(argv[i], "-U") == 0) {
-                    ++i;
-                    if (i >= argc || argv[i][0] == '-') {
-                        printMessage("cppcheck: argument to '-U' is missing.");
-                        return false;
-                    }
-
-                    undef = argv[i];
-                }
-                // "-Uundef"
-                else {
-                    undef = 2 + argv[i];
-                }
-
-                mSettings->userUndefs.insert(undef);
-            }
-
-            // -E
-            else if (std::strcmp(argv[i], "-E") == 0) {
-                mSettings->preprocessOnly = true;
-                mSettings->quiet = true;
-            }
-
-            // Include paths
-            else if (std::strncmp(argv[i], "-I", 2) == 0) {
-                std::string path;
-
-                // "-I path/"
-                if (std::strcmp(argv[i], "-I") == 0) {
-                    ++i;
-                    if (i >= argc || argv[i][0] == '-') {
-                        printMessage("cppcheck: argument to '-I' is missing.");
-                        return false;
-                    }
-                    path = argv[i];
-                }
-
-                // "-Ipath/"
-                else {
-                    path = 2 + argv[i];
-                }
-                path = Path::removeQuotationMarks(path);
-                path = Path::fromNativeSeparators(path);
-
-                // If path doesn't end with / or \, add it
-                if (!endsWith(path,'/'))
-                    path += '/';
-
-                mSettings->includePaths.push_back(path);
-            } else if (std::strncmp(argv[i], "--include=", 10) == 0) {
-                std::string path = argv[i] + 10;
-
-                path = Path::fromNativeSeparators(path);
-
-                mSettings->userIncludes.push_back(path);
-            } else if (std::strncmp(argv[i], "--includes-file=", 16) == 0) {
-                // open this file and read every input file (1 file name per line)
-                const std::string includesFile(16 + argv[i]);
-                if (!addIncludePathsToList(includesFile, &mSettings->includePaths)) {
-                    printMessage("Cppcheck: unable to open includes file at '" + includesFile + "'");
-                    return false;
-                }
-            } else if (std::strncmp(argv[i], "--config-exclude=",17) ==0) {
-                std::string path = argv[i] + 17;
-                path = Path::fromNativeSeparators(path);
-                mSettings->configExcludePaths.insert(path);
-            } else if (std::strncmp(argv[i], "--config-excludes-file=", 23) == 0) {
-                // open this file and read every input file (1 file name per line)
-                const std::string cfgExcludesFile(23 + argv[i]);
-                if (!addPathsToSet(cfgExcludesFile, &mSettings->configExcludePaths)) {
-                    printMessage("Cppcheck: unable to open config excludes file at '" + cfgExcludesFile + "'");
-                    return false;
-                }
-            }
-
-            // file list specified
-            else if (std::strncmp(argv[i], "--file-list=", 12) == 0) {
-                // open this file and read every input file (1 file name per line)
-                addFilesToList(12 + argv[i], mPathNames);
-            }
-
-            // Ignored paths
-            else if (std::strncmp(argv[i], "-i", 2) == 0) {
-                std::string path;
-
-                // "-i path/"
-                if (std::strcmp(argv[i], "-i") == 0) {
-                    ++i;
-                    if (i >= argc || argv[i][0] == '-') {
-                        printMessage("cppcheck: argument to '-i' is missing.");
-                        return false;
-                    }
-                    path = argv[i];
-                }
-
-                // "-ipath/"
-                else {
-                    path = 2 + argv[i];
-                }
-
-                if (!path.empty()) {
-                    path = Path::removeQuotationMarks(path);
-                    path = Path::fromNativeSeparators(path);
-                    path = Path::simplifyPath(path);
-
-                    if (FileLister::isDirectory(path)) {
-                        // If directory name doesn't end with / or \, add it
-                        if (!endsWith(path, '/'))
-                            path += '/';
-                    }
-                    mIgnoredPaths.push_back(path);
-                }
-            }
-
-            // --library
-            else if (std::strncmp(argv[i], "--library=", 10) == 0) {
-                std::string lib(argv[i] + 10);
-                mSettings->libraries.push_back(lib);
-            }
-
-            // --project
-            else if (std::strncmp(argv[i], "--project=", 10) == 0) {
-                const std::string projectFile = argv[i]+10;
-                ImportProject::Type projType = mSettings->project.import(projectFile, mSettings);
-                if (projType == ImportProject::Type::CPPCHECK_GUI) {
-                    mPathNames = mSettings->project.guiProject.pathNames;
-                    for (const std::string &lib : mSettings->project.guiProject.libraries)
-                        mSettings->libraries.push_back(lib);
-
-                    for (const std::string &ignorePath : mSettings->project.guiProject.excludedPaths)
-                        mIgnoredPaths.emplace_back(ignorePath);
-
-                    const std::string platform(mSettings->project.guiProject.platform);
-
-                    if (platform == "win32A")
-                        mSettings->platform(Settings::Win32A);
-                    else if (platform == "win32W")
-                        mSettings->platform(Settings::Win32W);
-                    else if (platform == "win64")
-                        mSettings->platform(Settings::Win64);
-                    else if (platform == "unix32")
-                        mSettings->platform(Settings::Unix32);
-                    else if (platform == "unix64")
-                        mSettings->platform(Settings::Unix64);
-                    else if (platform == "native")
-                        mSettings->platform(Settings::Native);
-                    else if (platform == "unspecified" || platform == "Unspecified" || platform == "")
-                        ;
-                    else if (!mSettings->loadPlatformFile(argv[0], platform)) {
-                        std::string message("cppcheck: error: unrecognized platform: \"");
-                        message += platform;
-                        message += "\".";
-                        printMessage(message);
-                        return false;
-                    }
-
-                    if (!mSettings->project.guiProject.projectFile.empty())
-                        projType = mSettings->project.import(mSettings->project.guiProject.projectFile, mSettings);
-                }
-                if (projType == ImportProject::Type::VS_SLN || projType == ImportProject::Type::VS_VCXPROJ) {
-                    if (mSettings->project.guiProject.analyzeAllVsConfigs == "false")
-                        mSettings->project.selectOneVsConfig(mSettings->platformType);
-                    if (!CppCheckExecutor::tryLoadLibrary(mSettings->library, argv[0], "windows.cfg")) {
-                        // This shouldn't happen normally.
-                        printMessage("cppcheck: Failed to load 'windows.cfg'. Your Cppcheck installation is broken. Please re-install.");
-                        return false;
-                    }
-                }
-                if (projType == ImportProject::Type::MISSING) {
-                    printMessage("cppcheck: Failed to open project '" + projectFile + "'.");
-                    return false;
-                }
-                if (projType == ImportProject::Type::UNKNOWN) {
-                    printMessage("cppcheck: Failed to load project '" + projectFile + "'. The format is unknown.");
-                    return false;
-                }
-            }
-
-            // Report progress
-            else if (std::strcmp(argv[i], "--report-progress") == 0) {
-                mSettings->reportProgress = true;
-            }
-
-            // --std
-            else if (std::strcmp(argv[i], "--std=posix") == 0) {
-                printMessage("cppcheck: Option --std=posix is deprecated and will be removed in 1.95.");
-            } else if (std::strcmp(argv[i], "--std=c89") == 0) {
-                mSettings->standards.c = Standards::C89;
-            } else if (std::strcmp(argv[i], "--std=c99") == 0) {
-                mSettings->standards.c = Standards::C99;
-            } else if (std::strcmp(argv[i], "--std=c11") == 0) {
-                mSettings->standards.c = Standards::C11;
-            } else if (std::strcmp(argv[i], "--std=c++03") == 0) {
-                mSettings->standards.cpp = Standards::CPP03;
-            } else if (std::strcmp(argv[i], "--std=c++11") == 0) {
-                mSettings->standards.cpp = Standards::CPP11;
-            } else if (std::strcmp(argv[i], "--std=c++14") == 0) {
-                mSettings->standards.cpp = Standards::CPP14;
-            } else if (std::strcmp(argv[i], "--std=c++17") == 0) {
-                mSettings->standards.cpp = Standards::CPP17;
-            } else if (std::strcmp(argv[i], "--std=c++20") == 0) {
-                mSettings->standards.cpp = Standards::CPP20;
-            }
-
-            // Output formatter
-            else if (std::strcmp(argv[i], "--template") == 0 ||
-                     std::strncmp(argv[i], "--template=", 11) == 0) {
-                // "--template format"
-                if (argv[i][10] == '=')
-                    mSettings->templateFormat = argv[i] + 11;
-                else if ((i+1) < argc && argv[i+1][0] != '-') {
-                    ++i;
-                    mSettings->templateFormat = argv[i];
-                } else {
-                    printMessage("cppcheck: argument to '--template' is missing.");
-                    return false;
-                }
-
-                if (mSettings->templateFormat == "gcc") {
-                    mSettings->templateFormat = "{file}:{line}:{column}: warning: {message} [{id}]\\n{code}";
-                    mSettings->templateLocation = "{file}:{line}:{column}: note: {info}\\n{code}";
-                } else if (mSettings->templateFormat == "daca2") {
-                    mSettings->templateFormat = "{file}:{line}:{column}: {severity}: {message} [{id}]";
-                    mSettings->templateLocation = "{file}:{line}:{column}: note: {info}";
-                } else if (mSettings->templateFormat == "vs")
-                    mSettings->templateFormat = "{file}({line}): {severity}: {message}";
-                else if (mSettings->templateFormat == "edit")
-                    mSettings->templateFormat = "{file} +{line}: {severity}: {message}";
-                else if (mSettings->templateFormat == "cppcheck1")
-                    mSettings->templateFormat = "{callstack}: ({severity}{inconclusive:, inconclusive}) {message}";
-            }
-
-            else if (std::strcmp(argv[i], "--template-location") == 0 ||
-                     std::strncmp(argv[i], "--template-location=", 20) == 0) {
-                // "--template-location format"
-                if (argv[i][19] == '=')
-                    mSettings->templateLocation = argv[i] + 20;
-                else if ((i+1) < argc && argv[i+1][0] != '-') {
-                    ++i;
-                    mSettings->templateLocation = argv[i];
-                } else {
-                    printMessage("cppcheck: argument to '--template' is missing.");
-                    return false;
-                }
-            }
-
-            // Checking threads
-            else if (std::strncmp(argv[i], "-j", 2) == 0) {
-                std::string numberString;
-
-                // "-j 3"
-                if (std::strcmp(argv[i], "-j") == 0) {
-                    ++i;
-                    if (i >= argc || argv[i][0] == '-') {
-                        printMessage("cppcheck: argument to '-j' is missing.");
-                        return false;
-                    }
-
-                    numberString = argv[i];
-                }
-
-                // "-j3"
-                else
-                    numberString = argv[i]+2;
-
-                std::istringstream iss(numberString);
-                if (!(iss >> mSettings->jobs)) {
-                    printMessage("cppcheck: argument to '-j' is not a number.");
-                    return false;
-                }
-
-                if (mSettings->jobs > 10000) {
-                    // This limit is here just to catch typos. If someone has
-                    // need for more jobs, this value should be increased.
-                    printMessage("cppcheck: argument for '-j' is allowed to be 10000 at max.");
-                    return false;
-                }
-            } else if (std::strncmp(argv[i], "-l", 2) == 0) {
-                std::string numberString;
-
-                // "-l 3"
-                if (std::strcmp(argv[i], "-l") == 0) {
-                    ++i;
-                    if (i >= argc || argv[i][0] == '-') {
-                        printMessage("cppcheck: argument to '-l' is missing.");
-                        return false;
-                    }
-
-                    numberString = argv[i];
-                }
-
-                // "-l3"
-                else
-                    numberString = argv[i]+2;
-
-                std::istringstream iss(numberString);
-                if (!(iss >> mSettings->loadAverage)) {
-                    printMessage("cppcheck: argument to '-l' is not a number.");
-                    return false;
-                }
-            }
-
-            // print all possible error messages..
-            else if (std::strcmp(argv[i], "--errorlist") == 0) {
-                mShowErrorMessages = true;
-                mSettings->xml = true;
-                mExitAfterPrint = true;
-            }
-
-            // documentation..
-            else if (std::strcmp(argv[i], "--doc") == 0) {
-                std::ostringstream doc;
-                // Get documentation..
-                for (const Check * it : Check::instances()) {
-                    const std::string& name(it->name());
-                    const std::string info(it->classInfo());
-                    if (!name.empty() && !info.empty())
-                        doc << "## " << name << " ##\n"
-                            << info << "\n";
-                }
-
-                std::cout << doc.str();
-                mExitAfterPrint = true;
-                return true;
-            }
-
-            // show timing information..
-            else if (std::strncmp(argv[i], "--showtime=", 11) == 0) {
-                const std::string showtimeMode = argv[i] + 11;
-                if (showtimeMode == "file")
-                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_FILE;
-                else if (showtimeMode == "summary")
-                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_SUMMARY;
-                else if (showtimeMode == "top5")
-                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_TOP5;
-                else if (showtimeMode.empty())
-                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_NONE;
-                else {
-                    std::string message("cppcheck: error: unrecognized showtime mode: \"");
-                    message += showtimeMode;
-                    message += "\". Supported modes: file, summary, top5.";
-                    printMessage(message);
-                    return false;
-                }
-            }
-
-#ifdef HAVE_RULES
-            // Rule given at command line
-            else if (std::strncmp(argv[i], "--rule=", 7) == 0) {
-                Settings::Rule rule;
-                rule.pattern = 7 + argv[i];
-                mSettings->rules.push_back(rule);
-            }
-
-            // Rule file
-            else if (std::strncmp(argv[i], "--rule-file=", 12) == 0) {
-                tinyxml2::XMLDocument doc;
-                if (doc.LoadFile(12+argv[i]) == tinyxml2::XML_SUCCESS) {
-                    tinyxml2::XMLElement *node = doc.FirstChildElement();
-                    for (; node && strcmp(node->Value(), "rule") == 0; node = node->NextSiblingElement()) {
-                        Settings::Rule rule;
-
-                        tinyxml2::XMLElement *tokenlist = node->FirstChildElement("tokenlist");
-                        if (tokenlist)
-                            rule.tokenlist = tokenlist->GetText();
-
-                        tinyxml2::XMLElement *pattern = node->FirstChildElement("pattern");
-                        if (pattern) {
-                            rule.pattern = pattern->GetText();
-                        }
-
-                        tinyxml2::XMLElement *message = node->FirstChildElement("message");
-                        if (message) {
-                            tinyxml2::XMLElement *severity = message->FirstChildElement("severity");
-                            if (severity)
-                                rule.severity = Severity::fromString(severity->GetText());
-
-                            tinyxml2::XMLElement *id = message->FirstChildElement("id");
-                            if (id)
-                                rule.id = id->GetText();
-
-                            tinyxml2::XMLElement *summary = message->FirstChildElement("summary");
-                            if (summary)
-                                rule.summary = summary->GetText() ? summary->GetText() : "";
-                        }
-
-                        if (!rule.pattern.empty())
-                            mSettings->rules.push_back(rule);
-                    }
-                } else {
-                    printMessage("cppcheck: error: unable to load rule-file: " + std::string(12+argv[i]));
-                    return false;
-                }
-            }
+    /* We may still successfully fail even if the proj_create succeeded */
+    if (expect_failure) {
+        proj_errno_reset (T.P);
+
+        /* Try to carry out the operation - and expect failure */
+        ci = proj_angular_input (T.P, T.dir)? torad_coord (T.P, T.dir, T.a): T.a;
+        co = expect_trans_n_dim (ci);
+
+        if (expect_failure_with_errno) {
+            if (proj_errno (T.P)==expect_failure_with_errno)
+                return another_succeeding_failure ();
+            fprintf (T.fout, "errno=%d, expected=%d\n", proj_errno (T.P), expect_failure_with_errno);
+            return another_failing_failure ();
+        }
+
+
+        /* Succeeded in failing? - that's a success */
+        if (co.xyz.x==HUGE_VAL)
+            return another_succeeding_failure ();
+
+        /* Failed to fail? - that's a failure */
+        banner (T.operation);
+        errmsg (3, "%sFailed to fail. Operation definition in line no. %d\n",
+            delim, (int) T.operation_lineno
+        );
+        return another_failing_failure ();
+    }
+
+
+    if (T.verbosity > 3) {
+        fprintf (T.fout, "%s\n", T.P->inverted? "INVERTED": "NOT INVERTED");
+        fprintf (T.fout, "%s\n", T.dir== 1? "forward": "reverse");
+        fprintf (T.fout, "%s\n", proj_angular_input (T.P, T.dir)?  "angular in":  "linear in");
+        fprintf (T.fout, "%s\n", proj_angular_output (T.P, T.dir)? "angular out": "linear out");
+        fprintf (T.fout, "left: %d   right:  %d\n", T.P->left, T.P->right);
+    }
+
+    tests++;
+    T.e  =  parse_coord (args);
+    if (HUGE_VAL==T.e.v[0])
+        return expect_message_cannot_parse (args);
+
+
+    /* expected angular values, probably in degrees */
+    ce = proj_angular_output (T.P, T.dir)? torad_coord (T.P, T.dir, T.e): T.e;
+    if (T.verbosity > 3)
+        fprintf (T.fout, "EXPECTS  %.12f  %.12f  %.12f  %.12f\n",
+                 ce.v[0],ce.v[1],ce.v[2],ce.v[3]);
+
+    /* input ("accepted") values, also probably in degrees */
+    ci = proj_angular_input (T.P, T.dir)? torad_coord (T.P, T.dir, T.a): T.a;
+    if (T.verbosity > 3)
+        fprintf (T.fout, "ACCEPTS  %.12f  %.12f  %.12f  %.12f\n",
+                 ci.v[0],ci.v[1],ci.v[2],ci.v[3]);
+
+    /* do the transformation, but mask off dimensions not given in expect-ation */
+    co = expect_trans_n_dim (ci);
+    if (T.dimensions_given < 4)
+        co.v[3] = 0;
+    if (T.dimensions_given < 3)
+        co.v[2] = 0;
+
+    /* angular output from proj_trans comes in radians */
+    T.b = proj_angular_output (T.P, T.dir)? todeg_coord (T.P, T.dir, co): co;
+    if (T.verbosity > 3)
+        fprintf (T.fout, "GOT      %.12f  %.12f  %.12f  %.12f\n",
+                 co.v[0],co.v[1],co.v[2],co.v[3]);
+
+#if 0
+    /* We need to handle unusual axis orders - that'll be an item for version 5.1 */
+    if (T.P->axisswap) {
+        ce = proj_trans (T.P->axisswap, T.dir, ce);
+        co = proj_trans (T.P->axisswap, T.dir, co);
+    }
 #endif
+    if (proj_angular_output (T.P, T.dir))
+        d = proj_lpz_dist (T.P, ce, co);
+    else
+        d = proj_xyz_dist (co, ce);
 
-            // Specify platform
-            else if (std::strncmp(argv[i], "--platform=", 11) == 0) {
-                const std::string platform(11+argv[i]);
+    if (d > T.tolerance)
+        return expect_message (d, args);
+    succs++;
 
-                if (platform == "win32A")
-                    mSettings->platform(Settings::Win32A);
-                else if (platform == "win32W")
-                    mSettings->platform(Settings::Win32W);
-                else if (platform == "win64")
-                    mSettings->platform(Settings::Win64);
-                else if (platform == "unix32")
-                    mSettings->platform(Settings::Unix32);
-                else if (platform == "unix64")
-                    mSettings->platform(Settings::Unix64);
-                else if (platform == "native")
-                    mSettings->platform(Settings::Native);
-                else if (platform == "unspecified")
-                    mSettings->platform(Settings::Unspecified);
-                else if (!mSettings->loadPlatformFile(argv[0], platform)) {
-                    std::string message("cppcheck: error: unrecognized platform: \"");
-                    message += platform;
-                    message += "\".";
-                    printMessage(message);
-                    return false;
-                }
-            }
-
-            // Set maximum number of #ifdef configurations to check
-            else if (std::strncmp(argv[i], "--max-configs=", 14) == 0) {
-                mSettings->force = false;
-
-                std::istringstream iss(14+argv[i]);
-                if (!(iss >> mSettings->maxConfigs)) {
-                    printMessage("cppcheck: argument to '--max-configs=' is not a number.");
-                    return false;
-                }
-
-                if (mSettings->maxConfigs < 1) {
-                    printMessage("cppcheck: argument to '--max-configs=' must be greater than 0.");
-                    return false;
-                }
-
-                maxconfigs = true;
-            }
-
-            // Print help
-            else if (std::strcmp(argv[i], "-h") == 0 || std::strcmp(argv[i], "--help") == 0) {
-                mPathNames.clear();
-                mShowHelp = true;
-                mExitAfterPrint = true;
-                break;
-            }
-
-            else {
-                std::string message("cppcheck: error: unrecognized command line option: \"");
-                message += argv[i];
-                message += "\".";
-                printMessage(message);
-                return false;
-            }
-        }
-
-        else {
-            std::string path = Path::removeQuotationMarks(argv[i]);
-            path = Path::fromNativeSeparators(path);
-            mPathNames.push_back(path);
-        }
-    }
-
-    // Default template format..
-    if (mSettings->templateFormat.empty()) {
-        mSettings->templateFormat = "{file}:{line}:{column}: {severity}:{inconclusive:inconclusive:} {message} [{id}]\\n{code}";
-        if (mSettings->templateLocation.empty())
-            mSettings->templateLocation = "{file}:{line}:{column}: note: {info}\\n{code}";
-    }
-
-    mSettings->project.ignorePaths(mIgnoredPaths);
-
-    if (mSettings->force)
-        mSettings->maxConfigs = ~0U;
-
-    else if ((def || mSettings->preprocessOnly) && !maxconfigs)
-        mSettings->maxConfigs = 1U;
-
-    if (mSettings->isEnabled(Settings::UNUSED_FUNCTION) && mSettings->jobs > 1) {
-        printMessage("cppcheck: unusedFunction check can't be used with '-j' option. Disabling unusedFunction check.");
-    }
-
-    if (argc <= 1) {
-        mShowHelp = true;
-        mExitAfterPrint = true;
-    }
-
-    if (mShowHelp) {
-        printHelp();
-        return true;
-    }
-
-    // Print error only if we have "real" command and expect files
-    if (!mExitAfterPrint && mPathNames.empty() && mSettings->project.fileSettings.empty()) {
-        printMessage("cppcheck: No C or C++ source files found.");
-        return false;
-    }
-
-    // Use paths _pathnames if no base paths for relative path output are given
-    if (mSettings->basePaths.empty() && mSettings->relativePaths)
-        mSettings->basePaths = mPathNames;
-
-    return true;
+    another_success ();
+    return 0;
 }
 
-void CmdLineParser::printHelp()
-{
-    std::cout << "Cppcheck - A tool for static C/C++ code analysis\n"
-              "\n"
-              "Syntax:\n"
-              "    cppcheck [OPTIONS] [files or paths]\n"
-              "\n"
-              "If a directory is given instead of a filename, *.cpp, *.cxx, *.cc, *.c++, *.c,\n"
-              "*.tpp, and *.txx files are checked recursively from the given directory.\n\n"
-              "Options:\n"
-              "    --addon=<addon>\n"
-              "                         Execute addon. i.e. cert.\n"
-              "    --cppcheck-build-dir=<dir>\n"
-              "                         Analysis output directory. Useful for various data.\n"
-              "                         Some possible usages are; whole program analysis,\n"
-              "                         incremental analysis, distributed analysis.\n"
-              "    --check-config       Check cppcheck configuration. The normal code\n"
-              "                         analysis is disabled by this flag.\n"
-              "    --check-library      Show information messages when library files have\n"
-              "                         incomplete info.\n"
-              "    --config-exclude=<dir>\n"
-              "                         Path (prefix) to be excluded from configuration\n"
-              "                         checking. Preprocessor configurations defined in\n"
-              "                         headers (but not sources) matching the prefix will not\n"
-              "                         be considered for evaluation.\n"
-              "    --config-excludes-file=<file>\n"
-              "                         A file that contains a list of config-excludes\n"
-              "    --doc                Print a list of all available checks.\n"
-              "    --dump               Dump xml data for each translation unit. The dump\n"
-              "                         files have the extension .dump and contain ast,\n"
-              "                         tokenlist, symboldatabase, valueflow.\n"
-              "    -D<ID>               Define preprocessor symbol. Unless --max-configs or\n"
-              "                         --force is used, Cppcheck will only check the given\n"
-              "                         configuration when -D is used.\n"
-              "                         Example: '-DDEBUG=1 -D__cplusplus'.\n"
-              "    -U<ID>               Undefine preprocessor symbol. Use -U to explicitly\n"
-              "                         hide certain #ifdef <ID> code paths from checking.\n"
-              "                         Example: '-UDEBUG'\n"
-              "    -E                   Print preprocessor output on stdout and don't do any\n"
-              "                         further processing.\n"
-              "    --enable=<id>        Enable additional checks. The available ids are:\n"
-              "                          * all\n"
-              "                                  Enable all checks. It is recommended to only\n"
-              "                                  use --enable=all when the whole program is\n"
-              "                                  scanned, because this enables unusedFunction.\n"
-              "                          * warning\n"
-              "                                  Enable warning messages\n"
-              "                          * style\n"
-              "                                  Enable all coding style checks. All messages\n"
-              "                                  with the severities 'style', 'performance' and\n"
-              "                                  'portability' are enabled.\n"
-              "                          * performance\n"
-              "                                  Enable performance messages\n"
-              "                          * portability\n"
-              "                                  Enable portability messages\n"
-              "                          * information\n"
-              "                                  Enable information messages\n"
-              "                          * unusedFunction\n"
-              "                                  Check for unused functions. It is recommend\n"
-              "                                  to only enable this when the whole program is\n"
-              "                                  scanned.\n"
-              "                          * missingInclude\n"
-              "                                  Warn if there are missing includes. For\n"
-              "                                  detailed information, use '--check-config'.\n"
-              "                         Several ids can be given if you separate them with\n"
-              "                         commas. See also --std\n"
-              "    --error-exitcode=<n> If errors are found, integer [n] is returned instead of\n"
-              "                         the default '0'. '" << EXIT_FAILURE << "' is returned\n"
-              "                         if arguments are not valid or if no input files are\n"
-              "                         provided. Note that your operating system can modify\n"
-              "                         this value, e.g. '256' can become '0'.\n"
-              "    --errorlist          Print a list of all the error messages in XML format.\n"
-              "    --exitcode-suppressions=<file>\n"
-              "                         Used when certain messages should be displayed but\n"
-              "                         should not cause a non-zero exitcode.\n"
-              "    --file-list=<file>   Specify the files to check in a text file. Add one\n"
-              "                         filename per line. When file is '-,' the file list will\n"
-              "                         be read from standard input.\n"
-              "    -f, --force          Force checking of all configurations in files. If used\n"
-              "                         together with '--max-configs=', the last option is the\n"
-              "                         one that is effective.\n"
-              "    -h, --help           Print this help.\n"
-              "    -I <dir>             Give path to search for include files. Give several -I\n"
-              "                         parameters to give several paths. First given path is\n"
-              "                         searched for contained header files first. If paths are\n"
-              "                         relative to source files, this is not needed.\n"
-              "    --includes-file=<file>\n"
-              "                         Specify directory paths to search for included header\n"
-              "                         files in a text file. Add one include path per line.\n"
-              "                         First given path is searched for contained header\n"
-              "                         files first. If paths are relative to source files,\n"
-              "                         this is not needed.\n"
-              "    --include=<file>\n"
-              "                         Force inclusion of a file before the checked file. Can\n"
-              "                         be used for example when checking the Linux kernel,\n"
-              "                         where autoconf.h needs to be included for every file\n"
-              "                         compiled. Works the same way as the GCC -include\n"
-              "                         option.\n"
-              "    -i <dir or file>     Give a source file or source file directory to exclude\n"
-              "                         from the check. This applies only to source files so\n"
-              "                         header files included by source files are not matched.\n"
-              "                         Directory name is matched to all parts of the path.\n"
-              "    --inconclusive       Allow that Cppcheck reports even though the analysis is\n"
-              "                         inconclusive.\n"
-              "                         There are false positives with this option. Each result\n"
-              "                         must be carefully investigated before you know if it is\n"
-              "                         good or bad.\n"
-              "    --inline-suppr       Enable inline suppressions. Use them by placing one or\n"
-              "                         more comments, like: '// cppcheck-suppress warningId'\n"
-              "                         on the lines before the warning to suppress.\n"
-              "    -j <jobs>            Start <jobs> threads to do the checking simultaneously.\n"
-#ifdef THREADING_MODEL_FORK
-              "    -l <load>            Specifies that no new threads should be started if\n"
-              "                         there are other threads running and the load average is\n"
-              "                         at least <load>.\n"
-#endif
-              "    --language=<language>, -x <language>\n"
-              "                         Forces cppcheck to check all files as the given\n"
-              "                         language. Valid values are: c, c++\n"
-              "    --library=<cfg>      Load file <cfg> that contains information about types\n"
-              "                         and functions. With such information Cppcheck\n"
-              "                         understands your code better and therefore you\n"
-              "                         get better results. The std.cfg file that is\n"
-              "                         distributed with Cppcheck is loaded automatically.\n"
-              "                         For more information about library files, read the\n"
-              "                         manual.\n"
-              "    --max-ctu-depth=N    Max depth in whole program analysis. The default value\n"
-              "                         is 2. A larger value will mean more errors can be found\n"
-              "                         but also means the analysis will be slower.\n"
-              "    --output-file=<file> Write results to file, rather than standard error.\n"
-              "    --project=<file>     Run Cppcheck on project. The <file> can be a Visual\n"
-              "                         Studio Solution (*.sln), Visual Studio Project\n"
-              "                         (*.vcxproj), compile database (compile_commands.json),\n"
-              "                         or Borland C++ Builder 6 (*.bpr). The files to analyse,\n"
-              "                         include paths, defines, platform and undefines in\n"
-              "                         the specified file will be used.\n"
-              "    --max-configs=<limit>\n"
-              "                         Maximum number of configurations to check in a file\n"
-              "                         before skipping it. Default is '12'. If used together\n"
-              "                         with '--force', the last option is the one that is\n"
-              "                         effective.\n"
-              "    --platform=<type>, --platform=<file>\n"
-              "                         Specifies platform specific types and sizes. The\n"
-              "                         available builtin platforms are:\n"
-              "                          * unix32\n"
-              "                                 32 bit unix variant\n"
-              "                          * unix64\n"
-              "                                 64 bit unix variant\n"
-              "                          * win32A\n"
-              "                                 32 bit Windows ASCII character encoding\n"
-              "                          * win32W\n"
-              "                                 32 bit Windows UNICODE character encoding\n"
-              "                          * win64\n"
-              "                                 64 bit Windows\n"
-              "                          * avr8\n"
-              "                                 8 bit AVR microcontrollers\n"
-              "                          * native\n"
-              "                                 Type sizes of host system are assumed, but no\n"
-              "                                 further assumptions.\n"
-              "                          * unspecified\n"
-              "                                 Unknown type sizes\n"
-              "    --plist-output=<path>\n"
-              "                         Generate Clang-plist output files in folder.\n"
-              "    -q, --quiet          Do not show progress reports.\n"
-              "    -rp, --relative-paths\n"
-              "    -rp=<paths>, --relative-paths=<paths>\n"
-              "                         Use relative paths in output. When given, <paths> are\n"
-              "                         used as base. You can separate multiple paths by ';'.\n"
-              "                         Otherwise path where source files are searched is used.\n"
-              "                         We use string comparison to create relative paths, so\n"
-              "                         using e.g. ~ for home folder does not work. It is\n"
-              "                         currently only possible to apply the base paths to\n"
-              "                         files that are on a lower level in the directory tree.\n"
-              "    --report-progress    Report progress messages while checking a file.\n"
-#ifdef HAVE_RULES
-              "    --rule=<rule>        Match regular expression.\n"
-              "    --rule-file=<file>   Use given rule file. For more information, see: \n"
-              "                         http://sourceforge.net/projects/cppcheck/files/Articles/\n"
-#endif
-              "    --std=<id>           Set standard.\n"
-              "                         The available options are:\n"
-              "                          * c89\n"
-              "                                 C code is C89 compatible\n"
-              "                          * c99\n"
-              "                                 C code is C99 compatible\n"
-              "                          * c11\n"
-              "                                 C code is C11 compatible (default)\n"
-              "                          * c++03\n"
-              "                                 C++ code is C++03 compatible\n"
-              "                          * c++11\n"
-              "                                 C++ code is C++11 compatible\n"
-              "                          * c++14\n"
-              "                                 C++ code is C++14 compatible\n"
-              "                          * c++17\n"
-              "                                 C++ code is C++17 compatible\n"
-              "                          * c++20\n"
-              "                                 C++ code is C++20 compatible (default)\n"
-              "    --suppress=<spec>    Suppress warnings that match <spec>. The format of\n"
-              "                         <spec> is:\n"
-              "                         [error id]:[filename]:[line]\n"
-              "                         The [filename] and [line] are optional. If [error id]\n"
-              "                         is a wildcard '*', all error ids match.\n"
-              "    --suppressions-list=<file>\n"
-              "                         Suppress warnings listed in the file. Each suppression\n"
-              "                         is in the same format as <spec> above.\n"
-              "    --template='<text>'  Format the error messages. Available fields:\n"
-              "                           {file}              file name\n"
-              "                           {line}              line number\n"
-              "                           {column}            column number\n"
-              "                           {callstack}         show a callstack. Example:\n"
-              "                                                 [file.c:1] -> [file.c:100]\n"
-              "                           {inconclusive:text} if warning is inconclusive, text\n"
-              "                                               is written\n"
-              "                           {severity}          severity\n"
-              "                           {message}           warning message\n"
-              "                           {id}                warning id\n"
-              "                           {cwe}               CWE id (Common Weakness Enumeration)\n"
-              "                           {code}              show the real code\n"
-              "                           \\t                 insert tab\n"
-              "                           \\n                 insert newline\n"
-              "                           \\r                 insert carriage return\n"
-              "                         Example formats:\n"
-              "                         '{file}:{line},{severity},{id},{message}' or\n"
-              "                         '{file}({line}):({severity}) {message}' or\n"
-              "                         '{callstack} {message}'\n"
-              "                         Pre-defined templates: gcc, vs, edit, cppcheck1\n"
-              "                         The default format is 'gcc'.\n"
-              "    --template-location='<text>'\n"
-              "                         Format error message location. If this is not provided\n"
-              "                         then no extra location info is shown.\n"
-              "                         Available fields:\n"
-              "                           {file}      file name\n"
-              "                           {line}      line number\n"
-              "                           {column}    column number\n"
-              "                           {info}      location info\n"
-              "                           {code}      show the real code\n"
-              "                           \\t         insert tab\n"
-              "                           \\n         insert newline\n"
-              "                           \\r         insert carriage return\n"
-              "                         Example format (gcc-like):\n"
-              "                         '{file}:{line}:{column}: note: {info}\\n{code}'\n"
-              "    -v, --verbose        Output more detailed error information.\n"
-              "    --version            Print out version number.\n"
-              "    --xml                Write results in xml format to error stream (stderr).\n"
-              "    --xml-version=<version>\n"
-              "                         Select the XML file version. Currently only versions 2 is available."
-              "\n"
-              "Example usage:\n"
-              "  # Recursively check the current folder. Print the progress on the screen and\n"
-              "  # write errors to a file:\n"
-              "  cppcheck . 2> err.txt\n"
-              "\n"
-              "  # Recursively check ../myproject/ and don't print progress:\n"
-              "  cppcheck --quiet ../myproject/\n"
-              "\n"
-              "  # Check test.cpp, enable all checks:\n"
-              "  cppcheck --enable=all --inconclusive --std=posix test.cpp\n"
-              "\n"
-              "  # Check f.cpp and search include files from inc1/ and inc2/:\n"
-              "  cppcheck -I inc1/ -I inc2/ f.cpp\n"
-              "\n"
-              "For more information:\n"
-              "    http://cppcheck.net/manual.pdf\n"
-              "\n"
-              "Many thanks to the 3rd party libraries we use:\n"
-              " * tinyxml2 -- loading project/library/ctu files.\n"
-              " * picojson -- loading compile database.\n"
-              " * pcre -- rules.\n"
-              " * qt -- used in GUI\n";
+
+
+/*****************************************************************************/
+static int verbose (const char *args) {
+/*****************************************************************************
+Tell the system how noisy it should be
+******************************************************************************/
+    int i = (int) proj_atof (args);
+
+    /* if -q/--quiet flag has been given, we do nothing */
+    if (T.verbosity < 0)
+        return 0;
+
+    if (strlen (args))
+        T.verbosity = i;
+    else
+        T.verbosity++;
+    return 0;
+}
+
+
+/*****************************************************************************/
+static int echo (const char *args) {
+/*****************************************************************************
+Add user defined noise to the output stream
+******************************************************************************/
+fprintf (T.fout, "%s\n", args);
+    return 0;
+}
+
+
+
+/*****************************************************************************/
+static int skip (const char *args) {
+/*****************************************************************************
+Indicate that the remaining material should be skipped. Mostly for debugging.
+******************************************************************************/
+    T.skip = 1;
+    (void) args;
+    F->level = 2; /* Silence complaints about missing </gie> element */
+    return 0;
+}
+
+
+static int dispatch (const char *cmnd, const char *args) {
+    if (T.skip)
+        return SKIP;
+    if  (0==strcmp (cmnd, "operation")) return  operation ((char *) args);
+    if (T.skip_test)
+    {
+        if  (0==strcmp (cmnd, "expect"))    return  another_skip();
+        return 0;
+    }
+    if  (0==strcmp (cmnd, "accept"))    return  accept    (args);
+    if  (0==strcmp (cmnd, "expect"))    return  expect    (args);
+    if  (0==strcmp (cmnd, "roundtrip")) return  roundtrip (args);
+    if  (0==strcmp (cmnd, "banner"))    return  banner    (args);
+    if  (0==strcmp (cmnd, "verbose"))   return  verbose   (args);
+    if  (0==strcmp (cmnd, "direction")) return  direction (args);
+    if  (0==strcmp (cmnd, "tolerance")) return  tolerance (args);
+    if  (0==strcmp (cmnd, "ignore"))    return  ignore    (args);
+    if  (0==strcmp (cmnd, "require_grid"))   return  require_grid   (args);
+    if  (0==strcmp (cmnd, "echo"))      return  echo      (args);
+    if  (0==strcmp (cmnd, "skip"))      return  skip      (args);
+    if  (0==strcmp (cmnd, "use_proj4_init_rules"))
+                                        return  use_proj4_init_rules    (args);
+
+    return 0;
+}
+
+
+
+
+namespace { // anonymous namespace
+struct errno_vs_err_const {const char *the_err_const; int the_errno;};
+static const struct errno_vs_err_const lookup[] = {
+    {"pjd_err_no_args"                  ,  -1},
+    {"pjd_err_no_option_in_init_file"   ,  -2},
+    {"pjd_err_no_colon_in_init_string"  ,  -3},
+    {"pjd_err_proj_not_named"           ,  -4},
+    {"pjd_err_unknown_projection_id"    ,  -5},
+    {"pjd_err_eccentricity_is_one"      ,  -6},
+    {"pjd_err_unknown_unit_id"          ,  -7},
+    {"pjd_err_invalid_boolean_param"    ,  -8},
+    {"pjd_err_unknown_ellp_param"       ,  -9},
+    {"pjd_err_rev_flattening_is_zero"   ,  -10},
+    {"pjd_err_ref_rad_larger_than_90"   ,  -11},
+    {"pjd_err_es_less_than_zero"        ,  -12},
+    {"pjd_err_major_axis_not_given"     ,  -13},
+    {"pjd_err_lat_or_lon_exceed_limit"  ,  -14},
+    {"pjd_err_invalid_x_or_y"           ,  -15},
+    {"pjd_err_wrong_format_dms_value"   ,  -16},
+    {"pjd_err_non_conv_inv_meri_dist"   ,  -17},
+    {"pjd_err_non_con_inv_phi2"         ,  -18},
+    {"pjd_err_acos_asin_arg_too_large"  ,  -19},
+    {"pjd_err_tolerance_condition"      ,  -20},
+    {"pjd_err_conic_lat_equal"          ,  -21},
+    {"pjd_err_lat_larger_than_90"       ,  -22},
+    {"pjd_err_lat1_is_zero"             ,  -23},
+    {"pjd_err_lat_ts_larger_than_90"    ,  -24},
+    {"pjd_err_control_point_no_dist"    ,  -25},
+    {"pjd_err_no_rotation_proj"         ,  -26},
+    {"pjd_err_w_or_m_zero_or_less"      ,  -27},
+    {"pjd_err_lsat_not_in_range"        ,  -28},
+    {"pjd_err_path_not_in_range"        ,  -29},
+    {"pjd_err_h_less_than_zero"         ,  -30},
+    {"pjd_err_k_less_than_zero"         ,  -31},
+    {"pjd_err_lat_1_or_2_zero_or_90"    ,  -32},
+    {"pjd_err_lat_0_or_alpha_eq_90"     ,  -33},
+    {"pjd_err_ellipsoid_use_required"   ,  -34},
+    {"pjd_err_invalid_utm_zone"         ,  -35},
+    {"pjd_err_tcheby_val_out_of_range"  ,  -36},
+    {"pjd_err_failed_to_find_proj"      ,  -37},
+    {"pjd_err_failed_to_load_grid"      ,  -38},
+    {"pjd_err_invalid_m_or_n"           ,  -39},
+    {"pjd_err_n_out_of_range"           ,  -40},
+    {"pjd_err_lat_1_2_unspecified"      ,  -41},
+    {"pjd_err_abs_lat1_eq_abs_lat2"     ,  -42},
+    {"pjd_err_lat_0_half_pi_from_mean"  ,  -43},
+    {"pjd_err_unparseable_cs_def"       ,  -44},
+    {"pjd_err_geocentric"               ,  -45},
+    {"pjd_err_unknown_prime_meridian"   ,  -46},
+    {"pjd_err_axis"                     ,  -47},
+    {"pjd_err_grid_area"                ,  -48},
+    {"pjd_err_invalid_sweep_axis"       ,  -49},
+    {"pjd_err_malformed_pipeline"       ,  -50},
+    {"pjd_err_unit_factor_less_than_0"  ,  -51},
+    {"pjd_err_invalid_scale"            ,  -52},
+    {"pjd_err_non_convergent"           ,  -53},
+    {"pjd_err_missing_args"             ,  -54},
+    {"pjd_err_lat_0_is_zero"            ,  -55},
+    {"pjd_err_ellipsoidal_unsupported"  ,  -56},
+    {"pjd_err_too_many_inits"           ,  -57},
+    {"pjd_err_invalid_arg"              ,  -58},
+    {"pjd_err_dont_skip"                ,  5555},
+    {"pjd_err_unknown"                  ,  9999},
+    {"pjd_err_enomem"                   ,  ENOMEM},
+};
+} // anonymous namespace
+
+static const struct errno_vs_err_const unknown = {"PJD_ERR_UNKNOWN", 9999};
+
+
+static int list_err_codes (void) {
+    int i;
+    const int n = sizeof lookup / sizeof lookup[0];
+
+    for (i = 0;  i < n;  i++) {
+        if (9999==lookup[i].the_errno)
+            break;
+        fprintf (T.fout, "%25s  (%2.2d):  %s\n", lookup[i].the_err_const + 8,
+                 lookup[i].the_errno, pj_strerrno(lookup[i].the_errno));
+    }
+    return 0;
+}
+
+
+static const char *err_const_from_errno (int err) {
+    size_t i;
+    const size_t n = sizeof lookup / sizeof lookup[0];
+
+    for (i = 0;  i < n;  i++) {
+        if (err==lookup[i].the_errno)
+            return lookup[i].the_err_const + 8;
+    }
+    return unknown.the_err_const;
+}
+
+
+static int errno_from_err_const (const char *err_const) {
+    const size_t n = sizeof lookup / sizeof lookup[0];
+    size_t i, len;
+    int ret;
+    char tolower_err_const[100];
+
+    /* Make a lower case copy for matching */
+    for (i = 0;  i < 99; i++) {
+        if (0==err_const[i] || isspace (err_const[i]))
+             break;
+        tolower_err_const[i] = (char) tolower (err_const[i]);
+    }
+    tolower_err_const[i] = 0;
+
+    /* If it looks numeric, return that numeric */
+    ret = (int) pj_atof (err_const);
+    if (0!=ret)
+        return ret;
+
+    /* Else try to find a matching identifier */
+    len = strlen (tolower_err_const);
+
+    /* First try to find a match excluding the PJD_ERR_ prefix */
+    for (i = 0;  i < n;  i++) {
+        if (0==strncmp (lookup[i].the_err_const + 8, err_const, len))
+            return lookup[i].the_errno;
+    }
+
+    /* If that did not work, try with the full name */
+    for (i = 0;  i < n;  i++) {
+        if (0==strncmp (lookup[i].the_err_const, err_const, len))
+            return lookup[i].the_errno;
+    }
+
+    /* On failure, return something unlikely */
+    return 9999;
+}
+
+
+static int errmsg (int errlev, const char *msg, ...) {
+    va_list args;
+    va_start(args, msg);
+    vfprintf(stdout, msg, args);
+    va_end(args);
+    if (errlev)
+        errno = errlev;
+    return errlev;
+}
+
+
+
+
+
+
+
+
+/****************************************************************************************
+
+FFIO - Flexible format I/O
+
+FFIO provides functionality for reading proj style instruction strings written
+in a less strict format than usual:
+
+*  Whitespace is generally allowed everywhere
+*  Comments can be written inline, '#' style
+*  ... or as free format blocks
+
+The overall mission of FFIO is to facilitate communications of geodetic
+parameters and test material in a format that is highly human readable,
+and provides ample room for comment, documentation, and test material.
+
+See the PROJ ".gie" test suites for examples of supported formatting.
+
+****************************************************************************************/
+
+
+/***************************************************************************************/
+static ffio *ffio_create (const char **tags, size_t n_tags, size_t max_record_size) {
+/****************************************************************************************
+Constructor for the ffio object.
+****************************************************************************************/
+    ffio *G = static_cast<ffio*>(calloc (1, sizeof (ffio)));
+    if (nullptr==G)
+        return nullptr;
+
+    if (0==max_record_size)
+        max_record_size = 1000;
+
+    G->args = static_cast<char*>(calloc (1, 5*max_record_size));
+    if (nullptr==G->args) {
+        free (G);
+        return nullptr;
+    }
+
+    G->next_args = static_cast<char*>(calloc (1, max_record_size));
+    if (nullptr==G->args) {
+        free (G->args);
+        free (G);
+        return nullptr;
+    }
+
+    G->args_size = 5*max_record_size;
+    G->next_args_size = max_record_size;
+
+    G->tags = tags;
+    G->n_tags = n_tags;
+    return G;
+}
+
+
+
+/***************************************************************************************/
+static ffio *ffio_destroy (ffio *G) {
+/****************************************************************************************
+Free all allocated associated memory, then free G itself. For extra RAII compliancy,
+the file object should also be closed if still open, but this will require additional
+control logic, and ffio is a gie tool specific package, so we fall back to asserting that
+fclose has been called prior to ffio_destroy.
+****************************************************************************************/
+    free (G->args);
+    free (G->next_args);
+    free (G);
+    return nullptr;
+}
+
+
+
+/***************************************************************************************/
+static int at_decorative_element (ffio *G) {
+/****************************************************************************************
+A decorative element consists of a line of at least 5 consecutive identical chars,
+starting at buffer position 0:
+"-----", "=====", "*****", etc.
+
+A decorative element serves as a end delimiter for the current element, and
+continues until a gie command verb is found at the start of a line
+****************************************************************************************/
+    int i;
+    char *c;
+    if (nullptr==G)
+        return 0;
+    c = G->next_args;
+    if (nullptr==c)
+        return 0;
+    if (0==c[0])
+        return 0;
+    for (i = 1; i < 5; i++)
+        if (c[i]!=c[0])
+            return 0;
+    return 1;
+}
+
+
+
+/***************************************************************************************/
+static const char *at_tag (ffio *G) {
+/****************************************************************************************
+A start of a new command serves as an end delimiter for the current command
+****************************************************************************************/
+    size_t j;
+    for (j = 0;  j < G->n_tags;  j++)
+        if (strncmp (G->next_args, G->tags[j], strlen(G->tags[j]))==0)
+            return G->tags[j];
+    return nullptr;
+}
+
+
+
+/***************************************************************************************/
+static int at_end_delimiter (ffio *G) {
+/****************************************************************************************
+An instruction consists of everything from its introductory tag to its end
+delimiter.  An end delimiter can be either the introductory tag of the next
+instruction, or a "decorative element", i.e. one of the "ascii art" style
+block delimiters typically used to mark up block comments in a free format
+file.
+****************************************************************************************/
+    if (G==nullptr)
+        return 0;
+    if (at_decorative_element (G))
+        return 1;
+    if (at_tag (G))
+        return 1;
+    return 0;
+}
+
+
+
+/***************************************************************************************/
+static int nextline (ffio *G) {
+/****************************************************************************************
+Read next line of input file. Returns 1 on success, 0 on failure.
+****************************************************************************************/
+    G->next_args[0] = 0;
+    if (T.skip)
+        return 0;
+    if (nullptr==fgets (G->next_args, (int) G->next_args_size - 1, G->f))
+        return 0;
+    if (feof (G->f))
+        return 0;
+    pj_chomp (G->next_args);
+    G->next_lineno++;
+    return 1;
+}
+
+
+
+/***************************************************************************************/
+static int locate_tag (ffio *G, const char *tag) {
+/****************************************************************************************
+Find start-of-line tag (currently only used to search for for <gie>, but any tag
+valid).
+
+Returns 1 on success, 0 on failure.
+****************************************************************************************/
+    size_t n = strlen (tag);
+    while (0!=strncmp (tag, G->next_args, n))
+        if (0==nextline (G))
+            return 0;
+    return 1;
+}
+
+
+
+/***************************************************************************************/
+static int step_into_gie_block (ffio *G) {
+/****************************************************************************************
+Make sure we're inside a <gie>-block. Return 1 on success, 0 otherwise.
+****************************************************************************************/
+    /* Already inside */
+    if (G->level % 2)
+        return 1;
+
+    if (0==locate_tag (G, "<gie>"))
+        return 0;
+
+    while (0!=strncmp ("<gie>", G->next_args, 5)) {
+        G->next_args[0] = 0;
+        if (feof (G->f))
+            return 0;
+        if (nullptr==fgets (G->next_args, (int) G->next_args_size - 1, G->f))
+            return 0;
+        pj_chomp (G->next_args);
+        G->next_lineno++;
+    }
+    G->level++;
+
+    /* We're ready at the start - now step into the block */
+    return nextline (G);
+}
+
+
+
+/***************************************************************************************/
+static int skip_to_next_tag (ffio *G) {
+/****************************************************************************************
+Skip forward to the next command tag. Return 1 on success, 0 otherwise.
+****************************************************************************************/
+    const char *c;
+    if (0==step_into_gie_block (G))
+        return 0;
+
+    c = at_tag (G);
+
+    /* If not already there - get there */
+    while (!c) {
+        if (0==nextline (G))
+            return 0;
+        c = at_tag (G);
+    }
+
+    /* If we reached the end of a <gie> block, locate the next and retry */
+    if (0==strcmp (c, "</gie>")) {
+        G->level++;
+        if (feof (G->f))
+            return 0;
+        if (0==step_into_gie_block (G))
+            return 0;
+        G->args[0] = 0;
+        return skip_to_next_tag (G);
+    }
+    G->lineno = G->next_lineno;
+
+    return 1;
+}
+
+/* Add the most recently read line of input to the block already stored. */
+static int append_args (ffio *G) {
+    size_t skip_chars = 0;
+    size_t next_len = strlen (G->next_args);
+    size_t args_len = strlen (G->args);
+    const char *tag = at_tag (G);
+
+    if (tag)
+        skip_chars = strlen (tag);
+
+    /* +2: 1 for the space separator and 1 for the NUL termination. */
+    if (G->args_size < args_len + next_len - skip_chars + 2) {
+        char *p = static_cast<char*>(realloc (G->args, 2 * G->args_size));
+        if (nullptr==p)
+            return 0;
+        G->args = p;
+        G->args_size = 2 * G->args_size;
+    }
+
+    G->args[args_len] = ' ';
+    strcpy (G->args + args_len + 1,  G->next_args + skip_chars);
+
+    G->next_args[0] = 0;
+    return 1;
+}
+
+
+
+
+
+/***************************************************************************************/
+static int get_inp (ffio *G) {
+/****************************************************************************************
+The primary command reader for gie. Reads a block of gie input, cleans up repeated
+whitespace etc. The block is stored in G->args. Returns 1 on success, 0 otherwise.
+****************************************************************************************/
+    G->args[0] = 0;
+
+    if (0==skip_to_next_tag (G))
+        return 0;
+    G->tag = at_tag (G);
+
+    if (nullptr==G->tag)
+        return 0;
+
+    do {
+        append_args (G);
+        if (0==nextline (G))
+            return 0;
+    } while (!at_end_delimiter (G));
+
+    pj_shrink (G->args);
+    return 1;
 }

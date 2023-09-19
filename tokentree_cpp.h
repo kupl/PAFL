@@ -27,13 +27,13 @@ namespace Command
 class CppTokenTree : public TokenTree
 {
 public:
-    CppTokenTree(const std::filesystem::path& path_with_filename, std::shared_ptr<TokenTree::Matcher> matcher);
+    CppTokenTree(const std::filesystem::path& path, std::shared_ptr<TokenTree::Matcher> matcher);
 
 private:
-    std::list<Token> _getRawStream(const std::filesystem::path& path_with_filename, std::shared_ptr<TokenTree::Matcher> matcher) const;
+    std::list<Token> _getRawStream(const std::filesystem::path& path, std::shared_ptr<TokenTree::Matcher> matcher) const;
 };
 
-void _eraseInclude(const std::filesystem::path& path_with_filename);
+void _eraseInclude(const std::filesystem::path& path);
 }
 
 
@@ -43,14 +43,14 @@ void _eraseInclude(const std::filesystem::path& path_with_filename);
 
 namespace PAFL
 {
-CppTokenTree::CppTokenTree(const std::filesystem::path& path_with_filename, std::shared_ptr<TokenTree::Matcher> matcher) :
-    TokenTree(path_with_filename, matcher)
+CppTokenTree::CppTokenTree(const std::filesystem::path& path, std::shared_ptr<TokenTree::Matcher> matcher) :
+    TokenTree(path, matcher)
 {
     // Tokenize
     CppPda pda(&*_root);
     line_t line = 0;
 
-    for (auto& token : _getRawStream(path_with_filename, matcher)) {
+    for (auto& token : _getRawStream(path, matcher)) {
         
         Token* tok = &token;
         if (token.type < Token::Type::OTHERWISE &&
@@ -73,8 +73,12 @@ CppTokenTree::CppTokenTree(const std::filesystem::path& path_with_filename, std:
     for (auto& list : _stream)
         _tokens_indexer.emplace(list.begin()->loc, &list);
     
-     if (!pda.isTerminated(&*_root))
-        throw std::string("Incomplete token tree <") + path_with_filename.string() + '>';
+    
+    if (!pda.isTerminated(&*_root)) {
+
+        std::cerr << "Incomplete token tree " << path << '\n';
+        throw path;
+    }
 }
 
 
@@ -82,7 +86,7 @@ CppTokenTree::CppTokenTree(const std::filesystem::path& path_with_filename, std:
 
 
 
-void _eraseInclude(const std::filesystem::path& path_with_filename)
+void _eraseInclude(const std::filesystem::path& path)
 {
     /*
     state : 0-11
@@ -112,7 +116,7 @@ void _eraseInclude(const std::filesystem::path& path_with_filename)
 
 
     // Read file (.c | .cc | .cpp | .h | .hpp)
-    std::ifstream ifs(path_with_filename);
+    std::ifstream ifs(path);
     ifs.seekg(0, std::ios::end);
     auto size = ifs.tellg();
 
@@ -166,10 +170,10 @@ void _eraseInclude(const std::filesystem::path& path_with_filename)
 
 
 
-std::list<Token> CppTokenTree::_getRawStream(const std::filesystem::path& path_with_filename, std::shared_ptr<TokenTree::Matcher> matcher) const
+std::list<Token> CppTokenTree::_getRawStream(const std::filesystem::path& path, std::shared_ptr<TokenTree::Matcher> matcher) const
 {
     // Erase header info
-    _eraseInclude(path_with_filename);
+    _eraseInclude(path);
     // clang++ dump-tokens
     std::system(Command::DUMP_COMMAND);
     std::remove(Command::TEMPORARY_CPP);

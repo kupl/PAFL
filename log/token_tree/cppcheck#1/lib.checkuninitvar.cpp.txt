@@ -19533,35 +19533,35 @@
 		- PARENT = { }
 		- CHILD  = { parent , * , vartok , while , assignment , ! , Token , CTOR_CALL , astParent , != , && , Match , pointer , alloc , if , }
 		- PRED   = { - , vartok , tokAt , Token , Match , if , }
-		- SUCC   = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- SUCC   = { unknown , }
 
 951 :	"Token"
 		- NEIGH  = { vartok , Token , previous , Match , if , }
 		- PARENT = { }
 		- CHILD  = { parent , * , vartok , while , assignment , ! , Token , CTOR_CALL , astParent , != , && , Match , pointer , alloc , if , }
 		- PRED   = { - , vartok , tokAt , Token , Match , if , }
-		- SUCC   = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- SUCC   = { unknown , }
 
 951 :	"Match"
 		- NEIGH  = { vartok , Token , previous , Match , if , }
 		- PARENT = { }
 		- CHILD  = { parent , * , vartok , while , assignment , ! , Token , CTOR_CALL , astParent , != , && , Match , pointer , alloc , if , }
 		- PRED   = { - , vartok , tokAt , Token , Match , if , }
-		- SUCC   = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- SUCC   = { unknown , }
 
 951 :	"vartok"
 		- NEIGH  = { vartok , Token , previous , Match , if , }
 		- PARENT = { }
 		- CHILD  = { parent , * , vartok , while , assignment , ! , Token , CTOR_CALL , astParent , != , && , Match , pointer , alloc , if , }
 		- PRED   = { - , vartok , tokAt , Token , Match , if , }
-		- SUCC   = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- SUCC   = { unknown , }
 
 951 :	"previous"
 		- NEIGH  = { vartok , Token , previous , Match , if , }
 		- PARENT = { }
 		- CHILD  = { parent , * , vartok , while , assignment , ! , Token , CTOR_CALL , astParent , != , && , Match , pointer , alloc , if , }
 		- PRED   = { - , vartok , tokAt , Token , Match , if , }
-		- SUCC   = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- SUCC   = { unknown , }
 
 953 :	"if"
 		- NEIGH  = { pointer , ! , if , }
@@ -19942,127 +19942,127 @@
 		- SUCC   = { }
 
 980 :	"unknown"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { unknown , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { vartok , Token , previous , Match , if , }
-		- SUCC   = { possibleParent , Token , Match , if , }
+		- SUCC   = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 
 981 :	"Token"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { vartok , Token , previous , Match , if , }
-		- SUCC   = { possibleParent , Token , Match , if , }
+		- PRED   = { unknown , }
+		- SUCC   = { && , isUnaryOp , possibleParent , if , }
 
 981 :	"*"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { vartok , Token , previous , Match , if , }
-		- SUCC   = { possibleParent , Token , Match , if , }
+		- PRED   = { unknown , }
+		- SUCC   = { && , isUnaryOp , possibleParent , if , }
 
 981 :	"possibleParent"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { vartok , Token , previous , Match , if , }
-		- SUCC   = { possibleParent , Token , Match , if , }
+		- PRED   = { unknown , }
+		- SUCC   = { && , isUnaryOp , possibleParent , if , }
 
 981 :	"getAstParentSkipPossibleCastAndAddressOf"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { vartok , Token , previous , Match , if , }
-		- SUCC   = { possibleParent , Token , Match , if , }
+		- PRED   = { unknown , }
+		- SUCC   = { && , isUnaryOp , possibleParent , if , }
 
 981 :	"vartok"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { vartok , Token , previous , Match , if , }
-		- SUCC   = { possibleParent , Token , Match , if , }
+		- PRED   = { unknown , }
+		- SUCC   = { && , isUnaryOp , possibleParent , if , }
 
 981 :	"&"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { vartok , Token , previous , Match , if , }
-		- SUCC   = { possibleParent , Token , Match , if , }
+		- PRED   = { unknown , }
+		- SUCC   = { && , isUnaryOp , possibleParent , if , }
 
 981 :	"unknown"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { vartok , Token , previous , Match , if , }
-		- SUCC   = { possibleParent , Token , Match , if , }
+		- PRED   = { unknown , }
+		- SUCC   = { && , isUnaryOp , possibleParent , if , }
 
 982 :	"if"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { && , isUnaryOp , possibleParent , if , }
 		- PARENT = { }
 		- CHILD  = { previous , Token , if , && , isUnaryOp , Match , possibleParent , while , }
-		- PRED   = { vartok , Token , previous , Match , if , }
+		- PRED   = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- SUCC   = { possibleParent , Token , Match , if , }
 
 982 :	"possibleParent"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { && , isUnaryOp , possibleParent , if , }
 		- PARENT = { }
 		- CHILD  = { previous , Token , if , && , isUnaryOp , Match , possibleParent , while , }
-		- PRED   = { vartok , Token , previous , Match , if , }
+		- PRED   = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- SUCC   = { possibleParent , Token , Match , if , }
 
 982 :	"&&"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { && , isUnaryOp , possibleParent , if , }
 		- PARENT = { }
 		- CHILD  = { previous , Token , if , && , isUnaryOp , Match , possibleParent , while , }
-		- PRED   = { vartok , Token , previous , Match , if , }
+		- PRED   = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- SUCC   = { possibleParent , Token , Match , if , }
 
 982 :	"possibleParent"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { && , isUnaryOp , possibleParent , if , }
 		- PARENT = { }
 		- CHILD  = { previous , Token , if , && , isUnaryOp , Match , possibleParent , while , }
-		- PRED   = { vartok , Token , previous , Match , if , }
+		- PRED   = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- SUCC   = { possibleParent , Token , Match , if , }
 
 982 :	"isUnaryOp"
-		- NEIGH  = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- NEIGH  = { && , isUnaryOp , possibleParent , if , }
 		- PARENT = { }
 		- CHILD  = { previous , Token , if , && , isUnaryOp , Match , possibleParent , while , }
-		- PRED   = { vartok , Token , previous , Match , if , }
+		- PRED   = { & , getAstParentSkipPossibleCastAndAddressOf , unknown , vartok , possibleParent , * , Token , }
 		- SUCC   = { possibleParent , Token , Match , if , }
 
 983 :	"while"
 		- NEIGH  = { && , isUnaryOp , possibleParent , while , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { unknown , & , getAstParentSkipPossibleCastAndAddressOf , possibleParent , }
 		- PRED   = { }
 		- SUCC   = { previous , Token , && , possibleParent , Match , if , }
 
 983 :	"possibleParent"
 		- NEIGH  = { && , isUnaryOp , possibleParent , while , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { unknown , & , getAstParentSkipPossibleCastAndAddressOf , possibleParent , }
 		- PRED   = { }
 		- SUCC   = { previous , Token , && , possibleParent , Match , if , }
 
 983 :	"&&"
 		- NEIGH  = { && , isUnaryOp , possibleParent , while , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { unknown , & , getAstParentSkipPossibleCastAndAddressOf , possibleParent , }
 		- PRED   = { }
 		- SUCC   = { previous , Token , && , possibleParent , Match , if , }
 
 983 :	"possibleParent"
 		- NEIGH  = { && , isUnaryOp , possibleParent , while , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { unknown , & , getAstParentSkipPossibleCastAndAddressOf , possibleParent , }
 		- PRED   = { }
 		- SUCC   = { previous , Token , && , possibleParent , Match , if , }
 
 983 :	"isUnaryOp"
 		- NEIGH  = { && , isUnaryOp , possibleParent , while , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { unknown , & , getAstParentSkipPossibleCastAndAddressOf , possibleParent , }
 		- PRED   = { }
 		- SUCC   = { previous , Token , && , possibleParent , Match , if , }
@@ -20104,49 +20104,49 @@
 
 985 :	"if"
 		- NEIGH  = { previous , Token , && , possibleParent , Match , if , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { return , }
 		- PRED   = { && , isUnaryOp , possibleParent , while , }
 		- SUCC   = { }
 
 985 :	"possibleParent"
 		- NEIGH  = { previous , Token , && , possibleParent , Match , if , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { return , }
 		- PRED   = { && , isUnaryOp , possibleParent , while , }
 		- SUCC   = { }
 
 985 :	"&&"
 		- NEIGH  = { previous , Token , && , possibleParent , Match , if , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { return , }
 		- PRED   = { && , isUnaryOp , possibleParent , while , }
 		- SUCC   = { }
 
 985 :	"Token"
 		- NEIGH  = { previous , Token , && , possibleParent , Match , if , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { return , }
 		- PRED   = { && , isUnaryOp , possibleParent , while , }
 		- SUCC   = { }
 
 985 :	"Match"
 		- NEIGH  = { previous , Token , && , possibleParent , Match , if , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { return , }
 		- PRED   = { && , isUnaryOp , possibleParent , while , }
 		- SUCC   = { }
 
 985 :	"possibleParent"
 		- NEIGH  = { previous , Token , && , possibleParent , Match , if , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { return , }
 		- PRED   = { && , isUnaryOp , possibleParent , while , }
 		- SUCC   = { }
 
 985 :	"previous"
 		- NEIGH  = { previous , Token , && , possibleParent , Match , if , }
-		- PARENT = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
+		- PARENT = { && , isUnaryOp , possibleParent , if , }
 		- CHILD  = { return , }
 		- PRED   = { && , isUnaryOp , possibleParent , while , }
 		- SUCC   = { }
@@ -20162,29 +20162,29 @@
 		- NEIGH  = { possibleParent , Token , Match , if , }
 		- PARENT = { }
 		- CHILD  = { == , simpleMatch , ! , Token , possibleParent , && , >= , astParent , unknown , vartok , isFunctionParUsage , pointer , use , alloc , str , if , }
-		- PRED   = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
-		- SUCC   = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PRED   = { && , isUnaryOp , possibleParent , if , }
+		- SUCC   = { astParent , vartok , parent , * , Token , }
 
 988 :	"Token"
 		- NEIGH  = { possibleParent , Token , Match , if , }
 		- PARENT = { }
 		- CHILD  = { == , simpleMatch , ! , Token , possibleParent , && , >= , astParent , unknown , vartok , isFunctionParUsage , pointer , use , alloc , str , if , }
-		- PRED   = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
-		- SUCC   = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PRED   = { && , isUnaryOp , possibleParent , if , }
+		- SUCC   = { astParent , vartok , parent , * , Token , }
 
 988 :	"Match"
 		- NEIGH  = { possibleParent , Token , Match , if , }
 		- PARENT = { }
 		- CHILD  = { == , simpleMatch , ! , Token , possibleParent , && , >= , astParent , unknown , vartok , isFunctionParUsage , pointer , use , alloc , str , if , }
-		- PRED   = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
-		- SUCC   = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PRED   = { && , isUnaryOp , possibleParent , if , }
+		- SUCC   = { astParent , vartok , parent , * , Token , }
 
 988 :	"possibleParent"
 		- NEIGH  = { possibleParent , Token , Match , if , }
 		- PARENT = { }
 		- CHILD  = { == , simpleMatch , ! , Token , possibleParent , && , >= , astParent , unknown , vartok , isFunctionParUsage , pointer , use , alloc , str , if , }
-		- PRED   = { isUnaryOp , && , & , if , getAstParentSkipPossibleCastAndAddressOf , possibleParent , * , Token , vartok , unknown , }
-		- SUCC   = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PRED   = { && , isUnaryOp , possibleParent , if , }
+		- SUCC   = { astParent , vartok , parent , * , Token , }
 
 989 :	"if"
 		- NEIGH  = { unknown , if , }
@@ -20376,92 +20376,92 @@
 		- SUCC   = { }
 
 1002 :	"Token"
-		- NEIGH  = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- NEIGH  = { astParent , vartok , parent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { possibleParent , Token , Match , if , }
-		- SUCC   = { == , str , && , parent , while , }
+		- SUCC   = { isCast , && , parent , while , }
 
 1002 :	"*"
-		- NEIGH  = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- NEIGH  = { astParent , vartok , parent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { possibleParent , Token , Match , if , }
-		- SUCC   = { == , str , && , parent , while , }
+		- SUCC   = { isCast , && , parent , while , }
 
 1002 :	"parent"
-		- NEIGH  = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- NEIGH  = { astParent , vartok , parent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { possibleParent , Token , Match , if , }
-		- SUCC   = { == , str , && , parent , while , }
+		- SUCC   = { isCast , && , parent , while , }
 
 1002 :	"vartok"
-		- NEIGH  = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- NEIGH  = { astParent , vartok , parent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { possibleParent , Token , Match , if , }
-		- SUCC   = { == , str , && , parent , while , }
+		- SUCC   = { isCast , && , parent , while , }
 
 1002 :	"astParent"
-		- NEIGH  = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- NEIGH  = { astParent , vartok , parent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { possibleParent , Token , Match , if , }
-		- SUCC   = { == , str , && , parent , while , }
+		- SUCC   = { isCast , && , parent , while , }
 
 1003 :	"while"
-		- NEIGH  = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- NEIGH  = { isCast , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { possibleParent , Token , Match , if , }
+		- PRED   = { astParent , vartok , parent , * , Token , }
 		- SUCC   = { == , str , && , parent , while , }
 
 1003 :	"parent"
-		- NEIGH  = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- NEIGH  = { isCast , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { possibleParent , Token , Match , if , }
+		- PRED   = { astParent , vartok , parent , * , Token , }
 		- SUCC   = { == , str , && , parent , while , }
 
 1003 :	"&&"
-		- NEIGH  = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- NEIGH  = { isCast , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { possibleParent , Token , Match , if , }
+		- PRED   = { astParent , vartok , parent , * , Token , }
 		- SUCC   = { == , str , && , parent , while , }
 
 1003 :	"parent"
-		- NEIGH  = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- NEIGH  = { isCast , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { possibleParent , Token , Match , if , }
+		- PRED   = { astParent , vartok , parent , * , Token , }
 		- SUCC   = { == , str , && , parent , while , }
 
 1003 :	"isCast"
-		- NEIGH  = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- NEIGH  = { isCast , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { possibleParent , Token , Match , if , }
+		- PRED   = { astParent , vartok , parent , * , Token , }
 		- SUCC   = { == , str , && , parent , while , }
 
 1004 :	"parent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PARENT = { isCast , && , parent , while , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 1004 :	"parent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PARENT = { isCast , && , parent , while , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 1004 :	"astParent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PARENT = { isCast , && , parent , while , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
@@ -20470,42 +20470,42 @@
 		- NEIGH  = { == , str , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PRED   = { isCast , && , parent , while , }
 		- SUCC   = { parent , simpleMatch , Token , if , }
 
 1005 :	"parent"
 		- NEIGH  = { == , str , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PRED   = { isCast , && , parent , while , }
 		- SUCC   = { parent , simpleMatch , Token , if , }
 
 1005 :	"&&"
 		- NEIGH  = { == , str , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PRED   = { isCast , && , parent , while , }
 		- SUCC   = { parent , simpleMatch , Token , if , }
 
 1005 :	"parent"
 		- NEIGH  = { == , str , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PRED   = { isCast , && , parent , while , }
 		- SUCC   = { parent , simpleMatch , Token , if , }
 
 1005 :	"str"
 		- NEIGH  = { == , str , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PRED   = { isCast , && , parent , while , }
 		- SUCC   = { parent , simpleMatch , Token , if , }
 
 1005 :	"=="
 		- NEIGH  = { == , str , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isCast , && , while , astParent , vartok , parent , * , Token , }
+		- PRED   = { isCast , && , parent , while , }
 		- SUCC   = { parent , simpleMatch , Token , if , }
 
 1006 :	"parent"

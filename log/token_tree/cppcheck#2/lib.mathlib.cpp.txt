@@ -6373,35 +6373,35 @@
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { + , InternalError , iLiteral , throw , }
 		- PRED   = { }
-		- SUCC   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- SUCC   = { tempBuf , string , std , }
 
 402 :	"++"
 		- NEIGH  = { iLiteralLen , == , idx , ++ , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { + , InternalError , iLiteral , throw , }
 		- PRED   = { }
-		- SUCC   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- SUCC   = { tempBuf , string , std , }
 
 402 :	"idx"
 		- NEIGH  = { iLiteralLen , == , idx , ++ , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { + , InternalError , iLiteral , throw , }
 		- PRED   = { }
-		- SUCC   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- SUCC   = { tempBuf , string , std , }
 
 402 :	"=="
 		- NEIGH  = { iLiteralLen , == , idx , ++ , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { + , InternalError , iLiteral , throw , }
 		- PRED   = { }
-		- SUCC   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- SUCC   = { tempBuf , string , std , }
 
 402 :	"iLiteralLen"
 		- NEIGH  = { iLiteralLen , == , idx , ++ , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { + , InternalError , iLiteral , throw , }
 		- PRED   = { }
-		- SUCC   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- SUCC   = { tempBuf , string , std , }
 
 403 :	"throw"
 		- NEIGH  = { + , InternalError , iLiteral , throw , }
@@ -6439,253 +6439,253 @@
 		- SUCC   = { }
 
 404 :	"std"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { tempBuf , string , std , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
 		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- SUCC   = { idx , push_back , iLiteral , tempBuf , }
 
 404 :	"string"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { tempBuf , string , std , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
 		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- SUCC   = { idx , push_back , iLiteral , tempBuf , }
 
 404 :	"tempBuf"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { tempBuf , string , std , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
 		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- SUCC   = { idx , push_back , iLiteral , tempBuf , }
 
 405 :	"tempBuf"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { idx , push_back , iLiteral , tempBuf , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PRED   = { tempBuf , string , std , }
+		- SUCC   = { iLiteralLen , != , idx , ++ , if , }
 
 405 :	"push_back"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { idx , push_back , iLiteral , tempBuf , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PRED   = { tempBuf , string , std , }
+		- SUCC   = { iLiteralLen , != , idx , ++ , if , }
 
 405 :	"iLiteral"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { idx , push_back , iLiteral , tempBuf , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PRED   = { tempBuf , string , std , }
+		- SUCC   = { iLiteralLen , != , idx , ++ , if , }
 
 405 :	"idx"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { idx , push_back , iLiteral , tempBuf , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PRED   = { tempBuf , string , std , }
+		- SUCC   = { iLiteralLen , != , idx , ++ , if , }
 
 406 :	"if"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { iLiteralLen , != , idx , ++ , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { idx , push_back , iLiteral , tempBuf , }
-		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PRED   = { idx , push_back , iLiteral , tempBuf , }
+		- SUCC   = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 
 406 :	"++"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { iLiteralLen , != , idx , ++ , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { idx , push_back , iLiteral , tempBuf , }
-		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PRED   = { idx , push_back , iLiteral , tempBuf , }
+		- SUCC   = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 
 406 :	"idx"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { iLiteralLen , != , idx , ++ , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { idx , push_back , iLiteral , tempBuf , }
-		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PRED   = { idx , push_back , iLiteral , tempBuf , }
+		- SUCC   = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 
 406 :	"!="
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { iLiteralLen , != , idx , ++ , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { idx , push_back , iLiteral , tempBuf , }
-		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PRED   = { idx , push_back , iLiteral , tempBuf , }
+		- SUCC   = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 
 406 :	"iLiteralLen"
-		- NEIGH  = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- NEIGH  = { iLiteralLen , != , idx , ++ , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { idx , push_back , iLiteral , tempBuf , }
-		- PRED   = { iLiteralLen , == , idx , ++ , if , }
-		- SUCC   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PRED   = { idx , push_back , iLiteral , tempBuf , }
+		- SUCC   = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 
 407 :	"tempBuf"
 		- NEIGH  = { idx , push_back , iLiteral , tempBuf , }
-		- PARENT = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PARENT = { iLiteralLen , != , idx , ++ , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 407 :	"push_back"
 		- NEIGH  = { idx , push_back , iLiteral , tempBuf , }
-		- PARENT = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PARENT = { iLiteralLen , != , idx , ++ , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 407 :	"iLiteral"
 		- NEIGH  = { idx , push_back , iLiteral , tempBuf , }
-		- PARENT = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PARENT = { iLiteralLen , != , idx , ++ , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 407 :	"idx"
 		- NEIGH  = { idx , push_back , iLiteral , tempBuf , }
-		- PARENT = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PARENT = { iLiteralLen , != , idx , ++ , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 408 :	"normalizedLiteral"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { iLiteralLen , != , idx , ++ , if , }
 		- SUCC   = { continue , }
 
 408 :	"push_back"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { iLiteralLen , != , idx , ++ , if , }
 		- SUCC   = { continue , }
 
 408 :	"static_cast"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { iLiteralLen , != , idx , ++ , if , }
 		- SUCC   = { continue , }
 
 408 :	"<"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { iLiteralLen , != , idx , ++ , if , }
 		- SUCC   = { continue , }
 
 408 :	">"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { iLiteralLen , != , idx , ++ , if , }
 		- SUCC   = { continue , }
 
 408 :	"MathLib"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { iLiteralLen , != , idx , ++ , if , }
 		- SUCC   = { continue , }
 
 408 :	"toULongNumber"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { iLiteralLen , != , idx , ++ , if , }
 		- SUCC   = { continue , }
 
 408 :	"+"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { iLiteralLen , != , idx , ++ , if , }
 		- SUCC   = { continue , }
 
 408 :	"tempBuf"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { iLiteralLen , != , idx , ++ , if , }
 		- SUCC   = { continue , }
 
 409 :	"continue"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { continue , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
-		- SUCC   = { continue , }
+		- PRED   = { tempBuf , toULongNumber , < , + , static_cast , > , MathLib , push_back , normalizedLiteral , }
+		- SUCC   = { }
 
 414 :	"if"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { iLiteralLen , == , + , idx , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { + , InternalError , iLiteral , throw , }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { }
 		- SUCC   = { continue , }
 
 414 :	"idx"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { iLiteralLen , == , + , idx , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { + , InternalError , iLiteral , throw , }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { }
 		- SUCC   = { continue , }
 
 414 :	"+"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { iLiteralLen , == , + , idx , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { + , InternalError , iLiteral , throw , }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { }
 		- SUCC   = { continue , }
 
 414 :	"=="
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { iLiteralLen , == , + , idx , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { + , InternalError , iLiteral , throw , }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { }
 		- SUCC   = { continue , }
 
 414 :	"iLiteralLen"
-		- NEIGH  = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- NEIGH  = { iLiteralLen , == , + , idx , if , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { + , InternalError , iLiteral , throw , }
-		- PRED   = { if , idx , iLiteralLen , string , push_back , != , iLiteral , tempBuf , ++ , std , }
+		- PRED   = { }
 		- SUCC   = { continue , }
 
 415 :	"throw"
 		- NEIGH  = { + , InternalError , iLiteral , throw , }
-		- PARENT = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PARENT = { iLiteralLen , == , + , idx , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 415 :	"InternalError"
 		- NEIGH  = { + , InternalError , iLiteral , throw , }
-		- PARENT = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PARENT = { iLiteralLen , == , + , idx , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 415 :	"+"
 		- NEIGH  = { + , InternalError , iLiteral , throw , }
-		- PARENT = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PARENT = { iLiteralLen , == , + , idx , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 415 :	"iLiteral"
 		- NEIGH  = { + , InternalError , iLiteral , throw , }
-		- PARENT = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PARENT = { iLiteralLen , == , + , idx , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 415 :	"+"
 		- NEIGH  = { + , InternalError , iLiteral , throw , }
-		- PARENT = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PARENT = { iLiteralLen , == , + , idx , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
@@ -6694,7 +6694,7 @@
 		- NEIGH  = { continue , }
 		- PARENT = { iLiteral , idx , switch , }
 		- CHILD  = { }
-		- PRED   = { iLiteralLen , idx , == , tempBuf , continue , static_cast , if , toULongNumber , < , + , > , MathLib , push_back , normalizedLiteral , }
+		- PRED   = { iLiteralLen , == , + , idx , if , }
 		- SUCC   = { }
 
 419 :	"if"
@@ -10713,21 +10713,21 @@
 		- PARENT = { }
 		- CHILD  = { return , }
 		- PRED   = { }
-		- SUCC   = { START , state , State , }
+		- SUCC   = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 
 644 :	"str"
 		- NEIGH  = { empty , str , if , }
 		- PARENT = { }
 		- CHILD  = { return , }
 		- PRED   = { }
-		- SUCC   = { START , state , State , }
+		- SUCC   = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 
 644 :	"empty"
 		- NEIGH  = { empty , str , if , }
 		- PARENT = { }
 		- CHILD  = { return , }
 		- PRED   = { }
-		- SUCC   = { START , state , State , }
+		- SUCC   = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 
 645 :	"return"
 		- NEIGH  = { return , }
@@ -10737,98 +10737,98 @@
 		- SUCC   = { }
 
 646 :	"State"
-		- NEIGH  = { START , state , State , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { empty , str , if , }
 		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 647 :	"START"
-		- NEIGH  = { START , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { empty , str , if , }
+		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 647 :	"BASE_DIGITS1"
-		- NEIGH  = { BASE_DIGITS1 , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { empty , str , if , }
+		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 647 :	"LEADING_DECIMAL"
-		- NEIGH  = { LEADING_DECIMAL , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { empty , str , if , }
+		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 647 :	"TRAILING_DECIMAL"
-		- NEIGH  = { TRAILING_DECIMAL , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { empty , str , if , }
+		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 647 :	"BASE_DIGITS2"
-		- NEIGH  = { BASE_DIGITS2 , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { empty , str , if , }
+		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 647 :	"E"
-		- NEIGH  = { E , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { empty , str , if , }
+		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 647 :	"MANTISSA_PLUSMINUS"
-		- NEIGH  = { MANTISSA_PLUSMINUS , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { empty , str , if , }
+		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 647 :	"MANTISSA_DIGITS"
-		- NEIGH  = { MANTISSA_DIGITS , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { empty , str , if , }
+		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 647 :	"SUFFIX_F"
-		- NEIGH  = { SUFFIX_F , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { empty , str , if , }
+		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 647 :	"SUFFIX_L"
-		- NEIGH  = { SUFFIX_L , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { empty , str , if , }
+		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 648 :	"state"
-		- NEIGH  = { START , state , State , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { empty , str , if , }
 		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 648 :	"State"
-		- NEIGH  = { START , state , State , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { empty , str , if , }
 		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 648 :	"START"
-		- NEIGH  = { START , state , State , }
+		- NEIGH  = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { empty , str , if , }
@@ -10838,42 +10838,42 @@
 		- NEIGH  = { begin , const_iterator , str , string , it , std , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { START , state , State , }
+		- PRED   = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- SUCC   = { || , * , == , it , if , }
 
 649 :	"string"
 		- NEIGH  = { begin , const_iterator , str , string , it , std , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { START , state , State , }
+		- PRED   = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- SUCC   = { || , * , == , it , if , }
 
 649 :	"const_iterator"
 		- NEIGH  = { begin , const_iterator , str , string , it , std , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { START , state , State , }
+		- PRED   = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- SUCC   = { || , * , == , it , if , }
 
 649 :	"it"
 		- NEIGH  = { begin , const_iterator , str , string , it , std , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { START , state , State , }
+		- PRED   = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- SUCC   = { || , * , == , it , if , }
 
 649 :	"str"
 		- NEIGH  = { begin , const_iterator , str , string , it , std , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { START , state , State , }
+		- PRED   = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- SUCC   = { || , * , == , it , if , }
 
 649 :	"begin"
 		- NEIGH  = { begin , const_iterator , str , string , it , std , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { START , state , State , }
+		- PRED   = { state , SUFFIX_L , MANTISSA_DIGITS , E , SUFFIX_F , START , BASE_DIGITS2 , TRAILING_DECIMAL , LEADING_DECIMAL , State , MANTISSA_PLUSMINUS , BASE_DIGITS1 , }
 		- SUCC   = { || , * , == , it , if , }
 
 650 :	"if"
@@ -14762,49 +14762,49 @@
 		- SUCC   = { }
 
 845 :	"Status"
-		- NEIGH  = { START , state , Status , }
+		- NEIGH  = { state , DIGITS , OCTAL_PREFIX , START , Status , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { empty , str , if , }
 
 846 :	"START"
-		- NEIGH  = { START , }
+		- NEIGH  = { state , DIGITS , OCTAL_PREFIX , START , Status , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { empty , str , if , }
 
 846 :	"OCTAL_PREFIX"
-		- NEIGH  = { OCTAL_PREFIX , }
+		- NEIGH  = { state , DIGITS , OCTAL_PREFIX , START , Status , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { empty , str , if , }
 
 846 :	"DIGITS"
-		- NEIGH  = { DIGITS , }
+		- NEIGH  = { state , DIGITS , OCTAL_PREFIX , START , Status , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { empty , str , if , }
 
 847 :	"state"
-		- NEIGH  = { START , state , Status , }
+		- NEIGH  = { state , DIGITS , OCTAL_PREFIX , START , Status , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { empty , str , if , }
 
 847 :	"Status"
-		- NEIGH  = { START , state , Status , }
+		- NEIGH  = { state , DIGITS , OCTAL_PREFIX , START , Status , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { empty , str , if , }
 
 847 :	"START"
-		- NEIGH  = { START , state , Status , }
+		- NEIGH  = { state , DIGITS , OCTAL_PREFIX , START , Status , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
@@ -14814,21 +14814,21 @@
 		- NEIGH  = { empty , str , if , }
 		- PARENT = { }
 		- CHILD  = { return , }
-		- PRED   = { START , state , Status , }
+		- PRED   = { state , DIGITS , OCTAL_PREFIX , START , Status , }
 		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 848 :	"str"
 		- NEIGH  = { empty , str , if , }
 		- PARENT = { }
 		- CHILD  = { return , }
-		- PRED   = { START , state , Status , }
+		- PRED   = { state , DIGITS , OCTAL_PREFIX , START , Status , }
 		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 848 :	"empty"
 		- NEIGH  = { empty , str , if , }
 		- PARENT = { }
 		- CHILD  = { return , }
-		- PRED   = { START , state , Status , }
+		- PRED   = { state , DIGITS , OCTAL_PREFIX , START , Status , }
 		- SUCC   = { begin , const_iterator , str , string , it , std , }
 
 849 :	"return"

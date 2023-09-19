@@ -1,0 +1,637 @@
+35 :	"pj_wkt_error"
+		- NEIGH  = { pj_wkt_error , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"pj_wkt_parse_context"
+		- NEIGH  = { pj_wkt_parse_context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"context"
+		- NEIGH  = { context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"msg"
+		- NEIGH  = { msg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+36 :	"context"
+		- NEIGH  = { errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { msg , += , errorMsg , context , }
+
+36 :	"errorMsg"
+		- NEIGH  = { errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { msg , += , errorMsg , context , }
+
+37 :	"context"
+		- NEIGH  = { msg , += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+37 :	"errorMsg"
+		- NEIGH  = { msg , += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+37 :	"+="
+		- NEIGH  = { msg , += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+37 :	"msg"
+		- NEIGH  = { msg , += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+38 :	"context"
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { msg , += , errorMsg , context , }
+		- SUCC   = { ctxtMsg , string , std , }
+
+38 :	"errorMsg"
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { msg , += , errorMsg , context , }
+		- SUCC   = { ctxtMsg , string , std , }
+
+38 :	"+="
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { msg , += , errorMsg , context , }
+		- SUCC   = { ctxtMsg , string , std , }
+
+40 :	"std"
+		- NEIGH  = { ctxtMsg , string , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+
+40 :	"string"
+		- NEIGH  = { ctxtMsg , string , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+
+40 :	"ctxtMsg"
+		- NEIGH  = { ctxtMsg , string , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+
+41 :	"n"
+		- NEIGH  = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , string , std , }
+		- SUCC   = { n , max , std , - , start_i , }
+
+41 :	"static_cast"
+		- NEIGH  = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , string , std , }
+		- SUCC   = { n , max , std , - , start_i , }
+
+41 :	"<"
+		- NEIGH  = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , string , std , }
+		- SUCC   = { n , max , std , - , start_i , }
+
+41 :	">"
+		- NEIGH  = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , string , std , }
+		- SUCC   = { n , max , std , - , start_i , }
+
+41 :	"context"
+		- NEIGH  = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , string , std , }
+		- SUCC   = { n , max , std , - , start_i , }
+
+41 :	"pszLastSuccess"
+		- NEIGH  = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , string , std , }
+		- SUCC   = { n , max , std , - , start_i , }
+
+41 :	"-"
+		- NEIGH  = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , string , std , }
+		- SUCC   = { n , max , std , - , start_i , }
+
+41 :	"context"
+		- NEIGH  = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , string , std , }
+		- SUCC   = { n , max , std , - , start_i , }
+
+41 :	"pszInput"
+		- NEIGH  = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , string , std , }
+		- SUCC   = { n , max , std , - , start_i , }
+
+42 :	"start_i"
+		- NEIGH  = { n , max , std , - , start_i , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- SUCC   = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+
+42 :	"std"
+		- NEIGH  = { n , max , std , - , start_i , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- SUCC   = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+
+42 :	"max"
+		- NEIGH  = { n , max , std , - , start_i , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- SUCC   = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+
+42 :	"n"
+		- NEIGH  = { n , max , std , - , start_i , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- SUCC   = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+
+42 :	"-"
+		- NEIGH  = { n , max , std , - , start_i , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pszInput , - , context , pszLastSuccess , > , static_cast , < , n , }
+		- SUCC   = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+
+43 :	"for"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"i"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"start_i"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"i"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"<"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"n"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"+"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"&&"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"context"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"pszInput"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"i"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"i"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+43 :	"++"
+		- NEIGH  = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { || , i , == , pszInput , context , if , }
+		- PRED   = { n , max , std , - , start_i , }
+		- SUCC   = { ctxtMsg , += , errorMsg , context , }
+
+44 :	"if"
+		- NEIGH  = { || , i , == , pszInput , context , if , }
+		- PARENT = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- CHILD  = { pszInput , context , += , > , ctxtMsg , n , i , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"context"
+		- NEIGH  = { || , i , == , pszInput , context , if , }
+		- PARENT = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- CHILD  = { pszInput , context , += , > , ctxtMsg , n , i , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"pszInput"
+		- NEIGH  = { || , i , == , pszInput , context , if , }
+		- PARENT = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- CHILD  = { pszInput , context , += , > , ctxtMsg , n , i , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"i"
+		- NEIGH  = { || , i , == , pszInput , context , if , }
+		- PARENT = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- CHILD  = { pszInput , context , += , > , ctxtMsg , n , i , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"=="
+		- NEIGH  = { || , i , == , pszInput , context , if , }
+		- PARENT = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- CHILD  = { pszInput , context , += , > , ctxtMsg , n , i , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"||"
+		- NEIGH  = { || , i , == , pszInput , context , if , }
+		- PARENT = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- CHILD  = { pszInput , context , += , > , ctxtMsg , n , i , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"context"
+		- NEIGH  = { || , i , == , pszInput , context , if , }
+		- PARENT = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- CHILD  = { pszInput , context , += , > , ctxtMsg , n , i , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"pszInput"
+		- NEIGH  = { || , i , == , pszInput , context , if , }
+		- PARENT = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- CHILD  = { pszInput , context , += , > , ctxtMsg , n , i , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"i"
+		- NEIGH  = { || , i , == , pszInput , context , if , }
+		- PARENT = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- CHILD  = { pszInput , context , += , > , ctxtMsg , n , i , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"=="
+		- NEIGH  = { || , i , == , pszInput , context , if , }
+		- PARENT = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- CHILD  = { pszInput , context , += , > , ctxtMsg , n , i , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+45 :	"if"
+		- NEIGH  = { n , > , i , if , }
+		- PARENT = { || , i , == , pszInput , context , if , }
+		- CHILD  = { + , break , i , start_i , ctxtMsg , clear , }
+		- PRED   = { }
+		- SUCC   = { }
+
+45 :	"i"
+		- NEIGH  = { n , > , i , if , }
+		- PARENT = { || , i , == , pszInput , context , if , }
+		- CHILD  = { + , break , i , start_i , ctxtMsg , clear , }
+		- PRED   = { }
+		- SUCC   = { }
+
+45 :	">"
+		- NEIGH  = { n , > , i , if , }
+		- PARENT = { || , i , == , pszInput , context , if , }
+		- CHILD  = { + , break , i , start_i , ctxtMsg , clear , }
+		- PRED   = { }
+		- SUCC   = { }
+
+45 :	"n"
+		- NEIGH  = { n , > , i , if , }
+		- PARENT = { || , i , == , pszInput , context , if , }
+		- CHILD  = { + , break , i , start_i , ctxtMsg , clear , }
+		- PRED   = { }
+		- SUCC   = { }
+
+46 :	"break"
+		- NEIGH  = { break , }
+		- PARENT = { n , > , i , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+48 :	"ctxtMsg"
+		- NEIGH  = { clear , ctxtMsg , }
+		- PARENT = { n , > , i , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { + , i , start_i , }
+
+48 :	"clear"
+		- NEIGH  = { clear , ctxtMsg , }
+		- PARENT = { n , > , i , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { + , i , start_i , }
+
+49 :	"start_i"
+		- NEIGH  = { + , i , start_i , }
+		- PARENT = { n , > , i , if , }
+		- CHILD  = { }
+		- PRED   = { clear , ctxtMsg , }
+		- SUCC   = { }
+
+49 :	"i"
+		- NEIGH  = { + , i , start_i , }
+		- PARENT = { n , > , i , if , }
+		- CHILD  = { }
+		- PRED   = { clear , ctxtMsg , }
+		- SUCC   = { }
+
+49 :	"+"
+		- NEIGH  = { + , i , start_i , }
+		- PARENT = { n , > , i , if , }
+		- CHILD  = { }
+		- PRED   = { clear , ctxtMsg , }
+		- SUCC   = { }
+
+52 :	"ctxtMsg"
+		- NEIGH  = { i , context , pszInput , += , ctxtMsg , }
+		- PARENT = { || , i , == , pszInput , context , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+52 :	"+="
+		- NEIGH  = { i , context , pszInput , += , ctxtMsg , }
+		- PARENT = { || , i , == , pszInput , context , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+52 :	"context"
+		- NEIGH  = { i , context , pszInput , += , ctxtMsg , }
+		- PARENT = { || , i , == , pszInput , context , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+52 :	"pszInput"
+		- NEIGH  = { i , context , pszInput , += , ctxtMsg , }
+		- PARENT = { || , i , == , pszInput , context , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+52 :	"i"
+		- NEIGH  = { i , context , pszInput , += , ctxtMsg , }
+		- PARENT = { || , i , == , pszInput , context , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+55 :	"context"
+		- NEIGH  = { ctxtMsg , += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- SUCC   = { += , errorMsg , context , }
+
+55 :	"errorMsg"
+		- NEIGH  = { ctxtMsg , += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- SUCC   = { += , errorMsg , context , }
+
+55 :	"+="
+		- NEIGH  = { ctxtMsg , += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- SUCC   = { += , errorMsg , context , }
+
+55 :	"ctxtMsg"
+		- NEIGH  = { ctxtMsg , += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pszInput , context , && , + , start_i , n , < , ++ , i , for , }
+		- SUCC   = { += , errorMsg , context , }
+
+56 :	"context"
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , += , errorMsg , context , }
+		- SUCC   = { start_i , n , < , ++ , i , for , }
+
+56 :	"errorMsg"
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , += , errorMsg , context , }
+		- SUCC   = { start_i , n , < , ++ , i , for , }
+
+56 :	"+="
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ctxtMsg , += , errorMsg , context , }
+		- SUCC   = { start_i , n , < , ++ , i , for , }
+
+57 :	"for"
+		- NEIGH  = { start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { += , errorMsg , context , }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+57 :	"i"
+		- NEIGH  = { start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { += , errorMsg , context , }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+57 :	"start_i"
+		- NEIGH  = { start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { += , errorMsg , context , }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+57 :	"i"
+		- NEIGH  = { start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { += , errorMsg , context , }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+57 :	"<"
+		- NEIGH  = { start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { += , errorMsg , context , }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+57 :	"n"
+		- NEIGH  = { start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { += , errorMsg , context , }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+57 :	"i"
+		- NEIGH  = { start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { += , errorMsg , context , }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+57 :	"++"
+		- NEIGH  = { start_i , n , < , ++ , i , for , }
+		- PARENT = { }
+		- CHILD  = { += , errorMsg , context , }
+		- PRED   = { += , errorMsg , context , }
+		- SUCC   = { += , errorMsg , context , }
+
+58 :	"context"
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { start_i , n , < , ++ , i , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+58 :	"errorMsg"
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { start_i , n , < , ++ , i , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+58 :	"+="
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { start_i , n , < , ++ , i , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+59 :	"context"
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { start_i , n , < , ++ , i , for , }
+		- SUCC   = { }
+
+59 :	"errorMsg"
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { start_i , n , < , ++ , i , for , }
+		- SUCC   = { }
+
+59 :	"+="
+		- NEIGH  = { += , errorMsg , context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { start_i , n , < , ++ , i , for , }
+		- SUCC   = { }
+

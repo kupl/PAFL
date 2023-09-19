@@ -1,0 +1,182 @@
+7 :	"adjlon"
+		- NEIGH  = { adjlon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+7 :	"lon"
+		- NEIGH  = { lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+9 :	"if"
+		- NEIGH  = { M_PI , lon , < , fabs , + , if , }
+		- PARENT = { }
+		- CHILD  = { lon , return , }
+		- PRED   = { }
+		- SUCC   = { M_PI , += , lon , }
+
+9 :	"fabs"
+		- NEIGH  = { M_PI , lon , < , fabs , + , if , }
+		- PARENT = { }
+		- CHILD  = { lon , return , }
+		- PRED   = { }
+		- SUCC   = { M_PI , += , lon , }
+
+9 :	"lon"
+		- NEIGH  = { M_PI , lon , < , fabs , + , if , }
+		- PARENT = { }
+		- CHILD  = { lon , return , }
+		- PRED   = { }
+		- SUCC   = { M_PI , += , lon , }
+
+9 :	"<"
+		- NEIGH  = { M_PI , lon , < , fabs , + , if , }
+		- PARENT = { }
+		- CHILD  = { lon , return , }
+		- PRED   = { }
+		- SUCC   = { M_PI , += , lon , }
+
+9 :	"M_PI"
+		- NEIGH  = { M_PI , lon , < , fabs , + , if , }
+		- PARENT = { }
+		- CHILD  = { lon , return , }
+		- PRED   = { }
+		- SUCC   = { M_PI , += , lon , }
+
+9 :	"+"
+		- NEIGH  = { M_PI , lon , < , fabs , + , if , }
+		- PARENT = { }
+		- CHILD  = { lon , return , }
+		- PRED   = { }
+		- SUCC   = { M_PI , += , lon , }
+
+10 :	"return"
+		- NEIGH  = { lon , return , }
+		- PARENT = { M_PI , lon , < , fabs , + , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+10 :	"lon"
+		- NEIGH  = { lon , return , }
+		- PARENT = { M_PI , lon , < , fabs , + , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+13 :	"lon"
+		- NEIGH  = { M_PI , += , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , lon , < , fabs , + , if , }
+		- SUCC   = { / , * , floor , M_TWOPI , -= , lon , }
+
+13 :	"+="
+		- NEIGH  = { M_PI , += , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , lon , < , fabs , + , if , }
+		- SUCC   = { / , * , floor , M_TWOPI , -= , lon , }
+
+13 :	"M_PI"
+		- NEIGH  = { M_PI , += , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , lon , < , fabs , + , if , }
+		- SUCC   = { / , * , floor , M_TWOPI , -= , lon , }
+
+16 :	"lon"
+		- NEIGH  = { / , * , floor , M_TWOPI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , += , lon , }
+		- SUCC   = { M_PI , -= , lon , }
+
+16 :	"-="
+		- NEIGH  = { / , * , floor , M_TWOPI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , += , lon , }
+		- SUCC   = { M_PI , -= , lon , }
+
+16 :	"M_TWOPI"
+		- NEIGH  = { / , * , floor , M_TWOPI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , += , lon , }
+		- SUCC   = { M_PI , -= , lon , }
+
+16 :	"*"
+		- NEIGH  = { / , * , floor , M_TWOPI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , += , lon , }
+		- SUCC   = { M_PI , -= , lon , }
+
+16 :	"floor"
+		- NEIGH  = { / , * , floor , M_TWOPI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , += , lon , }
+		- SUCC   = { M_PI , -= , lon , }
+
+16 :	"lon"
+		- NEIGH  = { / , * , floor , M_TWOPI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , += , lon , }
+		- SUCC   = { M_PI , -= , lon , }
+
+16 :	"/"
+		- NEIGH  = { / , * , floor , M_TWOPI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , += , lon , }
+		- SUCC   = { M_PI , -= , lon , }
+
+16 :	"M_TWOPI"
+		- NEIGH  = { / , * , floor , M_TWOPI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , += , lon , }
+		- SUCC   = { M_PI , -= , lon , }
+
+19 :	"lon"
+		- NEIGH  = { M_PI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , * , floor , M_TWOPI , -= , lon , }
+		- SUCC   = { lon , return , }
+
+19 :	"-="
+		- NEIGH  = { M_PI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , * , floor , M_TWOPI , -= , lon , }
+		- SUCC   = { lon , return , }
+
+19 :	"M_PI"
+		- NEIGH  = { M_PI , -= , lon , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , * , floor , M_TWOPI , -= , lon , }
+		- SUCC   = { lon , return , }
+
+21 :	"return"
+		- NEIGH  = { lon , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , -= , lon , }
+		- SUCC   = { }
+
+21 :	"lon"
+		- NEIGH  = { lon , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_PI , -= , lon , }
+		- SUCC   = { }
+

@@ -19,11 +19,11 @@ public:
 private:
     enum class _State { ROOT, FUNC, STMT, COND, THEN, TRIAL };
     enum class _Lambda { ROOT, OPERATOR, CAPTURE, ARGS_BEGIN, ARGS, BODY_BEGIN };
-    enum class _Struct { ROOT, ID, TBD };
+    enum class _Prefix { ROOT, ID, TBD };
 
     void _inheritLastIf(Token* tok);
     void _checkLambdaConnector(Token* tok);
-    void _detClassType(Token* tok);
+    void _detPrefixType(Token* tok);
 
     void _setFlatRelation(Token* tok);
 
@@ -60,7 +60,7 @@ private:
     std::stack<std::shared_ptr<Token::string_set>> _successor_stack;
 
     std::stack<_Lambda> _lambda_stack;
-    _Struct _struct_state;
+    _Prefix _prefix_state;
 
     /* Action */
     void _identifier(Token* tok);
@@ -74,7 +74,8 @@ private:
         { if (_lambda_stack.top() == _Lambda::ROOT) _lambda_stack.push(_Lambda::OPERATOR); }
     // enum | class
     void _enum(Token* tok);
-    void _class(Token* tok);
+    void _class(Token* tok)
+        { if (_ttype_stack.top() != Token::Type::ENUM) _enum(tok); }
     // namespace | l_paren
     void _left(Token* tok)
         { _otherwise(tok); _ttype_stack.push(tok->type); }
@@ -100,7 +101,7 @@ private:
 namespace PAFL
 {
 CppPda::CppPda(Token* root) :
-    _action{ &CppPda::_identifier, nullptr, }, _struct_state(_Struct::ROOT)
+    _action{ &CppPda::_identifier, nullptr, }, _prefix_state(_Prefix::ROOT)
 {
     _newRoot(Token::Type::ROOT, root);
     _lambda_stack.push(_Lambda::ROOT);
@@ -141,7 +142,7 @@ void CppPda::trans(Token* tok)
 {
     _inheritLastIf(tok);
     _checkLambdaConnector(tok);
-    _detClassType(tok);
+    _detPrefixType(tok);
     if (_action[static_cast<size_t>(tok->type)])
         (this->*_action[static_cast<size_t>(tok->type)])(tok);
 }
@@ -202,14 +203,14 @@ void CppPda::_checkLambdaConnector(Token* tok)
         _lambda_stack.pop();
 }
 
-void CppPda::_detClassType(Token* tok)
+void CppPda::_detPrefixType(Token* tok)
 {
-    if (_struct_state == _Struct::ROOT)
+    if (_prefix_state == _Prefix::ROOT)
         return;
 
-    if (_struct_state == _Struct::ID && tok->type == Token::Type::IDENTIFIER) {
+    if (_prefix_state == _Prefix::ID && tok->type == Token::Type::IDENTIFIER) {
 
-        _struct_state = _Struct::TBD;
+        _prefix_state = _Prefix::TBD;
         return;
     }
 
@@ -219,7 +220,7 @@ void CppPda::_detClassType(Token* tok)
         if (_state_stack.top() == _State::STMT)
             _ttype_stack.push(Token::Type::STMT);
     }
-    _struct_state = _Struct::ROOT;
+    _prefix_state = _Prefix::ROOT;
 }
 
 
@@ -355,27 +356,15 @@ void CppPda::_branch(Token* tok)
 
 void CppPda::_enum(Token* tok)
 {
-    if (_state_stack.top() == _State::ROOT)
-        _ttype_stack.push(tok->type);
-
-    else if (_isBlock(_state_stack.top()))
-        _beginLine(_State::STMT, tok->type);
-}
-
-void CppPda::_class(Token* tok)
-{
-    if (_ttype_stack.top() == Token::Type::ENUM)
-        return;
-
     if (_state_stack.top() == _State::ROOT) {
 
         _ttype_stack.push(tok->type);
-        _struct_state = _Struct::ID;
+        _prefix_state = _Prefix::ID;
     }
     else if (_isBlock(_state_stack.top())) {
 
         _beginLine(_State::STMT, tok->type);
-        _struct_state = _Struct::ID;
+        _prefix_state = _Prefix::ID;
     }
 }
 
@@ -418,13 +407,8 @@ void CppPda::_l_brace(Token* tok)
     }
 
     // Otherwise,
-    else {
-
-        // New line
-        if (_isBlock(_state_stack.top()) && _ttype_stack.top() == Token::Type::L_BRACE)
-            _beginLine(_State::STMT, Token::Type::STMT);
+    else
         _ttype_stack.push(tok->type);
-    }
 }
 
 void CppPda::_r_brace(Token* tok)
@@ -433,14 +417,10 @@ void CppPda::_r_brace(Token* tok)
     if (_ttype_stack.top() != Token::Type::L_BRACE) {
 
         _state_stack.pop(); // _State - STMT
-        _ttype_stack.pop(); // TType - }
         _ttype_stack.pop(); // TType - STMT
-        _ttype_stack.pop(); // TType - {
-        _deleteBlock();
-        _parent_stack.pop();
-        return;
     }
-    _ttype_stack.pop();
+    _ttype_stack.pop(); // TType - {
+        
 
     // Delete ROOT
     if (isEnumOrClass(_ttype_stack.top()))

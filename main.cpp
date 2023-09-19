@@ -9,22 +9,20 @@
 int main(int argc, char *argv[])
 {
     // Test
-    char *_argv[] = {
-        "./main", "cppcheck:cpp", "7,1,27,2,15,29,14,6,23,5,17,30,24,8,16,25,3,19,9,18,12,11,21,28,13,20,22,4,26,10", "pafl,ochiai", "-P/Users/user/defects4cpp/cppcheck", 
-        "-T/Users/user/defects4cpp", "-B/Users/user/Documents/C++/PAFL/_bug_info", "-l", "--dev-cache"
-    };
+    /*char *_argv[] = {
+"/Users/user/Documents/C++/PAFL/main","proj:cpp","24,8,13,12,11,21,22,9,18,16,1,3,17,2,4,19,10,6,20,5,27,23,14,28,15,7,26,25","pafl,ochiai","-P/Users/user/defects4cpp/proj","-T/Users/user/defects4cpp","-B/Users/user/Documents/C++/PAFL/_bug_info","-l","--dev-cache"};
     constexpr int _argc = 9;
     std::system(PAFL::Command::CLEAR);
-
-    PAFL::UI ui(_argc, _argv);
+    PAFL::UI ui(_argc, _argv);*/
 
     // Run
-    // PAFL::UI ui(argc, argv);
+    std::system(PAFL::Command::CLEAR);
+    PAFL::UI ui(argc, argv);
     
 
     // Collect coverage of every version
     std::vector<PAFL::TestSuite> suite(ui.numVersion());
-    const auto cache_path(PAFL::createDirRecursively(fs::path("./cache") / ui.getProject()));
+    const auto cache_path(PAFL::createDirRecursively(ui.getExePath() / "cache" / ui.getProject()));
 
     for (size_t iter = 0; iter != ui.numVersion(); iter++) {
 
@@ -50,7 +48,7 @@ int main(int argc, char *argv[])
     // Project Aware FL Model
     PAFL::FLModel flmodel;
     if (ui.hasLogger())
-        flmodel.setLogger(std::make_unique<PAFL::FLModel::Logger>(PAFL::createDirRecursively(fs::path("./log/model")) / ui.getProject()));
+        flmodel.setLogger(std::make_unique<PAFL::FLModel::Logger>(PAFL::createDirRecursively(ui.getExePath() / "log/model") / ui.getProject()));
     auto matcher = std::make_shared<PAFL::TokenTree::Matcher>(); // Tokenize files
 
 
@@ -58,7 +56,7 @@ int main(int argc, char *argv[])
     for (auto method : ui.getMethodSet()) {
 
         std::cout << "\n < " << method2string[static_cast<size_t>(method)] << " >\n\n";
-        std::string prefix(std::string("./coverage/") + method2string[static_cast<size_t>(method)] + '-' + ui.getProject() + '#');
+        std::string prefix(ui.getExePath().string() + "/coverage/" + method2string[static_cast<size_t>(method)] + '-' + ui.getProject() + '#');
 
         for (size_t iter = 0; iter != ui.numVersion(); iter++) {
             std::cout << "ver " << iter+1 << '\n';
@@ -98,7 +96,7 @@ int main(int argc, char *argv[])
                     if (ui.hasLogger()) {
 
                         std::replace(file.begin(), file.end(), '/', '.');
-                        tkt_vector[idx].log(PAFL::createDirRecursively(fs::path("./log/token_tree")\
+                        tkt_vector[idx].log(PAFL::createDirRecursively(ui.getExePath() / "log/token_tree"\
                                             / (ui.getProject() + '#' + std::to_string(iter+1))) / (file + ".txt"));
                     }
                 }

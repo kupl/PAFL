@@ -1,0 +1,1631 @@
+40 :	"pj_datum_set"
+		- NEIGH  = { pj_datum_set , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"PJ_CONTEXT"
+		- NEIGH  = { PJ_CONTEXT , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"ctx"
+		- NEIGH  = { ctx , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"paralist"
+		- NEIGH  = { paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"pl"
+		- NEIGH  = { pl , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"projdef"
+		- NEIGH  = { projdef , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+43 :	"*"
+		- NEIGH  = { towgs84 , nadgrids , name , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { PJD_UNKNOWN , datum_type , projdef , }
+
+43 :	"name"
+		- NEIGH  = { towgs84 , nadgrids , name , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { PJD_UNKNOWN , datum_type , projdef , }
+
+43 :	"*"
+		- NEIGH  = { towgs84 , nadgrids , name , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { PJD_UNKNOWN , datum_type , projdef , }
+
+43 :	"towgs84"
+		- NEIGH  = { towgs84 , nadgrids , name , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { PJD_UNKNOWN , datum_type , projdef , }
+
+43 :	"*"
+		- NEIGH  = { towgs84 , nadgrids , name , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { PJD_UNKNOWN , datum_type , projdef , }
+
+43 :	"nadgrids"
+		- NEIGH  = { towgs84 , nadgrids , name , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { PJD_UNKNOWN , datum_type , projdef , }
+
+45 :	"projdef"
+		- NEIGH  = { PJD_UNKNOWN , datum_type , projdef , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { towgs84 , nadgrids , name , * , }
+		- SUCC   = { != , s , name , pl , ctx , pj_param , if , }
+
+45 :	"datum_type"
+		- NEIGH  = { PJD_UNKNOWN , datum_type , projdef , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { towgs84 , nadgrids , name , * , }
+		- SUCC   = { != , s , name , pl , ctx , pj_param , if , }
+
+45 :	"PJD_UNKNOWN"
+		- NEIGH  = { PJD_UNKNOWN , datum_type , projdef , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { towgs84 , nadgrids , name , * , }
+		- SUCC   = { != , s , name , pl , ctx , pj_param , if , }
+
+57 :	"if"
+		- NEIGH  = { != , s , name , pl , ctx , pj_param , if , }
+		- PARENT = { }
+		- CHILD  = { strlen , ++ , id , pj_datums , > , && , ellipse_id , if , pl , next , for , name , s , strcmp , ! , curr , defn , * , i , paralist , }
+		- PRED   = { PJD_UNKNOWN , datum_type , projdef , }
+		- SUCC   = { pl , ctx , pj_param , s , nadgrids , }
+
+57 :	"name"
+		- NEIGH  = { != , s , name , pl , ctx , pj_param , if , }
+		- PARENT = { }
+		- CHILD  = { strlen , ++ , id , pj_datums , > , && , ellipse_id , if , pl , next , for , name , s , strcmp , ! , curr , defn , * , i , paralist , }
+		- PRED   = { PJD_UNKNOWN , datum_type , projdef , }
+		- SUCC   = { pl , ctx , pj_param , s , nadgrids , }
+
+57 :	"pj_param"
+		- NEIGH  = { != , s , name , pl , ctx , pj_param , if , }
+		- PARENT = { }
+		- CHILD  = { strlen , ++ , id , pj_datums , > , && , ellipse_id , if , pl , next , for , name , s , strcmp , ! , curr , defn , * , i , paralist , }
+		- PRED   = { PJD_UNKNOWN , datum_type , projdef , }
+		- SUCC   = { pl , ctx , pj_param , s , nadgrids , }
+
+57 :	"ctx"
+		- NEIGH  = { != , s , name , pl , ctx , pj_param , if , }
+		- PARENT = { }
+		- CHILD  = { strlen , ++ , id , pj_datums , > , && , ellipse_id , if , pl , next , for , name , s , strcmp , ! , curr , defn , * , i , paralist , }
+		- PRED   = { PJD_UNKNOWN , datum_type , projdef , }
+		- SUCC   = { pl , ctx , pj_param , s , nadgrids , }
+
+57 :	"pl"
+		- NEIGH  = { != , s , name , pl , ctx , pj_param , if , }
+		- PARENT = { }
+		- CHILD  = { strlen , ++ , id , pj_datums , > , && , ellipse_id , if , pl , next , for , name , s , strcmp , ! , curr , defn , * , i , paralist , }
+		- PRED   = { PJD_UNKNOWN , datum_type , projdef , }
+		- SUCC   = { pl , ctx , pj_param , s , nadgrids , }
+
+57 :	"s"
+		- NEIGH  = { != , s , name , pl , ctx , pj_param , if , }
+		- PARENT = { }
+		- CHILD  = { strlen , ++ , id , pj_datums , > , && , ellipse_id , if , pl , next , for , name , s , strcmp , ! , curr , defn , * , i , paralist , }
+		- PRED   = { PJD_UNKNOWN , datum_type , projdef , }
+		- SUCC   = { pl , ctx , pj_param , s , nadgrids , }
+
+57 :	"!="
+		- NEIGH  = { != , s , name , pl , ctx , pj_param , if , }
+		- PARENT = { }
+		- CHILD  = { strlen , ++ , id , pj_datums , > , && , ellipse_id , if , pl , next , for , name , s , strcmp , ! , curr , defn , * , i , paralist , }
+		- PRED   = { PJD_UNKNOWN , datum_type , projdef , }
+		- SUCC   = { pl , ctx , pj_param , s , nadgrids , }
+
+59 :	"paralist"
+		- NEIGH  = { curr , * , paralist , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { s , * , }
+
+59 :	"*"
+		- NEIGH  = { curr , * , paralist , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { s , * , }
+
+59 :	"curr"
+		- NEIGH  = { curr , * , paralist , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { s , * , }
+
+60 :	"*"
+		- NEIGH  = { s , * , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , * , paralist , }
+		- SUCC   = { i , }
+
+60 :	"s"
+		- NEIGH  = { s , * , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , * , paralist , }
+		- SUCC   = { i , }
+
+61 :	"i"
+		- NEIGH  = { i , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { s , * , }
+		- SUCC   = { && , pl , curr , next , for , }
+
+64 :	"for"
+		- NEIGH  = { && , pl , curr , next , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { curr , ! , if , }
+
+64 :	"curr"
+		- NEIGH  = { && , pl , curr , next , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { curr , ! , if , }
+
+64 :	"pl"
+		- NEIGH  = { && , pl , curr , next , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { curr , ! , if , }
+
+64 :	"curr"
+		- NEIGH  = { && , pl , curr , next , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { curr , ! , if , }
+
+64 :	"&&"
+		- NEIGH  = { && , pl , curr , next , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { curr , ! , if , }
+
+64 :	"curr"
+		- NEIGH  = { && , pl , curr , next , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { curr , ! , if , }
+
+64 :	"next"
+		- NEIGH  = { && , pl , curr , next , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { curr , ! , if , }
+
+64 :	"curr"
+		- NEIGH  = { && , pl , curr , next , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { curr , ! , if , }
+
+64 :	"curr"
+		- NEIGH  = { && , pl , curr , next , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { curr , ! , if , }
+
+64 :	"next"
+		- NEIGH  = { && , pl , curr , next , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { curr , ! , if , }
+
+67 :	"if"
+		- NEIGH  = { curr , ! , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { - , return , }
+		- PRED   = { && , pl , curr , next , for , }
+		- SUCC   = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+
+67 :	"!"
+		- NEIGH  = { curr , ! , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { - , return , }
+		- PRED   = { && , pl , curr , next , for , }
+		- SUCC   = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+
+67 :	"curr"
+		- NEIGH  = { curr , ! , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { - , return , }
+		- PRED   = { && , pl , curr , next , for , }
+		- SUCC   = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+
+67 :	"return"
+		- NEIGH  = { - , return , }
+		- PARENT = { curr , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+67 :	"-"
+		- NEIGH  = { - , return , }
+		- PARENT = { curr , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+70 :	"for"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"i"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"s"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"pj_datums"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"i"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"id"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"&&"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"strcmp"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"name"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"s"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"++"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+70 :	"i"
+		- NEIGH  = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { }
+		- PRED   = { curr , ! , if , }
+		- SUCC   = { ! , s , if , }
+
+72 :	"if"
+		- NEIGH  = { ! , s , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { return , PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , _ , PJ_LOG_ERROR , pj_log , proj_context_errno_set , ctx , }
+		- PRED   = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- SUCC   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+
+72 :	"!"
+		- NEIGH  = { ! , s , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { return , PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , _ , PJ_LOG_ERROR , pj_log , proj_context_errno_set , ctx , }
+		- PRED   = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- SUCC   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+
+72 :	"s"
+		- NEIGH  = { ! , s , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { return , PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , _ , PJ_LOG_ERROR , pj_log , proj_context_errno_set , ctx , }
+		- PRED   = { name , && , id , pj_datums , ++ , i , strcmp , s , for , }
+		- SUCC   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+
+73 :	"pj_log"
+		- NEIGH  = { _ , PJ_LOG_ERROR , ctx , pj_log , }
+		- PARENT = { ! , s , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , ctx , proj_context_errno_set , }
+
+73 :	"ctx"
+		- NEIGH  = { _ , PJ_LOG_ERROR , ctx , pj_log , }
+		- PARENT = { ! , s , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , ctx , proj_context_errno_set , }
+
+73 :	"PJ_LOG_ERROR"
+		- NEIGH  = { _ , PJ_LOG_ERROR , ctx , pj_log , }
+		- PARENT = { ! , s , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , ctx , proj_context_errno_set , }
+
+73 :	"_"
+		- NEIGH  = { _ , PJ_LOG_ERROR , ctx , pj_log , }
+		- PARENT = { ! , s , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , ctx , proj_context_errno_set , }
+
+74 :	"proj_context_errno_set"
+		- NEIGH  = { PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , ctx , proj_context_errno_set , }
+		- PARENT = { ! , s , if , }
+		- CHILD  = { }
+		- PRED   = { _ , PJ_LOG_ERROR , ctx , pj_log , }
+		- SUCC   = { return , }
+
+74 :	"ctx"
+		- NEIGH  = { PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , ctx , proj_context_errno_set , }
+		- PARENT = { ! , s , if , }
+		- CHILD  = { }
+		- PRED   = { _ , PJ_LOG_ERROR , ctx , pj_log , }
+		- SUCC   = { return , }
+
+74 :	"PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE"
+		- NEIGH  = { PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , ctx , proj_context_errno_set , }
+		- PARENT = { ! , s , if , }
+		- CHILD  = { }
+		- PRED   = { _ , PJ_LOG_ERROR , ctx , pj_log , }
+		- SUCC   = { return , }
+
+75 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { ! , s , if , }
+		- CHILD  = { }
+		- PRED   = { PROJ_ERR_INVALID_OP_ILLEGAL_ARG_VALUE , ctx , proj_context_errno_set , }
+		- SUCC   = { }
+
+78 :	"if"
+		- NEIGH  = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , curr , == , param , if , ellipse_id , pj_datums , entry , pj_mkparam , strlen , strncpy , - , i , strcpy , + , }
+		- PRED   = { ! , s , if , }
+		- SUCC   = { > , strlen , defn , && , i , pj_datums , if , }
+
+78 :	"pj_datums"
+		- NEIGH  = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , curr , == , param , if , ellipse_id , pj_datums , entry , pj_mkparam , strlen , strncpy , - , i , strcpy , + , }
+		- PRED   = { ! , s , if , }
+		- SUCC   = { > , strlen , defn , && , i , pj_datums , if , }
+
+78 :	"i"
+		- NEIGH  = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , curr , == , param , if , ellipse_id , pj_datums , entry , pj_mkparam , strlen , strncpy , - , i , strcpy , + , }
+		- PRED   = { ! , s , if , }
+		- SUCC   = { > , strlen , defn , && , i , pj_datums , if , }
+
+78 :	"ellipse_id"
+		- NEIGH  = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , curr , == , param , if , ellipse_id , pj_datums , entry , pj_mkparam , strlen , strncpy , - , i , strcpy , + , }
+		- PRED   = { ! , s , if , }
+		- SUCC   = { > , strlen , defn , && , i , pj_datums , if , }
+
+78 :	"&&"
+		- NEIGH  = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , curr , == , param , if , ellipse_id , pj_datums , entry , pj_mkparam , strlen , strncpy , - , i , strcpy , + , }
+		- PRED   = { ! , s , if , }
+		- SUCC   = { > , strlen , defn , && , i , pj_datums , if , }
+
+78 :	"strlen"
+		- NEIGH  = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , curr , == , param , if , ellipse_id , pj_datums , entry , pj_mkparam , strlen , strncpy , - , i , strcpy , + , }
+		- PRED   = { ! , s , if , }
+		- SUCC   = { > , strlen , defn , && , i , pj_datums , if , }
+
+78 :	"pj_datums"
+		- NEIGH  = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , curr , == , param , if , ellipse_id , pj_datums , entry , pj_mkparam , strlen , strncpy , - , i , strcpy , + , }
+		- PRED   = { ! , s , if , }
+		- SUCC   = { > , strlen , defn , && , i , pj_datums , if , }
+
+78 :	"i"
+		- NEIGH  = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , curr , == , param , if , ellipse_id , pj_datums , entry , pj_mkparam , strlen , strncpy , - , i , strcpy , + , }
+		- PRED   = { ! , s , if , }
+		- SUCC   = { > , strlen , defn , && , i , pj_datums , if , }
+
+78 :	"ellipse_id"
+		- NEIGH  = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , curr , == , param , if , ellipse_id , pj_datums , entry , pj_mkparam , strlen , strncpy , - , i , strcpy , + , }
+		- PRED   = { ! , s , if , }
+		- SUCC   = { > , strlen , defn , && , i , pj_datums , if , }
+
+78 :	">"
+		- NEIGH  = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , curr , == , param , if , ellipse_id , pj_datums , entry , pj_mkparam , strlen , strncpy , - , i , strcpy , + , }
+		- PRED   = { ! , s , if , }
+		- SUCC   = { > , strlen , defn , && , i , pj_datums , if , }
+
+80 :	"entry"
+		- NEIGH  = { entry , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { entry , strcpy , }
+
+82 :	"strcpy"
+		- NEIGH  = { entry , strcpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , }
+		- SUCC   = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+
+82 :	"entry"
+		- NEIGH  = { entry , strcpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , }
+		- SUCC   = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+
+83 :	"strncpy"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+83 :	"entry"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+83 :	"+"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+83 :	"strlen"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+83 :	"entry"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+83 :	"pj_datums"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+83 :	"i"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+83 :	"ellipse_id"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+84 :	"entry"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+84 :	"-"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+84 :	"-"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+84 :	"strlen"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+84 :	"entry"
+		- NEIGH  = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { entry , strcpy , }
+		- SUCC   = { - , entry , }
+
+85 :	"entry"
+		- NEIGH  = { - , entry , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- SUCC   = { entry , pj_mkparam , param , }
+
+85 :	"entry"
+		- NEIGH  = { - , entry , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- SUCC   = { entry , pj_mkparam , param , }
+
+85 :	"-"
+		- NEIGH  = { - , entry , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { ellipse_id , - , i , pj_datums , + , entry , strlen , strncpy , }
+		- SUCC   = { entry , pj_mkparam , param , }
+
+87 :	"param"
+		- NEIGH  = { entry , pj_mkparam , param , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { - , entry , }
+		- SUCC   = { param , == , if , }
+
+87 :	"pj_mkparam"
+		- NEIGH  = { entry , pj_mkparam , param , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { - , entry , }
+		- SUCC   = { param , == , if , }
+
+87 :	"entry"
+		- NEIGH  = { entry , pj_mkparam , param , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { - , entry , }
+		- SUCC   = { param , == , if , }
+
+88 :	"if"
+		- NEIGH  = { param , == , if , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { return , PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PRED   = { entry , pj_mkparam , param , }
+		- SUCC   = { param , next , curr , }
+
+88 :	"=="
+		- NEIGH  = { param , == , if , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { return , PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PRED   = { entry , pj_mkparam , param , }
+		- SUCC   = { param , next , curr , }
+
+88 :	"param"
+		- NEIGH  = { param , == , if , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { return , PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PRED   = { entry , pj_mkparam , param , }
+		- SUCC   = { param , next , curr , }
+
+90 :	"proj_context_errno_set"
+		- NEIGH  = { PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PARENT = { param , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+90 :	"ctx"
+		- NEIGH  = { PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PARENT = { param , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+90 :	"PROJ_ERR_OTHER"
+		- NEIGH  = { PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PARENT = { param , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+91 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { param , == , if , }
+		- CHILD  = { }
+		- PRED   = { PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- SUCC   = { }
+
+93 :	"curr"
+		- NEIGH  = { param , next , curr , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { param , == , if , }
+		- SUCC   = { param , curr , }
+
+93 :	"next"
+		- NEIGH  = { param , next , curr , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { param , == , if , }
+		- SUCC   = { param , curr , }
+
+93 :	"param"
+		- NEIGH  = { param , next , curr , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { param , == , if , }
+		- SUCC   = { param , curr , }
+
+94 :	"curr"
+		- NEIGH  = { param , curr , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { param , next , curr , }
+		- SUCC   = { }
+
+94 :	"param"
+		- NEIGH  = { param , curr , }
+		- PARENT = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- CHILD  = { }
+		- PRED   = { param , next , curr , }
+		- SUCC   = { }
+
+97 :	"if"
+		- NEIGH  = { > , strlen , defn , && , i , pj_datums , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , == , defn , pj_datums , i , curr , if , pj_mkparam , param , }
+		- PRED   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- SUCC   = { }
+
+97 :	"pj_datums"
+		- NEIGH  = { > , strlen , defn , && , i , pj_datums , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , == , defn , pj_datums , i , curr , if , pj_mkparam , param , }
+		- PRED   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- SUCC   = { }
+
+97 :	"i"
+		- NEIGH  = { > , strlen , defn , && , i , pj_datums , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , == , defn , pj_datums , i , curr , if , pj_mkparam , param , }
+		- PRED   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- SUCC   = { }
+
+97 :	"defn"
+		- NEIGH  = { > , strlen , defn , && , i , pj_datums , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , == , defn , pj_datums , i , curr , if , pj_mkparam , param , }
+		- PRED   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- SUCC   = { }
+
+97 :	"&&"
+		- NEIGH  = { > , strlen , defn , && , i , pj_datums , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , == , defn , pj_datums , i , curr , if , pj_mkparam , param , }
+		- PRED   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- SUCC   = { }
+
+97 :	"strlen"
+		- NEIGH  = { > , strlen , defn , && , i , pj_datums , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , == , defn , pj_datums , i , curr , if , pj_mkparam , param , }
+		- PRED   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- SUCC   = { }
+
+97 :	"pj_datums"
+		- NEIGH  = { > , strlen , defn , && , i , pj_datums , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , == , defn , pj_datums , i , curr , if , pj_mkparam , param , }
+		- PRED   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- SUCC   = { }
+
+97 :	"i"
+		- NEIGH  = { > , strlen , defn , && , i , pj_datums , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , == , defn , pj_datums , i , curr , if , pj_mkparam , param , }
+		- PRED   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- SUCC   = { }
+
+97 :	"defn"
+		- NEIGH  = { > , strlen , defn , && , i , pj_datums , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , == , defn , pj_datums , i , curr , if , pj_mkparam , param , }
+		- PRED   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- SUCC   = { }
+
+97 :	">"
+		- NEIGH  = { > , strlen , defn , && , i , pj_datums , if , }
+		- PARENT = { != , s , name , pl , ctx , pj_param , if , }
+		- CHILD  = { next , == , defn , pj_datums , i , curr , if , pj_mkparam , param , }
+		- PRED   = { > , strlen , && , i , pj_datums , ellipse_id , if , }
+		- SUCC   = { }
+
+99 :	"param"
+		- NEIGH  = { defn , pj_datums , i , pj_mkparam , param , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { param , == , if , }
+
+99 :	"pj_mkparam"
+		- NEIGH  = { defn , pj_datums , i , pj_mkparam , param , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { param , == , if , }
+
+99 :	"pj_datums"
+		- NEIGH  = { defn , pj_datums , i , pj_mkparam , param , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { param , == , if , }
+
+99 :	"i"
+		- NEIGH  = { defn , pj_datums , i , pj_mkparam , param , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { param , == , if , }
+
+99 :	"defn"
+		- NEIGH  = { defn , pj_datums , i , pj_mkparam , param , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { param , == , if , }
+
+100 :	"if"
+		- NEIGH  = { param , == , if , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { return , PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PRED   = { defn , pj_datums , i , pj_mkparam , param , }
+		- SUCC   = { param , next , curr , }
+
+100 :	"=="
+		- NEIGH  = { param , == , if , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { return , PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PRED   = { defn , pj_datums , i , pj_mkparam , param , }
+		- SUCC   = { param , next , curr , }
+
+100 :	"param"
+		- NEIGH  = { param , == , if , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { return , PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PRED   = { defn , pj_datums , i , pj_mkparam , param , }
+		- SUCC   = { param , next , curr , }
+
+102 :	"proj_context_errno_set"
+		- NEIGH  = { PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PARENT = { param , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+102 :	"ctx"
+		- NEIGH  = { PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PARENT = { param , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+102 :	"PROJ_ERR_OTHER"
+		- NEIGH  = { PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- PARENT = { param , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+103 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { param , == , if , }
+		- CHILD  = { }
+		- PRED   = { PROJ_ERR_OTHER , ctx , proj_context_errno_set , }
+		- SUCC   = { }
+
+105 :	"curr"
+		- NEIGH  = { param , next , curr , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { }
+		- PRED   = { param , == , if , }
+		- SUCC   = { }
+
+105 :	"next"
+		- NEIGH  = { param , next , curr , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { }
+		- PRED   = { param , == , if , }
+		- SUCC   = { }
+
+105 :	"param"
+		- NEIGH  = { param , next , curr , }
+		- PARENT = { > , strlen , defn , && , i , pj_datums , if , }
+		- CHILD  = { }
+		- PRED   = { param , == , if , }
+		- SUCC   = { }
+
+113 :	"nadgrids"
+		- NEIGH  = { pl , ctx , pj_param , s , nadgrids , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , s , name , pl , ctx , pj_param , if , }
+		- SUCC   = { != , nadgrids , if , }
+
+113 :	"pj_param"
+		- NEIGH  = { pl , ctx , pj_param , s , nadgrids , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , s , name , pl , ctx , pj_param , if , }
+		- SUCC   = { != , nadgrids , if , }
+
+113 :	"ctx"
+		- NEIGH  = { pl , ctx , pj_param , s , nadgrids , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , s , name , pl , ctx , pj_param , if , }
+		- SUCC   = { != , nadgrids , if , }
+
+113 :	"pl"
+		- NEIGH  = { pl , ctx , pj_param , s , nadgrids , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , s , name , pl , ctx , pj_param , if , }
+		- SUCC   = { != , nadgrids , if , }
+
+113 :	"s"
+		- NEIGH  = { pl , ctx , pj_param , s , nadgrids , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , s , name , pl , ctx , pj_param , if , }
+		- SUCC   = { != , nadgrids , if , }
+
+114 :	"if"
+		- NEIGH  = { != , nadgrids , if , }
+		- PARENT = { }
+		- CHILD  = { != , s , pl , ctx , towgs84 , PJD_GRIDSHIFT , pj_param , datum_type , if , projdef , }
+		- PRED   = { pl , ctx , pj_param , s , nadgrids , }
+		- SUCC   = { return , }
+
+114 :	"nadgrids"
+		- NEIGH  = { != , nadgrids , if , }
+		- PARENT = { }
+		- CHILD  = { != , s , pl , ctx , towgs84 , PJD_GRIDSHIFT , pj_param , datum_type , if , projdef , }
+		- PRED   = { pl , ctx , pj_param , s , nadgrids , }
+		- SUCC   = { return , }
+
+114 :	"!="
+		- NEIGH  = { != , nadgrids , if , }
+		- PARENT = { }
+		- CHILD  = { != , s , pl , ctx , towgs84 , PJD_GRIDSHIFT , pj_param , datum_type , if , projdef , }
+		- PRED   = { pl , ctx , pj_param , s , nadgrids , }
+		- SUCC   = { return , }
+
+119 :	"projdef"
+		- NEIGH  = { PJD_GRIDSHIFT , datum_type , projdef , }
+		- PARENT = { != , nadgrids , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+119 :	"datum_type"
+		- NEIGH  = { PJD_GRIDSHIFT , datum_type , projdef , }
+		- PARENT = { != , nadgrids , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+119 :	"PJD_GRIDSHIFT"
+		- NEIGH  = { PJD_GRIDSHIFT , datum_type , projdef , }
+		- PARENT = { != , nadgrids , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"if"
+		- NEIGH  = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- PARENT = { != , nadgrids , if , }
+		- CHILD  = { || , if , towgs84 , memset , * , < , parm_count , && , datum_params , projdef , for , != , s , }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"towgs84"
+		- NEIGH  = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- PARENT = { != , nadgrids , if , }
+		- CHILD  = { || , if , towgs84 , memset , * , < , parm_count , && , datum_params , projdef , for , != , s , }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"pj_param"
+		- NEIGH  = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- PARENT = { != , nadgrids , if , }
+		- CHILD  = { || , if , towgs84 , memset , * , < , parm_count , && , datum_params , projdef , for , != , s , }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"ctx"
+		- NEIGH  = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- PARENT = { != , nadgrids , if , }
+		- CHILD  = { || , if , towgs84 , memset , * , < , parm_count , && , datum_params , projdef , for , != , s , }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"pl"
+		- NEIGH  = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- PARENT = { != , nadgrids , if , }
+		- CHILD  = { || , if , towgs84 , memset , * , < , parm_count , && , datum_params , projdef , for , != , s , }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"s"
+		- NEIGH  = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- PARENT = { != , nadgrids , if , }
+		- CHILD  = { || , if , towgs84 , memset , * , < , parm_count , && , datum_params , projdef , for , != , s , }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"!="
+		- NEIGH  = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- PARENT = { != , nadgrids , if , }
+		- CHILD  = { || , if , towgs84 , memset , * , < , parm_count , && , datum_params , projdef , for , != , s , }
+		- PRED   = { }
+		- SUCC   = { }
+
+127 :	"parm_count"
+		- NEIGH  = { parm_count , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { s , * , }
+
+128 :	"*"
+		- NEIGH  = { s , * , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { }
+		- PRED   = { parm_count , }
+		- SUCC   = { * , datum_params , projdef , memset , }
+
+128 :	"s"
+		- NEIGH  = { s , * , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { }
+		- PRED   = { parm_count , }
+		- SUCC   = { * , datum_params , projdef , memset , }
+
+130 :	"memset"
+		- NEIGH  = { * , datum_params , projdef , memset , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { }
+		- PRED   = { s , * , }
+		- SUCC   = { < , && , s , != , * , towgs84 , parm_count , for , }
+
+130 :	"projdef"
+		- NEIGH  = { * , datum_params , projdef , memset , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { }
+		- PRED   = { s , * , }
+		- SUCC   = { < , && , s , != , * , towgs84 , parm_count , for , }
+
+130 :	"datum_params"
+		- NEIGH  = { * , datum_params , projdef , memset , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { }
+		- PRED   = { s , * , }
+		- SUCC   = { < , && , s , != , * , towgs84 , parm_count , for , }
+
+130 :	"*"
+		- NEIGH  = { * , datum_params , projdef , memset , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { }
+		- PRED   = { s , * , }
+		- SUCC   = { < , && , s , != , * , towgs84 , parm_count , for , }
+
+133 :	"for"
+		- NEIGH  = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { datum_params , parm_count , && , * , while , != , s , if , pj_atof , == , ++ , projdef , }
+		- PRED   = { * , datum_params , projdef , memset , }
+		- SUCC   = { || , != , datum_params , projdef , if , }
+
+133 :	"s"
+		- NEIGH  = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { datum_params , parm_count , && , * , while , != , s , if , pj_atof , == , ++ , projdef , }
+		- PRED   = { * , datum_params , projdef , memset , }
+		- SUCC   = { || , != , datum_params , projdef , if , }
+
+133 :	"towgs84"
+		- NEIGH  = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { datum_params , parm_count , && , * , while , != , s , if , pj_atof , == , ++ , projdef , }
+		- PRED   = { * , datum_params , projdef , memset , }
+		- SUCC   = { || , != , datum_params , projdef , if , }
+
+133 :	"*"
+		- NEIGH  = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { datum_params , parm_count , && , * , while , != , s , if , pj_atof , == , ++ , projdef , }
+		- PRED   = { * , datum_params , projdef , memset , }
+		- SUCC   = { || , != , datum_params , projdef , if , }
+
+133 :	"s"
+		- NEIGH  = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { datum_params , parm_count , && , * , while , != , s , if , pj_atof , == , ++ , projdef , }
+		- PRED   = { * , datum_params , projdef , memset , }
+		- SUCC   = { || , != , datum_params , projdef , if , }
+
+133 :	"!="
+		- NEIGH  = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { datum_params , parm_count , && , * , while , != , s , if , pj_atof , == , ++ , projdef , }
+		- PRED   = { * , datum_params , projdef , memset , }
+		- SUCC   = { || , != , datum_params , projdef , if , }
+
+133 :	"&&"
+		- NEIGH  = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { datum_params , parm_count , && , * , while , != , s , if , pj_atof , == , ++ , projdef , }
+		- PRED   = { * , datum_params , projdef , memset , }
+		- SUCC   = { || , != , datum_params , projdef , if , }
+
+133 :	"parm_count"
+		- NEIGH  = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { datum_params , parm_count , && , * , while , != , s , if , pj_atof , == , ++ , projdef , }
+		- PRED   = { * , datum_params , projdef , memset , }
+		- SUCC   = { || , != , datum_params , projdef , if , }
+
+133 :	"<"
+		- NEIGH  = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { datum_params , parm_count , && , * , while , != , s , if , pj_atof , == , ++ , projdef , }
+		- PRED   = { * , datum_params , projdef , memset , }
+		- SUCC   = { || , != , datum_params , projdef , if , }
+
+135 :	"projdef"
+		- NEIGH  = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { && , != , s , * , while , }
+
+135 :	"datum_params"
+		- NEIGH  = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { && , != , s , * , while , }
+
+135 :	"parm_count"
+		- NEIGH  = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { && , != , s , * , while , }
+
+135 :	"++"
+		- NEIGH  = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { && , != , s , * , while , }
+
+135 :	"pj_atof"
+		- NEIGH  = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { && , != , s , * , while , }
+
+135 :	"s"
+		- NEIGH  = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { && , != , s , * , while , }
+
+136 :	"while"
+		- NEIGH  = { && , != , s , * , while , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- SUCC   = { == , * , s , if , }
+
+136 :	"*"
+		- NEIGH  = { && , != , s , * , while , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- SUCC   = { == , * , s , if , }
+
+136 :	"s"
+		- NEIGH  = { && , != , s , * , while , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- SUCC   = { == , * , s , if , }
+
+136 :	"!="
+		- NEIGH  = { && , != , s , * , while , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- SUCC   = { == , * , s , if , }
+
+136 :	"&&"
+		- NEIGH  = { && , != , s , * , while , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- SUCC   = { == , * , s , if , }
+
+136 :	"*"
+		- NEIGH  = { && , != , s , * , while , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- SUCC   = { == , * , s , if , }
+
+136 :	"s"
+		- NEIGH  = { && , != , s , * , while , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- SUCC   = { == , * , s , if , }
+
+136 :	"!="
+		- NEIGH  = { && , != , s , * , while , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { s , pj_atof , ++ , parm_count , datum_params , projdef , }
+		- SUCC   = { == , * , s , if , }
+
+137 :	"s"
+		- NEIGH  = { ++ , s , }
+		- PARENT = { && , != , s , * , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+137 :	"++"
+		- NEIGH  = { ++ , s , }
+		- PARENT = { && , != , s , * , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+138 :	"if"
+		- NEIGH  = { == , * , s , if , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { && , != , s , * , while , }
+		- SUCC   = { }
+
+138 :	"*"
+		- NEIGH  = { == , * , s , if , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { && , != , s , * , while , }
+		- SUCC   = { }
+
+138 :	"s"
+		- NEIGH  = { == , * , s , if , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { && , != , s , * , while , }
+		- SUCC   = { }
+
+138 :	"=="
+		- NEIGH  = { == , * , s , if , }
+		- PARENT = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- CHILD  = { ++ , s , }
+		- PRED   = { && , != , s , * , while , }
+		- SUCC   = { }
+
+139 :	"s"
+		- NEIGH  = { ++ , s , }
+		- PARENT = { == , * , s , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+139 :	"++"
+		- NEIGH  = { ++ , s , }
+		- PARENT = { == , * , s , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+142 :	"if"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+142 :	"projdef"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+142 :	"datum_params"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+142 :	"!="
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+143 :	"||"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+143 :	"projdef"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+143 :	"datum_params"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+143 :	"!="
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+144 :	"||"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+144 :	"projdef"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+144 :	"datum_params"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+144 :	"!="
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+145 :	"||"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+145 :	"projdef"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+145 :	"datum_params"
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+145 :	"!="
+		- NEIGH  = { || , != , datum_params , projdef , if , }
+		- PARENT = { != , s , towgs84 , ctx , pj_param , pl , if , }
+		- CHILD  = { PJD_3PARAM , / , *= , + , PJD_7PARAM , datum_type , datum_params , projdef , }
+		- PRED   = { < , && , s , != , * , towgs84 , parm_count , for , }
+		- SUCC   = { }
+
+147 :	"projdef"
+		- NEIGH  = { PJD_7PARAM , datum_type , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { *= , datum_params , projdef , }
+
+147 :	"datum_type"
+		- NEIGH  = { PJD_7PARAM , datum_type , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { *= , datum_params , projdef , }
+
+147 :	"PJD_7PARAM"
+		- NEIGH  = { PJD_7PARAM , datum_type , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { *= , datum_params , projdef , }
+
+150 :	"projdef"
+		- NEIGH  = { *= , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { PJD_7PARAM , datum_type , projdef , }
+		- SUCC   = { *= , datum_params , projdef , }
+
+150 :	"datum_params"
+		- NEIGH  = { *= , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { PJD_7PARAM , datum_type , projdef , }
+		- SUCC   = { *= , datum_params , projdef , }
+
+150 :	"*="
+		- NEIGH  = { *= , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { PJD_7PARAM , datum_type , projdef , }
+		- SUCC   = { *= , datum_params , projdef , }
+
+151 :	"projdef"
+		- NEIGH  = { *= , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { *= , datum_params , projdef , }
+
+151 :	"datum_params"
+		- NEIGH  = { *= , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { *= , datum_params , projdef , }
+
+151 :	"*="
+		- NEIGH  = { *= , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { *= , datum_params , projdef , }
+
+152 :	"projdef"
+		- NEIGH  = { *= , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { + , / , datum_params , projdef , }
+
+152 :	"datum_params"
+		- NEIGH  = { *= , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { + , / , datum_params , projdef , }
+
+152 :	"*="
+		- NEIGH  = { *= , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { + , / , datum_params , projdef , }
+
+154 :	"projdef"
+		- NEIGH  = { + , / , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { }
+
+154 :	"datum_params"
+		- NEIGH  = { + , / , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { }
+
+155 :	"projdef"
+		- NEIGH  = { + , / , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { }
+
+155 :	"datum_params"
+		- NEIGH  = { + , / , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { }
+
+155 :	"/"
+		- NEIGH  = { + , / , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { }
+
+155 :	"+"
+		- NEIGH  = { + , / , datum_params , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { *= , datum_params , projdef , }
+		- SUCC   = { }
+
+158 :	"projdef"
+		- NEIGH  = { PJD_3PARAM , datum_type , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+158 :	"datum_type"
+		- NEIGH  = { PJD_3PARAM , datum_type , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+158 :	"PJD_3PARAM"
+		- NEIGH  = { PJD_3PARAM , datum_type , projdef , }
+		- PARENT = { || , != , datum_params , projdef , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+164 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , nadgrids , if , }
+		- SUCC   = { }
+

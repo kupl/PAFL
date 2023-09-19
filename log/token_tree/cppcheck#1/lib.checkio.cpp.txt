@@ -29007,183 +29007,183 @@
 		- SUCC   = { }
 
 1222 :	"isSecondCharAvailable"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 
 1222 :	"i"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 
 1222 :	"+"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 
 1222 :	"!="
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 
 1222 :	"formatString"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 
 1222 :	"end"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 
 1223 :	"if"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"i"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"!="
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"formatString"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"end"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"&&"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"isSecondCharAvailable"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"&&"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"*"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"i"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"+"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"=="
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"*"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1223 :	"i"
-		- NEIGH  = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- NEIGH  = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { end , != , i , isalpha , * , formatString , + , ! , if , }
-		- PRED   = { }
+		- PRED   = { end , != , formatString , + , i , isSecondCharAvailable , }
 		- SUCC   = { break , }
 
 1224 :	"if"
 		- NEIGH  = { i , isalpha , * , + , ! , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { ++ , specifier , done , std , + , * , tok , += , numFormat , invalidLengthModifierError , string , modifier , i , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1224 :	"!"
 		- NEIGH  = { i , isalpha , * , + , ! , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { ++ , specifier , done , std , + , * , tok , += , numFormat , invalidLengthModifierError , string , modifier , i , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1224 :	"isalpha"
 		- NEIGH  = { i , isalpha , * , + , ! , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { ++ , specifier , done , std , + , * , tok , += , numFormat , invalidLengthModifierError , string , modifier , i , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1224 :	"*"
 		- NEIGH  = { i , isalpha , * , + , ! , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { ++ , specifier , done , std , + , * , tok , += , numFormat , invalidLengthModifierError , string , modifier , i , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1224 :	"i"
 		- NEIGH  = { i , isalpha , * , + , ! , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { ++ , specifier , done , std , + , * , tok , += , numFormat , invalidLengthModifierError , string , modifier , i , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1224 :	"+"
 		- NEIGH  = { i , isalpha , * , + , ! , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { ++ , specifier , done , std , + , * , tok , += , numFormat , invalidLengthModifierError , string , modifier , i , }
 		- PRED   = { }
 		- SUCC   = { }
@@ -29372,35 +29372,35 @@
 
 1235 :	"if"
 		- NEIGH  = { end , formatString , != , i , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { done , * , isalpha , && , end , != , ! , if , formatString , + , i , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1235 :	"i"
 		- NEIGH  = { end , formatString , != , i , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { done , * , isalpha , && , end , != , ! , if , formatString , + , i , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1235 :	"!="
 		- NEIGH  = { end , formatString , != , i , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { done , * , isalpha , && , end , != , ! , if , formatString , + , i , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1235 :	"formatString"
 		- NEIGH  = { end , formatString , != , i , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { done , * , isalpha , && , end , != , ! , if , formatString , + , i , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1235 :	"end"
 		- NEIGH  = { end , formatString , != , i , if , }
-		- PARENT = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PARENT = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- CHILD  = { done , * , isalpha , && , end , != , ! , if , formatString , + , i , }
 		- PRED   = { }
 		- SUCC   = { }
@@ -29612,7 +29612,7 @@
 		- NEIGH  = { break , }
 		- PARENT = { i , * , switch , }
 		- CHILD  = { }
-		- PRED   = { * , == , && , end , != , if , formatString , + , i , isSecondCharAvailable , }
+		- PRED   = { * , isSecondCharAvailable , == , && , end , + , if , formatString , != , i , }
 		- SUCC   = { }
 
 1251 :	"if"

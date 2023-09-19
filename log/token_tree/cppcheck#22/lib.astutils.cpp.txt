@@ -34044,102 +34044,102 @@
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- SUCC   = { astParent , tok , parent , * , Token , }
 
 1341 :	"-"
 		- NEIGH  = { - , argn , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- SUCC   = { astParent , tok , parent , * , Token , }
 
 1343 :	"Token"
-		- NEIGH  = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { - , argn , }
-		- SUCC   = { isCast , && , parent , while , }
+		- SUCC   = { && , isUnaryOp , parent , if , }
 
 1343 :	"*"
-		- NEIGH  = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { - , argn , }
-		- SUCC   = { isCast , && , parent , while , }
+		- SUCC   = { && , isUnaryOp , parent , if , }
 
 1343 :	"parent"
-		- NEIGH  = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { - , argn , }
-		- SUCC   = { isCast , && , parent , while , }
+		- SUCC   = { && , isUnaryOp , parent , if , }
 
 1343 :	"tok"
-		- NEIGH  = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { - , argn , }
-		- SUCC   = { isCast , && , parent , while , }
+		- SUCC   = { && , isUnaryOp , parent , if , }
 
 1343 :	"astParent"
-		- NEIGH  = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { - , argn , }
-		- SUCC   = { isCast , && , parent , while , }
+		- SUCC   = { && , isUnaryOp , parent , if , }
 
 1344 :	"if"
-		- NEIGH  = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- NEIGH  = { && , isUnaryOp , parent , if , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { - , argn , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { isCast , && , parent , while , }
 
 1344 :	"parent"
-		- NEIGH  = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- NEIGH  = { && , isUnaryOp , parent , if , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { - , argn , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { isCast , && , parent , while , }
 
 1344 :	"&&"
-		- NEIGH  = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- NEIGH  = { && , isUnaryOp , parent , if , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { - , argn , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { isCast , && , parent , while , }
 
 1344 :	"parent"
-		- NEIGH  = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- NEIGH  = { && , isUnaryOp , parent , if , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { - , argn , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { isCast , && , parent , while , }
 
 1344 :	"isUnaryOp"
-		- NEIGH  = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- NEIGH  = { && , isUnaryOp , parent , if , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { - , argn , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { isCast , && , parent , while , }
 
 1345 :	"parent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- PARENT = { && , isUnaryOp , parent , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 1345 :	"parent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- PARENT = { && , isUnaryOp , parent , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 1345 :	"astParent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- PARENT = { && , isUnaryOp , parent , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
@@ -34148,35 +34148,35 @@
 		- NEIGH  = { isCast , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- PRED   = { && , isUnaryOp , parent , if , }
 		- SUCC   = { parent , Token , Match , if , }
 
 1346 :	"parent"
 		- NEIGH  = { isCast , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- PRED   = { && , isUnaryOp , parent , if , }
 		- SUCC   = { parent , Token , Match , if , }
 
 1346 :	"&&"
 		- NEIGH  = { isCast , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- PRED   = { && , isUnaryOp , parent , if , }
 		- SUCC   = { parent , Token , Match , if , }
 
 1346 :	"parent"
 		- NEIGH  = { isCast , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- PRED   = { && , isUnaryOp , parent , if , }
 		- SUCC   = { parent , Token , Match , if , }
 
 1346 :	"isCast"
 		- NEIGH  = { isCast , && , parent , while , }
 		- PARENT = { }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { isUnaryOp , && , if , astParent , tok , parent , * , Token , }
+		- PRED   = { && , isUnaryOp , parent , if , }
 		- SUCC   = { parent , Token , Match , if , }
 
 1347 :	"parent"

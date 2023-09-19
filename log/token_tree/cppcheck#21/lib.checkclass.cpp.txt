@@ -1578,21 +1578,21 @@
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { continue , }
 		- PRED   = { usedInUnion , printStyle , == , && , numConstructors , scope , ! , if , }
-		- SUCC   = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- SUCC   = { bailout , }
 
 126 :	"!"
 		- NEIGH  = { printWarnings , ! , if , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { continue , }
 		- PRED   = { usedInUnion , printStyle , == , && , numConstructors , scope , ! , if , }
-		- SUCC   = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- SUCC   = { bailout , }
 
 126 :	"printWarnings"
 		- NEIGH  = { printWarnings , ! , if , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { continue , }
 		- PRED   = { usedInUnion , printStyle , == , && , numConstructors , scope , ! , if , }
-		- SUCC   = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- SUCC   = { bailout , }
 
 127 :	"continue"
 		- NEIGH  = { continue , }
@@ -1602,92 +1602,92 @@
 		- SUCC   = { }
 
 132 :	"bailout"
-		- NEIGH  = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- NEIGH  = { bailout , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { }
 		- PRED   = { printWarnings , ! , if , }
-		- SUCC   = { bailout , if , }
+		- SUCC   = { nestedList , * , scope , Scope , nestedScope , for , }
 
 133 :	"for"
-		- NEIGH  = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- NEIGH  = { nestedList , * , scope , Scope , nestedScope , for , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PRED   = { printWarnings , ! , if , }
+		- PRED   = { bailout , }
 		- SUCC   = { bailout , if , }
 
 133 :	"Scope"
-		- NEIGH  = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- NEIGH  = { nestedList , * , scope , Scope , nestedScope , for , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PRED   = { printWarnings , ! , if , }
+		- PRED   = { bailout , }
 		- SUCC   = { bailout , if , }
 
 133 :	"*"
-		- NEIGH  = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- NEIGH  = { nestedList , * , scope , Scope , nestedScope , for , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PRED   = { printWarnings , ! , if , }
+		- PRED   = { bailout , }
 		- SUCC   = { bailout , if , }
 
 133 :	"nestedScope"
-		- NEIGH  = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- NEIGH  = { nestedList , * , scope , Scope , nestedScope , for , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PRED   = { printWarnings , ! , if , }
+		- PRED   = { bailout , }
 		- SUCC   = { bailout , if , }
 
 133 :	"scope"
-		- NEIGH  = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- NEIGH  = { nestedList , * , scope , Scope , nestedScope , for , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PRED   = { printWarnings , ! , if , }
+		- PRED   = { bailout , }
 		- SUCC   = { bailout , if , }
 
 133 :	"nestedList"
-		- NEIGH  = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- NEIGH  = { nestedList , * , scope , Scope , nestedScope , for , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PRED   = { printWarnings , ! , if , }
+		- PRED   = { bailout , }
 		- SUCC   = { bailout , if , }
 
 134 :	"if"
 		- NEIGH  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PARENT = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- PARENT = { nestedList , * , scope , Scope , nestedScope , for , }
 		- CHILD  = { break , bailout , }
 		- PRED   = { }
 		- SUCC   = { }
 
 134 :	"nestedScope"
 		- NEIGH  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PARENT = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- PARENT = { nestedList , * , scope , Scope , nestedScope , for , }
 		- CHILD  = { break , bailout , }
 		- PRED   = { }
 		- SUCC   = { }
 
 134 :	"type"
 		- NEIGH  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PARENT = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- PARENT = { nestedList , * , scope , Scope , nestedScope , for , }
 		- CHILD  = { break , bailout , }
 		- PRED   = { }
 		- SUCC   = { }
 
 134 :	"=="
 		- NEIGH  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PARENT = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- PARENT = { nestedList , * , scope , Scope , nestedScope , for , }
 		- CHILD  = { break , bailout , }
 		- PRED   = { }
 		- SUCC   = { }
 
 134 :	"Scope"
 		- NEIGH  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PARENT = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- PARENT = { nestedList , * , scope , Scope , nestedScope , for , }
 		- CHILD  = { break , bailout , }
 		- PRED   = { }
 		- SUCC   = { }
 
 134 :	"eUnion"
 		- NEIGH  = { Scope , eUnion , == , type , nestedScope , if , }
-		- PARENT = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- PARENT = { nestedList , * , scope , Scope , nestedScope , for , }
 		- CHILD  = { break , bailout , }
 		- PRED   = { }
 		- SUCC   = { }
@@ -1710,14 +1710,14 @@
 		- NEIGH  = { bailout , if , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { continue , }
-		- PRED   = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- PRED   = { nestedList , * , scope , Scope , nestedScope , for , }
 		- SUCC   = { size , scope , usage , > , Usage , < , vector , varlist , std , }
 
 139 :	"bailout"
 		- NEIGH  = { bailout , if , }
 		- PARENT = { classAndStructScopes , * , Scope , mSymbolDatabase , scope , for , }
 		- CHILD  = { continue , }
-		- PRED   = { scope , * , nestedScope , for , Scope , nestedList , bailout , }
+		- PRED   = { nestedList , * , scope , Scope , nestedScope , for , }
 		- SUCC   = { size , scope , usage , > , Usage , < , vector , varlist , std , }
 
 140 :	"continue"
@@ -32014,21 +32014,21 @@
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { continue , }
 		- PRED   = { classScope , derivedFrom , derivedFromScope , * , Scope , }
-		- SUCC   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- SUCC   = { baseClassPointers , > , < , set , std , }
 
 1646 :	"!"
 		- NEIGH  = { ! , derivedFromScope , if , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { continue , }
 		- PRED   = { classScope , derivedFrom , derivedFromScope , * , Scope , }
-		- SUCC   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- SUCC   = { baseClassPointers , > , < , set , std , }
 
 1646 :	"derivedFromScope"
 		- NEIGH  = { ! , derivedFromScope , if , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { continue , }
 		- PRED   = { classScope , derivedFrom , derivedFromScope , * , Scope , }
-		- SUCC   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- SUCC   = { baseClassPointers , > , < , set , std , }
 
 1647 :	"continue"
 		- NEIGH  = { continue , }
@@ -32038,148 +32038,148 @@
 		- SUCC   = { }
 
 1656 :	"std"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { baseClassPointers , > , < , set , std , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
 		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- SUCC   = { mSymbolDatabase , * , var , Variable , variableList , for , }
 
 1656 :	"set"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { baseClassPointers , > , < , set , std , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
 		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- SUCC   = { mSymbolDatabase , * , var , Variable , variableList , for , }
 
 1656 :	"<"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { baseClassPointers , > , < , set , std , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
 		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- SUCC   = { mSymbolDatabase , * , var , Variable , variableList , for , }
 
 1656 :	">"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { baseClassPointers , > , < , set , std , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
 		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- SUCC   = { mSymbolDatabase , * , var , Variable , variableList , for , }
 
 1656 :	"baseClassPointers"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { baseClassPointers , > , < , set , std , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
 		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- SUCC   = { mSymbolDatabase , * , var , Variable , variableList , for , }
 
 1658 :	"for"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PRED   = { baseClassPointers , > , < , set , std , }
+		- SUCC   = { dontDelete , > , < , set , std , }
 
 1658 :	"Variable"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PRED   = { baseClassPointers , > , < , set , std , }
+		- SUCC   = { dontDelete , > , < , set , std , }
 
 1658 :	"*"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PRED   = { baseClassPointers , > , < , set , std , }
+		- SUCC   = { dontDelete , > , < , set , std , }
 
 1658 :	"var"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PRED   = { baseClassPointers , > , < , set , std , }
+		- SUCC   = { dontDelete , > , < , set , std , }
 
 1658 :	"mSymbolDatabase"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PRED   = { baseClassPointers , > , < , set , std , }
+		- SUCC   = { dontDelete , > , < , set , std , }
 
 1658 :	"variableList"
-		- NEIGH  = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- NEIGH  = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PRED   = { ! , derivedFromScope , if , }
-		- SUCC   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PRED   = { baseClassPointers , > , < , set , std , }
+		- SUCC   = { dontDelete , > , < , set , std , }
 
 1659 :	"if"
 		- NEIGH  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PARENT = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PARENT = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- CHILD  = { declarationId , var , insert , baseClassPointers , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1659 :	"var"
 		- NEIGH  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PARENT = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PARENT = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- CHILD  = { declarationId , var , insert , baseClassPointers , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1659 :	"&&"
 		- NEIGH  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PARENT = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PARENT = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- CHILD  = { declarationId , var , insert , baseClassPointers , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1659 :	"var"
 		- NEIGH  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PARENT = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PARENT = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- CHILD  = { declarationId , var , insert , baseClassPointers , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1659 :	"isPointer"
 		- NEIGH  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PARENT = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PARENT = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- CHILD  = { declarationId , var , insert , baseClassPointers , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1659 :	"&&"
 		- NEIGH  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PARENT = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PARENT = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- CHILD  = { declarationId , var , insert , baseClassPointers , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1659 :	"var"
 		- NEIGH  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PARENT = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PARENT = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- CHILD  = { declarationId , var , insert , baseClassPointers , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1659 :	"type"
 		- NEIGH  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PARENT = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PARENT = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- CHILD  = { declarationId , var , insert , baseClassPointers , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1659 :	"=="
 		- NEIGH  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PARENT = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PARENT = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- CHILD  = { declarationId , var , insert , baseClassPointers , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1659 :	"derivedFrom"
 		- NEIGH  = { type , == , && , isPointer , var , derivedFrom , if , }
-		- PARENT = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PARENT = { mSymbolDatabase , * , var , Variable , variableList , for , }
 		- CHILD  = { declarationId , var , insert , baseClassPointers , }
 		- PRED   = { }
 		- SUCC   = { }
@@ -32213,204 +32213,204 @@
 		- SUCC   = { }
 
 1664 :	"std"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { dontDelete , > , < , set , std , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
-		- SUCC   = { ok , if , }
+		- PRED   = { mSymbolDatabase , * , var , Variable , variableList , for , }
+		- SUCC   = { ok , }
 
 1664 :	"set"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { dontDelete , > , < , set , std , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
-		- SUCC   = { ok , if , }
+		- PRED   = { mSymbolDatabase , * , var , Variable , variableList , for , }
+		- SUCC   = { ok , }
 
 1664 :	"<"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { dontDelete , > , < , set , std , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
-		- SUCC   = { ok , if , }
+		- PRED   = { mSymbolDatabase , * , var , Variable , variableList , for , }
+		- SUCC   = { ok , }
 
 1664 :	">"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { dontDelete , > , < , set , std , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
-		- SUCC   = { ok , if , }
+		- PRED   = { mSymbolDatabase , * , var , Variable , variableList , for , }
+		- SUCC   = { ok , }
 
 1664 :	"dontDelete"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { dontDelete , > , < , set , std , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
-		- SUCC   = { ok , if , }
+		- PRED   = { mSymbolDatabase , * , var , Variable , variableList , for , }
+		- SUCC   = { ok , }
 
 1667 :	"ok"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { ok , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
-		- SUCC   = { ok , if , }
+		- PRED   = { dontDelete , > , < , set , std , }
+		- SUCC   = { tokens , mTokenizer , tok , * , next , Token , for , }
 
 1669 :	"for"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PRED   = { ok , }
 		- SUCC   = { ok , if , }
 
 1669 :	"Token"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PRED   = { ok , }
 		- SUCC   = { ok , if , }
 
 1669 :	"*"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PRED   = { ok , }
 		- SUCC   = { ok , if , }
 
 1669 :	"tok"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PRED   = { ok , }
 		- SUCC   = { ok , if , }
 
 1669 :	"mTokenizer"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PRED   = { ok , }
 		- SUCC   = { ok , if , }
 
 1669 :	"tokens"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PRED   = { ok , }
 		- SUCC   = { ok , if , }
 
 1669 :	"tok"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PRED   = { ok , }
 		- SUCC   = { ok , if , }
 
 1669 :	"tok"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PRED   = { ok , }
 		- SUCC   = { ok , if , }
 
 1669 :	"tok"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PRED   = { ok , }
 		- SUCC   = { ok , if , }
 
 1669 :	"next"
-		- NEIGH  = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- NEIGH  = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PRED   = { var , * , Variable , variableList , for , baseClassPointers , mSymbolDatabase , > , < , set , std , }
+		- PRED   = { ok , }
 		- SUCC   = { ok , if , }
 
 1670 :	"if"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1670 :	"Token"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1670 :	"Match"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1670 :	"tok"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1670 :	"&&"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1671 :	"baseClassPointers"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1671 :	"find"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1671 :	"tok"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1671 :	"next"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1671 :	"varId"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1671 :	"!="
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1671 :	"baseClassPointers"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1671 :	"end"
 		- NEIGH  = { end , && , != , tok , next , find , Token , varId , Match , baseClassPointers , if , }
-		- PARENT = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PARENT = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- CHILD  = { != , varId , next , && , Match , size , c_str , find , tokAt , simpleMatch , dontDelete , derivedClass , str , if , std , + , tok , tmp , end , Token , string , }
 		- PRED   = { }
 		- SUCC   = { }
@@ -32664,14 +32664,14 @@
 		- NEIGH  = { ok , if , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { continue , }
-		- PRED   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PRED   = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- SUCC   = { getDestructor , baseDestructor , * , derivedFromScope , Function , }
 
 1688 :	"ok"
 		- NEIGH  = { ok , if , }
 		- PARENT = { type , && , AccessControl , != , Private , access , j , if , }
 		- CHILD  = { continue , }
-		- PRED   = { next , tokens , ok , * , Token , for , std , set , dontDelete , mTokenizer , tok , > , < , }
+		- PRED   = { tokens , mTokenizer , tok , * , next , Token , for , }
 		- SUCC   = { getDestructor , baseDestructor , * , derivedFromScope , Function , }
 
 1689 :	"continue"
@@ -34121,63 +34121,63 @@
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
 		- PRED   = { hasBody , eFunction , != , type , func , || , Function , ! , if , }
-		- SUCC   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- SUCC   = { isPointerOrReference , }
 
 1791 :	"func"
 		- NEIGH  = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
 		- PRED   = { hasBody , eFunction , != , type , func , || , Function , ! , if , }
-		- SUCC   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- SUCC   = { isPointerOrReference , }
 
 1791 :	"isFriend"
 		- NEIGH  = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
 		- PRED   = { hasBody , eFunction , != , type , func , || , Function , ! , if , }
-		- SUCC   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- SUCC   = { isPointerOrReference , }
 
 1791 :	"||"
 		- NEIGH  = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
 		- PRED   = { hasBody , eFunction , != , type , func , || , Function , ! , if , }
-		- SUCC   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- SUCC   = { isPointerOrReference , }
 
 1791 :	"func"
 		- NEIGH  = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
 		- PRED   = { hasBody , eFunction , != , type , func , || , Function , ! , if , }
-		- SUCC   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- SUCC   = { isPointerOrReference , }
 
 1791 :	"isStatic"
 		- NEIGH  = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
 		- PRED   = { hasBody , eFunction , != , type , func , || , Function , ! , if , }
-		- SUCC   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- SUCC   = { isPointerOrReference , }
 
 1791 :	"||"
 		- NEIGH  = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
 		- PRED   = { hasBody , eFunction , != , type , func , || , Function , ! , if , }
-		- SUCC   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- SUCC   = { isPointerOrReference , }
 
 1791 :	"func"
 		- NEIGH  = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
 		- PRED   = { hasBody , eFunction , != , type , func , || , Function , ! , if , }
-		- SUCC   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- SUCC   = { isPointerOrReference , }
 
 1791 :	"hasVirtualSpecifier"
 		- NEIGH  = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
 		- PRED   = { hasBody , eFunction , != , type , func , || , Function , ! , if , }
-		- SUCC   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- SUCC   = { isPointerOrReference , }
 
 1792 :	"continue"
 		- NEIGH  = { continue , }
@@ -34187,106 +34187,106 @@
 		- SUCC   = { }
 
 1796 :	"isPointerOrReference"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { isPointerOrReference , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { }
 		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
-		- SUCC   = { isPointerOrReference , if , }
+		- SUCC   = { retDef , func , typeToken , * , next , Token , for , }
 
 1797 :	"for"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { retDef , func , typeToken , * , next , Token , for , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { str , == , && , if , ! , isPointerOrReference , typeToken , Token , Match , }
-		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
+		- PRED   = { isPointerOrReference , }
 		- SUCC   = { isPointerOrReference , if , }
 
 1797 :	"Token"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { retDef , func , typeToken , * , next , Token , for , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { str , == , && , if , ! , isPointerOrReference , typeToken , Token , Match , }
-		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
+		- PRED   = { isPointerOrReference , }
 		- SUCC   = { isPointerOrReference , if , }
 
 1797 :	"*"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { retDef , func , typeToken , * , next , Token , for , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { str , == , && , if , ! , isPointerOrReference , typeToken , Token , Match , }
-		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
+		- PRED   = { isPointerOrReference , }
 		- SUCC   = { isPointerOrReference , if , }
 
 1797 :	"typeToken"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { retDef , func , typeToken , * , next , Token , for , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { str , == , && , if , ! , isPointerOrReference , typeToken , Token , Match , }
-		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
+		- PRED   = { isPointerOrReference , }
 		- SUCC   = { isPointerOrReference , if , }
 
 1797 :	"func"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { retDef , func , typeToken , * , next , Token , for , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { str , == , && , if , ! , isPointerOrReference , typeToken , Token , Match , }
-		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
+		- PRED   = { isPointerOrReference , }
 		- SUCC   = { isPointerOrReference , if , }
 
 1797 :	"retDef"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { retDef , func , typeToken , * , next , Token , for , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { str , == , && , if , ! , isPointerOrReference , typeToken , Token , Match , }
-		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
+		- PRED   = { isPointerOrReference , }
 		- SUCC   = { isPointerOrReference , if , }
 
 1797 :	"typeToken"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { retDef , func , typeToken , * , next , Token , for , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { str , == , && , if , ! , isPointerOrReference , typeToken , Token , Match , }
-		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
+		- PRED   = { isPointerOrReference , }
 		- SUCC   = { isPointerOrReference , if , }
 
 1797 :	"typeToken"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { retDef , func , typeToken , * , next , Token , for , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { str , == , && , if , ! , isPointerOrReference , typeToken , Token , Match , }
-		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
+		- PRED   = { isPointerOrReference , }
 		- SUCC   = { isPointerOrReference , if , }
 
 1797 :	"typeToken"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { retDef , func , typeToken , * , next , Token , for , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { str , == , && , if , ! , isPointerOrReference , typeToken , Token , Match , }
-		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
+		- PRED   = { isPointerOrReference , }
 		- SUCC   = { isPointerOrReference , if , }
 
 1797 :	"next"
-		- NEIGH  = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- NEIGH  = { retDef , func , typeToken , * , next , Token , for , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { str , == , && , if , ! , isPointerOrReference , typeToken , Token , Match , }
-		- PRED   = { hasVirtualSpecifier , isFriend , isStatic , || , func , if , }
+		- PRED   = { isPointerOrReference , }
 		- SUCC   = { isPointerOrReference , if , }
 
 1798 :	"if"
 		- NEIGH  = { typeToken , Token , Match , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { }
 		- SUCC   = { str , isPointerOrReference , typeToken , == , && , ! , if , }
 
 1798 :	"Token"
 		- NEIGH  = { typeToken , Token , Match , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { }
 		- SUCC   = { str , isPointerOrReference , typeToken , == , && , ! , if , }
 
 1798 :	"Match"
 		- NEIGH  = { typeToken , Token , Match , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { }
 		- SUCC   = { str , isPointerOrReference , typeToken , == , && , ! , if , }
 
 1798 :	"typeToken"
 		- NEIGH  = { typeToken , Token , Match , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { }
 		- SUCC   = { str , isPointerOrReference , typeToken , == , && , ! , if , }
@@ -34300,49 +34300,49 @@
 
 1800 :	"if"
 		- NEIGH  = { str , isPointerOrReference , typeToken , == , && , ! , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { typeToken , Token , Match , if , }
 		- SUCC   = { typeToken , Token , Match , if , }
 
 1800 :	"!"
 		- NEIGH  = { str , isPointerOrReference , typeToken , == , && , ! , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { typeToken , Token , Match , if , }
 		- SUCC   = { typeToken , Token , Match , if , }
 
 1800 :	"isPointerOrReference"
 		- NEIGH  = { str , isPointerOrReference , typeToken , == , && , ! , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { typeToken , Token , Match , if , }
 		- SUCC   = { typeToken , Token , Match , if , }
 
 1800 :	"&&"
 		- NEIGH  = { str , isPointerOrReference , typeToken , == , && , ! , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { typeToken , Token , Match , if , }
 		- SUCC   = { typeToken , Token , Match , if , }
 
 1800 :	"typeToken"
 		- NEIGH  = { str , isPointerOrReference , typeToken , == , && , ! , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { typeToken , Token , Match , if , }
 		- SUCC   = { typeToken , Token , Match , if , }
 
 1800 :	"str"
 		- NEIGH  = { str , isPointerOrReference , typeToken , == , && , ! , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { typeToken , Token , Match , if , }
 		- SUCC   = { typeToken , Token , Match , if , }
 
 1800 :	"=="
 		- NEIGH  = { str , isPointerOrReference , typeToken , == , && , ! , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , }
 		- PRED   = { typeToken , Token , Match , if , }
 		- SUCC   = { typeToken , Token , Match , if , }
@@ -34356,28 +34356,28 @@
 
 1802 :	"if"
 		- NEIGH  = { typeToken , Token , Match , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , isPointerOrReference , }
 		- PRED   = { str , isPointerOrReference , typeToken , == , && , ! , if , }
 		- SUCC   = { }
 
 1802 :	"Token"
 		- NEIGH  = { typeToken , Token , Match , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , isPointerOrReference , }
 		- PRED   = { str , isPointerOrReference , typeToken , == , && , ! , if , }
 		- SUCC   = { }
 
 1802 :	"Match"
 		- NEIGH  = { typeToken , Token , Match , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , isPointerOrReference , }
 		- PRED   = { str , isPointerOrReference , typeToken , == , && , ! , if , }
 		- SUCC   = { }
 
 1802 :	"typeToken"
 		- NEIGH  = { typeToken , Token , Match , if , }
-		- PARENT = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PARENT = { retDef , func , typeToken , * , next , Token , for , }
 		- CHILD  = { break , isPointerOrReference , }
 		- PRED   = { str , isPointerOrReference , typeToken , == , && , ! , if , }
 		- SUCC   = { }
@@ -34400,14 +34400,14 @@
 		- NEIGH  = { isPointerOrReference , if , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
-		- PRED   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PRED   = { retDef , func , typeToken , * , next , Token , for , }
 		- SUCC   = { isOperator , func , if , }
 
 1807 :	"isPointerOrReference"
 		- NEIGH  = { isPointerOrReference , if , }
 		- PARENT = { functionList , scope , func , & , Function , for , }
 		- CHILD  = { continue , }
-		- PRED   = { retDef , func , isPointerOrReference , typeToken , * , next , Token , for , }
+		- PRED   = { retDef , func , typeToken , * , next , Token , for , }
 		- SUCC   = { isOperator , func , if , }
 
 1808 :	"continue"

@@ -1,0 +1,679 @@
+10 :	"PROJ_HEAD"
+		- NEIGH  = { PROJ_HEAD , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+10 :	"tobmerc"
+		- NEIGH  = { tobmerc , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"PJ_XY"
+		- NEIGH  = { PJ_XY , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"tobmerc_s_forward"
+		- NEIGH  = { tobmerc_s_forward , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"PJ_LP"
+		- NEIGH  = { PJ_LP , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"lp"
+		- NEIGH  = { lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"P"
+		- NEIGH  = { P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+13 :	"PJ_XY"
+		- NEIGH  = { xy , PJ_XY , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cosphi , }
+
+13 :	"xy"
+		- NEIGH  = { xy , PJ_XY , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cosphi , }
+
+14 :	"cosphi"
+		- NEIGH  = { cosphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , PJ_XY , }
+		- SUCC   = { M_HALFPI , >= , phi , lp , fabs , if , }
+
+16 :	"if"
+		- NEIGH  = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- PARENT = { }
+		- CHILD  = { xy , PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , return , P , proj_errno_set , }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+16 :	"fabs"
+		- NEIGH  = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- PARENT = { }
+		- CHILD  = { xy , PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , return , P , proj_errno_set , }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+16 :	"lp"
+		- NEIGH  = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- PARENT = { }
+		- CHILD  = { xy , PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , return , P , proj_errno_set , }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+16 :	"phi"
+		- NEIGH  = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- PARENT = { }
+		- CHILD  = { xy , PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , return , P , proj_errno_set , }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+16 :	">="
+		- NEIGH  = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- PARENT = { }
+		- CHILD  = { xy , PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , return , P , proj_errno_set , }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+16 :	"M_HALFPI"
+		- NEIGH  = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- PARENT = { }
+		- CHILD  = { xy , PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , return , P , proj_errno_set , }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+23 :	"proj_errno_set"
+		- NEIGH  = { PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , P , proj_errno_set , }
+		- PARENT = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { xy , return , }
+
+23 :	"P"
+		- NEIGH  = { PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , P , proj_errno_set , }
+		- PARENT = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { xy , return , }
+
+23 :	"PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN"
+		- NEIGH  = { PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , P , proj_errno_set , }
+		- PARENT = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { xy , return , }
+
+24 :	"return"
+		- NEIGH  = { xy , return , }
+		- PARENT = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- CHILD  = { }
+		- PRED   = { PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , P , proj_errno_set , }
+		- SUCC   = { }
+
+24 :	"xy"
+		- NEIGH  = { xy , return , }
+		- PARENT = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- CHILD  = { }
+		- PRED   = { PROJ_ERR_COORD_TRANSFM_OUTSIDE_PROJECTION_DOMAIN , P , proj_errno_set , }
+		- SUCC   = { }
+
+27 :	"cosphi"
+		- NEIGH  = { phi , lp , cos , cosphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- SUCC   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+
+27 :	"cos"
+		- NEIGH  = { phi , lp , cos , cosphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- SUCC   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+
+27 :	"lp"
+		- NEIGH  = { phi , lp , cos , cosphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- SUCC   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+
+27 :	"phi"
+		- NEIGH  = { phi , lp , cos , cosphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { M_HALFPI , >= , phi , lp , fabs , if , }
+		- SUCC   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+
+28 :	"xy"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+28 :	"x"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+28 :	"P"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+28 :	"k0"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+28 :	"*"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+28 :	"lp"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+28 :	"lam"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+28 :	"*"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+28 :	"cosphi"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+28 :	"*"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+28 :	"cosphi"
+		- NEIGH  = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+
+29 :	"xy"
+		- NEIGH  = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+29 :	"y"
+		- NEIGH  = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+29 :	"P"
+		- NEIGH  = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+29 :	"k0"
+		- NEIGH  = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+29 :	"*"
+		- NEIGH  = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+29 :	"asinh"
+		- NEIGH  = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+29 :	"tan"
+		- NEIGH  = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+29 :	"lp"
+		- NEIGH  = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+29 :	"phi"
+		- NEIGH  = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , lp , k0 , lam , P , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+30 :	"return"
+		- NEIGH  = { xy , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- SUCC   = { }
+
+30 :	"xy"
+		- NEIGH  = { xy , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , tan , k0 , P , * , y , asinh , xy , }
+		- SUCC   = { }
+
+33 :	"PJ_LP"
+		- NEIGH  = { PJ_LP , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"tobmerc_s_inverse"
+		- NEIGH  = { tobmerc_s_inverse , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"PJ_XY"
+		- NEIGH  = { PJ_XY , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"xy"
+		- NEIGH  = { xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"P"
+		- NEIGH  = { P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+34 :	"PJ_LP"
+		- NEIGH  = { lp , PJ_LP , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cosphi , }
+
+34 :	"lp"
+		- NEIGH  = { lp , PJ_LP , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cosphi , }
+
+35 :	"cosphi"
+		- NEIGH  = { cosphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { lp , PJ_LP , }
+		- SUCC   = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+
+37 :	"lp"
+		- NEIGH  = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+37 :	"phi"
+		- NEIGH  = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+37 :	"atan"
+		- NEIGH  = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+37 :	"sinh"
+		- NEIGH  = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+37 :	"xy"
+		- NEIGH  = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+37 :	"y"
+		- NEIGH  = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+37 :	"/"
+		- NEIGH  = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+37 :	"P"
+		- NEIGH  = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+37 :	"k0"
+		- NEIGH  = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cosphi , }
+		- SUCC   = { phi , lp , cos , cosphi , }
+
+38 :	"cosphi"
+		- NEIGH  = { phi , lp , cos , cosphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- SUCC   = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+
+38 :	"cos"
+		- NEIGH  = { phi , lp , cos , cosphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- SUCC   = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+
+38 :	"lp"
+		- NEIGH  = { phi , lp , cos , cosphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- SUCC   = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+
+38 :	"phi"
+		- NEIGH  = { phi , lp , cos , cosphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { k0 , P , y , xy , sinh , lp , atan , / , phi , }
+		- SUCC   = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+
+39 :	"lp"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+39 :	"lam"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+39 :	"xy"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+39 :	"x"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+39 :	"/"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+39 :	"P"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+39 :	"k0"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+39 :	"/"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+39 :	"cosphi"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+39 :	"*"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+39 :	"cosphi"
+		- NEIGH  = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { phi , lp , cos , cosphi , }
+		- SUCC   = { lp , return , }
+
+40 :	"return"
+		- NEIGH  = { lp , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- SUCC   = { }
+
+40 :	"lp"
+		- NEIGH  = { lp , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { * , cosphi , k0 , / , x , xy , P , lam , lp , }
+		- SUCC   = { }
+
+43 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+43 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+43 :	"PROJECTION"
+		- NEIGH  = { PROJECTION , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+43 :	"tobmerc"
+		- NEIGH  = { tobmerc , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"P"
+		- NEIGH  = { inv , tobmerc_s_inverse , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tobmerc_s_forward , fwd , P , }
+
+44 :	"inv"
+		- NEIGH  = { inv , tobmerc_s_inverse , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tobmerc_s_forward , fwd , P , }
+
+44 :	"tobmerc_s_inverse"
+		- NEIGH  = { inv , tobmerc_s_inverse , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tobmerc_s_forward , fwd , P , }
+
+45 :	"P"
+		- NEIGH  = { tobmerc_s_forward , fwd , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { inv , tobmerc_s_inverse , P , }
+		- SUCC   = { P , return , }
+
+45 :	"fwd"
+		- NEIGH  = { tobmerc_s_forward , fwd , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { inv , tobmerc_s_inverse , P , }
+		- SUCC   = { P , return , }
+
+45 :	"tobmerc_s_forward"
+		- NEIGH  = { tobmerc_s_forward , fwd , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { inv , tobmerc_s_inverse , P , }
+		- SUCC   = { P , return , }
+
+46 :	"return"
+		- NEIGH  = { P , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tobmerc_s_forward , fwd , P , }
+		- SUCC   = { }
+
+46 :	"P"
+		- NEIGH  = { P , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tobmerc_s_forward , fwd , P , }
+		- SUCC   = { }
+

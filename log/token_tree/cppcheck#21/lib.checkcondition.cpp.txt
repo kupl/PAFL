@@ -31153,28 +31153,28 @@
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
 		- PRED   = { link , tok , if , }
-		- SUCC   = { Match , while , astParent , tok , parent , * , Token , }
+		- SUCC   = { astParent , tok , parent , * , Token , }
 
 1402 :	"!"
 		- NEIGH  = { tok , ! , hasKnownIntValue , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
 		- PRED   = { link , tok , if , }
-		- SUCC   = { Match , while , astParent , tok , parent , * , Token , }
+		- SUCC   = { astParent , tok , parent , * , Token , }
 
 1402 :	"tok"
 		- NEIGH  = { tok , ! , hasKnownIntValue , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
 		- PRED   = { link , tok , if , }
-		- SUCC   = { Match , while , astParent , tok , parent , * , Token , }
+		- SUCC   = { astParent , tok , parent , * , Token , }
 
 1402 :	"hasKnownIntValue"
 		- NEIGH  = { tok , ! , hasKnownIntValue , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
 		- PRED   = { link , tok , if , }
-		- SUCC   = { Match , while , astParent , tok , parent , * , Token , }
+		- SUCC   = { astParent , tok , parent , * , Token , }
 
 1403 :	"continue"
 		- NEIGH  = { continue , }
@@ -31184,85 +31184,85 @@
 		- SUCC   = { }
 
 1406 :	"Token"
-		- NEIGH  = { Match , while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { }
 		- PRED   = { tok , ! , hasKnownIntValue , if , }
-		- SUCC   = { parent , ! , if , }
+		- SUCC   = { Match , Token , parent , while , }
 
 1406 :	"*"
-		- NEIGH  = { Match , while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { }
 		- PRED   = { tok , ! , hasKnownIntValue , if , }
-		- SUCC   = { parent , ! , if , }
+		- SUCC   = { Match , Token , parent , while , }
 
 1406 :	"parent"
-		- NEIGH  = { Match , while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { }
 		- PRED   = { tok , ! , hasKnownIntValue , if , }
-		- SUCC   = { parent , ! , if , }
+		- SUCC   = { Match , Token , parent , while , }
 
 1406 :	"tok"
-		- NEIGH  = { Match , while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { }
 		- PRED   = { tok , ! , hasKnownIntValue , if , }
-		- SUCC   = { parent , ! , if , }
+		- SUCC   = { Match , Token , parent , while , }
 
 1406 :	"astParent"
-		- NEIGH  = { Match , while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { }
 		- PRED   = { tok , ! , hasKnownIntValue , if , }
-		- SUCC   = { parent , ! , if , }
+		- SUCC   = { Match , Token , parent , while , }
 
 1407 :	"while"
-		- NEIGH  = { Match , while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { Match , Token , parent , while , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { tok , ! , hasKnownIntValue , if , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { parent , ! , if , }
 
 1407 :	"Token"
-		- NEIGH  = { Match , while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { Match , Token , parent , while , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { tok , ! , hasKnownIntValue , if , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { parent , ! , if , }
 
 1407 :	"Match"
-		- NEIGH  = { Match , while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { Match , Token , parent , while , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { tok , ! , hasKnownIntValue , if , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { parent , ! , if , }
 
 1407 :	"parent"
-		- NEIGH  = { Match , while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { Match , Token , parent , while , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { astParent , parent , }
-		- PRED   = { tok , ! , hasKnownIntValue , if , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { parent , ! , if , }
 
 1408 :	"parent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { Match , while , astParent , tok , parent , * , Token , }
+		- PARENT = { Match , Token , parent , while , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 1408 :	"parent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { Match , while , astParent , tok , parent , * , Token , }
+		- PARENT = { Match , Token , parent , while , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 1408 :	"astParent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { Match , while , astParent , tok , parent , * , Token , }
+		- PARENT = { Match , Token , parent , while , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
@@ -31271,22 +31271,22 @@
 		- NEIGH  = { parent , ! , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
-		- PRED   = { Match , while , astParent , tok , parent , * , Token , }
-		- SUCC   = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PRED   = { Match , Token , parent , while , }
+		- SUCC   = { condition , * , Token , }
 
 1409 :	"!"
 		- NEIGH  = { parent , ! , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
-		- PRED   = { Match , while , astParent , tok , parent , * , Token , }
-		- SUCC   = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PRED   = { Match , Token , parent , while , }
+		- SUCC   = { condition , * , Token , }
 
 1409 :	"parent"
 		- NEIGH  = { parent , ! , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
-		- PRED   = { Match , while , astParent , tok , parent , * , Token , }
-		- SUCC   = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PRED   = { Match , Token , parent , while , }
+		- SUCC   = { condition , * , Token , }
 
 1410 :	"continue"
 		- NEIGH  = { continue , }
@@ -31296,134 +31296,134 @@
 		- SUCC   = { }
 
 1411 :	"Token"
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { condition , * , Token , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { }
 		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- SUCC   = { tok , precedes , == , && , str , parent , if , }
 
 1411 :	"*"
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { condition , * , Token , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { }
 		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- SUCC   = { tok , precedes , == , && , str , parent , if , }
 
 1411 :	"condition"
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { condition , * , Token , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { }
 		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- SUCC   = { tok , precedes , == , && , str , parent , if , }
 
 1412 :	"if"
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { tok , precedes , == , && , str , parent , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { previous , if , Token , astOperand1 , parent , Match , condition , }
-		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- PRED   = { condition , * , Token , }
+		- SUCC   = { condition , }
 
 1412 :	"parent"
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { tok , precedes , == , && , str , parent , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { previous , if , Token , astOperand1 , parent , Match , condition , }
-		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- PRED   = { condition , * , Token , }
+		- SUCC   = { condition , }
 
 1412 :	"str"
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { tok , precedes , == , && , str , parent , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { previous , if , Token , astOperand1 , parent , Match , condition , }
-		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- PRED   = { condition , * , Token , }
+		- SUCC   = { condition , }
 
 1412 :	"=="
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { tok , precedes , == , && , str , parent , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { previous , if , Token , astOperand1 , parent , Match , condition , }
-		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- PRED   = { condition , * , Token , }
+		- SUCC   = { condition , }
 
 1412 :	"&&"
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { tok , precedes , == , && , str , parent , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { previous , if , Token , astOperand1 , parent , Match , condition , }
-		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- PRED   = { condition , * , Token , }
+		- SUCC   = { condition , }
 
 1412 :	"precedes"
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { tok , precedes , == , && , str , parent , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { previous , if , Token , astOperand1 , parent , Match , condition , }
-		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- PRED   = { condition , * , Token , }
+		- SUCC   = { condition , }
 
 1412 :	"tok"
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { tok , precedes , == , && , str , parent , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { previous , if , Token , astOperand1 , parent , Match , condition , }
-		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- PRED   = { condition , * , Token , }
+		- SUCC   = { condition , }
 
 1412 :	"parent"
-		- NEIGH  = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- NEIGH  = { tok , precedes , == , && , str , parent , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { previous , if , Token , astOperand1 , parent , Match , condition , }
-		- PRED   = { parent , ! , if , }
-		- SUCC   = { tok , diag , if , condition , }
+		- PRED   = { condition , * , Token , }
+		- SUCC   = { condition , }
 
 1413 :	"condition"
 		- NEIGH  = { astOperand1 , parent , condition , }
-		- PARENT = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PARENT = { tok , precedes , == , && , str , parent , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 1413 :	"parent"
 		- NEIGH  = { astOperand1 , parent , condition , }
-		- PARENT = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PARENT = { tok , precedes , == , && , str , parent , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 1413 :	"astOperand1"
 		- NEIGH  = { astOperand1 , parent , condition , }
-		- PARENT = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PARENT = { tok , precedes , == , && , str , parent , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 1414 :	"if"
 		- NEIGH  = { parent , Token , previous , Match , if , }
-		- PARENT = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PARENT = { tok , precedes , == , && , str , parent , if , }
 		- CHILD  = { simpleMatch , Token , if , astOperand2 , parent , condition , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1414 :	"Token"
 		- NEIGH  = { parent , Token , previous , Match , if , }
-		- PARENT = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PARENT = { tok , precedes , == , && , str , parent , if , }
 		- CHILD  = { simpleMatch , Token , if , astOperand2 , parent , condition , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1414 :	"Match"
 		- NEIGH  = { parent , Token , previous , Match , if , }
-		- PARENT = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PARENT = { tok , precedes , == , && , str , parent , if , }
 		- CHILD  = { simpleMatch , Token , if , astOperand2 , parent , condition , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1414 :	"parent"
 		- NEIGH  = { parent , Token , previous , Match , if , }
-		- PARENT = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PARENT = { tok , precedes , == , && , str , parent , if , }
 		- CHILD  = { simpleMatch , Token , if , astOperand2 , parent , condition , }
 		- PRED   = { }
 		- SUCC   = { }
 
 1414 :	"previous"
 		- NEIGH  = { parent , Token , previous , Match , if , }
-		- PARENT = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PARENT = { tok , precedes , == , && , str , parent , if , }
 		- CHILD  = { simpleMatch , Token , if , astOperand2 , parent , condition , }
 		- PRED   = { }
 		- SUCC   = { }
@@ -31653,36 +31653,36 @@
 		- SUCC   = { }
 
 1422 :	"condition"
-		- NEIGH  = { tok , diag , if , condition , }
+		- NEIGH  = { condition , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { }
-		- PRED   = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
-		- SUCC   = { tok , Token , Match , if , }
+		- PRED   = { tok , precedes , == , && , str , parent , if , }
+		- SUCC   = { tok , diag , if , }
 
 1425 :	"if"
-		- NEIGH  = { tok , diag , if , condition , }
+		- NEIGH  = { tok , diag , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
-		- PRED   = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PRED   = { condition , }
 		- SUCC   = { tok , Token , Match , if , }
 
 1425 :	"diag"
-		- NEIGH  = { tok , diag , if , condition , }
+		- NEIGH  = { tok , diag , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
-		- PRED   = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PRED   = { condition , }
 		- SUCC   = { tok , Token , Match , if , }
 
 1425 :	"tok"
-		- NEIGH  = { tok , diag , if , condition , }
+		- NEIGH  = { tok , diag , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
-		- PRED   = { tok , && , == , str , parent , if , condition , * , precedes , Token , }
+		- PRED   = { condition , }
 		- SUCC   = { tok , Token , Match , if , }
 
 1426 :	"continue"
 		- NEIGH  = { continue , }
-		- PARENT = { tok , diag , if , condition , }
+		- PARENT = { tok , diag , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
@@ -31691,28 +31691,28 @@
 		- NEIGH  = { tok , Token , Match , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
-		- PRED   = { tok , diag , if , condition , }
+		- PRED   = { tok , diag , if , }
 		- SUCC   = { tok , Token , Match , if , }
 
 1427 :	"Token"
 		- NEIGH  = { tok , Token , Match , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
-		- PRED   = { tok , diag , if , condition , }
+		- PRED   = { tok , diag , if , }
 		- SUCC   = { tok , Token , Match , if , }
 
 1427 :	"Match"
 		- NEIGH  = { tok , Token , Match , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
-		- PRED   = { tok , diag , if , condition , }
+		- PRED   = { tok , diag , if , }
 		- SUCC   = { tok , Token , Match , if , }
 
 1427 :	"tok"
 		- NEIGH  = { tok , Token , Match , if , }
 		- PARENT = { scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
 		- CHILD  = { continue , }
-		- PRED   = { tok , diag , if , condition , }
+		- PRED   = { tok , diag , if , }
 		- SUCC   = { tok , Token , Match , if , }
 
 1428 :	"continue"

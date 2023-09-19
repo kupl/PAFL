@@ -54,7 +54,7 @@ public:
     
 private:
     void _insert(decltype(Token::neighbors) set_ptr, block& blck, float base);
-    float _maxWeight(decltype(Token::neighbors) set_ptr, const block& blck) const;
+    float _maxWeight(decltype(Token::neighbors) set_ptr, const block& blck, size_t& denom) const;
 
     block _target;
     block _parent;
@@ -108,35 +108,39 @@ void Localizer::Lang::assignFuture()
 
 float Localizer::Lang::similarity(const Token& token) const
 {
-    float target_weight = _maxWeight(token.neighbors, _target);
+    size_t denom = 0;
+
+    float target_weight = _maxWeight(token.neighbors, _target, denom); denom = 0;
+    float pred_weight = _maxWeight(token.predecessor, _pred, denom);
+    float succ_weight = _maxWeight(token.successor, _succ, denom);
 
     float parent_weight = 0.0f;
     if (token.parent != token.root)
-        parent_weight = _maxWeight(token.parent->neighbors, _parent);
+        parent_weight = _maxWeight(token.parent->neighbors, _parent, denom);
+
     float child_weight = 0.0f;
     if (token.children)
-        child_weight = _maxWeight(token.children, _child);
+        child_weight = _maxWeight(token.children, _child, denom);
 
-    float pred_weight = _maxWeight(token.predecessor, _pred);
-    float succ_weight = _maxWeight(token.successor, _succ);
-
-    return target_weight + (parent_weight + child_weight + pred_weight + succ_weight) / 4;
+    return (target_weight + (parent_weight + child_weight + pred_weight + succ_weight) / denom) / 2;
 }
 
 
 
-float Localizer::Lang::_maxWeight(decltype(Token::neighbors) set_ptr, const block& blck) const
+float Localizer::Lang::_maxWeight(decltype(Token::neighbors) set_ptr, const block& blck, size_t& denom) const
 {
+    if (blck.empty() || set_ptr->empty())
+        return 0.0f;
+    denom++;
     float ret = 0.0f;
-    if (!blck.empty())
-        for (auto& tok : *set_ptr)
-            if (blck.contains(tok)) {
 
-                auto temp = blck.at(tok).weight;
-                if (temp > ret)
-                    ret = temp;
-            }
+    for (auto& tok : *set_ptr)
+        if (blck.contains(tok)) {
 
+            auto temp = blck.at(tok).weight;
+            if (temp > ret)
+                ret = temp;
+        }
     return ret;
 }
 

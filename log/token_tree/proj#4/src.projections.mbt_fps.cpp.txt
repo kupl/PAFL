@@ -1,0 +1,1008 @@
+8 :	"PROJ_HEAD"
+		- NEIGH  = { PROJ_HEAD , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+8 :	"mbt_fps"
+		- NEIGH  = { mbt_fps , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+19 :	"PJ_XY"
+		- NEIGH  = { PJ_XY , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+19 :	"s_forward"
+		- NEIGH  = { s_forward , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+19 :	"PJ_LP"
+		- NEIGH  = { PJ_LP , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+19 :	"lp"
+		- NEIGH  = { lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+19 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+19 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+19 :	"P"
+		- NEIGH  = { P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+20 :	"PJ_XY"
+		- NEIGH  = { xy , PJ_XY , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , V , k , }
+
+20 :	"xy"
+		- NEIGH  = { xy , PJ_XY , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , V , k , }
+
+21 :	"k"
+		- NEIGH  = { t , V , k , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , PJ_XY , }
+		- SUCC   = { i , }
+
+21 :	"V"
+		- NEIGH  = { t , V , k , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , PJ_XY , }
+		- SUCC   = { i , }
+
+21 :	"t"
+		- NEIGH  = { t , V , k , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , PJ_XY , }
+		- SUCC   = { i , }
+
+22 :	"i"
+		- NEIGH  = { i , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , V , k , }
+		- SUCC   = { P , }
+
+23 :	"P"
+		- NEIGH  = { P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { i , }
+		- SUCC   = { phi , lp , sin , * , k , }
+
+25 :	"k"
+		- NEIGH  = { phi , lp , sin , * , k , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , }
+		- SUCC   = { -- , i , for , }
+
+25 :	"*"
+		- NEIGH  = { phi , lp , sin , * , k , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , }
+		- SUCC   = { -- , i , for , }
+
+25 :	"sin"
+		- NEIGH  = { phi , lp , sin , * , k , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , }
+		- SUCC   = { -- , i , for , }
+
+25 :	"lp"
+		- NEIGH  = { phi , lp , sin , * , k , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , }
+		- SUCC   = { -- , i , for , }
+
+25 :	"phi"
+		- NEIGH  = { phi , lp , sin , * , k , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , }
+		- SUCC   = { -- , i , for , }
+
+26 :	"for"
+		- NEIGH  = { -- , i , for , }
+		- PARENT = { }
+		- CHILD  = { fabs , cos , - , if , sin , * , V , + , / , -= , t , phi , < , k , lp , }
+		- PRED   = { phi , lp , sin , * , k , }
+		- SUCC   = { / , phi , lp , t , }
+
+26 :	"i"
+		- NEIGH  = { -- , i , for , }
+		- PARENT = { }
+		- CHILD  = { fabs , cos , - , if , sin , * , V , + , / , -= , t , phi , < , k , lp , }
+		- PRED   = { phi , lp , sin , * , k , }
+		- SUCC   = { / , phi , lp , t , }
+
+26 :	"i"
+		- NEIGH  = { -- , i , for , }
+		- PARENT = { }
+		- CHILD  = { fabs , cos , - , if , sin , * , V , + , / , -= , t , phi , < , k , lp , }
+		- PRED   = { phi , lp , sin , * , k , }
+		- SUCC   = { / , phi , lp , t , }
+
+26 :	"--"
+		- NEIGH  = { -- , i , for , }
+		- PARENT = { }
+		- CHILD  = { fabs , cos , - , if , sin , * , V , + , / , -= , t , phi , < , k , lp , }
+		- PRED   = { phi , lp , sin , * , k , }
+		- SUCC   = { / , phi , lp , t , }
+
+26 :	"i"
+		- NEIGH  = { -- , i , for , }
+		- PARENT = { }
+		- CHILD  = { fabs , cos , - , if , sin , * , V , + , / , -= , t , phi , < , k , lp , }
+		- PRED   = { phi , lp , sin , * , k , }
+		- SUCC   = { / , phi , lp , t , }
+
+27 :	"t"
+		- NEIGH  = { / , phi , lp , t , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+
+27 :	"lp"
+		- NEIGH  = { / , phi , lp , t , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+
+27 :	"phi"
+		- NEIGH  = { / , phi , lp , t , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+
+27 :	"/"
+		- NEIGH  = { / , phi , lp , t , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+
+28 :	"lp"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"phi"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"-="
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"V"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"*"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"sin"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"t"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"+"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"sin"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"lp"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"phi"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"-"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"k"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+28 :	"/"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+29 :	"*"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+29 :	"cos"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+29 :	"t"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+29 :	"+"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+29 :	"cos"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+29 :	"lp"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+29 :	"phi"
+		- NEIGH  = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { V , < , fabs , if , }
+
+30 :	"if"
+		- NEIGH  = { V , < , fabs , if , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { break , }
+		- PRED   = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- SUCC   = { }
+
+30 :	"fabs"
+		- NEIGH  = { V , < , fabs , if , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { break , }
+		- PRED   = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- SUCC   = { }
+
+30 :	"V"
+		- NEIGH  = { V , < , fabs , if , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { break , }
+		- PRED   = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- SUCC   = { }
+
+30 :	"<"
+		- NEIGH  = { V , < , fabs , if , }
+		- PARENT = { -- , i , for , }
+		- CHILD  = { break , }
+		- PRED   = { cos , - , sin , * , + , / , -= , V , t , phi , k , lp , }
+		- SUCC   = { }
+
+31 :	"break"
+		- NEIGH  = { break , }
+		- PARENT = { V , < , fabs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"t"
+		- NEIGH  = { / , phi , lp , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { -- , i , for , }
+		- SUCC   = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+
+33 :	"lp"
+		- NEIGH  = { / , phi , lp , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { -- , i , for , }
+		- SUCC   = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+
+33 :	"phi"
+		- NEIGH  = { / , phi , lp , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { -- , i , for , }
+		- SUCC   = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+
+33 :	"/"
+		- NEIGH  = { / , phi , lp , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { -- , i , for , }
+		- SUCC   = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+
+34 :	"xy"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"x"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"*"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"lp"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"lam"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"*"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"+"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"*"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"cos"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"lp"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"phi"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"/"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"cos"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+34 :	"t"
+		- NEIGH  = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { / , phi , lp , t , }
+		- SUCC   = { t , sin , * , y , xy , }
+
+35 :	"xy"
+		- NEIGH  = { t , sin , * , y , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+35 :	"y"
+		- NEIGH  = { t , sin , * , y , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+35 :	"*"
+		- NEIGH  = { t , sin , * , y , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+35 :	"sin"
+		- NEIGH  = { t , sin , * , y , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+35 :	"t"
+		- NEIGH  = { t , sin , * , y , xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , / , phi , cos , + , lp , lam , * , x , xy , }
+		- SUCC   = { xy , return , }
+
+36 :	"return"
+		- NEIGH  = { xy , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , sin , * , y , xy , }
+		- SUCC   = { }
+
+36 :	"xy"
+		- NEIGH  = { xy , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , sin , * , y , xy , }
+		- SUCC   = { }
+
+40 :	"PJ_LP"
+		- NEIGH  = { PJ_LP , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"s_inverse"
+		- NEIGH  = { s_inverse , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"PJ_XY"
+		- NEIGH  = { PJ_XY , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"xy"
+		- NEIGH  = { xy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"P"
+		- NEIGH  = { P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+41 :	"PJ_LP"
+		- NEIGH  = { lp , PJ_LP , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , }
+
+41 :	"lp"
+		- NEIGH  = { lp , PJ_LP , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , }
+
+42 :	"t"
+		- NEIGH  = { t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { lp , PJ_LP , }
+		- SUCC   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+
+44 :	"lp"
+		- NEIGH  = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , }
+		- SUCC   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+
+44 :	"phi"
+		- NEIGH  = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , }
+		- SUCC   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+
+44 :	"*"
+		- NEIGH  = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , }
+		- SUCC   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+
+44 :	"t"
+		- NEIGH  = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , }
+		- SUCC   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+
+44 :	"aasin"
+		- NEIGH  = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , }
+		- SUCC   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+
+44 :	"P"
+		- NEIGH  = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , }
+		- SUCC   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+
+44 :	"ctx"
+		- NEIGH  = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , }
+		- SUCC   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+
+44 :	"xy"
+		- NEIGH  = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , }
+		- SUCC   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+
+44 :	"y"
+		- NEIGH  = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , }
+		- SUCC   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+
+44 :	"/"
+		- NEIGH  = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , }
+		- SUCC   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+
+45 :	"lp"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"lam"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"xy"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"x"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"/"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"*"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"+"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"*"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"cos"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"lp"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"phi"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"/"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"cos"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+45 :	"t"
+		- NEIGH  = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { xy , ctx , P , aasin , / , phi , t , y , * , lp , }
+		- SUCC   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+
+46 :	"lp"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"phi"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"aasin"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"P"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"ctx"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"*"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"sin"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"t"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"+"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"sin"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"lp"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"phi"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+46 :	"/"
+		- NEIGH  = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , t , phi , cos , / , x , xy , lam , lp , }
+		- SUCC   = { lp , return , }
+
+47 :	"return"
+		- NEIGH  = { lp , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- SUCC   = { }
+
+47 :	"lp"
+		- NEIGH  = { lp , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , * , P , sin , aasin , ctx , / , t , phi , lp , }
+		- SUCC   = { }
+
+51 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"PROJECTION"
+		- NEIGH  = { PROJECTION , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"mbt_fps"
+		- NEIGH  = { mbt_fps , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+53 :	"P"
+		- NEIGH  = { es , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { s_inverse , inv , P , }
+
+53 :	"es"
+		- NEIGH  = { es , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { s_inverse , inv , P , }
+
+54 :	"P"
+		- NEIGH  = { s_inverse , inv , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { es , P , }
+		- SUCC   = { s_forward , fwd , P , }
+
+54 :	"inv"
+		- NEIGH  = { s_inverse , inv , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { es , P , }
+		- SUCC   = { s_forward , fwd , P , }
+
+54 :	"s_inverse"
+		- NEIGH  = { s_inverse , inv , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { es , P , }
+		- SUCC   = { s_forward , fwd , P , }
+
+55 :	"P"
+		- NEIGH  = { s_forward , fwd , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { s_inverse , inv , P , }
+		- SUCC   = { P , return , }
+
+55 :	"fwd"
+		- NEIGH  = { s_forward , fwd , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { s_inverse , inv , P , }
+		- SUCC   = { P , return , }
+
+55 :	"s_forward"
+		- NEIGH  = { s_forward , fwd , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { s_inverse , inv , P , }
+		- SUCC   = { P , return , }
+
+57 :	"return"
+		- NEIGH  = { P , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { s_forward , fwd , P , }
+		- SUCC   = { }
+
+57 :	"P"
+		- NEIGH  = { P , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { s_forward , fwd , P , }
+		- SUCC   = { }
+

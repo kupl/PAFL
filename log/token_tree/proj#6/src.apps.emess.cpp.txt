@@ -1,0 +1,497 @@
+27 :	"emess"
+		- NEIGH  = { emess , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+27 :	"code"
+		- NEIGH  = { code , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+27 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+27 :	"fmt"
+		- NEIGH  = { fmt , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+28 :	"va_list"
+		- NEIGH  = { args , va_list , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { fmt , args , va_start , }
+
+28 :	"args"
+		- NEIGH  = { args , va_list , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { fmt , args , va_start , }
+
+30 :	"va_start"
+		- NEIGH  = { fmt , args , va_start , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { args , va_list , }
+		- SUCC   = { != , fmt , if , }
+
+30 :	"args"
+		- NEIGH  = { fmt , args , va_start , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { args , va_list , }
+		- SUCC   = { != , fmt , if , }
+
+30 :	"fmt"
+		- NEIGH  = { fmt , args , va_start , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { args , va_list , }
+		- SUCC   = { != , fmt , if , }
+
+32 :	"if"
+		- NEIGH  = { != , fmt , if , }
+		- PARENT = { }
+		- CHILD  = { Prog_name , pj_get_release , stderr , emess_dat , fprintf , }
+		- PRED   = { fmt , args , va_start , }
+		- SUCC   = { * , != , File_name , && , emess_dat , if , }
+
+32 :	"fmt"
+		- NEIGH  = { != , fmt , if , }
+		- PARENT = { }
+		- CHILD  = { Prog_name , pj_get_release , stderr , emess_dat , fprintf , }
+		- PRED   = { fmt , args , va_start , }
+		- SUCC   = { * , != , File_name , && , emess_dat , if , }
+
+32 :	"!="
+		- NEIGH  = { != , fmt , if , }
+		- PARENT = { }
+		- CHILD  = { Prog_name , pj_get_release , stderr , emess_dat , fprintf , }
+		- PRED   = { fmt , args , va_start , }
+		- SUCC   = { * , != , File_name , && , emess_dat , if , }
+
+33 :	"fprintf"
+		- NEIGH  = { Prog_name , pj_get_release , stderr , emess_dat , fprintf , }
+		- PARENT = { != , fmt , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"stderr"
+		- NEIGH  = { Prog_name , pj_get_release , stderr , emess_dat , fprintf , }
+		- PARENT = { != , fmt , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"pj_get_release"
+		- NEIGH  = { Prog_name , pj_get_release , stderr , emess_dat , fprintf , }
+		- PARENT = { != , fmt , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+34 :	"emess_dat"
+		- NEIGH  = { Prog_name , pj_get_release , stderr , emess_dat , fprintf , }
+		- PARENT = { != , fmt , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+34 :	"Prog_name"
+		- NEIGH  = { Prog_name , pj_get_release , stderr , emess_dat , fprintf , }
+		- PARENT = { != , fmt , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+36 :	"if"
+		- NEIGH  = { * , != , File_name , && , emess_dat , if , }
+		- PARENT = { }
+		- CHILD  = { putc , > , File_line , emess_dat , if , File_name , stderr , fprintf , }
+		- PRED   = { != , fmt , if , }
+		- SUCC   = { - , == , || , code , if , }
+
+36 :	"emess_dat"
+		- NEIGH  = { * , != , File_name , && , emess_dat , if , }
+		- PARENT = { }
+		- CHILD  = { putc , > , File_line , emess_dat , if , File_name , stderr , fprintf , }
+		- PRED   = { != , fmt , if , }
+		- SUCC   = { - , == , || , code , if , }
+
+36 :	"File_name"
+		- NEIGH  = { * , != , File_name , && , emess_dat , if , }
+		- PARENT = { }
+		- CHILD  = { putc , > , File_line , emess_dat , if , File_name , stderr , fprintf , }
+		- PRED   = { != , fmt , if , }
+		- SUCC   = { - , == , || , code , if , }
+
+36 :	"!="
+		- NEIGH  = { * , != , File_name , && , emess_dat , if , }
+		- PARENT = { }
+		- CHILD  = { putc , > , File_line , emess_dat , if , File_name , stderr , fprintf , }
+		- PRED   = { != , fmt , if , }
+		- SUCC   = { - , == , || , code , if , }
+
+36 :	"&&"
+		- NEIGH  = { * , != , File_name , && , emess_dat , if , }
+		- PARENT = { }
+		- CHILD  = { putc , > , File_line , emess_dat , if , File_name , stderr , fprintf , }
+		- PRED   = { != , fmt , if , }
+		- SUCC   = { - , == , || , code , if , }
+
+36 :	"*"
+		- NEIGH  = { * , != , File_name , && , emess_dat , if , }
+		- PARENT = { }
+		- CHILD  = { putc , > , File_line , emess_dat , if , File_name , stderr , fprintf , }
+		- PRED   = { != , fmt , if , }
+		- SUCC   = { - , == , || , code , if , }
+
+36 :	"emess_dat"
+		- NEIGH  = { * , != , File_name , && , emess_dat , if , }
+		- PARENT = { }
+		- CHILD  = { putc , > , File_line , emess_dat , if , File_name , stderr , fprintf , }
+		- PRED   = { != , fmt , if , }
+		- SUCC   = { - , == , || , code , if , }
+
+36 :	"File_name"
+		- NEIGH  = { * , != , File_name , && , emess_dat , if , }
+		- PARENT = { }
+		- CHILD  = { putc , > , File_line , emess_dat , if , File_name , stderr , fprintf , }
+		- PRED   = { != , fmt , if , }
+		- SUCC   = { - , == , || , code , if , }
+
+37 :	"fprintf"
+		- NEIGH  = { File_name , stderr , emess_dat , fprintf , }
+		- PARENT = { * , != , File_name , && , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { > , File_line , emess_dat , if , }
+
+37 :	"stderr"
+		- NEIGH  = { File_name , stderr , emess_dat , fprintf , }
+		- PARENT = { * , != , File_name , && , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { > , File_line , emess_dat , if , }
+
+37 :	"emess_dat"
+		- NEIGH  = { File_name , stderr , emess_dat , fprintf , }
+		- PARENT = { * , != , File_name , && , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { > , File_line , emess_dat , if , }
+
+37 :	"File_name"
+		- NEIGH  = { File_name , stderr , emess_dat , fprintf , }
+		- PARENT = { * , != , File_name , && , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { > , File_line , emess_dat , if , }
+
+38 :	"if"
+		- NEIGH  = { > , File_line , emess_dat , if , }
+		- PARENT = { * , != , File_name , && , emess_dat , if , }
+		- CHILD  = { File_line , fputc , stderr , emess_dat , fprintf , }
+		- PRED   = { File_name , stderr , emess_dat , fprintf , }
+		- SUCC   = { }
+
+38 :	"emess_dat"
+		- NEIGH  = { > , File_line , emess_dat , if , }
+		- PARENT = { * , != , File_name , && , emess_dat , if , }
+		- CHILD  = { File_line , fputc , stderr , emess_dat , fprintf , }
+		- PRED   = { File_name , stderr , emess_dat , fprintf , }
+		- SUCC   = { }
+
+38 :	"File_line"
+		- NEIGH  = { > , File_line , emess_dat , if , }
+		- PARENT = { * , != , File_name , && , emess_dat , if , }
+		- CHILD  = { File_line , fputc , stderr , emess_dat , fprintf , }
+		- PRED   = { File_name , stderr , emess_dat , fprintf , }
+		- SUCC   = { }
+
+38 :	">"
+		- NEIGH  = { > , File_line , emess_dat , if , }
+		- PARENT = { * , != , File_name , && , emess_dat , if , }
+		- CHILD  = { File_line , fputc , stderr , emess_dat , fprintf , }
+		- PRED   = { File_name , stderr , emess_dat , fprintf , }
+		- SUCC   = { }
+
+39 :	"fprintf"
+		- NEIGH  = { File_line , stderr , emess_dat , fprintf , }
+		- PARENT = { > , File_line , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+39 :	"stderr"
+		- NEIGH  = { File_line , stderr , emess_dat , fprintf , }
+		- PARENT = { > , File_line , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+39 :	"emess_dat"
+		- NEIGH  = { File_line , stderr , emess_dat , fprintf , }
+		- PARENT = { > , File_line , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+39 :	"File_line"
+		- NEIGH  = { File_line , stderr , emess_dat , fprintf , }
+		- PARENT = { > , File_line , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+41 :	"fputc"
+		- NEIGH  = { stderr , fputc , }
+		- PARENT = { > , File_line , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+41 :	"stderr"
+		- NEIGH  = { stderr , fputc , }
+		- PARENT = { > , File_line , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+43 :	"putc"
+		- NEIGH  = { stderr , putc , }
+		- PARENT = { * , != , File_name , && , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+43 :	"stderr"
+		- NEIGH  = { stderr , putc , }
+		- PARENT = { * , != , File_name , && , emess_dat , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+45 :	"if"
+		- NEIGH  = { - , == , || , code , if , }
+		- PARENT = { }
+		- CHILD  = { stderr , my_strerror , * , fprintf , errno , my_errno , }
+		- PRED   = { * , != , File_name , && , emess_dat , if , }
+		- SUCC   = { args , fmt , stderr , vfprintf , }
+
+45 :	"code"
+		- NEIGH  = { - , == , || , code , if , }
+		- PARENT = { }
+		- CHILD  = { stderr , my_strerror , * , fprintf , errno , my_errno , }
+		- PRED   = { * , != , File_name , && , emess_dat , if , }
+		- SUCC   = { args , fmt , stderr , vfprintf , }
+
+45 :	"=="
+		- NEIGH  = { - , == , || , code , if , }
+		- PARENT = { }
+		- CHILD  = { stderr , my_strerror , * , fprintf , errno , my_errno , }
+		- PRED   = { * , != , File_name , && , emess_dat , if , }
+		- SUCC   = { args , fmt , stderr , vfprintf , }
+
+45 :	"||"
+		- NEIGH  = { - , == , || , code , if , }
+		- PARENT = { }
+		- CHILD  = { stderr , my_strerror , * , fprintf , errno , my_errno , }
+		- PRED   = { * , != , File_name , && , emess_dat , if , }
+		- SUCC   = { args , fmt , stderr , vfprintf , }
+
+45 :	"code"
+		- NEIGH  = { - , == , || , code , if , }
+		- PARENT = { }
+		- CHILD  = { stderr , my_strerror , * , fprintf , errno , my_errno , }
+		- PRED   = { * , != , File_name , && , emess_dat , if , }
+		- SUCC   = { args , fmt , stderr , vfprintf , }
+
+45 :	"=="
+		- NEIGH  = { - , == , || , code , if , }
+		- PARENT = { }
+		- CHILD  = { stderr , my_strerror , * , fprintf , errno , my_errno , }
+		- PRED   = { * , != , File_name , && , emess_dat , if , }
+		- SUCC   = { args , fmt , stderr , vfprintf , }
+
+45 :	"-"
+		- NEIGH  = { - , == , || , code , if , }
+		- PARENT = { }
+		- CHILD  = { stderr , my_strerror , * , fprintf , errno , my_errno , }
+		- PRED   = { * , != , File_name , && , emess_dat , if , }
+		- SUCC   = { args , fmt , stderr , vfprintf , }
+
+47 :	"my_errno"
+		- NEIGH  = { errno , my_errno , }
+		- PARENT = { - , == , || , code , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { my_strerror , * , }
+
+47 :	"errno"
+		- NEIGH  = { errno , my_errno , }
+		- PARENT = { - , == , || , code , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { my_strerror , * , }
+
+52 :	"*"
+		- NEIGH  = { my_strerror , * , }
+		- PARENT = { - , == , || , code , if , }
+		- CHILD  = { }
+		- PRED   = { errno , my_errno , }
+		- SUCC   = { my_errno , my_strerror , stderr , fprintf , }
+
+52 :	"my_strerror"
+		- NEIGH  = { my_strerror , * , }
+		- PARENT = { - , == , || , code , if , }
+		- CHILD  = { }
+		- PRED   = { errno , my_errno , }
+		- SUCC   = { my_errno , my_strerror , stderr , fprintf , }
+
+54 :	"fprintf"
+		- NEIGH  = { my_errno , my_strerror , stderr , fprintf , }
+		- PARENT = { - , == , || , code , if , }
+		- CHILD  = { }
+		- PRED   = { my_strerror , * , }
+		- SUCC   = { }
+
+54 :	"stderr"
+		- NEIGH  = { my_errno , my_strerror , stderr , fprintf , }
+		- PARENT = { - , == , || , code , if , }
+		- CHILD  = { }
+		- PRED   = { my_strerror , * , }
+		- SUCC   = { }
+
+55 :	"my_errno"
+		- NEIGH  = { my_errno , my_strerror , stderr , fprintf , }
+		- PARENT = { - , == , || , code , if , }
+		- CHILD  = { }
+		- PRED   = { my_strerror , * , }
+		- SUCC   = { }
+
+55 :	"my_strerror"
+		- NEIGH  = { my_errno , my_strerror , stderr , fprintf , }
+		- PARENT = { - , == , || , code , if , }
+		- CHILD  = { }
+		- PRED   = { my_strerror , * , }
+		- SUCC   = { }
+
+59 :	"vfprintf"
+		- NEIGH  = { args , fmt , stderr , vfprintf , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { - , == , || , code , if , }
+		- SUCC   = { args , va_end , }
+
+59 :	"stderr"
+		- NEIGH  = { args , fmt , stderr , vfprintf , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { - , == , || , code , if , }
+		- SUCC   = { args , va_end , }
+
+59 :	"fmt"
+		- NEIGH  = { args , fmt , stderr , vfprintf , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { - , == , || , code , if , }
+		- SUCC   = { args , va_end , }
+
+59 :	"args"
+		- NEIGH  = { args , fmt , stderr , vfprintf , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { - , == , || , code , if , }
+		- SUCC   = { args , va_end , }
+
+60 :	"va_end"
+		- NEIGH  = { args , va_end , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { args , fmt , stderr , vfprintf , }
+		- SUCC   = { > , code , if , }
+
+60 :	"args"
+		- NEIGH  = { args , va_end , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { args , fmt , stderr , vfprintf , }
+		- SUCC   = { > , code , if , }
+
+62 :	"if"
+		- NEIGH  = { > , code , if , }
+		- PARENT = { }
+		- CHILD  = { code , putc , exit , stderr , fputs , }
+		- PRED   = { args , va_end , }
+		- SUCC   = { }
+
+62 :	"code"
+		- NEIGH  = { > , code , if , }
+		- PARENT = { }
+		- CHILD  = { code , putc , exit , stderr , fputs , }
+		- PRED   = { args , va_end , }
+		- SUCC   = { }
+
+62 :	">"
+		- NEIGH  = { > , code , if , }
+		- PARENT = { }
+		- CHILD  = { code , putc , exit , stderr , fputs , }
+		- PRED   = { args , va_end , }
+		- SUCC   = { }
+
+63 :	"fputs"
+		- NEIGH  = { stderr , fputs , }
+		- PARENT = { > , code , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { code , exit , }
+
+63 :	"stderr"
+		- NEIGH  = { stderr , fputs , }
+		- PARENT = { > , code , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { code , exit , }
+
+64 :	"exit"
+		- NEIGH  = { code , exit , }
+		- PARENT = { > , code , if , }
+		- CHILD  = { }
+		- PRED   = { stderr , fputs , }
+		- SUCC   = { }
+
+64 :	"code"
+		- NEIGH  = { code , exit , }
+		- PARENT = { > , code , if , }
+		- CHILD  = { }
+		- PRED   = { stderr , fputs , }
+		- SUCC   = { }
+
+67 :	"putc"
+		- NEIGH  = { stderr , putc , }
+		- PARENT = { > , code , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+67 :	"stderr"
+		- NEIGH  = { stderr , putc , }
+		- PARENT = { > , code , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+

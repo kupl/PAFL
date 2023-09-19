@@ -1,0 +1,511 @@
+17 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"pj_authset"
+		- NEIGH  = { pj_authset , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"es"
+		- NEIGH  = { es , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+19 :	"t"
+		- NEIGH  = { APA , * , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { != , * , APA , malloc , if , }
+
+19 :	"*"
+		- NEIGH  = { APA , * , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { != , * , APA , malloc , if , }
+
+19 :	"APA"
+		- NEIGH  = { APA , * , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { != , * , APA , malloc , if , }
+
+21 :	"if"
+		- NEIGH  = { != , * , APA , malloc , if , }
+		- PARENT = { }
+		- CHILD  = { += , t , es , *= , * , APA , }
+		- PRED   = { APA , * , t , }
+		- SUCC   = { APA , return , }
+
+21 :	"APA"
+		- NEIGH  = { != , * , APA , malloc , if , }
+		- PARENT = { }
+		- CHILD  = { += , t , es , *= , * , APA , }
+		- PRED   = { APA , * , t , }
+		- SUCC   = { APA , return , }
+
+21 :	"*"
+		- NEIGH  = { != , * , APA , malloc , if , }
+		- PARENT = { }
+		- CHILD  = { += , t , es , *= , * , APA , }
+		- PRED   = { APA , * , t , }
+		- SUCC   = { APA , return , }
+
+21 :	"malloc"
+		- NEIGH  = { != , * , APA , malloc , if , }
+		- PARENT = { }
+		- CHILD  = { += , t , es , *= , * , APA , }
+		- PRED   = { APA , * , t , }
+		- SUCC   = { APA , return , }
+
+21 :	"*"
+		- NEIGH  = { != , * , APA , malloc , if , }
+		- PARENT = { }
+		- CHILD  = { += , t , es , *= , * , APA , }
+		- PRED   = { APA , * , t , }
+		- SUCC   = { APA , return , }
+
+21 :	"!="
+		- NEIGH  = { != , * , APA , malloc , if , }
+		- PARENT = { }
+		- CHILD  = { += , t , es , *= , * , APA , }
+		- PRED   = { APA , * , t , }
+		- SUCC   = { APA , return , }
+
+22 :	"APA"
+		- NEIGH  = { es , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { * , es , t , }
+
+22 :	"es"
+		- NEIGH  = { es , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { * , es , t , }
+
+22 :	"*"
+		- NEIGH  = { es , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { * , es , t , }
+
+23 :	"t"
+		- NEIGH  = { * , es , t , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { es , * , APA , }
+		- SUCC   = { t , += , * , APA , }
+
+23 :	"es"
+		- NEIGH  = { * , es , t , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { es , * , APA , }
+		- SUCC   = { t , += , * , APA , }
+
+23 :	"*"
+		- NEIGH  = { * , es , t , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { es , * , APA , }
+		- SUCC   = { t , += , * , APA , }
+
+23 :	"es"
+		- NEIGH  = { * , es , t , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { es , * , APA , }
+		- SUCC   = { t , += , * , APA , }
+
+24 :	"APA"
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { * , es , t , }
+		- SUCC   = { t , * , APA , }
+
+24 :	"+="
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { * , es , t , }
+		- SUCC   = { t , * , APA , }
+
+24 :	"t"
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { * , es , t , }
+		- SUCC   = { t , * , APA , }
+
+24 :	"*"
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { * , es , t , }
+		- SUCC   = { t , * , APA , }
+
+25 :	"APA"
+		- NEIGH  = { t , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , += , * , APA , }
+		- SUCC   = { es , *= , t , }
+
+25 :	"t"
+		- NEIGH  = { t , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , += , * , APA , }
+		- SUCC   = { es , *= , t , }
+
+25 :	"*"
+		- NEIGH  = { t , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , += , * , APA , }
+		- SUCC   = { es , *= , t , }
+
+26 :	"t"
+		- NEIGH  = { es , *= , t , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , * , APA , }
+		- SUCC   = { t , += , * , APA , }
+
+26 :	"*="
+		- NEIGH  = { es , *= , t , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , * , APA , }
+		- SUCC   = { t , += , * , APA , }
+
+26 :	"es"
+		- NEIGH  = { es , *= , t , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , * , APA , }
+		- SUCC   = { t , += , * , APA , }
+
+27 :	"APA"
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { es , *= , t , }
+		- SUCC   = { t , += , * , APA , }
+
+27 :	"+="
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { es , *= , t , }
+		- SUCC   = { t , += , * , APA , }
+
+27 :	"t"
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { es , *= , t , }
+		- SUCC   = { t , += , * , APA , }
+
+27 :	"*"
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { es , *= , t , }
+		- SUCC   = { t , += , * , APA , }
+
+28 :	"APA"
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , += , * , APA , }
+		- SUCC   = { t , * , APA , }
+
+28 :	"+="
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , += , * , APA , }
+		- SUCC   = { t , * , APA , }
+
+28 :	"t"
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , += , * , APA , }
+		- SUCC   = { t , * , APA , }
+
+28 :	"*"
+		- NEIGH  = { t , += , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , += , * , APA , }
+		- SUCC   = { t , * , APA , }
+
+29 :	"APA"
+		- NEIGH  = { t , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , += , * , APA , }
+		- SUCC   = { }
+
+29 :	"t"
+		- NEIGH  = { t , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , += , * , APA , }
+		- SUCC   = { }
+
+29 :	"*"
+		- NEIGH  = { t , * , APA , }
+		- PARENT = { != , * , APA , malloc , if , }
+		- CHILD  = { }
+		- PRED   = { t , += , * , APA , }
+		- SUCC   = { }
+
+31 :	"return"
+		- NEIGH  = { APA , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , * , APA , malloc , if , }
+		- SUCC   = { }
+
+31 :	"APA"
+		- NEIGH  = { APA , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , * , APA , malloc , if , }
+		- SUCC   = { }
+
+34 :	"pj_authlat"
+		- NEIGH  = { pj_authlat , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+34 :	"beta"
+		- NEIGH  = { beta , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+34 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+34 :	"APA"
+		- NEIGH  = { APA , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"t"
+		- NEIGH  = { + , beta , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , sin , * , APA , beta , + , return , }
+
+35 :	"beta"
+		- NEIGH  = { + , beta , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , sin , * , APA , beta , + , return , }
+
+35 :	"+"
+		- NEIGH  = { + , beta , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , sin , * , APA , beta , + , return , }
+
+35 :	"beta"
+		- NEIGH  = { + , beta , t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , sin , * , APA , beta , + , return , }
+
+36 :	"return"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"beta"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"+"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"APA"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"*"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"sin"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"t"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"+"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"APA"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"*"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"sin"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"t"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"+"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"t"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"+"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"APA"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"*"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"sin"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"t"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"+"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"t"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"+"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+
+36 :	"t"
+		- NEIGH  = { t , sin , * , APA , beta , + , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , beta , t , }
+		- SUCC   = { }
+

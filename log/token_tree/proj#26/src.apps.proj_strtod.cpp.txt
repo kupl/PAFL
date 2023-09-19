@@ -1,0 +1,3234 @@
+98 :	"proj_strtod"
+		- NEIGH  = { proj_strtod , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+98 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+98 :	"str"
+		- NEIGH  = { str , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+98 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+98 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+98 :	"endptr"
+		- NEIGH  = { endptr , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+99 :	"number"
+		- NEIGH  = { integral_part , number , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { exponent , }
+
+99 :	"integral_part"
+		- NEIGH  = { integral_part , number , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { exponent , }
+
+100 :	"exponent"
+		- NEIGH  = { exponent , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { integral_part , number , }
+		- SUCC   = { fraction_is_nonzero , }
+
+101 :	"fraction_is_nonzero"
+		- NEIGH  = { fraction_is_nonzero , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { exponent , }
+		- SUCC   = { sign , }
+
+102 :	"sign"
+		- NEIGH  = { sign , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { fraction_is_nonzero , }
+		- SUCC   = { str , p , * , }
+
+103 :	"*"
+		- NEIGH  = { str , p , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sign , }
+		- SUCC   = { n , }
+
+103 :	"p"
+		- NEIGH  = { str , p , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sign , }
+		- SUCC   = { n , }
+
+103 :	"*"
+		- NEIGH  = { str , p , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sign , }
+		- SUCC   = { n , }
+
+103 :	"str"
+		- NEIGH  = { str , p , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sign , }
+		- SUCC   = { n , }
+
+104 :	"n"
+		- NEIGH  = { n , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { str , p , * , }
+		- SUCC   = { num_digits_total , }
+
+105 :	"num_digits_total"
+		- NEIGH  = { num_digits_total , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { n , }
+		- SUCC   = { num_digits_after_comma , }
+
+106 :	"num_digits_after_comma"
+		- NEIGH  = { num_digits_after_comma , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { num_digits_total , }
+		- SUCC   = { num_prefixed_zeros , }
+
+107 :	"num_prefixed_zeros"
+		- NEIGH  = { num_prefixed_zeros , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { num_digits_after_comma , }
+		- SUCC   = { str , == , if , }
+
+109 :	"if"
+		- NEIGH  = { str , == , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , endptr , if , EFAULT , errno , }
+		- PRED   = { num_prefixed_zeros , }
+		- SUCC   = { p , * , isspace , while , }
+
+109 :	"=="
+		- NEIGH  = { str , == , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , endptr , if , EFAULT , errno , }
+		- PRED   = { num_prefixed_zeros , }
+		- SUCC   = { p , * , isspace , while , }
+
+109 :	"str"
+		- NEIGH  = { str , == , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , endptr , if , EFAULT , errno , }
+		- PRED   = { num_prefixed_zeros , }
+		- SUCC   = { p , * , isspace , while , }
+
+110 :	"errno"
+		- NEIGH  = { EFAULT , errno , }
+		- PARENT = { str , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+110 :	"EFAULT"
+		- NEIGH  = { EFAULT , errno , }
+		- PARENT = { str , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+111 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { str , == , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { EFAULT , errno , }
+		- SUCC   = { HUGE_VAL , return , }
+
+111 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { str , == , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { EFAULT , errno , }
+		- SUCC   = { HUGE_VAL , return , }
+
+112 :	"*"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+112 :	"endptr"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+112 :	"p"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+113 :	"return"
+		- NEIGH  = { HUGE_VAL , return , }
+		- PARENT = { str , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+113 :	"HUGE_VAL"
+		- NEIGH  = { HUGE_VAL , return , }
+		- PARENT = { str , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+117 :	"while"
+		- NEIGH  = { p , * , isspace , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { str , == , if , }
+		- SUCC   = { p , * , == , if , }
+
+117 :	"isspace"
+		- NEIGH  = { p , * , isspace , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { str , == , if , }
+		- SUCC   = { p , * , == , if , }
+
+117 :	"*"
+		- NEIGH  = { p , * , isspace , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { str , == , if , }
+		- SUCC   = { p , * , == , if , }
+
+117 :	"p"
+		- NEIGH  = { p , * , isspace , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { str , == , if , }
+		- SUCC   = { p , * , == , if , }
+
+118 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , isspace , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+118 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , isspace , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+121 :	"if"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , isspace , while , }
+		- SUCC   = { p , * , strchr , == , if , }
+
+121 :	"=="
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , isspace , while , }
+		- SUCC   = { p , * , strchr , == , if , }
+
+121 :	"*"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , isspace , while , }
+		- SUCC   = { p , * , strchr , == , if , }
+
+121 :	"p"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , isspace , while , }
+		- SUCC   = { p , * , strchr , == , if , }
+
+122 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { str , endptr , * , }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+122 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { str , endptr , * , }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+123 :	"*"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+123 :	"endptr"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+123 :	"*"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+123 :	"str"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+124 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+128 :	"if"
+		- NEIGH  = { p , * , strchr , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { p , * , switch , }
+
+128 :	"=="
+		- NEIGH  = { p , * , strchr , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { p , * , switch , }
+
+128 :	"strchr"
+		- NEIGH  = { p , * , strchr , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { p , * , switch , }
+
+128 :	"*"
+		- NEIGH  = { p , * , strchr , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { p , * , switch , }
+
+128 :	"p"
+		- NEIGH  = { p , * , strchr , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { p , * , switch , }
+
+129 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { p , * , strchr , == , if , }
+		- CHILD  = { str , endptr , * , }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+129 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { p , * , strchr , == , if , }
+		- CHILD  = { str , endptr , * , }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+130 :	"*"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"endptr"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"*"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"str"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+131 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { p , * , strchr , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+135 :	"switch"
+		- NEIGH  = { p , * , switch , }
+		- PARENT = { }
+		- CHILD  = { endptr , ++ , == , return , - , || , * , isdigit , break , p , if , sign , }
+		- PRED   = { p , * , strchr , == , if , }
+		- SUCC   = { || , p , * , strchr , && , == , if , sign , != , }
+
+135 :	"*"
+		- NEIGH  = { p , * , switch , }
+		- PARENT = { }
+		- CHILD  = { endptr , ++ , == , return , - , || , * , isdigit , break , p , if , sign , }
+		- PRED   = { p , * , strchr , == , if , }
+		- SUCC   = { || , p , * , strchr , && , == , if , sign , != , }
+
+135 :	"p"
+		- NEIGH  = { p , * , switch , }
+		- PARENT = { }
+		- CHILD  = { endptr , ++ , == , return , - , || , * , isdigit , break , p , if , sign , }
+		- PRED   = { p , * , strchr , == , if , }
+		- SUCC   = { || , p , * , strchr , && , == , if , sign , != , }
+
+137 :	"sign"
+		- NEIGH  = { - , sign , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { ++ , p , }
+
+137 :	"-"
+		- NEIGH  = { - , sign , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { ++ , p , }
+
+138 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { }
+		- PRED   = { - , sign , }
+		- SUCC   = { break , }
+
+138 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { }
+		- PRED   = { - , sign , }
+		- SUCC   = { break , }
+
+139 :	"break"
+		- NEIGH  = { break , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { }
+		- PRED   = { ++ , p , }
+		- SUCC   = { }
+
+141 :	"sign"
+		- NEIGH  = { sign , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { ++ , p , }
+
+142 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { }
+		- PRED   = { sign , }
+		- SUCC   = { break , }
+
+142 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { }
+		- PRED   = { sign , }
+		- SUCC   = { break , }
+
+143 :	"break"
+		- NEIGH  = { break , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { }
+		- PRED   = { ++ , p , }
+		- SUCC   = { }
+
+145 :	"if"
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"isdigit"
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"*"
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"p"
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"||"
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"=="
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"*"
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"p"
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"||"
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"=="
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"*"
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+145 :	"p"
+		- NEIGH  = { == , || , p , * , isdigit , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { break , }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+146 :	"break"
+		- NEIGH  = { break , }
+		- PARENT = { == , || , p , * , isdigit , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { str , endptr , * , }
+		- PRED   = { == , || , p , * , isdigit , if , }
+		- SUCC   = { return , }
+
+147 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { str , endptr , * , }
+		- PRED   = { == , || , p , * , isdigit , if , }
+		- SUCC   = { return , }
+
+148 :	"*"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+148 :	"endptr"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+148 :	"*"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+148 :	"str"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+149 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { p , * , switch , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+153 :	"if"
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"!="
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"sign"
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"&&"
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"=="
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"strchr"
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"*"
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"p"
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"||"
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"=="
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"*"
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+153 :	"p"
+		- NEIGH  = { || , p , * , strchr , && , == , if , sign , != , }
+		- PARENT = { }
+		- CHILD  = { return , endptr , if , }
+		- PRED   = { p , * , switch , }
+		- SUCC   = { p , * , == , || , while , }
+
+154 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { || , p , * , strchr , && , == , if , sign , != , }
+		- CHILD  = { str , endptr , * , }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+154 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { || , p , * , strchr , && , == , if , sign , != , }
+		- CHILD  = { str , endptr , * , }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+155 :	"*"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"endptr"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"*"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"str"
+		- NEIGH  = { str , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+156 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { || , p , * , strchr , && , == , if , sign , != , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+160 :	"while"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { || , p , * , strchr , && , == , if , sign , != , }
+		- SUCC   = { isspace , strchr , || , p , * , == , if , }
+
+160 :	"=="
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { || , p , * , strchr , && , == , if , sign , != , }
+		- SUCC   = { isspace , strchr , || , p , * , == , if , }
+
+160 :	"*"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { || , p , * , strchr , && , == , if , sign , != , }
+		- SUCC   = { isspace , strchr , || , p , * , == , if , }
+
+160 :	"p"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { || , p , * , strchr , && , == , if , sign , != , }
+		- SUCC   = { isspace , strchr , || , p , * , == , if , }
+
+160 :	"||"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { || , p , * , strchr , && , == , if , sign , != , }
+		- SUCC   = { isspace , strchr , || , p , * , == , if , }
+
+160 :	"=="
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { || , p , * , strchr , && , == , if , sign , != , }
+		- SUCC   = { isspace , strchr , || , p , * , == , if , }
+
+160 :	"*"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { || , p , * , strchr , && , == , if , sign , != , }
+		- SUCC   = { isspace , strchr , || , p , * , == , if , }
+
+160 :	"p"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { }
+		- CHILD  = { ++ , p , }
+		- PRED   = { || , p , * , strchr , && , == , if , sign , != , }
+		- SUCC   = { isspace , strchr , || , p , * , == , if , }
+
+161 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , || , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+161 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , || , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+164 :	"if"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"=="
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"*"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"p"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"||"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"=="
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"strchr"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"*"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"p"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"||"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"isspace"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"*"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+164 :	"p"
+		- NEIGH  = { isspace , strchr , || , p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { == , if , sign , - , return , endptr , }
+		- PRED   = { p , * , == , || , while , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+165 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { isspace , strchr , || , p , * , == , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { }
+		- SUCC   = { - , == , sign , return , }
+
+165 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { isspace , strchr , || , p , * , == , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { }
+		- SUCC   = { - , == , sign , return , }
+
+166 :	"*"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+166 :	"endptr"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+166 :	"p"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+167 :	"return"
+		- NEIGH  = { - , == , sign , return , }
+		- PARENT = { isspace , strchr , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+167 :	"sign"
+		- NEIGH  = { - , == , sign , return , }
+		- PARENT = { isspace , strchr , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+167 :	"=="
+		- NEIGH  = { - , == , sign , return , }
+		- PARENT = { isspace , strchr , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+167 :	"-"
+		- NEIGH  = { - , == , sign , return , }
+		- PARENT = { isspace , strchr , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+167 :	"-"
+		- NEIGH  = { - , == , sign , return , }
+		- PARENT = { isspace , strchr , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+171 :	"while"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { }
+		- CHILD  = { num_digits_total , ++ , - , number , p , * , == , + , if , }
+		- PRED   = { isspace , strchr , || , p , * , == , if , }
+		- SUCC   = { number , integral_part , }
+
+171 :	"isdigit"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { }
+		- CHILD  = { num_digits_total , ++ , - , number , p , * , == , + , if , }
+		- PRED   = { isspace , strchr , || , p , * , == , if , }
+		- SUCC   = { number , integral_part , }
+
+171 :	"*"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { }
+		- CHILD  = { num_digits_total , ++ , - , number , p , * , == , + , if , }
+		- PRED   = { isspace , strchr , || , p , * , == , if , }
+		- SUCC   = { number , integral_part , }
+
+171 :	"p"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { }
+		- CHILD  = { num_digits_total , ++ , - , number , p , * , == , + , if , }
+		- PRED   = { isspace , strchr , || , p , * , == , if , }
+		- SUCC   = { number , integral_part , }
+
+171 :	"||"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { }
+		- CHILD  = { num_digits_total , ++ , - , number , p , * , == , + , if , }
+		- PRED   = { isspace , strchr , || , p , * , == , if , }
+		- SUCC   = { number , integral_part , }
+
+171 :	"=="
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { }
+		- CHILD  = { num_digits_total , ++ , - , number , p , * , == , + , if , }
+		- PRED   = { isspace , strchr , || , p , * , == , if , }
+		- SUCC   = { number , integral_part , }
+
+171 :	"*"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { }
+		- CHILD  = { num_digits_total , ++ , - , number , p , * , == , + , if , }
+		- PRED   = { isspace , strchr , || , p , * , == , if , }
+		- SUCC   = { number , integral_part , }
+
+171 :	"p"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { }
+		- CHILD  = { num_digits_total , ++ , - , number , p , * , == , + , if , }
+		- PRED   = { isspace , strchr , || , p , * , == , if , }
+		- SUCC   = { number , integral_part , }
+
+172 :	"if"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+172 :	"=="
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+172 :	"*"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+172 :	"p"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+173 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { continue , }
+
+173 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { continue , }
+
+174 :	"continue"
+		- NEIGH  = { continue , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { ++ , p , }
+		- SUCC   = { }
+
+176 :	"number"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+176 :	"number"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+176 :	"*"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+176 :	"+"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+176 :	"*"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+176 :	"p"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+176 :	"-"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+177 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { - , + , p , * , number , }
+		- SUCC   = { ++ , num_digits_total , }
+
+177 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { - , + , p , * , number , }
+		- SUCC   = { ++ , num_digits_total , }
+
+178 :	"num_digits_total"
+		- NEIGH  = { ++ , num_digits_total , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { ++ , p , }
+		- SUCC   = { }
+
+178 :	"++"
+		- NEIGH  = { ++ , num_digits_total , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { ++ , p , }
+		- SUCC   = { }
+
+180 :	"integral_part"
+		- NEIGH  = { number , integral_part , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { == , p , * , isdigit , || , while , }
+		- SUCC   = { p , * , == , if , }
+
+180 :	"number"
+		- NEIGH  = { number , integral_part , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { == , p , * , isdigit , || , while , }
+		- SUCC   = { p , * , == , if , }
+
+183 :	"if"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { number , integral_part , }
+		- SUCC   = { p , * , == , if , }
+
+183 :	"=="
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { number , integral_part , }
+		- SUCC   = { p , * , == , if , }
+
+183 :	"*"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { number , integral_part , }
+		- SUCC   = { p , * , == , if , }
+
+183 :	"p"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { number , integral_part , }
+		- SUCC   = { p , * , == , if , }
+
+184 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { }
+		- SUCC   = { - , == , sign , if , }
+
+184 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { }
+		- SUCC   = { - , == , sign , if , }
+
+185 :	"*"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+185 :	"endptr"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+185 :	"p"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+186 :	"if"
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , - , return , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { number , return , }
+
+186 :	"sign"
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , - , return , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { number , return , }
+
+186 :	"=="
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , - , return , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { number , return , }
+
+186 :	"-"
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , - , return , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { number , return , }
+
+187 :	"return"
+		- NEIGH  = { number , - , return , }
+		- PARENT = { - , == , sign , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+187 :	"-"
+		- NEIGH  = { number , - , return , }
+		- PARENT = { - , == , sign , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+187 :	"number"
+		- NEIGH  = { number , - , return , }
+		- PARENT = { - , == , sign , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+188 :	"return"
+		- NEIGH  = { number , return , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { }
+
+188 :	"number"
+		- NEIGH  = { number , return , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { }
+
+192 :	"if"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { while , isdigit , strchr , || , * , == , fraction_is_nonzero , if , ++ , integral_part , p , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { num_digits_total , == , if , }
+
+192 :	"=="
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { while , isdigit , strchr , || , * , == , fraction_is_nonzero , if , ++ , integral_part , p , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { num_digits_total , == , if , }
+
+192 :	"*"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { while , isdigit , strchr , || , * , == , fraction_is_nonzero , if , ++ , integral_part , p , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { num_digits_total , == , if , }
+
+192 :	"p"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { }
+		- CHILD  = { while , isdigit , strchr , || , * , == , fraction_is_nonzero , if , ++ , integral_part , p , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { num_digits_total , == , if , }
+
+193 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { integral_part , == , if , }
+
+193 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { integral_part , == , if , }
+
+197 :	"if"
+		- NEIGH  = { integral_part , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { p , * , == , || , while , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { strchr , || , p , * , == , if , }
+
+197 :	"=="
+		- NEIGH  = { integral_part , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { p , * , == , || , while , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { strchr , || , p , * , == , if , }
+
+197 :	"integral_part"
+		- NEIGH  = { integral_part , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { p , * , == , || , while , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { strchr , || , p , * , == , if , }
+
+198 :	"while"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { integral_part , == , if , }
+		- CHILD  = { ++ , p , * , == , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+198 :	"=="
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { integral_part , == , if , }
+		- CHILD  = { ++ , p , * , == , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+198 :	"*"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { integral_part , == , if , }
+		- CHILD  = { ++ , p , * , == , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+198 :	"p"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { integral_part , == , if , }
+		- CHILD  = { ++ , p , * , == , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+198 :	"||"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { integral_part , == , if , }
+		- CHILD  = { ++ , p , * , == , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+198 :	"=="
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { integral_part , == , if , }
+		- CHILD  = { ++ , p , * , == , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+198 :	"*"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { integral_part , == , if , }
+		- CHILD  = { ++ , p , * , == , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+198 :	"p"
+		- NEIGH  = { p , * , == , || , while , }
+		- PARENT = { integral_part , == , if , }
+		- CHILD  = { ++ , p , * , == , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+199 :	"if"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { p , * , == , || , while , }
+		- CHILD  = { ++ , num_prefixed_zeros , }
+		- PRED   = { }
+		- SUCC   = { ++ , p , }
+
+199 :	"=="
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { p , * , == , || , while , }
+		- CHILD  = { ++ , num_prefixed_zeros , }
+		- PRED   = { }
+		- SUCC   = { ++ , p , }
+
+199 :	"*"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { p , * , == , || , while , }
+		- CHILD  = { ++ , num_prefixed_zeros , }
+		- PRED   = { }
+		- SUCC   = { ++ , p , }
+
+199 :	"p"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { p , * , == , || , while , }
+		- CHILD  = { ++ , num_prefixed_zeros , }
+		- PRED   = { }
+		- SUCC   = { ++ , p , }
+
+200 :	"num_prefixed_zeros"
+		- NEIGH  = { ++ , num_prefixed_zeros , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+200 :	"++"
+		- NEIGH  = { ++ , num_prefixed_zeros , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+201 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { }
+
+201 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { }
+
+205 :	"if"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { integral_part , == , if , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+205 :	"=="
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { integral_part , == , if , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+205 :	"*"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { integral_part , == , if , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+205 :	"p"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { integral_part , == , if , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+205 :	"||"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { integral_part , == , if , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+205 :	"=="
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { integral_part , == , if , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+205 :	"strchr"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { integral_part , == , if , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+205 :	"*"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { integral_part , == , if , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+205 :	"p"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , return , - , == , if , sign , endptr , }
+		- PRED   = { integral_part , == , if , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+206 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { }
+		- SUCC   = { - , == , sign , if , }
+
+206 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { }
+		- SUCC   = { - , == , sign , if , }
+
+207 :	"*"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+207 :	"endptr"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+207 :	"p"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+208 :	"if"
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { number , - , return , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { number , return , }
+
+208 :	"sign"
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { number , - , return , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { number , return , }
+
+208 :	"=="
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { number , - , return , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { number , return , }
+
+208 :	"-"
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { number , - , return , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { number , return , }
+
+209 :	"return"
+		- NEIGH  = { number , - , return , }
+		- PARENT = { - , == , sign , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+209 :	"-"
+		- NEIGH  = { number , - , return , }
+		- PARENT = { - , == , sign , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+209 :	"number"
+		- NEIGH  = { number , - , return , }
+		- PARENT = { - , == , sign , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+210 :	"return"
+		- NEIGH  = { number , return , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { }
+
+210 :	"number"
+		- NEIGH  = { number , return , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { }
+
+213 :	"while"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { num_digits_after_comma , || , - , != , > , num_digits_total , number , p , * , ++ , == , + , if , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { fraction_is_nonzero , if , }
+
+213 :	"isdigit"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { num_digits_after_comma , || , - , != , > , num_digits_total , number , p , * , ++ , == , + , if , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { fraction_is_nonzero , if , }
+
+213 :	"*"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { num_digits_after_comma , || , - , != , > , num_digits_total , number , p , * , ++ , == , + , if , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { fraction_is_nonzero , if , }
+
+213 :	"p"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { num_digits_after_comma , || , - , != , > , num_digits_total , number , p , * , ++ , == , + , if , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { fraction_is_nonzero , if , }
+
+213 :	"||"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { num_digits_after_comma , || , - , != , > , num_digits_total , number , p , * , ++ , == , + , if , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { fraction_is_nonzero , if , }
+
+213 :	"=="
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { num_digits_after_comma , || , - , != , > , num_digits_total , number , p , * , ++ , == , + , if , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { fraction_is_nonzero , if , }
+
+213 :	"*"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { num_digits_after_comma , || , - , != , > , num_digits_total , number , p , * , ++ , == , + , if , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { fraction_is_nonzero , if , }
+
+213 :	"p"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { num_digits_after_comma , || , - , != , > , num_digits_total , number , p , * , ++ , == , + , if , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { fraction_is_nonzero , if , }
+
+215 :	"if"
+		- NEIGH  = { > , num_digits_total , || , p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+215 :	"=="
+		- NEIGH  = { > , num_digits_total , || , p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+215 :	"*"
+		- NEIGH  = { > , num_digits_total , || , p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+215 :	"p"
+		- NEIGH  = { > , num_digits_total , || , p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+215 :	"||"
+		- NEIGH  = { > , num_digits_total , || , p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+215 :	"num_digits_total"
+		- NEIGH  = { > , num_digits_total , || , p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+215 :	">"
+		- NEIGH  = { > , num_digits_total , || , p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , number , }
+
+216 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { > , num_digits_total , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { continue , }
+
+216 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { > , num_digits_total , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { continue , }
+
+217 :	"continue"
+		- NEIGH  = { continue , }
+		- PARENT = { > , num_digits_total , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { ++ , p , }
+		- SUCC   = { }
+
+220 :	"number"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { > , num_digits_total , || , p , * , == , if , }
+		- SUCC   = { != , p , * , if , }
+
+220 :	"number"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { > , num_digits_total , || , p , * , == , if , }
+		- SUCC   = { != , p , * , if , }
+
+220 :	"*"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { > , num_digits_total , || , p , * , == , if , }
+		- SUCC   = { != , p , * , if , }
+
+220 :	"+"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { > , num_digits_total , || , p , * , == , if , }
+		- SUCC   = { != , p , * , if , }
+
+220 :	"*"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { > , num_digits_total , || , p , * , == , if , }
+		- SUCC   = { != , p , * , if , }
+
+220 :	"p"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { > , num_digits_total , || , p , * , == , if , }
+		- SUCC   = { != , p , * , if , }
+
+220 :	"-"
+		- NEIGH  = { - , + , p , * , number , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { > , num_digits_total , || , p , * , == , if , }
+		- SUCC   = { != , p , * , if , }
+
+221 :	"if"
+		- NEIGH  = { != , p , * , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { fraction_is_nonzero , }
+		- PRED   = { - , + , p , * , number , }
+		- SUCC   = { ++ , p , }
+
+221 :	"*"
+		- NEIGH  = { != , p , * , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { fraction_is_nonzero , }
+		- PRED   = { - , + , p , * , number , }
+		- SUCC   = { ++ , p , }
+
+221 :	"p"
+		- NEIGH  = { != , p , * , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { fraction_is_nonzero , }
+		- PRED   = { - , + , p , * , number , }
+		- SUCC   = { ++ , p , }
+
+221 :	"!="
+		- NEIGH  = { != , p , * , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { fraction_is_nonzero , }
+		- PRED   = { - , + , p , * , number , }
+		- SUCC   = { ++ , p , }
+
+222 :	"fraction_is_nonzero"
+		- NEIGH  = { fraction_is_nonzero , }
+		- PARENT = { != , p , * , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+223 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { != , p , * , if , }
+		- SUCC   = { ++ , num_digits_total , }
+
+223 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { != , p , * , if , }
+		- SUCC   = { ++ , num_digits_total , }
+
+224 :	"num_digits_total"
+		- NEIGH  = { ++ , num_digits_total , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { ++ , p , }
+		- SUCC   = { ++ , num_digits_after_comma , }
+
+224 :	"++"
+		- NEIGH  = { ++ , num_digits_total , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { ++ , p , }
+		- SUCC   = { ++ , num_digits_after_comma , }
+
+225 :	"num_digits_after_comma"
+		- NEIGH  = { ++ , num_digits_after_comma , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { ++ , num_digits_total , }
+		- SUCC   = { }
+
+225 :	"++"
+		- NEIGH  = { ++ , num_digits_after_comma , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { ++ , num_digits_total , }
+		- SUCC   = { }
+
+229 :	"if"
+		- NEIGH  = { fraction_is_nonzero , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , + , num_digits_after_comma , exponent , num_prefixed_zeros , integral_part , - , }
+		- PRED   = { == , p , * , isdigit , || , while , }
+		- SUCC   = { }
+
+229 :	"fraction_is_nonzero"
+		- NEIGH  = { fraction_is_nonzero , if , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { number , + , num_digits_after_comma , exponent , num_prefixed_zeros , integral_part , - , }
+		- PRED   = { == , p , * , isdigit , || , while , }
+		- SUCC   = { }
+
+230 :	"exponent"
+		- NEIGH  = { + , num_digits_after_comma , num_prefixed_zeros , - , exponent , }
+		- PARENT = { fraction_is_nonzero , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+230 :	"-"
+		- NEIGH  = { + , num_digits_after_comma , num_prefixed_zeros , - , exponent , }
+		- PARENT = { fraction_is_nonzero , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+230 :	"num_digits_after_comma"
+		- NEIGH  = { + , num_digits_after_comma , num_prefixed_zeros , - , exponent , }
+		- PARENT = { fraction_is_nonzero , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+230 :	"+"
+		- NEIGH  = { + , num_digits_after_comma , num_prefixed_zeros , - , exponent , }
+		- PARENT = { fraction_is_nonzero , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+230 :	"num_prefixed_zeros"
+		- NEIGH  = { + , num_digits_after_comma , num_prefixed_zeros , - , exponent , }
+		- PARENT = { fraction_is_nonzero , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+232 :	"number"
+		- NEIGH  = { integral_part , number , }
+		- PARENT = { fraction_is_nonzero , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+232 :	"integral_part"
+		- NEIGH  = { integral_part , number , }
+		- PARENT = { fraction_is_nonzero , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+237 :	"if"
+		- NEIGH  = { num_digits_total , == , if , }
+		- PARENT = { }
+		- CHILD  = { if , return , endptr , HUGE_VAL , EINVAL , errno , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { - , == , sign , if , }
+
+237 :	"=="
+		- NEIGH  = { num_digits_total , == , if , }
+		- PARENT = { }
+		- CHILD  = { if , return , endptr , HUGE_VAL , EINVAL , errno , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { - , == , sign , if , }
+
+237 :	"num_digits_total"
+		- NEIGH  = { num_digits_total , == , if , }
+		- PARENT = { }
+		- CHILD  = { if , return , endptr , HUGE_VAL , EINVAL , errno , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { - , == , sign , if , }
+
+238 :	"errno"
+		- NEIGH  = { EINVAL , errno , }
+		- PARENT = { num_digits_total , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+238 :	"EINVAL"
+		- NEIGH  = { EINVAL , errno , }
+		- PARENT = { num_digits_total , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { endptr , if , }
+
+239 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { num_digits_total , == , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { EINVAL , errno , }
+		- SUCC   = { HUGE_VAL , return , }
+
+239 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { num_digits_total , == , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { EINVAL , errno , }
+		- SUCC   = { HUGE_VAL , return , }
+
+240 :	"*"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+240 :	"endptr"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+240 :	"p"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+241 :	"return"
+		- NEIGH  = { HUGE_VAL , return , }
+		- PARENT = { num_digits_total , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+241 :	"HUGE_VAL"
+		- NEIGH  = { HUGE_VAL , return , }
+		- PARENT = { num_digits_total , == , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+244 :	"if"
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { }
+		- CHILD  = { - , number , }
+		- PRED   = { num_digits_total , == , if , }
+		- SUCC   = { == , p , * , || , while , }
+
+244 :	"sign"
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { }
+		- CHILD  = { - , number , }
+		- PRED   = { num_digits_total , == , if , }
+		- SUCC   = { == , p , * , || , while , }
+
+244 :	"=="
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { }
+		- CHILD  = { - , number , }
+		- PRED   = { num_digits_total , == , if , }
+		- SUCC   = { == , p , * , || , while , }
+
+244 :	"-"
+		- NEIGH  = { - , == , sign , if , }
+		- PARENT = { }
+		- CHILD  = { - , number , }
+		- PRED   = { num_digits_total , == , if , }
+		- SUCC   = { == , p , * , || , while , }
+
+245 :	"number"
+		- NEIGH  = { - , number , }
+		- PARENT = { - , == , sign , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+245 :	"-"
+		- NEIGH  = { - , number , }
+		- PARENT = { - , == , sign , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+245 :	"number"
+		- NEIGH  = { - , number , }
+		- PARENT = { - , == , sign , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+248 :	"while"
+		- NEIGH  = { == , p , * , || , while , }
+		- PARENT = { }
+		- CHILD  = { break , n , += , exponent , while , isdigit , strchr , - , || , ++ , == , sign , if , * , p , }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { endptr , if , }
+
+248 :	"*"
+		- NEIGH  = { == , p , * , || , while , }
+		- PARENT = { }
+		- CHILD  = { break , n , += , exponent , while , isdigit , strchr , - , || , ++ , == , sign , if , * , p , }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { endptr , if , }
+
+248 :	"p"
+		- NEIGH  = { == , p , * , || , while , }
+		- PARENT = { }
+		- CHILD  = { break , n , += , exponent , while , isdigit , strchr , - , || , ++ , == , sign , if , * , p , }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { endptr , if , }
+
+248 :	"=="
+		- NEIGH  = { == , p , * , || , while , }
+		- PARENT = { }
+		- CHILD  = { break , n , += , exponent , while , isdigit , strchr , - , || , ++ , == , sign , if , * , p , }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { endptr , if , }
+
+248 :	"||"
+		- NEIGH  = { == , p , * , || , while , }
+		- PARENT = { }
+		- CHILD  = { break , n , += , exponent , while , isdigit , strchr , - , || , ++ , == , sign , if , * , p , }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { endptr , if , }
+
+248 :	"*"
+		- NEIGH  = { == , p , * , || , while , }
+		- PARENT = { }
+		- CHILD  = { break , n , += , exponent , while , isdigit , strchr , - , || , ++ , == , sign , if , * , p , }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { endptr , if , }
+
+248 :	"p"
+		- NEIGH  = { == , p , * , || , while , }
+		- PARENT = { }
+		- CHILD  = { break , n , += , exponent , while , isdigit , strchr , - , || , ++ , == , sign , if , * , p , }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { endptr , if , }
+
+248 :	"=="
+		- NEIGH  = { == , p , * , || , while , }
+		- PARENT = { }
+		- CHILD  = { break , n , += , exponent , while , isdigit , strchr , - , || , ++ , == , sign , if , * , p , }
+		- PRED   = { - , == , sign , if , }
+		- SUCC   = { endptr , if , }
+
+249 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { strchr , || , p , * , == , if , }
+
+249 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { strchr , || , p , * , == , if , }
+
+252 :	"if"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { break , -- , p , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { p , * , == , while , }
+
+252 :	"=="
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { break , -- , p , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { p , * , == , while , }
+
+252 :	"*"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { break , -- , p , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { p , * , == , while , }
+
+252 :	"p"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { break , -- , p , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { p , * , == , while , }
+
+252 :	"||"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { break , -- , p , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { p , * , == , while , }
+
+252 :	"=="
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { break , -- , p , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { p , * , == , while , }
+
+252 :	"strchr"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { break , -- , p , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { p , * , == , while , }
+
+252 :	"*"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { break , -- , p , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { p , * , == , while , }
+
+252 :	"p"
+		- NEIGH  = { strchr , || , p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { break , -- , p , }
+		- PRED   = { ++ , p , }
+		- SUCC   = { p , * , == , while , }
+
+253 :	"p"
+		- NEIGH  = { -- , p , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { break , }
+
+253 :	"--"
+		- NEIGH  = { -- , p , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { break , }
+
+254 :	"break"
+		- NEIGH  = { break , }
+		- PARENT = { strchr , || , p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { -- , p , }
+		- SUCC   = { }
+
+257 :	"while"
+		- NEIGH  = { p , * , == , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , p , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { sign , }
+
+257 :	"=="
+		- NEIGH  = { p , * , == , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , p , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { sign , }
+
+257 :	"*"
+		- NEIGH  = { p , * , == , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , p , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { sign , }
+
+257 :	"p"
+		- NEIGH  = { p , * , == , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , p , }
+		- PRED   = { strchr , || , p , * , == , if , }
+		- SUCC   = { sign , }
+
+258 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+258 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+260 :	"sign"
+		- NEIGH  = { sign , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , while , }
+		- SUCC   = { p , * , == , if , }
+
+261 :	"if"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { - , sign , }
+		- PRED   = { sign , }
+		- SUCC   = { p , * , == , if , }
+
+261 :	"=="
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { - , sign , }
+		- PRED   = { sign , }
+		- SUCC   = { p , * , == , if , }
+
+261 :	"*"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { - , sign , }
+		- PRED   = { sign , }
+		- SUCC   = { p , * , == , if , }
+
+261 :	"p"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { - , sign , }
+		- PRED   = { sign , }
+		- SUCC   = { p , * , == , if , }
+
+262 :	"sign"
+		- NEIGH  = { - , sign , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+262 :	"-"
+		- NEIGH  = { - , sign , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+263 :	"if"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { + , sign , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { sign , == , if , }
+
+263 :	"=="
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { + , sign , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { sign , == , if , }
+
+263 :	"*"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { + , sign , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { sign , == , if , }
+
+263 :	"p"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { + , sign , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { sign , == , if , }
+
+264 :	"sign"
+		- NEIGH  = { + , sign , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+264 :	"+"
+		- NEIGH  = { + , sign , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+265 :	"if"
+		- NEIGH  = { sign , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , == , || , p , * , isdigit , ! , if , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { n , }
+
+265 :	"=="
+		- NEIGH  = { sign , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , == , || , p , * , isdigit , ! , if , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { n , }
+
+265 :	"sign"
+		- NEIGH  = { sign , == , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , == , || , p , * , isdigit , ! , if , }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { n , }
+
+266 :	"if"
+		- NEIGH  = { == , || , p , * , isdigit , ! , if , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { HUGE_VAL , return , endptr , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+266 :	"!"
+		- NEIGH  = { == , || , p , * , isdigit , ! , if , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { HUGE_VAL , return , endptr , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+266 :	"isdigit"
+		- NEIGH  = { == , || , p , * , isdigit , ! , if , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { HUGE_VAL , return , endptr , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+266 :	"*"
+		- NEIGH  = { == , || , p , * , isdigit , ! , if , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { HUGE_VAL , return , endptr , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+266 :	"p"
+		- NEIGH  = { == , || , p , * , isdigit , ! , if , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { HUGE_VAL , return , endptr , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+266 :	"||"
+		- NEIGH  = { == , || , p , * , isdigit , ! , if , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { HUGE_VAL , return , endptr , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+266 :	"*"
+		- NEIGH  = { == , || , p , * , isdigit , ! , if , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { HUGE_VAL , return , endptr , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+266 :	"p"
+		- NEIGH  = { == , || , p , * , isdigit , ! , if , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { HUGE_VAL , return , endptr , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+266 :	"=="
+		- NEIGH  = { == , || , p , * , isdigit , ! , if , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { HUGE_VAL , return , endptr , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+267 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { == , || , p , * , isdigit , ! , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { }
+		- SUCC   = { HUGE_VAL , return , }
+
+267 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { == , || , p , * , isdigit , ! , if , }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { }
+		- SUCC   = { HUGE_VAL , return , }
+
+268 :	"*"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+268 :	"endptr"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+268 :	"p"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+269 :	"return"
+		- NEIGH  = { HUGE_VAL , return , }
+		- PARENT = { == , || , p , * , isdigit , ! , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+269 :	"HUGE_VAL"
+		- NEIGH  = { HUGE_VAL , return , }
+		- PARENT = { == , || , p , * , isdigit , ! , if , }
+		- CHILD  = { }
+		- PRED   = { endptr , if , }
+		- SUCC   = { }
+
+273 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+273 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { sign , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+277 :	"n"
+		- NEIGH  = { n , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { }
+		- PRED   = { sign , == , if , }
+		- SUCC   = { == , p , * , isdigit , || , while , }
+
+278 :	"while"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , - , p , * , n , == , + , if , }
+		- PRED   = { n , }
+		- SUCC   = { sign , == , - , if , }
+
+278 :	"isdigit"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , - , p , * , n , == , + , if , }
+		- PRED   = { n , }
+		- SUCC   = { sign , == , - , if , }
+
+278 :	"*"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , - , p , * , n , == , + , if , }
+		- PRED   = { n , }
+		- SUCC   = { sign , == , - , if , }
+
+278 :	"p"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , - , p , * , n , == , + , if , }
+		- PRED   = { n , }
+		- SUCC   = { sign , == , - , if , }
+
+278 :	"||"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , - , p , * , n , == , + , if , }
+		- PRED   = { n , }
+		- SUCC   = { sign , == , - , if , }
+
+278 :	"=="
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , - , p , * , n , == , + , if , }
+		- PRED   = { n , }
+		- SUCC   = { sign , == , - , if , }
+
+278 :	"*"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , - , p , * , n , == , + , if , }
+		- PRED   = { n , }
+		- SUCC   = { sign , == , - , if , }
+
+278 :	"p"
+		- NEIGH  = { == , p , * , isdigit , || , while , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { ++ , - , p , * , n , == , + , if , }
+		- PRED   = { n , }
+		- SUCC   = { sign , == , - , if , }
+
+279 :	"if"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , n , }
+
+279 :	"=="
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , n , }
+
+279 :	"*"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , n , }
+
+279 :	"p"
+		- NEIGH  = { p , * , == , if , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { continue , ++ , p , }
+		- PRED   = { }
+		- SUCC   = { - , + , p , * , n , }
+
+280 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { continue , }
+
+280 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { continue , }
+
+281 :	"continue"
+		- NEIGH  = { continue , }
+		- PARENT = { p , * , == , if , }
+		- CHILD  = { }
+		- PRED   = { ++ , p , }
+		- SUCC   = { }
+
+283 :	"n"
+		- NEIGH  = { - , + , p , * , n , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+283 :	"n"
+		- NEIGH  = { - , + , p , * , n , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+283 :	"*"
+		- NEIGH  = { - , + , p , * , n , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+283 :	"+"
+		- NEIGH  = { - , + , p , * , n , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+283 :	"*"
+		- NEIGH  = { - , + , p , * , n , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+283 :	"p"
+		- NEIGH  = { - , + , p , * , n , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+283 :	"-"
+		- NEIGH  = { - , + , p , * , n , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { p , * , == , if , }
+		- SUCC   = { ++ , p , }
+
+284 :	"p"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { - , + , p , * , n , }
+		- SUCC   = { }
+
+284 :	"++"
+		- NEIGH  = { ++ , p , }
+		- PARENT = { == , p , * , isdigit , || , while , }
+		- CHILD  = { }
+		- PRED   = { - , + , p , * , n , }
+		- SUCC   = { }
+
+287 :	"if"
+		- NEIGH  = { sign , == , - , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { - , n , }
+		- PRED   = { == , p , * , isdigit , || , while , }
+		- SUCC   = { n , += , exponent , }
+
+287 :	"-"
+		- NEIGH  = { sign , == , - , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { - , n , }
+		- PRED   = { == , p , * , isdigit , || , while , }
+		- SUCC   = { n , += , exponent , }
+
+287 :	"=="
+		- NEIGH  = { sign , == , - , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { - , n , }
+		- PRED   = { == , p , * , isdigit , || , while , }
+		- SUCC   = { n , += , exponent , }
+
+287 :	"sign"
+		- NEIGH  = { sign , == , - , if , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { - , n , }
+		- PRED   = { == , p , * , isdigit , || , while , }
+		- SUCC   = { n , += , exponent , }
+
+288 :	"n"
+		- NEIGH  = { - , n , }
+		- PARENT = { sign , == , - , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+288 :	"-"
+		- NEIGH  = { - , n , }
+		- PARENT = { sign , == , - , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+288 :	"n"
+		- NEIGH  = { - , n , }
+		- PARENT = { sign , == , - , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+289 :	"exponent"
+		- NEIGH  = { n , += , exponent , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { }
+		- PRED   = { sign , == , - , if , }
+		- SUCC   = { break , }
+
+289 :	"+="
+		- NEIGH  = { n , += , exponent , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { }
+		- PRED   = { sign , == , - , if , }
+		- SUCC   = { break , }
+
+289 :	"n"
+		- NEIGH  = { n , += , exponent , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { }
+		- PRED   = { sign , == , - , if , }
+		- SUCC   = { break , }
+
+290 :	"break"
+		- NEIGH  = { break , }
+		- PARENT = { == , p , * , || , while , }
+		- CHILD  = { }
+		- PRED   = { n , += , exponent , }
+		- SUCC   = { }
+
+293 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { == , p , * , || , while , }
+		- SUCC   = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+
+293 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { }
+		- CHILD  = { endptr , p , * , }
+		- PRED   = { == , p , * , || , while , }
+		- SUCC   = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+
+294 :	"*"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+294 :	"endptr"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+294 :	"p"
+		- NEIGH  = { endptr , p , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+296 :	"if"
+		- NEIGH  = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , ERANGE , errno , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { == , exponent , if , }
+
+296 :	"exponent"
+		- NEIGH  = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , ERANGE , errno , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { == , exponent , if , }
+
+296 :	"<"
+		- NEIGH  = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , ERANGE , errno , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { == , exponent , if , }
+
+296 :	"DBL_MIN_EXP"
+		- NEIGH  = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , ERANGE , errno , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { == , exponent , if , }
+
+296 :	"||"
+		- NEIGH  = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , ERANGE , errno , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { == , exponent , if , }
+
+296 :	"exponent"
+		- NEIGH  = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , ERANGE , errno , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { == , exponent , if , }
+
+296 :	">"
+		- NEIGH  = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , ERANGE , errno , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { == , exponent , if , }
+
+296 :	"DBL_MAX_EXP"
+		- NEIGH  = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { HUGE_VAL , return , ERANGE , errno , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { == , exponent , if , }
+
+297 :	"errno"
+		- NEIGH  = { ERANGE , errno , }
+		- PARENT = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { HUGE_VAL , return , }
+
+297 :	"ERANGE"
+		- NEIGH  = { ERANGE , errno , }
+		- PARENT = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { HUGE_VAL , return , }
+
+298 :	"return"
+		- NEIGH  = { HUGE_VAL , return , }
+		- PARENT = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- CHILD  = { }
+		- PRED   = { ERANGE , errno , }
+		- SUCC   = { }
+
+298 :	"HUGE_VAL"
+		- NEIGH  = { HUGE_VAL , return , }
+		- PARENT = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- CHILD  = { }
+		- PRED   = { ERANGE , errno , }
+		- SUCC   = { }
+
+302 :	"if"
+		- NEIGH  = { == , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { number , return , }
+		- PRED   = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- SUCC   = { < , exponent , abs , if , }
+
+302 :	"=="
+		- NEIGH  = { == , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { number , return , }
+		- PRED   = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- SUCC   = { < , exponent , abs , if , }
+
+302 :	"exponent"
+		- NEIGH  = { == , exponent , if , }
+		- PARENT = { }
+		- CHILD  = { number , return , }
+		- PRED   = { DBL_MAX_EXP , > , || , DBL_MIN_EXP , < , exponent , if , }
+		- SUCC   = { < , exponent , abs , if , }
+
+303 :	"return"
+		- NEIGH  = { number , return , }
+		- PARENT = { == , exponent , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+303 :	"number"
+		- NEIGH  = { number , return , }
+		- PARENT = { == , exponent , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+304 :	"if"
+		- NEIGH  = { < , exponent , abs , if , }
+		- PARENT = { }
+		- CHILD  = { > , static_cast , pow , / , *= , * , number , -- , < , absexp , exponent , while , ex , - , }
+		- PRED   = { == , exponent , if , }
+		- SUCC   = { number , return , }
+
+304 :	"abs"
+		- NEIGH  = { < , exponent , abs , if , }
+		- PARENT = { }
+		- CHILD  = { > , static_cast , pow , / , *= , * , number , -- , < , absexp , exponent , while , ex , - , }
+		- PRED   = { == , exponent , if , }
+		- SUCC   = { number , return , }
+
+304 :	"exponent"
+		- NEIGH  = { < , exponent , abs , if , }
+		- PARENT = { }
+		- CHILD  = { > , static_cast , pow , / , *= , * , number , -- , < , absexp , exponent , while , ex , - , }
+		- PRED   = { == , exponent , if , }
+		- SUCC   = { number , return , }
+
+304 :	"<"
+		- NEIGH  = { < , exponent , abs , if , }
+		- PARENT = { }
+		- CHILD  = { > , static_cast , pow , / , *= , * , number , -- , < , absexp , exponent , while , ex , - , }
+		- PRED   = { == , exponent , if , }
+		- SUCC   = { number , return , }
+
+305 :	"ex"
+		- NEIGH  = { ex , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { < , exponent , - , absexp , }
+
+306 :	"absexp"
+		- NEIGH  = { < , exponent , - , absexp , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { ex , }
+		- SUCC   = { -- , absexp , while , }
+
+306 :	"exponent"
+		- NEIGH  = { < , exponent , - , absexp , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { ex , }
+		- SUCC   = { -- , absexp , while , }
+
+306 :	"<"
+		- NEIGH  = { < , exponent , - , absexp , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { ex , }
+		- SUCC   = { -- , absexp , while , }
+
+306 :	"-"
+		- NEIGH  = { < , exponent , - , absexp , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { ex , }
+		- SUCC   = { -- , absexp , while , }
+
+306 :	"exponent"
+		- NEIGH  = { < , exponent , - , absexp , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { ex , }
+		- SUCC   = { -- , absexp , while , }
+
+306 :	"exponent"
+		- NEIGH  = { < , exponent , - , absexp , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { ex , }
+		- SUCC   = { -- , absexp , while , }
+
+307 :	"while"
+		- NEIGH  = { -- , absexp , while , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { *= , ex , }
+		- PRED   = { < , exponent , - , absexp , }
+		- SUCC   = { * , exponent , ex , / , < , number , }
+
+307 :	"absexp"
+		- NEIGH  = { -- , absexp , while , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { *= , ex , }
+		- PRED   = { < , exponent , - , absexp , }
+		- SUCC   = { * , exponent , ex , / , < , number , }
+
+307 :	"--"
+		- NEIGH  = { -- , absexp , while , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { *= , ex , }
+		- PRED   = { < , exponent , - , absexp , }
+		- SUCC   = { * , exponent , ex , / , < , number , }
+
+308 :	"ex"
+		- NEIGH  = { *= , ex , }
+		- PARENT = { -- , absexp , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+308 :	"*="
+		- NEIGH  = { *= , ex , }
+		- PARENT = { -- , absexp , while , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+309 :	"number"
+		- NEIGH  = { * , exponent , ex , / , < , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { -- , absexp , while , }
+		- SUCC   = { }
+
+309 :	"exponent"
+		- NEIGH  = { * , exponent , ex , / , < , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { -- , absexp , while , }
+		- SUCC   = { }
+
+309 :	"<"
+		- NEIGH  = { * , exponent , ex , / , < , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { -- , absexp , while , }
+		- SUCC   = { }
+
+309 :	"number"
+		- NEIGH  = { * , exponent , ex , / , < , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { -- , absexp , while , }
+		- SUCC   = { }
+
+309 :	"/"
+		- NEIGH  = { * , exponent , ex , / , < , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { -- , absexp , while , }
+		- SUCC   = { }
+
+309 :	"ex"
+		- NEIGH  = { * , exponent , ex , / , < , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { -- , absexp , while , }
+		- SUCC   = { }
+
+309 :	"number"
+		- NEIGH  = { * , exponent , ex , / , < , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { -- , absexp , while , }
+		- SUCC   = { }
+
+309 :	"*"
+		- NEIGH  = { * , exponent , ex , / , < , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { -- , absexp , while , }
+		- SUCC   = { }
+
+309 :	"ex"
+		- NEIGH  = { * , exponent , ex , / , < , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { -- , absexp , while , }
+		- SUCC   = { }
+
+312 :	"number"
+		- NEIGH  = { exponent , > , < , pow , static_cast , *= , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+312 :	"*="
+		- NEIGH  = { exponent , > , < , pow , static_cast , *= , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+312 :	"pow"
+		- NEIGH  = { exponent , > , < , pow , static_cast , *= , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+312 :	"static_cast"
+		- NEIGH  = { exponent , > , < , pow , static_cast , *= , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+312 :	"<"
+		- NEIGH  = { exponent , > , < , pow , static_cast , *= , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+312 :	">"
+		- NEIGH  = { exponent , > , < , pow , static_cast , *= , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+312 :	"exponent"
+		- NEIGH  = { exponent , > , < , pow , static_cast , *= , number , }
+		- PARENT = { < , exponent , abs , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+314 :	"return"
+		- NEIGH  = { number , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , exponent , abs , if , }
+		- SUCC   = { }
+
+314 :	"number"
+		- NEIGH  = { number , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { < , exponent , abs , if , }
+		- SUCC   = { }
+
+317 :	"proj_atof"
+		- NEIGH  = { proj_atof , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+317 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+317 :	"str"
+		- NEIGH  = { str , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+318 :	"return"
+		- NEIGH  = { str , proj_strtod , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+318 :	"proj_strtod"
+		- NEIGH  = { str , proj_strtod , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+318 :	"str"
+		- NEIGH  = { str , proj_strtod , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+

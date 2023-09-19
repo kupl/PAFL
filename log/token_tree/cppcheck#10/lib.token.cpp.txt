@@ -5921,99 +5921,99 @@
 		- SUCC   = { }
 
 399 :	"haystack"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { += , haystack , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { isKeyword , == , && , isName , tok , varId , ! , if , }
 
 399 :	"+="
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { += , haystack , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { isKeyword , == , && , isName , tok , varId , ! , if , }
 
 400 :	"if"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 400 :	"tok"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 400 :	"isName"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 400 :	"&&"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 400 :	"tok"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 400 :	"varId"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 400 :	"=="
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 400 :	"&&"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 400 :	"!"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 400 :	"tok"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 400 :	"isKeyword"
-		- NEIGH  = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- NEIGH  = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 401 :	"return"
 		- NEIGH  = { return , }
-		- PARENT = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- PARENT = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
@@ -6022,7 +6022,7 @@
 		- NEIGH  = { break , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
-		- PRED   = { isKeyword , varId , isName , ! , if , tok , += , == , && , haystack , }
+		- PRED   = { isKeyword , == , && , isName , tok , varId , ! , if , }
 		- SUCC   = { }
 
 407 :	"if"
@@ -6229,92 +6229,92 @@
 		- SUCC   = { }
 
 432 :	"haystack"
-		- NEIGH  = { if , == , += , haystack , }
+		- NEIGH  = { += , haystack , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { == , haystack , if , }
 
 432 :	"+="
-		- NEIGH  = { if , == , += , haystack , }
+		- NEIGH  = { += , haystack , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { == , haystack , if , }
 
 434 :	"if"
-		- NEIGH  = { if , == , += , haystack , }
+		- NEIGH  = { == , haystack , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { Token , tokType , if , tok , += , eChar , == , haystack , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 434 :	"haystack"
-		- NEIGH  = { if , == , += , haystack , }
+		- NEIGH  = { == , haystack , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { Token , tokType , if , tok , += , eChar , == , haystack , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 434 :	"=="
-		- NEIGH  = { if , == , += , haystack , }
+		- NEIGH  = { == , haystack , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { Token , tokType , if , tok , += , eChar , == , haystack , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 435 :	"haystack"
 		- NEIGH  = { += , haystack , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { Token , eChar , == , tok , tokType , if , }
 
 435 :	"+="
 		- NEIGH  = { += , haystack , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { Token , eChar , == , tok , tokType , if , }
 
 436 :	"if"
 		- NEIGH  = { Token , eChar , == , tok , tokType , if , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 436 :	"tok"
 		- NEIGH  = { Token , eChar , == , tok , tokType , if , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 436 :	"tokType"
 		- NEIGH  = { Token , eChar , == , tok , tokType , if , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 436 :	"=="
 		- NEIGH  = { Token , eChar , == , tok , tokType , if , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 436 :	"Token"
 		- NEIGH  = { Token , eChar , == , tok , tokType , if , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 436 :	"eChar"
 		- NEIGH  = { Token , eChar , == , tok , tokType , if , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
@@ -6328,21 +6328,21 @@
 
 440 :	"if"
 		- NEIGH  = { == , haystack , if , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { if , isComparisonOp , tok , += , isConstOp , haystack , }
 		- PRED   = { }
 		- SUCC   = { }
 
 440 :	"haystack"
 		- NEIGH  = { == , haystack , if , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { if , isComparisonOp , tok , += , isConstOp , haystack , }
 		- PRED   = { }
 		- SUCC   = { }
 
 440 :	"=="
 		- NEIGH  = { == , haystack , if , }
-		- PARENT = { if , == , += , haystack , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { if , isComparisonOp , tok , += , isConstOp , haystack , }
 		- PRED   = { }
 		- SUCC   = { }
@@ -6435,68 +6435,68 @@
 		- NEIGH  = { break , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
-		- PRED   = { if , == , += , haystack , }
+		- PRED   = { == , haystack , if , }
 		- SUCC   = { }
 
 456 :	"haystack"
-		- NEIGH  = { eString , Token , tokType , if , tok , += , == , haystack , }
+		- NEIGH  = { += , haystack , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { eString , Token , == , tok , tokType , if , }
 
 456 :	"+="
-		- NEIGH  = { eString , Token , tokType , if , tok , += , == , haystack , }
+		- NEIGH  = { += , haystack , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { eString , Token , == , tok , tokType , if , }
 
 457 :	"if"
-		- NEIGH  = { eString , Token , tokType , if , tok , += , == , haystack , }
+		- NEIGH  = { eString , Token , == , tok , tokType , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 457 :	"tok"
-		- NEIGH  = { eString , Token , tokType , if , tok , += , == , haystack , }
+		- NEIGH  = { eString , Token , == , tok , tokType , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 457 :	"tokType"
-		- NEIGH  = { eString , Token , tokType , if , tok , += , == , haystack , }
+		- NEIGH  = { eString , Token , == , tok , tokType , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 457 :	"=="
-		- NEIGH  = { eString , Token , tokType , if , tok , += , == , haystack , }
+		- NEIGH  = { eString , Token , == , tok , tokType , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 457 :	"Token"
-		- NEIGH  = { eString , Token , tokType , if , tok , += , == , haystack , }
+		- NEIGH  = { eString , Token , == , tok , tokType , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 457 :	"eString"
-		- NEIGH  = { eString , Token , tokType , if , tok , += , == , haystack , }
+		- NEIGH  = { eString , Token , == , tok , tokType , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 458 :	"return"
 		- NEIGH  = { return , }
-		- PARENT = { eString , Token , tokType , if , tok , += , == , haystack , }
+		- PARENT = { eString , Token , == , tok , tokType , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
@@ -6505,47 +6505,47 @@
 		- NEIGH  = { break , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
-		- PRED   = { eString , Token , tokType , if , tok , += , == , haystack , }
+		- PRED   = { eString , Token , == , tok , tokType , if , }
 		- SUCC   = { }
 
 464 :	"haystack"
-		- NEIGH  = { isBoolean , if , tok , += , haystack , }
+		- NEIGH  = { += , haystack , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { isBoolean , tok , if , }
 
 464 :	"+="
-		- NEIGH  = { isBoolean , if , tok , += , haystack , }
+		- NEIGH  = { += , haystack , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { isBoolean , tok , if , }
 
 465 :	"if"
-		- NEIGH  = { isBoolean , if , tok , += , haystack , }
+		- NEIGH  = { isBoolean , tok , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 465 :	"tok"
-		- NEIGH  = { isBoolean , if , tok , += , haystack , }
+		- NEIGH  = { isBoolean , tok , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 465 :	"isBoolean"
-		- NEIGH  = { isBoolean , if , tok , += , haystack , }
+		- NEIGH  = { isBoolean , tok , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { return , }
-		- PRED   = { }
+		- PRED   = { += , haystack , }
 		- SUCC   = { break , }
 
 466 :	"return"
 		- NEIGH  = { return , }
-		- PARENT = { isBoolean , if , tok , += , haystack , }
+		- PARENT = { isBoolean , tok , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
@@ -6554,61 +6554,61 @@
 		- NEIGH  = { break , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
-		- PRED   = { isBoolean , if , tok , += , haystack , }
+		- PRED   = { isBoolean , tok , if , }
 		- SUCC   = { }
 
 470 :	"++"
-		- NEIGH  = { == , if , haystack , ++ , }
+		- NEIGH  = { haystack , ++ , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { == , haystack , if , }
 
 470 :	"haystack"
-		- NEIGH  = { == , if , haystack , ++ , }
+		- NEIGH  = { haystack , ++ , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { break , }
+		- SUCC   = { == , haystack , if , }
 
 471 :	"if"
-		- NEIGH  = { == , if , haystack , ++ , }
+		- NEIGH  = { == , haystack , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { str , eLogicalOp , Token , tok , += , && , == , haystack , tokType , if , }
-		- PRED   = { }
+		- PRED   = { haystack , ++ , }
 		- SUCC   = { break , }
 
 471 :	"haystack"
-		- NEIGH  = { == , if , haystack , ++ , }
+		- NEIGH  = { == , haystack , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { str , eLogicalOp , Token , tok , += , && , == , haystack , tokType , if , }
-		- PRED   = { }
+		- PRED   = { haystack , ++ , }
 		- SUCC   = { break , }
 
 471 :	"=="
-		- NEIGH  = { == , if , haystack , ++ , }
+		- NEIGH  = { == , haystack , if , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { str , eLogicalOp , Token , tok , += , && , == , haystack , tokType , if , }
-		- PRED   = { }
+		- PRED   = { haystack , ++ , }
 		- SUCC   = { break , }
 
 473 :	"if"
 		- NEIGH  = { == , haystack , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { str , eBitOp , tokType , if , Token , isOp , tok , += , && , == , haystack , }
 		- PRED   = { }
 		- SUCC   = { }
 
 473 :	"haystack"
 		- NEIGH  = { == , haystack , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { str , eBitOp , tokType , if , Token , isOp , tok , += , && , == , haystack , }
 		- PRED   = { }
 		- SUCC   = { }
 
 473 :	"=="
 		- NEIGH  = { == , haystack , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { str , eBitOp , tokType , if , Token , isOp , tok , += , && , == , haystack , }
 		- PRED   = { }
 		- SUCC   = { }
@@ -6748,84 +6748,84 @@
 
 488 :	"haystack"
 		- NEIGH  = { += , haystack , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
 
 488 :	"+="
 		- NEIGH  = { += , haystack , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
 
 489 :	"if"
 		- NEIGH  = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 489 :	"tok"
 		- NEIGH  = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 489 :	"tokType"
 		- NEIGH  = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 489 :	"=="
 		- NEIGH  = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 489 :	"Token"
 		- NEIGH  = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 489 :	"eLogicalOp"
 		- NEIGH  = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 489 :	"&&"
 		- NEIGH  = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 489 :	"tok"
 		- NEIGH  = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 489 :	"str"
 		- NEIGH  = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
 
 489 :	"=="
 		- NEIGH  = { str , eLogicalOp , Token , && , == , tok , tokType , if , }
-		- PARENT = { == , if , haystack , ++ , }
+		- PARENT = { == , haystack , if , }
 		- CHILD  = { return , }
 		- PRED   = { += , haystack , }
 		- SUCC   = { }
@@ -6841,7 +6841,7 @@
 		- NEIGH  = { break , }
 		- PARENT = { haystack , switch , }
 		- CHILD  = { }
-		- PRED   = { == , if , haystack , ++ , }
+		- PRED   = { == , haystack , if , }
 		- SUCC   = { }
 
 496 :	"throw"

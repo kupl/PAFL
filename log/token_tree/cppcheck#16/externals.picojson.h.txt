@@ -6394,284 +6394,284 @@
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { boolean_ , u_ , return , }
-		- SUCC   = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- SUCC   = { buf , }
 
 375 :	"buf"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { buf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- SUCC   = { tmp , }
 
 376 :	"tmp"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { tmp , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { buf , }
+		- SUCC   = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 
 377 :	"snprintf"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"buf"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"buf"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"fabs"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"u_"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"number_"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"<"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"<<"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"&&"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"modf"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"u_"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"number_"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"&"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"tmp"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"=="
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"u_"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 377 :	"number_"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { tmp , }
+		- SUCC   = { localeconv , decimal_point , * , }
 
 379 :	"*"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { localeconv , decimal_point , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
+		- SUCC   = { != , strcmp , decimal_point , if , }
 
 379 :	"decimal_point"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { localeconv , decimal_point , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
+		- SUCC   = { != , strcmp , decimal_point , if , }
 
 379 :	"localeconv"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { localeconv , decimal_point , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
+		- SUCC   = { != , strcmp , decimal_point , if , }
 
 379 :	"decimal_point"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { localeconv , decimal_point , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { == , tmp , modf , && , u_ , & , buf , number_ , fabs , << , < , snprintf , }
+		- SUCC   = { != , strcmp , decimal_point , if , }
 
 380 :	"if"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { != , strcmp , decimal_point , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { != , p , for , decimal_point , decimal_point_len , buf , * , strlen , ++ , size_t , }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { localeconv , decimal_point , * , }
+		- SUCC   = { buf , return , }
 
 380 :	"strcmp"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { != , strcmp , decimal_point , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { != , p , for , decimal_point , decimal_point_len , buf , * , strlen , ++ , size_t , }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { localeconv , decimal_point , * , }
+		- SUCC   = { buf , return , }
 
 380 :	"decimal_point"
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { != , strcmp , decimal_point , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { != , p , for , decimal_point , decimal_point_len , buf , * , strlen , ++ , size_t , }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { localeconv , decimal_point , * , }
+		- SUCC   = { buf , return , }
 
 380 :	"!="
-		- NEIGH  = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- NEIGH  = { != , strcmp , decimal_point , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { != , p , for , decimal_point , decimal_point_len , buf , * , strlen , ++ , size_t , }
-		- PRED   = { number_type , }
-		- SUCC   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { localeconv , decimal_point , * , }
+		- SUCC   = { buf , return , }
 
 381 :	"size_t"
 		- NEIGH  = { decimal_point , decimal_point_len , strlen , size_t , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { ++ , != , p , * , buf , for , }
 
 381 :	"decimal_point_len"
 		- NEIGH  = { decimal_point , decimal_point_len , strlen , size_t , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { ++ , != , p , * , buf , for , }
 
 381 :	"strlen"
 		- NEIGH  = { decimal_point , decimal_point_len , strlen , size_t , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { ++ , != , p , * , buf , for , }
 
 381 :	"decimal_point"
 		- NEIGH  = { decimal_point , decimal_point_len , strlen , size_t , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { ++ , != , p , * , buf , for , }
 
 382 :	"for"
 		- NEIGH  = { ++ , != , p , * , buf , for , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { decimal_point_len , p , == , decimal_point , strncmp , if , }
 		- PRED   = { decimal_point , decimal_point_len , strlen , size_t , }
 		- SUCC   = { }
 
 382 :	"*"
 		- NEIGH  = { ++ , != , p , * , buf , for , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { decimal_point_len , p , == , decimal_point , strncmp , if , }
 		- PRED   = { decimal_point , decimal_point_len , strlen , size_t , }
 		- SUCC   = { }
 
 382 :	"p"
 		- NEIGH  = { ++ , != , p , * , buf , for , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { decimal_point_len , p , == , decimal_point , strncmp , if , }
 		- PRED   = { decimal_point , decimal_point_len , strlen , size_t , }
 		- SUCC   = { }
 
 382 :	"buf"
 		- NEIGH  = { ++ , != , p , * , buf , for , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { decimal_point_len , p , == , decimal_point , strncmp , if , }
 		- PRED   = { decimal_point , decimal_point_len , strlen , size_t , }
 		- SUCC   = { }
 
 382 :	"*"
 		- NEIGH  = { ++ , != , p , * , buf , for , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { decimal_point_len , p , == , decimal_point , strncmp , if , }
 		- PRED   = { decimal_point , decimal_point_len , strlen , size_t , }
 		- SUCC   = { }
 
 382 :	"p"
 		- NEIGH  = { ++ , != , p , * , buf , for , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { decimal_point_len , p , == , decimal_point , strncmp , if , }
 		- PRED   = { decimal_point , decimal_point_len , strlen , size_t , }
 		- SUCC   = { }
 
 382 :	"!="
 		- NEIGH  = { ++ , != , p , * , buf , for , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { decimal_point_len , p , == , decimal_point , strncmp , if , }
 		- PRED   = { decimal_point , decimal_point_len , strlen , size_t , }
 		- SUCC   = { }
 
 382 :	"++"
 		- NEIGH  = { ++ , != , p , * , buf , for , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { decimal_point_len , p , == , decimal_point , strncmp , if , }
 		- PRED   = { decimal_point , decimal_point_len , strlen , size_t , }
 		- SUCC   = { }
 
 382 :	"p"
 		- NEIGH  = { ++ , != , p , * , buf , for , }
-		- PARENT = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PARENT = { != , strcmp , decimal_point , if , }
 		- CHILD  = { decimal_point_len , p , == , decimal_point , strncmp , if , }
 		- PRED   = { decimal_point , decimal_point_len , strlen , size_t , }
 		- SUCC   = { }
@@ -6789,59 +6789,59 @@
 		- SUCC   = { }
 
 389 :	"return"
-		- NEIGH  = { string_ , buf , * , u_ , string_type , return , }
+		- NEIGH  = { buf , return , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
-		- SUCC   = { array_type , }
+		- PRED   = { != , strcmp , decimal_point , if , }
+		- SUCC   = { string_type , }
 
 389 :	"buf"
-		- NEIGH  = { string_ , buf , * , u_ , string_type , return , }
+		- NEIGH  = { buf , return , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
-		- SUCC   = { array_type , }
+		- PRED   = { != , strcmp , decimal_point , if , }
+		- SUCC   = { string_type , }
 
 391 :	"string_type"
-		- NEIGH  = { string_ , buf , * , u_ , string_type , return , }
+		- NEIGH  = { string_type , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
-		- SUCC   = { array_type , }
+		- PRED   = { buf , return , }
+		- SUCC   = { string_ , u_ , * , return , }
 
 391 :	"return"
-		- NEIGH  = { string_ , buf , * , u_ , string_type , return , }
+		- NEIGH  = { string_ , u_ , * , return , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PRED   = { string_type , }
 		- SUCC   = { array_type , }
 
 391 :	"*"
-		- NEIGH  = { string_ , buf , * , u_ , string_type , return , }
+		- NEIGH  = { string_ , u_ , * , return , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PRED   = { string_type , }
 		- SUCC   = { array_type , }
 
 391 :	"u_"
-		- NEIGH  = { string_ , buf , * , u_ , string_type , return , }
+		- NEIGH  = { string_ , u_ , * , return , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PRED   = { string_type , }
 		- SUCC   = { array_type , }
 
 391 :	"string_"
-		- NEIGH  = { string_ , buf , * , u_ , string_type , return , }
+		- NEIGH  = { string_ , u_ , * , return , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { != , strcmp , if , & , buf , number_ , fabs , decimal_point , < , snprintf , localeconv , && , * , u_ , modf , == , tmp , << , }
+		- PRED   = { string_type , }
 		- SUCC   = { array_type , }
 
 392 :	"array_type"
 		- NEIGH  = { array_type , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { string_ , buf , * , u_ , string_type , return , }
+		- PRED   = { string_ , u_ , * , return , }
 		- SUCC   = { return , }
 
 392 :	"return"
@@ -8081,67 +8081,67 @@
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { break , }
-		- SUCC   = { != , indent , if , - , ++ , oi , * , }
+		- SUCC   = { ++ , oi , * , }
 
 455 :	"*"
-		- NEIGH  = { != , indent , if , - , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { array_type , }
-		- SUCC   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
+		- SUCC   = { - , != , indent , if , }
 
 455 :	"oi"
-		- NEIGH  = { != , indent , if , - , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { array_type , }
-		- SUCC   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
+		- SUCC   = { - , != , indent , if , }
 
 455 :	"++"
-		- NEIGH  = { != , indent , if , - , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { array_type , }
-		- SUCC   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
+		- SUCC   = { - , != , indent , if , }
 
 456 :	"if"
-		- NEIGH  = { != , indent , if , - , ++ , oi , * , }
+		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { indent , ++ , }
-		- PRED   = { array_type , }
+		- PRED   = { ++ , oi , * , }
 		- SUCC   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 
 456 :	"indent"
-		- NEIGH  = { != , indent , if , - , ++ , oi , * , }
+		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { indent , ++ , }
-		- PRED   = { array_type , }
+		- PRED   = { ++ , oi , * , }
 		- SUCC   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 
 456 :	"!="
-		- NEIGH  = { != , indent , if , - , ++ , oi , * , }
+		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { indent , ++ , }
-		- PRED   = { array_type , }
+		- PRED   = { ++ , oi , * , }
 		- SUCC   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 
 456 :	"-"
-		- NEIGH  = { != , indent , if , - , ++ , oi , * , }
+		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { indent , ++ , }
-		- PRED   = { array_type , }
+		- PRED   = { ++ , oi , * , }
 		- SUCC   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 
 457 :	"++"
 		- NEIGH  = { indent , ++ , }
-		- PARENT = { != , indent , if , - , ++ , oi , * , }
+		- PARENT = { - , != , indent , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 457 :	"indent"
 		- NEIGH  = { indent , ++ , }
-		- PARENT = { != , indent , if , - , ++ , oi , * , }
+		- PARENT = { - , != , indent , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
@@ -8150,98 +8150,98 @@
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 459 :	"array"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 459 :	"const_iterator"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 459 :	"i"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 459 :	"u_"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 459 :	"array_"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 459 :	"begin"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 460 :	"i"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 460 :	"!="
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 460 :	"u_"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 460 :	"array_"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 460 :	"end"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 461 :	"++"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 461 :	"i"
 		- NEIGH  = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { oi , indent , != , _serialize , array_ , begin , u_ , - , i , if , }
-		- PRED   = { != , indent , if , - , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 462 :	"if"
@@ -8389,28 +8389,28 @@
 		- PARENT = { type_ , switch , }
 		- CHILD  = { empty , array_ , u_ , ! , if , indent , -- , }
 		- PRED   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
-		- SUCC   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- SUCC   = { ++ , oi , * , }
 
 470 :	"indent"
 		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { empty , array_ , u_ , ! , if , indent , -- , }
 		- PRED   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
-		- SUCC   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- SUCC   = { ++ , oi , * , }
 
 470 :	"!="
 		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { empty , array_ , u_ , ! , if , indent , -- , }
 		- PRED   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
-		- SUCC   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- SUCC   = { ++ , oi , * , }
 
 470 :	"-"
 		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { empty , array_ , u_ , ! , if , indent , -- , }
 		- PRED   = { != , array_ , end , begin , u_ , ++ , i , const_iterator , array , for , }
-		- SUCC   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- SUCC   = { ++ , oi , * , }
 
 471 :	"--"
 		- NEIGH  = { indent , -- , }
@@ -8483,99 +8483,99 @@
 		- SUCC   = { }
 
 476 :	"*"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { - , != , indent , if , }
-		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
+		- SUCC   = { break , }
 
 476 :	"oi"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { - , != , indent , if , }
-		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
+		- SUCC   = { break , }
 
 476 :	"++"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { - , != , indent , if , }
-		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
+		- SUCC   = { break , }
 
 477 :	"break"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { break , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { - , != , indent , if , }
-		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
+		- PRED   = { ++ , oi , * , }
+		- SUCC   = { object_type , }
 
 479 :	"object_type"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { object_type , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { - , != , indent , if , }
-		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
+		- PRED   = { break , }
+		- SUCC   = { ++ , oi , * , }
 
 480 :	"*"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { - , != , indent , if , }
-		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
+		- PRED   = { object_type , }
+		- SUCC   = { - , != , indent , if , }
 
 480 :	"oi"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { - , != , indent , if , }
-		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
+		- PRED   = { object_type , }
+		- SUCC   = { - , != , indent , if , }
 
 480 :	"++"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { - , != , indent , if , }
-		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
+		- PRED   = { object_type , }
+		- SUCC   = { - , != , indent , if , }
 
 481 :	"if"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { indent , ++ , }
-		- PRED   = { - , != , indent , if , }
+		- PRED   = { ++ , oi , * , }
 		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 
 481 :	"indent"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { indent , ++ , }
-		- PRED   = { - , != , indent , if , }
+		- PRED   = { ++ , oi , * , }
 		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 
 481 :	"!="
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { indent , ++ , }
-		- PRED   = { - , != , indent , if , }
+		- PRED   = { ++ , oi , * , }
 		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 
 481 :	"-"
-		- NEIGH  = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { indent , ++ , }
-		- PRED   = { - , != , indent , if , }
+		- PRED   = { ++ , oi , * , }
 		- SUCC   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 
 482 :	"++"
 		- NEIGH  = { indent , ++ , }
-		- PARENT = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PARENT = { - , != , indent , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
 
 482 :	"indent"
 		- NEIGH  = { indent , ++ , }
-		- PARENT = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PARENT = { - , != , indent , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { }
@@ -8584,98 +8584,98 @@
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 484 :	"object"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 484 :	"const_iterator"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 484 :	"i"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 484 :	"u_"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 484 :	"object_"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 484 :	"begin"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 485 :	"i"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 485 :	"!="
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 485 :	"u_"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 485 :	"object_"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 485 :	"end"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 486 :	"++"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 486 :	"i"
 		- NEIGH  = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { _serialize , second , ++ , != , indent , oi , if , first , begin , * , u_ , serialize_str , object_ , - , i , }
-		- PRED   = { != , indent , if , object_type , - , break , ++ , oi , * , }
+		- PRED   = { - , != , indent , if , }
 		- SUCC   = { - , != , indent , if , }
 
 487 :	"if"
@@ -8928,28 +8928,28 @@
 		- PARENT = { type_ , switch , }
 		- CHILD  = { empty , object_ , u_ , ! , if , indent , -- , }
 		- PRED   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
-		- SUCC   = { to_str , copy , break , ++ , oi , * , }
+		- SUCC   = { ++ , oi , * , }
 
 500 :	"indent"
 		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { empty , object_ , u_ , ! , if , indent , -- , }
 		- PRED   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
-		- SUCC   = { to_str , copy , break , ++ , oi , * , }
+		- SUCC   = { ++ , oi , * , }
 
 500 :	"!="
 		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { empty , object_ , u_ , ! , if , indent , -- , }
 		- PRED   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
-		- SUCC   = { to_str , copy , break , ++ , oi , * , }
+		- SUCC   = { ++ , oi , * , }
 
 500 :	"-"
 		- NEIGH  = { - , != , indent , if , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { empty , object_ , u_ , ! , if , indent , -- , }
 		- PRED   = { != , end , begin , object_ , u_ , ++ , i , const_iterator , object , for , }
-		- SUCC   = { to_str , copy , break , ++ , oi , * , }
+		- SUCC   = { ++ , oi , * , }
 
 501 :	"--"
 		- NEIGH  = { indent , -- , }
@@ -9022,59 +9022,59 @@
 		- SUCC   = { }
 
 506 :	"*"
-		- NEIGH  = { to_str , copy , break , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { - , != , indent , if , }
 		- SUCC   = { break , }
 
 506 :	"oi"
-		- NEIGH  = { to_str , copy , break , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { - , != , indent , if , }
 		- SUCC   = { break , }
 
 506 :	"++"
-		- NEIGH  = { to_str , copy , break , ++ , oi , * , }
+		- NEIGH  = { ++ , oi , * , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
 		- PRED   = { - , != , indent , if , }
 		- SUCC   = { break , }
 
 507 :	"break"
-		- NEIGH  = { to_str , copy , break , ++ , oi , * , }
+		- NEIGH  = { break , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { - , != , indent , if , }
-		- SUCC   = { break , }
+		- PRED   = { ++ , oi , * , }
+		- SUCC   = { }
 
 510 :	"copy"
-		- NEIGH  = { to_str , copy , break , ++ , oi , * , }
+		- NEIGH  = { oi , to_str , copy , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { - , != , indent , if , }
+		- PRED   = { }
 		- SUCC   = { break , }
 
 510 :	"to_str"
-		- NEIGH  = { to_str , copy , break , ++ , oi , * , }
+		- NEIGH  = { oi , to_str , copy , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { - , != , indent , if , }
+		- PRED   = { }
 		- SUCC   = { break , }
 
 510 :	"oi"
-		- NEIGH  = { to_str , copy , break , ++ , oi , * , }
+		- NEIGH  = { oi , to_str , copy , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { - , != , indent , if , }
+		- PRED   = { }
 		- SUCC   = { break , }
 
 511 :	"break"
 		- NEIGH  = { break , }
 		- PARENT = { type_ , switch , }
 		- CHILD  = { }
-		- PRED   = { to_str , copy , break , ++ , oi , * , }
+		- PRED   = { oi , to_str , copy , }
 		- SUCC   = { }
 
 513 :	"if"

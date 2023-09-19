@@ -1242,132 +1242,132 @@
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
 		- PRED   = { BUFFER_SIZE , ValueType , }
-		- SUCC   = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- SUCC   = { intvalue , f , }
 
 123 :	"CONTAINER_SIZE"
 		- NEIGH  = { CONTAINER_SIZE , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
 		- PRED   = { BUFFER_SIZE , ValueType , }
-		- SUCC   = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- SUCC   = { intvalue , f , }
 
 124 :	"f"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { intvalue , f , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
 		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- SUCC   = { break , }
 
 124 :	"intvalue"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { intvalue , f , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
 		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- SUCC   = { break , }
 
 125 :	"break"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { break , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { intvalue , f , }
+		- SUCC   = { FLOAT , ValueType , }
 
 127 :	"ValueType"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { FLOAT , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { break , }
+		- SUCC   = { floatValue , f , }
 
 127 :	"FLOAT"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { FLOAT , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { break , }
+		- SUCC   = { floatValue , f , }
 
 128 :	"f"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { floatValue , f , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { FLOAT , ValueType , }
+		- SUCC   = { break , }
 
 128 :	"floatValue"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { floatValue , f , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { FLOAT , ValueType , }
+		- SUCC   = { break , }
 
 129 :	"break"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { break , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { floatValue , f , }
+		- SUCC   = { UNINIT , ValueType , }
 
 131 :	"ValueType"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { UNINIT , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { break , }
+		- SUCC   = { TOK , ValueType , }
 
 131 :	"UNINIT"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { UNINIT , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { break , }
+		- SUCC   = { TOK , ValueType , }
 
 132 :	"ValueType"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { TOK , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { UNINIT , ValueType , }
+		- SUCC   = { LIFETIME , ValueType , }
 
 132 :	"TOK"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { TOK , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { UNINIT , ValueType , }
+		- SUCC   = { LIFETIME , ValueType , }
 
 133 :	"ValueType"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { LIFETIME , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { TOK , ValueType , }
+		- SUCC   = { MOVED , ValueType , }
 
 133 :	"LIFETIME"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { LIFETIME , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { TOK , ValueType , }
+		- SUCC   = { MOVED , ValueType , }
 
 134 :	"ValueType"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { MOVED , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { LIFETIME , ValueType , }
+		- SUCC   = { break , }
 
 134 :	"MOVED"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { MOVED , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { LIFETIME , ValueType , }
+		- SUCC   = { break , }
 
 135 :	"break"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { break , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
+		- PRED   = { MOVED , ValueType , }
 		- SUCC   = { }
 
 139 :	"=="
@@ -2691,38 +2691,38 @@
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { tokvalue , * , Token , }
-		- SUCC   = { moveKind , MoveKind , }
+		- SUCC   = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 
 228 :	"MoveKind"
-		- NEIGH  = { moveKind , MoveKind , }
+		- NEIGH  = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { floatValue , }
 		- SUCC   = { varvalue , }
 
 228 :	"NonMovedVariable"
-		- NEIGH  = { NonMovedVariable , }
+		- NEIGH  = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { floatValue , }
+		- SUCC   = { varvalue , }
 
 228 :	"MovedVariable"
-		- NEIGH  = { MovedVariable , }
+		- NEIGH  = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { floatValue , }
+		- SUCC   = { varvalue , }
 
 228 :	"ForwardedVariable"
-		- NEIGH  = { ForwardedVariable , }
+		- NEIGH  = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { floatValue , }
+		- SUCC   = { varvalue , }
 
 228 :	"moveKind"
-		- NEIGH  = { moveKind , MoveKind , }
+		- NEIGH  = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { floatValue , }
@@ -2732,7 +2732,7 @@
 		- NEIGH  = { varvalue , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { moveKind , MoveKind , }
+		- PRED   = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- SUCC   = { condition , * , Token , }
 
 234 :	"Token"
@@ -2817,157 +2817,157 @@
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { indirect , }
-		- SUCC   = { lifetimeKind , LifetimeKind , }
+		- SUCC   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 
 253 :	"bigint"
 		- NEIGH  = { path , bigint , MathLib , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { indirect , }
-		- SUCC   = { lifetimeKind , LifetimeKind , }
+		- SUCC   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 
 253 :	"path"
 		- NEIGH  = { path , bigint , MathLib , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { indirect , }
-		- SUCC   = { lifetimeKind , LifetimeKind , }
+		- SUCC   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 
 255 :	"LifetimeKind"
-		- NEIGH  = { lifetimeKind , LifetimeKind , }
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { path , bigint , MathLib , }
-		- SUCC   = { lifetimeScope , LifetimeScope , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
 
 255 :	"Object"
-		- NEIGH  = { Object , }
-		- PARENT = { }
-		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
-
-255 :	"Lambda"
-		- NEIGH  = { Lambda , }
-		- PARENT = { }
-		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
-
-255 :	"Iterator"
-		- NEIGH  = { Iterator , }
-		- PARENT = { }
-		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
-
-255 :	"Address"
-		- NEIGH  = { Address , }
-		- PARENT = { }
-		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
-
-255 :	"lifetimeKind"
-		- NEIGH  = { lifetimeKind , LifetimeKind , }
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { path , bigint , MathLib , }
-		- SUCC   = { lifetimeScope , LifetimeScope , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
 
-257 :	"LifetimeScope"
-		- NEIGH  = { lifetimeScope , LifetimeScope , }
+255 :	"Lambda"
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeKind , LifetimeKind , }
+		- PRED   = { path , bigint , MathLib , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
+
+255 :	"Iterator"
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { path , bigint , MathLib , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
+
+255 :	"Address"
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { path , bigint , MathLib , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
+
+255 :	"lifetimeKind"
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { path , bigint , MathLib , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
+
+257 :	"LifetimeScope"
+		- NEIGH  = { lifetimeScope , Local , Argument , LifetimeScope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 		- SUCC   = { moveKind , MoveKind , toString , * , }
 
 257 :	"Local"
-		- NEIGH  = { Local , }
+		- NEIGH  = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
+		- SUCC   = { moveKind , MoveKind , toString , * , }
 
 257 :	"Argument"
-		- NEIGH  = { Argument , }
+		- NEIGH  = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
+		- SUCC   = { moveKind , MoveKind , toString , * , }
 
 257 :	"lifetimeScope"
-		- NEIGH  = { lifetimeScope , LifetimeScope , }
+		- NEIGH  = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeKind , LifetimeKind , }
+		- PRED   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 		- SUCC   = { moveKind , MoveKind , toString , * , }
 
 259 :	"*"
 		- NEIGH  = { moveKind , MoveKind , toString , * , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeScope , LifetimeScope , }
-		- SUCC   = { valueKind , ValueKind , }
+		- PRED   = { lifetimeScope , Local , Argument , LifetimeScope , }
+		- SUCC   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 
 259 :	"toString"
 		- NEIGH  = { moveKind , MoveKind , toString , * , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeScope , LifetimeScope , }
-		- SUCC   = { valueKind , ValueKind , }
+		- PRED   = { lifetimeScope , Local , Argument , LifetimeScope , }
+		- SUCC   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 
 259 :	"MoveKind"
 		- NEIGH  = { moveKind , MoveKind , toString , * , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeScope , LifetimeScope , }
-		- SUCC   = { valueKind , ValueKind , }
+		- PRED   = { lifetimeScope , Local , Argument , LifetimeScope , }
+		- SUCC   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 
 259 :	"moveKind"
 		- NEIGH  = { moveKind , MoveKind , toString , * , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeScope , LifetimeScope , }
-		- SUCC   = { valueKind , ValueKind , }
+		- PRED   = { lifetimeScope , Local , Argument , LifetimeScope , }
+		- SUCC   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 
 262 :	"ValueKind"
-		- NEIGH  = { valueKind , ValueKind , }
+		- NEIGH  = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { moveKind , MoveKind , toString , * , }
 		- SUCC   = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 
 264 :	"Possible"
-		- NEIGH  = { Possible , }
+		- NEIGH  = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { moveKind , MoveKind , toString , * , }
+		- SUCC   = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 
 266 :	"Known"
-		- NEIGH  = { Known , }
+		- NEIGH  = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { moveKind , MoveKind , toString , * , }
+		- SUCC   = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 
 268 :	"Inconclusive"
-		- NEIGH  = { Inconclusive , }
+		- NEIGH  = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { moveKind , MoveKind , toString , * , }
+		- SUCC   = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 
 270 :	"Impossible"
-		- NEIGH  = { Impossible , }
+		- NEIGH  = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { moveKind , MoveKind , toString , * , }
+		- SUCC   = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 
 271 :	"valueKind"
-		- NEIGH  = { valueKind , ValueKind , }
+		- NEIGH  = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { moveKind , MoveKind , toString , * , }
@@ -2977,238 +2977,238 @@
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 274 :	"valueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 274 :	"ValueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 274 :	"Known"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 277 :	"isKnown"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 278 :	"return"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 278 :	"valueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 278 :	"=="
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 278 :	"ValueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 278 :	"Known"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 281 :	"setPossible"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 282 :	"valueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 282 :	"ValueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 282 :	"Possible"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 285 :	"isPossible"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 286 :	"return"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 286 :	"valueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 286 :	"=="
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 286 :	"ValueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 286 :	"Possible"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 289 :	"isImpossible"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 290 :	"return"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 290 :	"valueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 290 :	"=="
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 290 :	"ValueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 290 :	"Impossible"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 293 :	"setImpossible"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 294 :	"valueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 294 :	"ValueKind"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 294 :	"Impossible"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 297 :	"setInconclusive"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 297 :	"inconclusive"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 298 :	"if"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { Inconclusive , ValueKind , valueKind , }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 298 :	"inconclusive"
 		- NEIGH  = { if , setImpossible , Impossible , isPossible , setPossible , setInconclusive , == , Possible , isKnown , Known , inconclusive , ValueKind , isImpossible , valueKind , return , setKnown , }
 		- PARENT = { }
 		- CHILD  = { Inconclusive , ValueKind , valueKind , }
-		- PRED   = { valueKind , ValueKind , }
+		- PRED   = { valueKind , ValueKind , Impossible , Known , Possible , Inconclusive , }
 		- SUCC   = { isKnown , if , changeKnownToPossible , Inconclusive , ValueKind , == , return , valueKind , isInconclusive , }
 
 299 :	"valueKind"

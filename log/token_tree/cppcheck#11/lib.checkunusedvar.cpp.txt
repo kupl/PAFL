@@ -14724,88 +14724,88 @@
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
 		- PRED   = { tok , start , * , Token , }
-		- SUCC   = { while , astParent , tok , parent , * , Token , }
+		- SUCC   = { astParent , tok , parent , * , Token , }
 
 857 :	"Token"
-		- NEIGH  = { while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
 		- PRED   = { inwhile , }
-		- SUCC   = { scope , dereference , variables , doAssignment , tok , }
+		- SUCC   = { parent , while , }
 
 857 :	"*"
-		- NEIGH  = { while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
 		- PRED   = { inwhile , }
-		- SUCC   = { scope , dereference , variables , doAssignment , tok , }
+		- SUCC   = { parent , while , }
 
 857 :	"parent"
-		- NEIGH  = { while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
 		- PRED   = { inwhile , }
-		- SUCC   = { scope , dereference , variables , doAssignment , tok , }
+		- SUCC   = { parent , while , }
 
 857 :	"tok"
-		- NEIGH  = { while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
 		- PRED   = { inwhile , }
-		- SUCC   = { scope , dereference , variables , doAssignment , tok , }
+		- SUCC   = { parent , while , }
 
 857 :	"astParent"
-		- NEIGH  = { while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { astParent , tok , parent , * , Token , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
 		- PRED   = { inwhile , }
-		- SUCC   = { scope , dereference , variables , doAssignment , tok , }
+		- SUCC   = { parent , while , }
 
 858 :	"while"
-		- NEIGH  = { while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { parent , while , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { astParent , parent , previous , simpleMatch , Token , if , }
-		- PRED   = { inwhile , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { scope , dereference , variables , doAssignment , tok , }
 
 858 :	"parent"
-		- NEIGH  = { while , astParent , tok , parent , * , Token , }
+		- NEIGH  = { parent , while , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { astParent , parent , previous , simpleMatch , Token , if , }
-		- PRED   = { inwhile , }
+		- PRED   = { astParent , tok , parent , * , Token , }
 		- SUCC   = { scope , dereference , variables , doAssignment , tok , }
 
 859 :	"if"
 		- NEIGH  = { parent , simpleMatch , Token , previous , if , }
-		- PARENT = { while , astParent , tok , parent , * , Token , }
+		- PARENT = { parent , while , }
 		- CHILD  = { break , inwhile , }
 		- PRED   = { }
 		- SUCC   = { astParent , parent , }
 
 859 :	"Token"
 		- NEIGH  = { parent , simpleMatch , Token , previous , if , }
-		- PARENT = { while , astParent , tok , parent , * , Token , }
+		- PARENT = { parent , while , }
 		- CHILD  = { break , inwhile , }
 		- PRED   = { }
 		- SUCC   = { astParent , parent , }
 
 859 :	"simpleMatch"
 		- NEIGH  = { parent , simpleMatch , Token , previous , if , }
-		- PARENT = { while , astParent , tok , parent , * , Token , }
+		- PARENT = { parent , while , }
 		- CHILD  = { break , inwhile , }
 		- PRED   = { }
 		- SUCC   = { astParent , parent , }
 
 859 :	"parent"
 		- NEIGH  = { parent , simpleMatch , Token , previous , if , }
-		- PARENT = { while , astParent , tok , parent , * , Token , }
+		- PARENT = { parent , while , }
 		- CHILD  = { break , inwhile , }
 		- PRED   = { }
 		- SUCC   = { astParent , parent , }
 
 859 :	"previous"
 		- NEIGH  = { parent , simpleMatch , Token , previous , if , }
-		- PARENT = { while , astParent , tok , parent , * , Token , }
+		- PARENT = { parent , while , }
 		- CHILD  = { break , inwhile , }
 		- PRED   = { }
 		- SUCC   = { astParent , parent , }
@@ -14826,21 +14826,21 @@
 
 863 :	"parent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { while , astParent , tok , parent , * , Token , }
+		- PARENT = { parent , while , }
 		- CHILD  = { }
 		- PRED   = { parent , simpleMatch , Token , previous , if , }
 		- SUCC   = { }
 
 863 :	"parent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { while , astParent , tok , parent , * , Token , }
+		- PARENT = { parent , while , }
 		- CHILD  = { }
 		- PRED   = { parent , simpleMatch , Token , previous , if , }
 		- SUCC   = { }
 
 863 :	"astParent"
 		- NEIGH  = { astParent , parent , }
-		- PARENT = { while , astParent , tok , parent , * , Token , }
+		- PARENT = { parent , while , }
 		- CHILD  = { }
 		- PRED   = { parent , simpleMatch , Token , previous , if , }
 		- SUCC   = { }
@@ -14849,42 +14849,42 @@
 		- NEIGH  = { scope , dereference , variables , doAssignment , tok , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
-		- PRED   = { while , astParent , tok , parent , * , Token , }
+		- PRED   = { parent , while , }
 		- SUCC   = { isAssignmentOp , str , && , != , tok , if , }
 
 867 :	"doAssignment"
 		- NEIGH  = { scope , dereference , variables , doAssignment , tok , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
-		- PRED   = { while , astParent , tok , parent , * , Token , }
+		- PRED   = { parent , while , }
 		- SUCC   = { isAssignmentOp , str , && , != , tok , if , }
 
 867 :	"variables"
 		- NEIGH  = { scope , dereference , variables , doAssignment , tok , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
-		- PRED   = { while , astParent , tok , parent , * , Token , }
+		- PRED   = { parent , while , }
 		- SUCC   = { isAssignmentOp , str , && , != , tok , if , }
 
 867 :	"tok"
 		- NEIGH  = { scope , dereference , variables , doAssignment , tok , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
-		- PRED   = { while , astParent , tok , parent , * , Token , }
+		- PRED   = { parent , while , }
 		- SUCC   = { isAssignmentOp , str , && , != , tok , if , }
 
 867 :	"dereference"
 		- NEIGH  = { scope , dereference , variables , doAssignment , tok , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
-		- PRED   = { while , astParent , tok , parent , * , Token , }
+		- PRED   = { parent , while , }
 		- SUCC   = { isAssignmentOp , str , && , != , tok , if , }
 
 867 :	"scope"
 		- NEIGH  = { scope , dereference , variables , doAssignment , tok , }
 		- PARENT = { || , tok , Token , Match , if , }
 		- CHILD  = { }
-		- PRED   = { while , astParent , tok , parent , * , Token , }
+		- PRED   = { parent , while , }
 		- SUCC   = { isAssignmentOp , str , && , != , tok , if , }
 
 869 :	"if"

@@ -4861,35 +4861,35 @@
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { if , ! , bodyEnd , scope , tok , }
 		- PRED   = { }
-		- SUCC   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- SUCC   = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 
 307 :	"!"
 		- NEIGH  = { isExecutable , scope , tok , ! , if , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { if , ! , bodyEnd , scope , tok , }
 		- PRED   = { }
-		- SUCC   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- SUCC   = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 
 307 :	"tok"
 		- NEIGH  = { isExecutable , scope , tok , ! , if , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { if , ! , bodyEnd , scope , tok , }
 		- PRED   = { }
-		- SUCC   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- SUCC   = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 
 307 :	"scope"
 		- NEIGH  = { isExecutable , scope , tok , ! , if , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { if , ! , bodyEnd , scope , tok , }
 		- PRED   = { }
-		- SUCC   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- SUCC   = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 
 307 :	"isExecutable"
 		- NEIGH  = { isExecutable , scope , tok , ! , if , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { if , ! , bodyEnd , scope , tok , }
 		- PRED   = { }
-		- SUCC   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- SUCC   = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 
 308 :	"tok"
 		- NEIGH  = { bodyEnd , scope , tok , }
@@ -4948,78 +4948,78 @@
 		- SUCC   = { }
 
 315 :	"Token"
-		- NEIGH  = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- NEIGH  = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { }
 		- PRED   = { isExecutable , scope , tok , ! , if , }
-		- SUCC   = { || , tok , next , Token , if , ! , Match , }
+		- SUCC   = { nextTok , if , }
 
 315 :	"*"
-		- NEIGH  = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- NEIGH  = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { }
 		- PRED   = { isExecutable , scope , tok , ! , if , }
-		- SUCC   = { || , tok , next , Token , if , ! , Match , }
+		- SUCC   = { nextTok , if , }
 
 315 :	"nextTok"
-		- NEIGH  = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- NEIGH  = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { }
 		- PRED   = { isExecutable , scope , tok , ! , if , }
-		- SUCC   = { || , tok , next , Token , if , ! , Match , }
+		- SUCC   = { nextTok , if , }
 
 315 :	"checkTokenInsideExpression"
-		- NEIGH  = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- NEIGH  = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { }
 		- PRED   = { isExecutable , scope , tok , ! , if , }
-		- SUCC   = { || , tok , next , Token , if , ! , Match , }
+		- SUCC   = { nextTok , if , }
 
 315 :	"tok"
-		- NEIGH  = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- NEIGH  = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { }
 		- PRED   = { isExecutable , scope , tok , ! , if , }
-		- SUCC   = { || , tok , next , Token , if , ! , Match , }
+		- SUCC   = { nextTok , if , }
 
 315 :	"varInfo"
-		- NEIGH  = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- NEIGH  = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { }
 		- PRED   = { isExecutable , scope , tok , ! , if , }
-		- SUCC   = { || , tok , next , Token , if , ! , Match , }
+		- SUCC   = { nextTok , if , }
 
 316 :	"if"
-		- NEIGH  = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- NEIGH  = { nextTok , if , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , nextTok , tok , }
-		- PRED   = { isExecutable , scope , tok , ! , if , }
+		- PRED   = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 		- SUCC   = { || , tok , next , Token , if , ! , Match , }
 
 316 :	"nextTok"
-		- NEIGH  = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- NEIGH  = { nextTok , if , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , nextTok , tok , }
-		- PRED   = { isExecutable , scope , tok , ! , if , }
+		- PRED   = { checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
 		- SUCC   = { || , tok , next , Token , if , ! , Match , }
 
 317 :	"tok"
 		- NEIGH  = { nextTok , tok , }
-		- PARENT = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PARENT = { nextTok , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { continue , }
 
 317 :	"nextTok"
 		- NEIGH  = { nextTok , tok , }
-		- PARENT = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PARENT = { nextTok , if , }
 		- CHILD  = { }
 		- PRED   = { }
 		- SUCC   = { continue , }
 
 318 :	"continue"
 		- NEIGH  = { continue , }
-		- PARENT = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PARENT = { nextTok , if , }
 		- CHILD  = { }
 		- PRED   = { nextTok , tok , }
 		- SUCC   = { }
@@ -5028,70 +5028,70 @@
 		- NEIGH  = { || , tok , next , Token , if , ! , Match , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , }
-		- PRED   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PRED   = { nextTok , if , }
 		- SUCC   = { next , tok , }
 
 324 :	"!"
 		- NEIGH  = { || , tok , next , Token , if , ! , Match , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , }
-		- PRED   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PRED   = { nextTok , if , }
 		- SUCC   = { next , tok , }
 
 324 :	"Token"
 		- NEIGH  = { || , tok , next , Token , if , ! , Match , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , }
-		- PRED   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PRED   = { nextTok , if , }
 		- SUCC   = { next , tok , }
 
 324 :	"Match"
 		- NEIGH  = { || , tok , next , Token , if , ! , Match , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , }
-		- PRED   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PRED   = { nextTok , if , }
 		- SUCC   = { next , tok , }
 
 324 :	"tok"
 		- NEIGH  = { || , tok , next , Token , if , ! , Match , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , }
-		- PRED   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PRED   = { nextTok , if , }
 		- SUCC   = { next , tok , }
 
 324 :	"||"
 		- NEIGH  = { || , tok , next , Token , if , ! , Match , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , }
-		- PRED   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PRED   = { nextTok , if , }
 		- SUCC   = { next , tok , }
 
 324 :	"Token"
 		- NEIGH  = { || , tok , next , Token , if , ! , Match , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , }
-		- PRED   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PRED   = { nextTok , if , }
 		- SUCC   = { next , tok , }
 
 324 :	"Match"
 		- NEIGH  = { || , tok , next , Token , if , ! , Match , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , }
-		- PRED   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PRED   = { nextTok , if , }
 		- SUCC   = { next , tok , }
 
 324 :	"tok"
 		- NEIGH  = { || , tok , next , Token , if , ! , Match , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , }
-		- PRED   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PRED   = { nextTok , if , }
 		- SUCC   = { next , tok , }
 
 324 :	"next"
 		- NEIGH  = { || , tok , next , Token , if , ! , Match , }
 		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
 		- CHILD  = { continue , }
-		- PRED   = { if , checkTokenInsideExpression , varInfo , tok , nextTok , * , Token , }
+		- PRED   = { nextTok , if , }
 		- SUCC   = { next , tok , }
 
 325 :	"continue"

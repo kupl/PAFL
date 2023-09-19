@@ -1606,83 +1606,83 @@
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
 		- PRED   = { * , cap , newAllocated , }
-		- SUCC   = { }
+		- SUCC   = { T , memcpy , _mem , _size , newMem , * , }
 
 298 :	"*"
 		- NEIGH  = { newAllocated , newMem , * , new , T , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
 		- PRED   = { * , cap , newAllocated , }
-		- SUCC   = { }
+		- SUCC   = { T , memcpy , _mem , _size , newMem , * , }
 
 298 :	"newMem"
 		- NEIGH  = { newAllocated , newMem , * , new , T , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
 		- PRED   = { * , cap , newAllocated , }
-		- SUCC   = { }
+		- SUCC   = { T , memcpy , _mem , _size , newMem , * , }
 
 298 :	"new"
 		- NEIGH  = { newAllocated , newMem , * , new , T , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
 		- PRED   = { * , cap , newAllocated , }
-		- SUCC   = { }
+		- SUCC   = { T , memcpy , _mem , _size , newMem , * , }
 
 298 :	"T"
 		- NEIGH  = { newAllocated , newMem , * , new , T , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
 		- PRED   = { * , cap , newAllocated , }
-		- SUCC   = { }
+		- SUCC   = { T , memcpy , _mem , _size , newMem , * , }
 
 298 :	"newAllocated"
 		- NEIGH  = { newAllocated , newMem , * , new , T , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
 		- PRED   = { * , cap , newAllocated , }
-		- SUCC   = { }
+		- SUCC   = { T , memcpy , _mem , _size , newMem , * , }
 
 300 :	"memcpy"
 		- NEIGH  = { T , memcpy , _mem , _size , newMem , * , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { newAllocated , newMem , * , new , T , }
 		- SUCC   = { _pool , != , _mem , if , }
 
 300 :	"newMem"
 		- NEIGH  = { T , memcpy , _mem , _size , newMem , * , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { newAllocated , newMem , * , new , T , }
 		- SUCC   = { _pool , != , _mem , if , }
 
 300 :	"_mem"
 		- NEIGH  = { T , memcpy , _mem , _size , newMem , * , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { newAllocated , newMem , * , new , T , }
 		- SUCC   = { _pool , != , _mem , if , }
 
 300 :	"T"
 		- NEIGH  = { T , memcpy , _mem , _size , newMem , * , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { newAllocated , newMem , * , new , T , }
 		- SUCC   = { _pool , != , _mem , if , }
 
 300 :	"*"
 		- NEIGH  = { T , memcpy , _mem , _size , newMem , * , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { newAllocated , newMem , * , new , T , }
 		- SUCC   = { _pool , != , _mem , if , }
 
 300 :	"_size"
 		- NEIGH  = { T , memcpy , _mem , _size , newMem , * , }
 		- PARENT = { _allocated , > , cap , if , }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { newAllocated , newMem , * , new , T , }
 		- SUCC   = { _pool , != , _mem , if , }
 
 301 :	"if"
@@ -2418,48 +2418,48 @@
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { _root , ! , if , }
-		- SUCC   = { }
+		- SUCC   = { next , _root , }
 
 379 :	"*"
 		- NEIGH  = { result , * , _root , Item , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { _root , ! , if , }
-		- SUCC   = { }
+		- SUCC   = { next , _root , }
 
 379 :	"result"
 		- NEIGH  = { result , * , _root , Item , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { _root , ! , if , }
-		- SUCC   = { }
+		- SUCC   = { next , _root , }
 
 379 :	"_root"
 		- NEIGH  = { result , * , _root , Item , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { _root , ! , if , }
-		- SUCC   = { }
+		- SUCC   = { next , _root , }
 
 381 :	"_root"
 		- NEIGH  = { next , _root , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { result , * , _root , Item , }
 		- SUCC   = { _currentAllocs , ++ , }
 
 381 :	"_root"
 		- NEIGH  = { next , _root , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { result , * , _root , Item , }
 		- SUCC   = { _currentAllocs , ++ , }
 
 381 :	"next"
 		- NEIGH  = { next , _root , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { result , * , _root , Item , }
 		- SUCC   = { _currentAllocs , ++ , }
 
 383 :	"++"
@@ -14927,83 +14927,83 @@
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { pool , & , _memPool , returnNode , }
 
 1905 :	"*"
 		- NEIGH  = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { pool , & , _memPool , returnNode , }
 
 1905 :	"returnNode"
 		- NEIGH  = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { pool , & , _memPool , returnNode , }
 
 1905 :	"new"
 		- NEIGH  = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { pool , & , _memPool , returnNode , }
 
 1905 :	"pool"
 		- NEIGH  = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { pool , & , _memPool , returnNode , }
 
 1905 :	"Alloc"
 		- NEIGH  = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { pool , & , _memPool , returnNode , }
 
 1905 :	"NodeType"
 		- NEIGH  = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { pool , & , _memPool , returnNode , }
 
 1905 :	"this"
 		- NEIGH  = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { }
-		- SUCC   = { }
+		- SUCC   = { pool , & , _memPool , returnNode , }
 
 1907 :	"returnNode"
 		- NEIGH  = { pool , & , _memPool , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- SUCC   = { returnNode , Push , _unlinked , }
 
 1907 :	"_memPool"
 		- NEIGH  = { pool , & , _memPool , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- SUCC   = { returnNode , Push , _unlinked , }
 
 1907 :	"&"
 		- NEIGH  = { pool , & , _memPool , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- SUCC   = { returnNode , Push , _unlinked , }
 
 1907 :	"pool"
 		- NEIGH  = { pool , & , _memPool , returnNode , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
+		- PRED   = { Alloc , pool , this , NodeType , * , new , returnNode , }
 		- SUCC   = { returnNode , Push , _unlinked , }
 
 1909 :	"_unlinked"

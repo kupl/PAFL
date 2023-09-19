@@ -255,52 +255,52 @@
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { classScope , * , Scope , }
-		- SUCC   = { needInitialization , NeedInitialization , }
+		- SUCC   = { False , True , Unknown , needInitialization , NeedInitialization , }
 
 67 :	"*"
 		- NEIGH  = { enclosingScope , * , Scope , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { classScope , * , Scope , }
-		- SUCC   = { needInitialization , NeedInitialization , }
+		- SUCC   = { False , True , Unknown , needInitialization , NeedInitialization , }
 
 67 :	"enclosingScope"
 		- NEIGH  = { enclosingScope , * , Scope , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { classScope , * , Scope , }
-		- SUCC   = { needInitialization , NeedInitialization , }
+		- SUCC   = { False , True , Unknown , needInitialization , NeedInitialization , }
 
 68 :	"NeedInitialization"
-		- NEIGH  = { needInitialization , NeedInitialization , }
+		- NEIGH  = { False , True , Unknown , needInitialization , NeedInitialization , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { enclosingScope , * , Scope , }
 		- SUCC   = { BaseInfo , }
 
 69 :	"Unknown"
-		- NEIGH  = { Unknown , }
+		- NEIGH  = { False , True , Unknown , needInitialization , NeedInitialization , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { enclosingScope , * , Scope , }
+		- SUCC   = { BaseInfo , }
 
 69 :	"True"
-		- NEIGH  = { True , }
+		- NEIGH  = { False , True , Unknown , needInitialization , NeedInitialization , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { enclosingScope , * , Scope , }
+		- SUCC   = { BaseInfo , }
 
 69 :	"False"
-		- NEIGH  = { False , }
+		- NEIGH  = { False , True , Unknown , needInitialization , NeedInitialization , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { enclosingScope , * , Scope , }
+		- SUCC   = { BaseInfo , }
 
 70 :	"needInitialization"
-		- NEIGH  = { needInitialization , NeedInitialization , }
+		- NEIGH  = { False , True , Unknown , needInitialization , NeedInitialization , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { enclosingScope , * , Scope , }
@@ -310,7 +310,7 @@
 		- NEIGH  = { BaseInfo , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { needInitialization , NeedInitialization , }
+		- PRED   = { False , True , Unknown , needInitialization , NeedInitialization , }
 		- SUCC   = { FriendInfo , }
 
 74 :	"BaseInfo"
@@ -12491,146 +12491,146 @@
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { settings , type , * , Token , parseDecl , Settings , ValueType , }
-		- SUCC   = { MatchResult , }
+		- SUCC   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 
 1144 :	"typeFromString"
 		- NEIGH  = { typestr , & , string , typeFromString , longType , std , Type , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { settings , type , * , Token , parseDecl , Settings , ValueType , }
-		- SUCC   = { MatchResult , }
+		- SUCC   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 
 1144 :	"std"
 		- NEIGH  = { typestr , & , string , typeFromString , longType , std , Type , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { settings , type , * , Token , parseDecl , Settings , ValueType , }
-		- SUCC   = { MatchResult , }
+		- SUCC   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 
 1144 :	"string"
 		- NEIGH  = { typestr , & , string , typeFromString , longType , std , Type , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { settings , type , * , Token , parseDecl , Settings , ValueType , }
-		- SUCC   = { MatchResult , }
+		- SUCC   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 
 1144 :	"&"
 		- NEIGH  = { typestr , & , string , typeFromString , longType , std , Type , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { settings , type , * , Token , parseDecl , Settings , ValueType , }
-		- SUCC   = { MatchResult , }
+		- SUCC   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 
 1144 :	"typestr"
 		- NEIGH  = { typestr , & , string , typeFromString , longType , std , Type , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { settings , type , * , Token , parseDecl , Settings , ValueType , }
-		- SUCC   = { MatchResult , }
+		- SUCC   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 
 1144 :	"longType"
 		- NEIGH  = { typestr , & , string , typeFromString , longType , std , Type , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { settings , type , * , Token , parseDecl , Settings , ValueType , }
-		- SUCC   = { MatchResult , }
+		- SUCC   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 
 1146 :	"MatchResult"
-		- NEIGH  = { MatchResult , }
+		- NEIGH  = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { typestr , & , string , typeFromString , longType , std , Type , }
 		- SUCC   = { func , MatchResult , call , * , matchParameter , ValueType , }
 
 1146 :	"UNKNOWN"
-		- NEIGH  = { UNKNOWN , }
+		- NEIGH  = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { typestr , & , string , typeFromString , longType , std , Type , }
+		- SUCC   = { func , MatchResult , call , * , matchParameter , ValueType , }
 
 1146 :	"SAME"
-		- NEIGH  = { SAME , }
+		- NEIGH  = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { typestr , & , string , typeFromString , longType , std , Type , }
+		- SUCC   = { func , MatchResult , call , * , matchParameter , ValueType , }
 
 1146 :	"FALLBACK1"
-		- NEIGH  = { FALLBACK1 , }
+		- NEIGH  = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { typestr , & , string , typeFromString , longType , std , Type , }
+		- SUCC   = { func , MatchResult , call , * , matchParameter , ValueType , }
 
 1146 :	"FALLBACK2"
-		- NEIGH  = { FALLBACK2 , }
+		- NEIGH  = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { typestr , & , string , typeFromString , longType , std , Type , }
+		- SUCC   = { func , MatchResult , call , * , matchParameter , ValueType , }
 
 1146 :	"NOMATCH"
-		- NEIGH  = { NOMATCH , }
+		- NEIGH  = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { typestr , & , string , typeFromString , longType , std , Type , }
+		- SUCC   = { func , MatchResult , call , * , matchParameter , ValueType , }
 
 1147 :	"MatchResult"
 		- NEIGH  = { func , MatchResult , call , * , matchParameter , ValueType , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { MatchResult , }
+		- PRED   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- SUCC   = { funcVar , callVar , Variable , MatchResult , call , * , matchParameter , ValueType , }
 
 1147 :	"matchParameter"
 		- NEIGH  = { func , MatchResult , call , * , matchParameter , ValueType , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { MatchResult , }
+		- PRED   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- SUCC   = { funcVar , callVar , Variable , MatchResult , call , * , matchParameter , ValueType , }
 
 1147 :	"ValueType"
 		- NEIGH  = { func , MatchResult , call , * , matchParameter , ValueType , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { MatchResult , }
+		- PRED   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- SUCC   = { funcVar , callVar , Variable , MatchResult , call , * , matchParameter , ValueType , }
 
 1147 :	"*"
 		- NEIGH  = { func , MatchResult , call , * , matchParameter , ValueType , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { MatchResult , }
+		- PRED   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- SUCC   = { funcVar , callVar , Variable , MatchResult , call , * , matchParameter , ValueType , }
 
 1147 :	"call"
 		- NEIGH  = { func , MatchResult , call , * , matchParameter , ValueType , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { MatchResult , }
+		- PRED   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- SUCC   = { funcVar , callVar , Variable , MatchResult , call , * , matchParameter , ValueType , }
 
 1147 :	"ValueType"
 		- NEIGH  = { func , MatchResult , call , * , matchParameter , ValueType , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { MatchResult , }
+		- PRED   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- SUCC   = { funcVar , callVar , Variable , MatchResult , call , * , matchParameter , ValueType , }
 
 1147 :	"*"
 		- NEIGH  = { func , MatchResult , call , * , matchParameter , ValueType , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { MatchResult , }
+		- PRED   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- SUCC   = { funcVar , callVar , Variable , MatchResult , call , * , matchParameter , ValueType , }
 
 1147 :	"func"
 		- NEIGH  = { func , MatchResult , call , * , matchParameter , ValueType , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { MatchResult , }
+		- PRED   = { SAME , FALLBACK2 , FALLBACK1 , NOMATCH , UNKNOWN , MatchResult , }
 		- SUCC   = { funcVar , callVar , Variable , MatchResult , call , * , matchParameter , ValueType , }
 
 1148 :	"MatchResult"

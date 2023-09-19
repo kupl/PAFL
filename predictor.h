@@ -45,7 +45,7 @@ private:
     unsigned short _passing_cnt;
 
     const unsigned short _cnt_ub = 64;
-    const size_t K = 4;
+    const size_t K = 6;
 };
 }
 

@@ -1,0 +1,343 @@
+8 :	"pj_qsfn"
+		- NEIGH  = { pj_qsfn , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+8 :	"sinphi"
+		- NEIGH  = { sinphi , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+8 :	"e"
+		- NEIGH  = { e , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+8 :	"one_es"
+		- NEIGH  = { one_es , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+9 :	"con"
+		- NEIGH  = { div2 , div1 , con , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { >= , e , if , }
+
+9 :	"div1"
+		- NEIGH  = { div2 , div1 , con , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { >= , e , if , }
+
+9 :	"div2"
+		- NEIGH  = { div2 , div1 , con , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { >= , e , if , }
+
+11 :	"if"
+		- NEIGH  = { >= , e , if , }
+		- PARENT = { }
+		- CHILD  = { one_es , return , - , || , log , if , + , div2 , * , == , e , div1 , sinphi , / , con , }
+		- PRED   = { div2 , div1 , con , }
+		- SUCC   = { }
+
+11 :	"e"
+		- NEIGH  = { >= , e , if , }
+		- PARENT = { }
+		- CHILD  = { one_es , return , - , || , log , if , + , div2 , * , == , e , div1 , sinphi , / , con , }
+		- PRED   = { div2 , div1 , con , }
+		- SUCC   = { }
+
+11 :	">="
+		- NEIGH  = { >= , e , if , }
+		- PARENT = { }
+		- CHILD  = { one_es , return , - , || , log , if , + , div2 , * , == , e , div1 , sinphi , / , con , }
+		- PRED   = { div2 , div1 , con , }
+		- SUCC   = { }
+
+12 :	"con"
+		- NEIGH  = { * , e , sinphi , con , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { * , - , con , div1 , }
+
+12 :	"e"
+		- NEIGH  = { * , e , sinphi , con , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { * , - , con , div1 , }
+
+12 :	"*"
+		- NEIGH  = { * , e , sinphi , con , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { * , - , con , div1 , }
+
+12 :	"sinphi"
+		- NEIGH  = { * , e , sinphi , con , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { * , - , con , div1 , }
+
+13 :	"div1"
+		- NEIGH  = { * , - , con , div1 , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { * , e , sinphi , con , }
+		- SUCC   = { con , + , div2 , }
+
+13 :	"-"
+		- NEIGH  = { * , - , con , div1 , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { * , e , sinphi , con , }
+		- SUCC   = { con , + , div2 , }
+
+13 :	"con"
+		- NEIGH  = { * , - , con , div1 , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { * , e , sinphi , con , }
+		- SUCC   = { con , + , div2 , }
+
+13 :	"*"
+		- NEIGH  = { * , - , con , div1 , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { * , e , sinphi , con , }
+		- SUCC   = { con , + , div2 , }
+
+13 :	"con"
+		- NEIGH  = { * , - , con , div1 , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { * , e , sinphi , con , }
+		- SUCC   = { con , + , div2 , }
+
+14 :	"div2"
+		- NEIGH  = { con , + , div2 , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { * , - , con , div1 , }
+		- SUCC   = { || , == , div1 , div2 , if , }
+
+14 :	"+"
+		- NEIGH  = { con , + , div2 , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { * , - , con , div1 , }
+		- SUCC   = { || , == , div1 , div2 , if , }
+
+14 :	"con"
+		- NEIGH  = { con , + , div2 , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { * , - , con , div1 , }
+		- SUCC   = { || , == , div1 , div2 , if , }
+
+17 :	"if"
+		- NEIGH  = { || , == , div1 , div2 , if , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { HUGE_VAL , return , }
+		- PRED   = { con , + , div2 , }
+		- SUCC   = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+
+17 :	"div1"
+		- NEIGH  = { || , == , div1 , div2 , if , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { HUGE_VAL , return , }
+		- PRED   = { con , + , div2 , }
+		- SUCC   = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+
+17 :	"=="
+		- NEIGH  = { || , == , div1 , div2 , if , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { HUGE_VAL , return , }
+		- PRED   = { con , + , div2 , }
+		- SUCC   = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+
+17 :	"||"
+		- NEIGH  = { || , == , div1 , div2 , if , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { HUGE_VAL , return , }
+		- PRED   = { con , + , div2 , }
+		- SUCC   = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+
+17 :	"div2"
+		- NEIGH  = { || , == , div1 , div2 , if , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { HUGE_VAL , return , }
+		- PRED   = { con , + , div2 , }
+		- SUCC   = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+
+17 :	"=="
+		- NEIGH  = { || , == , div1 , div2 , if , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { HUGE_VAL , return , }
+		- PRED   = { con , + , div2 , }
+		- SUCC   = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+
+18 :	"return"
+		- NEIGH  = { HUGE_VAL , return , }
+		- PARENT = { || , == , div1 , div2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"HUGE_VAL"
+		- NEIGH  = { HUGE_VAL , return , }
+		- PARENT = { || , == , div1 , div2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+20 :	"return"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"one_es"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"*"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"sinphi"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"/"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"div1"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"-"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"/"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"e"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"*"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"log"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"-"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"con"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"/"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+20 :	"div2"
+		- NEIGH  = { e , div1 , div2 , * , con , sinphi , one_es , log , / , - , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { || , == , div1 , div2 , if , }
+		- SUCC   = { }
+
+22 :	"return"
+		- NEIGH  = { sinphi , + , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+22 :	"sinphi"
+		- NEIGH  = { sinphi , + , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+22 :	"+"
+		- NEIGH  = { sinphi , + , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+22 :	"sinphi"
+		- NEIGH  = { sinphi , + , return , }
+		- PARENT = { >= , e , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+

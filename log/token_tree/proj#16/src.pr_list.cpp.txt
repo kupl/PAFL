@@ -1,0 +1,1253 @@
+12 :	"pr_list"
+		- NEIGH  = { pr_list , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"P"
+		- NEIGH  = { P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"not_used"
+		- NEIGH  = { not_used , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+13 :	"paralist"
+		- NEIGH  = { t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { flag , n , l , }
+
+13 :	"*"
+		- NEIGH  = { t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { flag , n , l , }
+
+13 :	"t"
+		- NEIGH  = { t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { flag , n , l , }
+
+14 :	"l"
+		- NEIGH  = { flag , n , l , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , * , paralist , }
+		- SUCC   = { putchar , }
+
+14 :	"n"
+		- NEIGH  = { flag , n , l , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , * , paralist , }
+		- SUCC   = { putchar , }
+
+14 :	"flag"
+		- NEIGH  = { flag , n , l , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , * , paralist , }
+		- SUCC   = { putchar , }
+
+16 :	"putchar"
+		- NEIGH  = { putchar , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { flag , n , l , }
+		- SUCC   = { P , params , t , next , for , }
+
+17 :	"for"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { || , used , t , not_used , && , ! , if , }
+		- PRED   = { putchar , }
+		- SUCC   = { > , n , if , }
+
+17 :	"t"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { || , used , t , not_used , && , ! , if , }
+		- PRED   = { putchar , }
+		- SUCC   = { > , n , if , }
+
+17 :	"P"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { || , used , t , not_used , && , ! , if , }
+		- PRED   = { putchar , }
+		- SUCC   = { > , n , if , }
+
+17 :	"params"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { || , used , t , not_used , && , ! , if , }
+		- PRED   = { putchar , }
+		- SUCC   = { > , n , if , }
+
+17 :	"t"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { || , used , t , not_used , && , ! , if , }
+		- PRED   = { putchar , }
+		- SUCC   = { > , n , if , }
+
+17 :	"t"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { || , used , t , not_used , && , ! , if , }
+		- PRED   = { putchar , }
+		- SUCC   = { > , n , if , }
+
+17 :	"t"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { || , used , t , not_used , && , ! , if , }
+		- PRED   = { putchar , }
+		- SUCC   = { > , n , if , }
+
+17 :	"next"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { || , used , t , not_used , && , ! , if , }
+		- PRED   = { putchar , }
+		- SUCC   = { > , n , if , }
+
+18 :	"if"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"!"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"not_used"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"&&"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"t"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"used"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"||"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"not_used"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"&&"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"!"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"t"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+18 :	"used"
+		- NEIGH  = { || , used , t , not_used , && , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { += , stdout , fputs , n , if , + , flag , != , > , t , param , * , putchar , strlen , l , }
+		- PRED   = { }
+		- SUCC   = { }
+
+19 :	"l"
+		- NEIGH  = { + , t , strlen , param , l , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { l , > , + , n , if , }
+
+19 :	"strlen"
+		- NEIGH  = { + , t , strlen , param , l , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { l , > , + , n , if , }
+
+19 :	"t"
+		- NEIGH  = { + , t , strlen , param , l , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { l , > , + , n , if , }
+
+19 :	"param"
+		- NEIGH  = { + , t , strlen , param , l , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { l , > , + , n , if , }
+
+19 :	"+"
+		- NEIGH  = { + , t , strlen , param , l , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { l , > , + , n , if , }
+
+20 :	"if"
+		- NEIGH  = { l , > , + , n , if , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { n , stdout , fputs , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { putchar , }
+
+20 :	"n"
+		- NEIGH  = { l , > , + , n , if , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { n , stdout , fputs , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { putchar , }
+
+20 :	"+"
+		- NEIGH  = { l , > , + , n , if , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { n , stdout , fputs , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { putchar , }
+
+20 :	"l"
+		- NEIGH  = { l , > , + , n , if , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { n , stdout , fputs , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { putchar , }
+
+20 :	">"
+		- NEIGH  = { l , > , + , n , if , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { n , stdout , fputs , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { putchar , }
+
+21 :	"fputs"
+		- NEIGH  = { stdout , fputs , }
+		- PARENT = { l , > , + , n , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { n , }
+
+21 :	"stdout"
+		- NEIGH  = { stdout , fputs , }
+		- PARENT = { l , > , + , n , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { n , }
+
+22 :	"n"
+		- NEIGH  = { n , }
+		- PARENT = { l , > , + , n , if , }
+		- CHILD  = { }
+		- PRED   = { stdout , fputs , }
+		- SUCC   = { }
+
+24 :	"putchar"
+		- NEIGH  = { putchar , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { l , > , + , n , if , }
+		- SUCC   = { != , t , param , * , if , }
+
+25 :	"if"
+		- NEIGH  = { != , t , param , * , if , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { stdout , t , param , fputs , }
+
+25 :	"*"
+		- NEIGH  = { != , t , param , * , if , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { stdout , t , param , fputs , }
+
+25 :	"t"
+		- NEIGH  = { != , t , param , * , if , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { stdout , t , param , fputs , }
+
+25 :	"param"
+		- NEIGH  = { != , t , param , * , if , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { stdout , t , param , fputs , }
+
+25 :	"!="
+		- NEIGH  = { != , t , param , * , if , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { stdout , t , param , fputs , }
+
+26 :	"putchar"
+		- NEIGH  = { putchar , }
+		- PARENT = { != , t , param , * , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+27 :	"fputs"
+		- NEIGH  = { stdout , t , param , fputs , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { != , t , param , * , if , }
+		- SUCC   = { l , += , n , }
+
+27 :	"t"
+		- NEIGH  = { stdout , t , param , fputs , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { != , t , param , * , if , }
+		- SUCC   = { l , += , n , }
+
+27 :	"param"
+		- NEIGH  = { stdout , t , param , fputs , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { != , t , param , * , if , }
+		- SUCC   = { l , += , n , }
+
+27 :	"stdout"
+		- NEIGH  = { stdout , t , param , fputs , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { != , t , param , * , if , }
+		- SUCC   = { l , += , n , }
+
+28 :	"n"
+		- NEIGH  = { l , += , n , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { stdout , t , param , fputs , }
+		- SUCC   = { }
+
+28 :	"+="
+		- NEIGH  = { l , += , n , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { stdout , t , param , fputs , }
+		- SUCC   = { }
+
+28 :	"l"
+		- NEIGH  = { l , += , n , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { stdout , t , param , fputs , }
+		- SUCC   = { }
+
+30 :	"flag"
+		- NEIGH  = { flag , }
+		- PARENT = { || , used , t , not_used , && , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+31 :	"if"
+		- NEIGH  = { > , n , if , }
+		- PARENT = { }
+		- CHILD  = { putchar , }
+		- PRED   = { P , params , t , next , for , }
+		- SUCC   = { flag , return , }
+
+31 :	"n"
+		- NEIGH  = { > , n , if , }
+		- PARENT = { }
+		- CHILD  = { putchar , }
+		- PRED   = { P , params , t , next , for , }
+		- SUCC   = { flag , return , }
+
+31 :	">"
+		- NEIGH  = { > , n , if , }
+		- PARENT = { }
+		- CHILD  = { putchar , }
+		- PRED   = { P , params , t , next , for , }
+		- SUCC   = { flag , return , }
+
+32 :	"putchar"
+		- NEIGH  = { putchar , }
+		- PARENT = { > , n , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"return"
+		- NEIGH  = { flag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , n , if , }
+		- SUCC   = { }
+
+33 :	"flag"
+		- NEIGH  = { flag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , n , if , }
+		- SUCC   = { }
+
+36 :	"pj_pr_list"
+		- NEIGH  = { pj_pr_list , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+36 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+36 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+36 :	"P"
+		- NEIGH  = { P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+37 :	"*"
+		- NEIGH  = { s , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { putchar , }
+
+37 :	"s"
+		- NEIGH  = { s , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { putchar , }
+
+39 :	"putchar"
+		- NEIGH  = { putchar , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { s , * , }
+		- SUCC   = { ++ , * , P , descr , s , for , }
+
+40 :	"for"
+		- NEIGH  = { ++ , * , P , descr , s , for , }
+		- PARENT = { }
+		- CHILD  = { == , if , s , * , putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { putchar , }
+
+40 :	"s"
+		- NEIGH  = { ++ , * , P , descr , s , for , }
+		- PARENT = { }
+		- CHILD  = { == , if , s , * , putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { putchar , }
+
+40 :	"P"
+		- NEIGH  = { ++ , * , P , descr , s , for , }
+		- PARENT = { }
+		- CHILD  = { == , if , s , * , putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { putchar , }
+
+40 :	"descr"
+		- NEIGH  = { ++ , * , P , descr , s , for , }
+		- PARENT = { }
+		- CHILD  = { == , if , s , * , putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { putchar , }
+
+40 :	"*"
+		- NEIGH  = { ++ , * , P , descr , s , for , }
+		- PARENT = { }
+		- CHILD  = { == , if , s , * , putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { putchar , }
+
+40 :	"s"
+		- NEIGH  = { ++ , * , P , descr , s , for , }
+		- PARENT = { }
+		- CHILD  = { == , if , s , * , putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { putchar , }
+
+40 :	"++"
+		- NEIGH  = { ++ , * , P , descr , s , for , }
+		- PARENT = { }
+		- CHILD  = { == , if , s , * , putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { putchar , }
+
+40 :	"s"
+		- NEIGH  = { ++ , * , P , descr , s , for , }
+		- PARENT = { }
+		- CHILD  = { == , if , s , * , putchar , }
+		- PRED   = { putchar , }
+		- SUCC   = { putchar , }
+
+41 :	"putchar"
+		- NEIGH  = { s , * , putchar , }
+		- PARENT = { ++ , * , P , descr , s , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { == , * , s , if , }
+
+41 :	"*"
+		- NEIGH  = { s , * , putchar , }
+		- PARENT = { ++ , * , P , descr , s , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { == , * , s , if , }
+
+41 :	"s"
+		- NEIGH  = { s , * , putchar , }
+		- PARENT = { ++ , * , P , descr , s , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { == , * , s , if , }
+
+42 :	"if"
+		- NEIGH  = { == , * , s , if , }
+		- PARENT = { ++ , * , P , descr , s , for , }
+		- CHILD  = { putchar , }
+		- PRED   = { s , * , putchar , }
+		- SUCC   = { }
+
+42 :	"*"
+		- NEIGH  = { == , * , s , if , }
+		- PARENT = { ++ , * , P , descr , s , for , }
+		- CHILD  = { putchar , }
+		- PRED   = { s , * , putchar , }
+		- SUCC   = { }
+
+42 :	"s"
+		- NEIGH  = { == , * , s , if , }
+		- PARENT = { ++ , * , P , descr , s , for , }
+		- CHILD  = { putchar , }
+		- PRED   = { s , * , putchar , }
+		- SUCC   = { }
+
+42 :	"=="
+		- NEIGH  = { == , * , s , if , }
+		- PARENT = { ++ , * , P , descr , s , for , }
+		- CHILD  = { putchar , }
+		- PRED   = { s , * , putchar , }
+		- SUCC   = { }
+
+43 :	"putchar"
+		- NEIGH  = { putchar , }
+		- PARENT = { == , * , s , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+45 :	"putchar"
+		- NEIGH  = { putchar , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ++ , * , P , descr , s , for , }
+		- SUCC   = { P , pr_list , if , }
+
+46 :	"if"
+		- NEIGH  = { P , pr_list , if , }
+		- PARENT = { }
+		- CHILD  = { P , pr_list , stdout , fputs , }
+		- PRED   = { putchar , }
+		- SUCC   = { }
+
+46 :	"pr_list"
+		- NEIGH  = { P , pr_list , if , }
+		- PARENT = { }
+		- CHILD  = { P , pr_list , stdout , fputs , }
+		- PRED   = { putchar , }
+		- SUCC   = { }
+
+46 :	"P"
+		- NEIGH  = { P , pr_list , if , }
+		- PARENT = { }
+		- CHILD  = { P , pr_list , stdout , fputs , }
+		- PRED   = { putchar , }
+		- SUCC   = { }
+
+47 :	"fputs"
+		- NEIGH  = { stdout , fputs , }
+		- PARENT = { P , pr_list , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { P , pr_list , }
+
+47 :	"stdout"
+		- NEIGH  = { stdout , fputs , }
+		- PARENT = { P , pr_list , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { P , pr_list , }
+
+48 :	"pr_list"
+		- NEIGH  = { P , pr_list , }
+		- PARENT = { P , pr_list , if , }
+		- CHILD  = { }
+		- PRED   = { stdout , fputs , }
+		- SUCC   = { }
+
+48 :	"P"
+		- NEIGH  = { P , pr_list , }
+		- PARENT = { P , pr_list , if , }
+		- CHILD  = { }
+		- PRED   = { stdout , fputs , }
+		- SUCC   = { }
+
+60 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+60 :	"pj_get_def"
+		- NEIGH  = { pj_get_def , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+60 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+60 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+60 :	"P"
+		- NEIGH  = { P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+60 :	"options"
+		- NEIGH  = { options , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+63 :	"paralist"
+		- NEIGH  = { t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { l , }
+
+63 :	"*"
+		- NEIGH  = { t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { l , }
+
+63 :	"t"
+		- NEIGH  = { t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { l , }
+
+64 :	"l"
+		- NEIGH  = { l , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { t , * , paralist , }
+		- SUCC   = { definition , * , }
+
+65 :	"*"
+		- NEIGH  = { definition , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { l , }
+		- SUCC   = { def_max , size_t , }
+
+65 :	"definition"
+		- NEIGH  = { definition , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { l , }
+		- SUCC   = { def_max , size_t , }
+
+66 :	"size_t"
+		- NEIGH  = { def_max , size_t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { definition , * , }
+		- SUCC   = { options , }
+
+66 :	"def_max"
+		- NEIGH  = { def_max , size_t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { definition , * , }
+		- SUCC   = { options , }
+
+67 :	"options"
+		- NEIGH  = { options , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_max , size_t , }
+		- SUCC   = { def_max , pj_malloc , * , definition , }
+
+69 :	"definition"
+		- NEIGH  = { def_max , pj_malloc , * , definition , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { options , }
+		- SUCC   = { definition , ! , if , }
+
+69 :	"*"
+		- NEIGH  = { def_max , pj_malloc , * , definition , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { options , }
+		- SUCC   = { definition , ! , if , }
+
+69 :	"pj_malloc"
+		- NEIGH  = { def_max , pj_malloc , * , definition , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { options , }
+		- SUCC   = { definition , ! , if , }
+
+69 :	"def_max"
+		- NEIGH  = { def_max , pj_malloc , * , definition , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { options , }
+		- SUCC   = { definition , ! , if , }
+
+70 :	"if"
+		- NEIGH  = { definition , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { def_max , pj_malloc , * , definition , }
+		- SUCC   = { definition , }
+
+70 :	"!"
+		- NEIGH  = { definition , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { def_max , pj_malloc , * , definition , }
+		- SUCC   = { definition , }
+
+70 :	"definition"
+		- NEIGH  = { definition , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { def_max , pj_malloc , * , definition , }
+		- SUCC   = { definition , }
+
+71 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { definition , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+72 :	"definition"
+		- NEIGH  = { definition , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { definition , ! , if , }
+		- SUCC   = { P , params , t , next , for , }
+
+74 :	"for"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { strcat , def_max , + , definition , param , strlen , l , used , > , t , ! , if , }
+		- PRED   = { definition , }
+		- SUCC   = { definition , return , }
+
+74 :	"t"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { strcat , def_max , + , definition , param , strlen , l , used , > , t , ! , if , }
+		- PRED   = { definition , }
+		- SUCC   = { definition , return , }
+
+74 :	"P"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { strcat , def_max , + , definition , param , strlen , l , used , > , t , ! , if , }
+		- PRED   = { definition , }
+		- SUCC   = { definition , return , }
+
+74 :	"params"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { strcat , def_max , + , definition , param , strlen , l , used , > , t , ! , if , }
+		- PRED   = { definition , }
+		- SUCC   = { definition , return , }
+
+74 :	"t"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { strcat , def_max , + , definition , param , strlen , l , used , > , t , ! , if , }
+		- PRED   = { definition , }
+		- SUCC   = { definition , return , }
+
+74 :	"t"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { strcat , def_max , + , definition , param , strlen , l , used , > , t , ! , if , }
+		- PRED   = { definition , }
+		- SUCC   = { definition , return , }
+
+74 :	"t"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { strcat , def_max , + , definition , param , strlen , l , used , > , t , ! , if , }
+		- PRED   = { definition , }
+		- SUCC   = { definition , return , }
+
+74 :	"next"
+		- NEIGH  = { P , params , t , next , for , }
+		- PARENT = { }
+		- CHILD  = { strcat , def_max , + , definition , param , strlen , l , used , > , t , ! , if , }
+		- PRED   = { definition , }
+		- SUCC   = { definition , return , }
+
+77 :	"if"
+		- NEIGH  = { used , t , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { continue , }
+		- PRED   = { }
+		- SUCC   = { + , t , strlen , param , l , }
+
+77 :	"!"
+		- NEIGH  = { used , t , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { continue , }
+		- PRED   = { }
+		- SUCC   = { + , t , strlen , param , l , }
+
+77 :	"t"
+		- NEIGH  = { used , t , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { continue , }
+		- PRED   = { }
+		- SUCC   = { + , t , strlen , param , l , }
+
+77 :	"used"
+		- NEIGH  = { used , t , ! , if , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { continue , }
+		- PRED   = { }
+		- SUCC   = { + , t , strlen , param , l , }
+
+78 :	"continue"
+		- NEIGH  = { continue , }
+		- PARENT = { used , t , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+81 :	"l"
+		- NEIGH  = { + , t , strlen , param , l , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { used , t , ! , if , }
+		- SUCC   = { def_max , > , l , if , + , definition , strlen , }
+
+81 :	"strlen"
+		- NEIGH  = { + , t , strlen , param , l , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { used , t , ! , if , }
+		- SUCC   = { def_max , > , l , if , + , definition , strlen , }
+
+81 :	"t"
+		- NEIGH  = { + , t , strlen , param , l , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { used , t , ! , if , }
+		- SUCC   = { def_max , > , l , if , + , definition , strlen , }
+
+81 :	"param"
+		- NEIGH  = { + , t , strlen , param , l , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { used , t , ! , if , }
+		- SUCC   = { def_max , > , l , if , + , definition , strlen , }
+
+81 :	"+"
+		- NEIGH  = { + , t , strlen , param , l , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { used , t , ! , if , }
+		- SUCC   = { def_max , > , l , if , + , definition , strlen , }
+
+82 :	"if"
+		- NEIGH  = { def_max , > , l , if , + , definition , strlen , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { if , + , def_max , def2 , l , pj_malloc , * , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { definition , strcat , }
+
+82 :	"strlen"
+		- NEIGH  = { def_max , > , l , if , + , definition , strlen , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { if , + , def_max , def2 , l , pj_malloc , * , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { definition , strcat , }
+
+82 :	"definition"
+		- NEIGH  = { def_max , > , l , if , + , definition , strlen , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { if , + , def_max , def2 , l , pj_malloc , * , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { definition , strcat , }
+
+82 :	"+"
+		- NEIGH  = { def_max , > , l , if , + , definition , strlen , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { if , + , def_max , def2 , l , pj_malloc , * , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { definition , strcat , }
+
+82 :	"l"
+		- NEIGH  = { def_max , > , l , if , + , definition , strlen , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { if , + , def_max , def2 , l , pj_malloc , * , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { definition , strcat , }
+
+82 :	"+"
+		- NEIGH  = { def_max , > , l , if , + , definition , strlen , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { if , + , def_max , def2 , l , pj_malloc , * , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { definition , strcat , }
+
+82 :	">"
+		- NEIGH  = { def_max , > , l , if , + , definition , strlen , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { if , + , def_max , def2 , l , pj_malloc , * , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { definition , strcat , }
+
+82 :	"def_max"
+		- NEIGH  = { def_max , > , l , if , + , definition , strlen , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { if , + , def_max , def2 , l , pj_malloc , * , }
+		- PRED   = { + , t , strlen , param , l , }
+		- SUCC   = { definition , strcat , }
+
+84 :	"*"
+		- NEIGH  = { def2 , * , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { l , * , + , def_max , }
+
+84 :	"def2"
+		- NEIGH  = { def2 , * , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { l , * , + , def_max , }
+
+86 :	"def_max"
+		- NEIGH  = { l , * , + , def_max , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { def2 , * , }
+		- SUCC   = { def_max , pj_malloc , * , def2 , }
+
+86 :	"def_max"
+		- NEIGH  = { l , * , + , def_max , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { def2 , * , }
+		- SUCC   = { def_max , pj_malloc , * , def2 , }
+
+86 :	"*"
+		- NEIGH  = { l , * , + , def_max , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { def2 , * , }
+		- SUCC   = { def_max , pj_malloc , * , def2 , }
+
+86 :	"+"
+		- NEIGH  = { l , * , + , def_max , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { def2 , * , }
+		- SUCC   = { def_max , pj_malloc , * , def2 , }
+
+86 :	"l"
+		- NEIGH  = { l , * , + , def_max , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { def2 , * , }
+		- SUCC   = { def_max , pj_malloc , * , def2 , }
+
+86 :	"+"
+		- NEIGH  = { l , * , + , def_max , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { def2 , * , }
+		- SUCC   = { def_max , pj_malloc , * , def2 , }
+
+87 :	"def2"
+		- NEIGH  = { def_max , pj_malloc , * , def2 , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { l , * , + , def_max , }
+		- SUCC   = { def2 , if , }
+
+87 :	"*"
+		- NEIGH  = { def_max , pj_malloc , * , def2 , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { l , * , + , def_max , }
+		- SUCC   = { def2 , if , }
+
+87 :	"pj_malloc"
+		- NEIGH  = { def_max , pj_malloc , * , def2 , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { l , * , + , def_max , }
+		- SUCC   = { def2 , if , }
+
+87 :	"def_max"
+		- NEIGH  = { def_max , pj_malloc , * , def2 , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { }
+		- PRED   = { l , * , + , def_max , }
+		- SUCC   = { def2 , if , }
+
+88 :	"if"
+		- NEIGH  = { def2 , if , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { return , pj_dalloc , definition , def2 , strcpy , }
+		- PRED   = { def_max , pj_malloc , * , def2 , }
+		- SUCC   = { }
+
+88 :	"def2"
+		- NEIGH  = { def2 , if , }
+		- PARENT = { def_max , > , l , if , + , definition , strlen , }
+		- CHILD  = { return , pj_dalloc , definition , def2 , strcpy , }
+		- PRED   = { def_max , pj_malloc , * , def2 , }
+		- SUCC   = { }
+
+89 :	"strcpy"
+		- NEIGH  = { definition , def2 , strcpy , }
+		- PARENT = { def2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { definition , pj_dalloc , }
+
+89 :	"def2"
+		- NEIGH  = { definition , def2 , strcpy , }
+		- PARENT = { def2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { definition , pj_dalloc , }
+
+89 :	"definition"
+		- NEIGH  = { definition , def2 , strcpy , }
+		- PARENT = { def2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { definition , pj_dalloc , }
+
+90 :	"pj_dalloc"
+		- NEIGH  = { definition , pj_dalloc , }
+		- PARENT = { def2 , if , }
+		- CHILD  = { }
+		- PRED   = { definition , def2 , strcpy , }
+		- SUCC   = { def2 , definition , }
+
+90 :	"definition"
+		- NEIGH  = { definition , pj_dalloc , }
+		- PARENT = { def2 , if , }
+		- CHILD  = { }
+		- PRED   = { definition , def2 , strcpy , }
+		- SUCC   = { def2 , definition , }
+
+91 :	"definition"
+		- NEIGH  = { def2 , definition , }
+		- PARENT = { def2 , if , }
+		- CHILD  = { }
+		- PRED   = { definition , pj_dalloc , }
+		- SUCC   = { }
+
+91 :	"def2"
+		- NEIGH  = { def2 , definition , }
+		- PARENT = { def2 , if , }
+		- CHILD  = { }
+		- PRED   = { definition , pj_dalloc , }
+		- SUCC   = { }
+
+94 :	"pj_dalloc"
+		- NEIGH  = { definition , pj_dalloc , }
+		- PARENT = { def2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+94 :	"definition"
+		- NEIGH  = { definition , pj_dalloc , }
+		- PARENT = { def2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+95 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { def2 , if , }
+		- CHILD  = { }
+		- PRED   = { definition , pj_dalloc , }
+		- SUCC   = { }
+
+100 :	"strcat"
+		- NEIGH  = { definition , strcat , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { def_max , > , l , if , + , definition , strlen , }
+		- SUCC   = { param , t , definition , strcat , }
+
+100 :	"definition"
+		- NEIGH  = { definition , strcat , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { def_max , > , l , if , + , definition , strlen , }
+		- SUCC   = { param , t , definition , strcat , }
+
+101 :	"strcat"
+		- NEIGH  = { param , t , definition , strcat , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { definition , strcat , }
+		- SUCC   = { }
+
+101 :	"definition"
+		- NEIGH  = { param , t , definition , strcat , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { definition , strcat , }
+		- SUCC   = { }
+
+101 :	"t"
+		- NEIGH  = { param , t , definition , strcat , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { definition , strcat , }
+		- SUCC   = { }
+
+101 :	"param"
+		- NEIGH  = { param , t , definition , strcat , }
+		- PARENT = { P , params , t , next , for , }
+		- CHILD  = { }
+		- PRED   = { definition , strcat , }
+		- SUCC   = { }
+
+104 :	"return"
+		- NEIGH  = { definition , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , params , t , next , for , }
+		- SUCC   = { }
+
+104 :	"definition"
+		- NEIGH  = { definition , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , params , t , next , for , }
+		- SUCC   = { }
+

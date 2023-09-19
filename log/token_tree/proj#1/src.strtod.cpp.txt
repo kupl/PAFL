@@ -1,0 +1,756 @@
+67 :	"pj_atof"
+		- NEIGH  = { pj_atof , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+67 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+67 :	"nptr"
+		- NEIGH  = { nptr , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"return"
+		- NEIGH  = { nptr , pj_strtod , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"pj_strtod"
+		- NEIGH  = { nptr , pj_strtod , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"nptr"
+		- NEIGH  = { nptr , pj_strtod , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+77 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+77 :	"replace_point_by_locale_point"
+		- NEIGH  = { replace_point_by_locale_point , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+77 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+77 :	"pszNumber"
+		- NEIGH  = { pszNumber , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+77 :	"point"
+		- NEIGH  = { point , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+78 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+78 :	"pszWorkBuffer"
+		- NEIGH  = { pszWorkBuffer , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+88 :	"byPoint"
+		- NEIGH  = { byPoint , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { == , byPoint , if , }
+
+89 :	"if"
+		- NEIGH  = { == , byPoint , if , }
+		- PARENT = { }
+		- CHILD  = { byPoint , sprintf , szBuf , }
+		- PRED   = { byPoint , }
+		- SUCC   = { != , byPoint , point , if , }
+
+89 :	"byPoint"
+		- NEIGH  = { == , byPoint , if , }
+		- PARENT = { }
+		- CHILD  = { byPoint , sprintf , szBuf , }
+		- PRED   = { byPoint , }
+		- SUCC   = { != , byPoint , point , if , }
+
+89 :	"=="
+		- NEIGH  = { == , byPoint , if , }
+		- PARENT = { }
+		- CHILD  = { byPoint , sprintf , szBuf , }
+		- PRED   = { byPoint , }
+		- SUCC   = { != , byPoint , point , if , }
+
+91 :	"szBuf"
+		- NEIGH  = { szBuf , }
+		- PARENT = { == , byPoint , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { szBuf , sprintf , }
+
+92 :	"sprintf"
+		- NEIGH  = { szBuf , sprintf , }
+		- PARENT = { == , byPoint , if , }
+		- CHILD  = { }
+		- PRED   = { szBuf , }
+		- SUCC   = { szBuf , byPoint , }
+
+92 :	"szBuf"
+		- NEIGH  = { szBuf , sprintf , }
+		- PARENT = { == , byPoint , if , }
+		- CHILD  = { }
+		- PRED   = { szBuf , }
+		- SUCC   = { szBuf , byPoint , }
+
+93 :	"byPoint"
+		- NEIGH  = { szBuf , byPoint , }
+		- PARENT = { == , byPoint , if , }
+		- CHILD  = { }
+		- PRED   = { szBuf , sprintf , }
+		- SUCC   = { }
+
+93 :	"szBuf"
+		- NEIGH  = { szBuf , byPoint , }
+		- PARENT = { == , byPoint , if , }
+		- CHILD  = { }
+		- PRED   = { szBuf , sprintf , }
+		- SUCC   = { }
+
+95 :	"if"
+		- NEIGH  = { != , byPoint , point , if , }
+		- PARENT = { }
+		- CHILD  = { if , pszNumber , point , strchr , pszPoint , * , }
+		- PRED   = { == , byPoint , if , }
+		- SUCC   = { pszNumber , * , return , }
+
+95 :	"point"
+		- NEIGH  = { != , byPoint , point , if , }
+		- PARENT = { }
+		- CHILD  = { if , pszNumber , point , strchr , pszPoint , * , }
+		- PRED   = { == , byPoint , if , }
+		- SUCC   = { pszNumber , * , return , }
+
+95 :	"!="
+		- NEIGH  = { != , byPoint , point , if , }
+		- PARENT = { }
+		- CHILD  = { if , pszNumber , point , strchr , pszPoint , * , }
+		- PRED   = { == , byPoint , if , }
+		- SUCC   = { pszNumber , * , return , }
+
+95 :	"byPoint"
+		- NEIGH  = { != , byPoint , point , if , }
+		- PARENT = { }
+		- CHILD  = { if , pszNumber , point , strchr , pszPoint , * , }
+		- PRED   = { == , byPoint , if , }
+		- SUCC   = { pszNumber , * , return , }
+
+97 :	"*"
+		- NEIGH  = { pszNumber , point , strchr , pszPoint , * , }
+		- PARENT = { != , byPoint , point , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { pszPoint , if , }
+
+97 :	"pszPoint"
+		- NEIGH  = { pszNumber , point , strchr , pszPoint , * , }
+		- PARENT = { != , byPoint , point , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { pszPoint , if , }
+
+97 :	"strchr"
+		- NEIGH  = { pszNumber , point , strchr , pszPoint , * , }
+		- PARENT = { != , byPoint , point , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { pszPoint , if , }
+
+97 :	"pszNumber"
+		- NEIGH  = { pszNumber , point , strchr , pszPoint , * , }
+		- PARENT = { != , byPoint , point , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { pszPoint , if , }
+
+97 :	"point"
+		- NEIGH  = { pszNumber , point , strchr , pszPoint , * , }
+		- PARENT = { != , byPoint , point , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { pszPoint , if , }
+
+98 :	"if"
+		- NEIGH  = { pszPoint , if , }
+		- PARENT = { != , byPoint , point , if , }
+		- CHILD  = { return , - , pszPoint , < , byPoint , pszNumber , * , pszNew , strlen , if , }
+		- PRED   = { pszNumber , point , strchr , pszPoint , * , }
+		- SUCC   = { }
+
+98 :	"pszPoint"
+		- NEIGH  = { pszPoint , if , }
+		- PARENT = { != , byPoint , point , if , }
+		- CHILD  = { return , - , pszPoint , < , byPoint , pszNumber , * , pszNew , strlen , if , }
+		- PRED   = { pszNumber , point , strchr , pszPoint , * , }
+		- SUCC   = { }
+
+100 :	"*"
+		- NEIGH  = { pszNew , * , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { pszNumber , < , strlen , if , }
+
+100 :	"pszNew"
+		- NEIGH  = { pszNew , * , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { pszNumber , < , strlen , if , }
+
+101 :	"if"
+		- NEIGH  = { pszNumber , < , strlen , if , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { ! , if , pszNew , pszWorkBuffer , pj_strdup , pszNumber , strcpy , }
+		- PRED   = { pszNew , * , }
+		- SUCC   = { byPoint , pszNumber , - , pszPoint , pszNew , }
+
+101 :	"strlen"
+		- NEIGH  = { pszNumber , < , strlen , if , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { ! , if , pszNew , pszWorkBuffer , pj_strdup , pszNumber , strcpy , }
+		- PRED   = { pszNew , * , }
+		- SUCC   = { byPoint , pszNumber , - , pszPoint , pszNew , }
+
+101 :	"pszNumber"
+		- NEIGH  = { pszNumber , < , strlen , if , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { ! , if , pszNew , pszWorkBuffer , pj_strdup , pszNumber , strcpy , }
+		- PRED   = { pszNew , * , }
+		- SUCC   = { byPoint , pszNumber , - , pszPoint , pszNew , }
+
+101 :	"<"
+		- NEIGH  = { pszNumber , < , strlen , if , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { ! , if , pszNew , pszWorkBuffer , pj_strdup , pszNumber , strcpy , }
+		- PRED   = { pszNew , * , }
+		- SUCC   = { byPoint , pszNumber , - , pszPoint , pszNew , }
+
+103 :	"strcpy"
+		- NEIGH  = { pszWorkBuffer , pszNumber , strcpy , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { pszWorkBuffer , pszNew , }
+
+103 :	"pszWorkBuffer"
+		- NEIGH  = { pszWorkBuffer , pszNumber , strcpy , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { pszWorkBuffer , pszNew , }
+
+103 :	"pszNumber"
+		- NEIGH  = { pszWorkBuffer , pszNumber , strcpy , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { pszWorkBuffer , pszNew , }
+
+104 :	"pszNew"
+		- NEIGH  = { pszWorkBuffer , pszNew , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { }
+		- PRED   = { pszWorkBuffer , pszNumber , strcpy , }
+		- SUCC   = { }
+
+104 :	"pszWorkBuffer"
+		- NEIGH  = { pszWorkBuffer , pszNew , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { }
+		- PRED   = { pszWorkBuffer , pszNumber , strcpy , }
+		- SUCC   = { }
+
+107 :	"pszNew"
+		- NEIGH  = { pszNumber , pj_strdup , pszNew , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { ! , pszNew , if , }
+
+107 :	"pj_strdup"
+		- NEIGH  = { pszNumber , pj_strdup , pszNew , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { ! , pszNew , if , }
+
+107 :	"pszNumber"
+		- NEIGH  = { pszNumber , pj_strdup , pszNew , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { ! , pszNew , if , }
+
+108 :	"if"
+		- NEIGH  = { ! , pszNew , if , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { NULL , return , }
+		- PRED   = { pszNumber , pj_strdup , pszNew , }
+		- SUCC   = { }
+
+108 :	"!"
+		- NEIGH  = { ! , pszNew , if , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { NULL , return , }
+		- PRED   = { pszNumber , pj_strdup , pszNew , }
+		- SUCC   = { }
+
+108 :	"pszNew"
+		- NEIGH  = { ! , pszNew , if , }
+		- PARENT = { pszNumber , < , strlen , if , }
+		- CHILD  = { NULL , return , }
+		- PRED   = { pszNumber , pj_strdup , pszNew , }
+		- SUCC   = { }
+
+109 :	"return"
+		- NEIGH  = { NULL , return , }
+		- PARENT = { ! , pszNew , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+109 :	"NULL"
+		- NEIGH  = { NULL , return , }
+		- PARENT = { ! , pszNew , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+111 :	"pszNew"
+		- NEIGH  = { byPoint , pszNumber , - , pszPoint , pszNew , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { }
+		- PRED   = { pszNumber , < , strlen , if , }
+		- SUCC   = { pszNew , return , }
+
+111 :	"pszPoint"
+		- NEIGH  = { byPoint , pszNumber , - , pszPoint , pszNew , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { }
+		- PRED   = { pszNumber , < , strlen , if , }
+		- SUCC   = { pszNew , return , }
+
+111 :	"-"
+		- NEIGH  = { byPoint , pszNumber , - , pszPoint , pszNew , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { }
+		- PRED   = { pszNumber , < , strlen , if , }
+		- SUCC   = { pszNew , return , }
+
+111 :	"pszNumber"
+		- NEIGH  = { byPoint , pszNumber , - , pszPoint , pszNew , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { }
+		- PRED   = { pszNumber , < , strlen , if , }
+		- SUCC   = { pszNew , return , }
+
+111 :	"byPoint"
+		- NEIGH  = { byPoint , pszNumber , - , pszPoint , pszNew , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { }
+		- PRED   = { pszNumber , < , strlen , if , }
+		- SUCC   = { pszNew , return , }
+
+112 :	"return"
+		- NEIGH  = { pszNew , return , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { }
+		- PRED   = { byPoint , pszNumber , - , pszPoint , pszNew , }
+		- SUCC   = { }
+
+112 :	"pszNew"
+		- NEIGH  = { pszNew , return , }
+		- PARENT = { pszPoint , if , }
+		- CHILD  = { }
+		- PRED   = { byPoint , pszNumber , - , pszPoint , pszNew , }
+		- SUCC   = { }
+
+149 :	"return"
+		- NEIGH  = { pszNumber , * , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , byPoint , point , if , }
+		- SUCC   = { }
+
+149 :	"*"
+		- NEIGH  = { pszNumber , * , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , byPoint , point , if , }
+		- SUCC   = { }
+
+149 :	"pszNumber"
+		- NEIGH  = { pszNumber , * , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { != , byPoint , point , if , }
+		- SUCC   = { }
+
+171 :	"pj_strtod"
+		- NEIGH  = { pj_strtod , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+171 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+171 :	"nptr"
+		- NEIGH  = { nptr , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+171 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+171 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+171 :	"endptr"
+		- NEIGH  = { endptr , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+179 :	"dfValue"
+		- NEIGH  = { dfValue , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { nError , }
+
+180 :	"nError"
+		- NEIGH  = { nError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { dfValue , }
+		- SUCC   = { szWorkBuffer , }
+
+181 :	"szWorkBuffer"
+		- NEIGH  = { szWorkBuffer , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { nError , }
+		- SUCC   = { szWorkBuffer , nptr , replace_point_by_locale_point , pszNumber , * , }
+
+183 :	"*"
+		- NEIGH  = { szWorkBuffer , nptr , replace_point_by_locale_point , pszNumber , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , }
+		- SUCC   = { endptr , strtod , pszNumber , dfValue , }
+
+183 :	"pszNumber"
+		- NEIGH  = { szWorkBuffer , nptr , replace_point_by_locale_point , pszNumber , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , }
+		- SUCC   = { endptr , strtod , pszNumber , dfValue , }
+
+183 :	"replace_point_by_locale_point"
+		- NEIGH  = { szWorkBuffer , nptr , replace_point_by_locale_point , pszNumber , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , }
+		- SUCC   = { endptr , strtod , pszNumber , dfValue , }
+
+183 :	"nptr"
+		- NEIGH  = { szWorkBuffer , nptr , replace_point_by_locale_point , pszNumber , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , }
+		- SUCC   = { endptr , strtod , pszNumber , dfValue , }
+
+183 :	"szWorkBuffer"
+		- NEIGH  = { szWorkBuffer , nptr , replace_point_by_locale_point , pszNumber , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , }
+		- SUCC   = { endptr , strtod , pszNumber , dfValue , }
+
+185 :	"dfValue"
+		- NEIGH  = { endptr , strtod , pszNumber , dfValue , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , nptr , replace_point_by_locale_point , pszNumber , * , }
+		- SUCC   = { errno , nError , }
+
+185 :	"strtod"
+		- NEIGH  = { endptr , strtod , pszNumber , dfValue , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , nptr , replace_point_by_locale_point , pszNumber , * , }
+		- SUCC   = { errno , nError , }
+
+185 :	"pszNumber"
+		- NEIGH  = { endptr , strtod , pszNumber , dfValue , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , nptr , replace_point_by_locale_point , pszNumber , * , }
+		- SUCC   = { errno , nError , }
+
+185 :	"endptr"
+		- NEIGH  = { endptr , strtod , pszNumber , dfValue , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , nptr , replace_point_by_locale_point , pszNumber , * , }
+		- SUCC   = { errno , nError , }
+
+186 :	"nError"
+		- NEIGH  = { errno , nError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { endptr , strtod , pszNumber , dfValue , }
+		- SUCC   = { endptr , if , }
+
+186 :	"errno"
+		- NEIGH  = { errno , nError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { endptr , strtod , pszNumber , dfValue , }
+		- SUCC   = { endptr , if , }
+
+188 :	"if"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { }
+		- CHILD  = { - , pszNumber , nptr , + , endptr , * , }
+		- PRED   = { errno , nError , }
+		- SUCC   = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+
+188 :	"endptr"
+		- NEIGH  = { endptr , if , }
+		- PARENT = { }
+		- CHILD  = { - , pszNumber , nptr , + , endptr , * , }
+		- PRED   = { errno , nError , }
+		- SUCC   = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+
+189 :	"*"
+		- NEIGH  = { - , pszNumber , nptr , + , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+189 :	"endptr"
+		- NEIGH  = { - , pszNumber , nptr , + , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+189 :	"*"
+		- NEIGH  = { - , pszNumber , nptr , + , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+189 :	"nptr"
+		- NEIGH  = { - , pszNumber , nptr , + , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+189 :	"+"
+		- NEIGH  = { - , pszNumber , nptr , + , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+189 :	"*"
+		- NEIGH  = { - , pszNumber , nptr , + , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+189 :	"endptr"
+		- NEIGH  = { - , pszNumber , nptr , + , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+189 :	"-"
+		- NEIGH  = { - , pszNumber , nptr , + , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+189 :	"pszNumber"
+		- NEIGH  = { - , pszNumber , nptr , + , endptr , * , }
+		- PARENT = { endptr , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+191 :	"if"
+		- NEIGH  = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- PARENT = { }
+		- CHILD  = { pszNumber , free , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { nError , errno , }
+
+191 :	"pszNumber"
+		- NEIGH  = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- PARENT = { }
+		- CHILD  = { pszNumber , free , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { nError , errno , }
+
+191 :	"!="
+		- NEIGH  = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- PARENT = { }
+		- CHILD  = { pszNumber , free , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { nError , errno , }
+
+191 :	"*"
+		- NEIGH  = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- PARENT = { }
+		- CHILD  = { pszNumber , free , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { nError , errno , }
+
+191 :	"nptr"
+		- NEIGH  = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- PARENT = { }
+		- CHILD  = { pszNumber , free , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { nError , errno , }
+
+191 :	"&&"
+		- NEIGH  = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- PARENT = { }
+		- CHILD  = { pszNumber , free , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { nError , errno , }
+
+191 :	"pszNumber"
+		- NEIGH  = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- PARENT = { }
+		- CHILD  = { pszNumber , free , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { nError , errno , }
+
+191 :	"!="
+		- NEIGH  = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- PARENT = { }
+		- CHILD  = { pszNumber , free , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { nError , errno , }
+
+191 :	"szWorkBuffer"
+		- NEIGH  = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- PARENT = { }
+		- CHILD  = { pszNumber , free , }
+		- PRED   = { endptr , if , }
+		- SUCC   = { nError , errno , }
+
+192 :	"free"
+		- NEIGH  = { pszNumber , free , }
+		- PARENT = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+192 :	"pszNumber"
+		- NEIGH  = { pszNumber , free , }
+		- PARENT = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+194 :	"errno"
+		- NEIGH  = { nError , errno , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- SUCC   = { dfValue , return , }
+
+194 :	"nError"
+		- NEIGH  = { nError , errno , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { szWorkBuffer , && , * , pszNumber , nptr , != , if , }
+		- SUCC   = { dfValue , return , }
+
+195 :	"return"
+		- NEIGH  = { dfValue , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { nError , errno , }
+		- SUCC   = { }
+
+195 :	"dfValue"
+		- NEIGH  = { dfValue , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { nError , errno , }
+		- SUCC   = { }
+

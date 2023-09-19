@@ -1235,132 +1235,132 @@
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
 		- PRED   = { BUFFER_SIZE , ValueType , }
-		- SUCC   = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- SUCC   = { intvalue , f , }
 
 121 :	"CONTAINER_SIZE"
 		- NEIGH  = { CONTAINER_SIZE , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
 		- PRED   = { BUFFER_SIZE , ValueType , }
-		- SUCC   = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- SUCC   = { intvalue , f , }
 
 122 :	"f"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { intvalue , f , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
 		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- SUCC   = { break , }
 
 122 :	"intvalue"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { intvalue , f , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
 		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- SUCC   = { break , }
 
 123 :	"break"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { break , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { intvalue , f , }
+		- SUCC   = { FLOAT , ValueType , }
 
 125 :	"ValueType"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { FLOAT , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { break , }
+		- SUCC   = { floatValue , f , }
 
 125 :	"FLOAT"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { FLOAT , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { break , }
+		- SUCC   = { floatValue , f , }
 
 126 :	"f"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { floatValue , f , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { FLOAT , ValueType , }
+		- SUCC   = { break , }
 
 126 :	"floatValue"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { floatValue , f , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { FLOAT , ValueType , }
+		- SUCC   = { break , }
 
 127 :	"break"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { break , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { floatValue , f , }
+		- SUCC   = { UNINIT , ValueType , }
 
 129 :	"ValueType"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { UNINIT , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { break , }
+		- SUCC   = { TOK , ValueType , }
 
 129 :	"UNINIT"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { UNINIT , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { break , }
+		- SUCC   = { TOK , ValueType , }
 
 130 :	"ValueType"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { TOK , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { UNINIT , ValueType , }
+		- SUCC   = { LIFETIME , ValueType , }
 
 130 :	"TOK"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { TOK , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { UNINIT , ValueType , }
+		- SUCC   = { LIFETIME , ValueType , }
 
 131 :	"ValueType"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { LIFETIME , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { TOK , ValueType , }
+		- SUCC   = { MOVED , ValueType , }
 
 131 :	"LIFETIME"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { LIFETIME , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { TOK , ValueType , }
+		- SUCC   = { MOVED , ValueType , }
 
 132 :	"ValueType"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { MOVED , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { LIFETIME , ValueType , }
+		- SUCC   = { break , }
 
 132 :	"MOVED"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { MOVED , ValueType , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
-		- SUCC   = { }
+		- PRED   = { LIFETIME , ValueType , }
+		- SUCC   = { break , }
 
 133 :	"break"
-		- NEIGH  = { MOVED , LIFETIME , TOK , UNINIT , floatValue , ValueType , FLOAT , break , intvalue , f , }
+		- NEIGH  = { break , }
 		- PARENT = { switch , f , visitValue , F , < , valueType , > , return , }
 		- CHILD  = { }
-		- PRED   = { CONTAINER_SIZE , ValueType , }
+		- PRED   = { MOVED , ValueType , }
 		- SUCC   = { }
 
 137 :	"=="
@@ -2670,38 +2670,38 @@
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { tokvalue , * , Token , }
-		- SUCC   = { moveKind , MoveKind , }
+		- SUCC   = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 
 222 :	"MoveKind"
-		- NEIGH  = { moveKind , MoveKind , }
+		- NEIGH  = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { floatValue , }
 		- SUCC   = { varvalue , }
 
 222 :	"NonMovedVariable"
-		- NEIGH  = { NonMovedVariable , }
+		- NEIGH  = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { floatValue , }
+		- SUCC   = { varvalue , }
 
 222 :	"MovedVariable"
-		- NEIGH  = { MovedVariable , }
+		- NEIGH  = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { floatValue , }
+		- SUCC   = { varvalue , }
 
 222 :	"ForwardedVariable"
-		- NEIGH  = { ForwardedVariable , }
+		- NEIGH  = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { floatValue , }
+		- SUCC   = { varvalue , }
 
 222 :	"moveKind"
-		- NEIGH  = { moveKind , MoveKind , }
+		- NEIGH  = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { floatValue , }
@@ -2711,7 +2711,7 @@
 		- NEIGH  = { varvalue , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { moveKind , MoveKind , }
+		- PRED   = { moveKind , MovedVariable , ForwardedVariable , NonMovedVariable , MoveKind , }
 		- SUCC   = { condition , * , Token , }
 
 228 :	"Token"
@@ -2789,118 +2789,118 @@
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { defaultArg , }
-		- SUCC   = { lifetimeKind , LifetimeKind , }
+		- SUCC   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 
 246 :	"LifetimeKind"
-		- NEIGH  = { lifetimeKind , LifetimeKind , }
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { indirect , }
-		- SUCC   = { lifetimeScope , LifetimeScope , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
 
 246 :	"Object"
-		- NEIGH  = { Object , }
-		- PARENT = { }
-		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
-
-246 :	"Lambda"
-		- NEIGH  = { Lambda , }
-		- PARENT = { }
-		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
-
-246 :	"Iterator"
-		- NEIGH  = { Iterator , }
-		- PARENT = { }
-		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
-
-246 :	"Address"
-		- NEIGH  = { Address , }
-		- PARENT = { }
-		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
-
-246 :	"lifetimeKind"
-		- NEIGH  = { lifetimeKind , LifetimeKind , }
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 		- PARENT = { }
 		- CHILD  = { }
 		- PRED   = { indirect , }
-		- SUCC   = { lifetimeScope , LifetimeScope , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
 
-248 :	"LifetimeScope"
-		- NEIGH  = { lifetimeScope , LifetimeScope , }
+246 :	"Lambda"
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeKind , LifetimeKind , }
+		- PRED   = { indirect , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
+
+246 :	"Iterator"
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { indirect , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
+
+246 :	"Address"
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { indirect , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
+
+246 :	"lifetimeKind"
+		- NEIGH  = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { indirect , }
+		- SUCC   = { lifetimeScope , Local , Argument , LifetimeScope , }
+
+248 :	"LifetimeScope"
+		- NEIGH  = { lifetimeScope , Local , Argument , LifetimeScope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 		- SUCC   = { moveKind , switch , MoveKind , toString , * , }
 
 248 :	"Local"
-		- NEIGH  = { Local , }
+		- NEIGH  = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
+		- SUCC   = { moveKind , switch , MoveKind , toString , * , }
 
 248 :	"Argument"
-		- NEIGH  = { Argument , }
+		- NEIGH  = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { }
-		- SUCC   = { }
+		- PRED   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
+		- SUCC   = { moveKind , switch , MoveKind , toString , * , }
 
 248 :	"lifetimeScope"
-		- NEIGH  = { lifetimeScope , LifetimeScope , }
+		- NEIGH  = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeKind , LifetimeKind , }
+		- PRED   = { lifetimeKind , Iterator , Lambda , Object , Address , LifetimeKind , }
 		- SUCC   = { moveKind , switch , MoveKind , toString , * , }
 
 250 :	"*"
 		- NEIGH  = { moveKind , switch , MoveKind , toString , * , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeScope , LifetimeScope , }
+		- PRED   = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- SUCC   = { valueKind , Possible , Inconclusive , Impossible , ValueKind , Known , return , }
 
 250 :	"toString"
 		- NEIGH  = { moveKind , switch , MoveKind , toString , * , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeScope , LifetimeScope , }
+		- PRED   = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- SUCC   = { valueKind , Possible , Inconclusive , Impossible , ValueKind , Known , return , }
 
 250 :	"MoveKind"
 		- NEIGH  = { moveKind , switch , MoveKind , toString , * , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeScope , LifetimeScope , }
+		- PRED   = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- SUCC   = { valueKind , Possible , Inconclusive , Impossible , ValueKind , Known , return , }
 
 250 :	"moveKind"
 		- NEIGH  = { moveKind , switch , MoveKind , toString , * , }
 		- PARENT = { }
 		- CHILD  = { }
-		- PRED   = { lifetimeScope , LifetimeScope , }
+		- PRED   = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- SUCC   = { valueKind , Possible , Inconclusive , Impossible , ValueKind , Known , return , }
 
 251 :	"switch"
 		- NEIGH  = { moveKind , switch , MoveKind , toString , * , }
 		- PARENT = { }
 		- CHILD  = { MovedVariable , ForwardedVariable , NonMovedVariable , return , MoveKind , }
-		- PRED   = { lifetimeScope , LifetimeScope , }
+		- PRED   = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- SUCC   = { valueKind , Possible , Inconclusive , Impossible , ValueKind , Known , return , }
 
 251 :	"moveKind"
 		- NEIGH  = { moveKind , switch , MoveKind , toString , * , }
 		- PARENT = { }
 		- CHILD  = { MovedVariable , ForwardedVariable , NonMovedVariable , return , MoveKind , }
-		- PRED   = { lifetimeScope , LifetimeScope , }
+		- PRED   = { lifetimeScope , Local , Argument , LifetimeScope , }
 		- SUCC   = { valueKind , Possible , Inconclusive , Impossible , ValueKind , Known , return , }
 
 252 :	"MoveKind"

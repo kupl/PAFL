@@ -1,0 +1,1323 @@
+59 :	"NS_PROJ"
+		- NEIGH  = { NS_PROJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+63 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+63 :	"pj_strdup"
+		- NEIGH  = { pj_strdup , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+63 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+63 :	"str"
+		- NEIGH  = { str , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+66 :	"size_t"
+		- NEIGH  = { + , str , len , strlen , size_t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { len , < , > , dup , malloc , static_cast , * , }
+
+66 :	"len"
+		- NEIGH  = { + , str , len , strlen , size_t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { len , < , > , dup , malloc , static_cast , * , }
+
+66 :	"strlen"
+		- NEIGH  = { + , str , len , strlen , size_t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { len , < , > , dup , malloc , static_cast , * , }
+
+66 :	"str"
+		- NEIGH  = { + , str , len , strlen , size_t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { len , < , > , dup , malloc , static_cast , * , }
+
+66 :	"+"
+		- NEIGH  = { + , str , len , strlen , size_t , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { len , < , > , dup , malloc , static_cast , * , }
+
+67 :	"*"
+		- NEIGH  = { len , < , > , dup , malloc , static_cast , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , str , len , strlen , size_t , }
+		- SUCC   = { dup , if , }
+
+67 :	"dup"
+		- NEIGH  = { len , < , > , dup , malloc , static_cast , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , str , len , strlen , size_t , }
+		- SUCC   = { dup , if , }
+
+67 :	"static_cast"
+		- NEIGH  = { len , < , > , dup , malloc , static_cast , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , str , len , strlen , size_t , }
+		- SUCC   = { dup , if , }
+
+67 :	"<"
+		- NEIGH  = { len , < , > , dup , malloc , static_cast , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , str , len , strlen , size_t , }
+		- SUCC   = { dup , if , }
+
+67 :	"*"
+		- NEIGH  = { len , < , > , dup , malloc , static_cast , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , str , len , strlen , size_t , }
+		- SUCC   = { dup , if , }
+
+67 :	">"
+		- NEIGH  = { len , < , > , dup , malloc , static_cast , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , str , len , strlen , size_t , }
+		- SUCC   = { dup , if , }
+
+67 :	"malloc"
+		- NEIGH  = { len , < , > , dup , malloc , static_cast , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , str , len , strlen , size_t , }
+		- SUCC   = { dup , if , }
+
+67 :	"len"
+		- NEIGH  = { len , < , > , dup , malloc , static_cast , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { + , str , len , strlen , size_t , }
+		- SUCC   = { dup , if , }
+
+68 :	"if"
+		- NEIGH  = { dup , if , }
+		- PARENT = { }
+		- CHILD  = { len , str , dup , memcpy , }
+		- PRED   = { len , < , > , dup , malloc , static_cast , * , }
+		- SUCC   = { dup , return , }
+
+68 :	"dup"
+		- NEIGH  = { dup , if , }
+		- PARENT = { }
+		- CHILD  = { len , str , dup , memcpy , }
+		- PRED   = { len , < , > , dup , malloc , static_cast , * , }
+		- SUCC   = { dup , return , }
+
+69 :	"memcpy"
+		- NEIGH  = { len , str , dup , memcpy , }
+		- PARENT = { dup , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"dup"
+		- NEIGH  = { len , str , dup , memcpy , }
+		- PARENT = { dup , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"str"
+		- NEIGH  = { len , str , dup , memcpy , }
+		- PARENT = { dup , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"len"
+		- NEIGH  = { len , str , dup , memcpy , }
+		- PARENT = { dup , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+70 :	"return"
+		- NEIGH  = { dup , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { dup , if , }
+		- SUCC   = { }
+
+70 :	"dup"
+		- NEIGH  = { dup , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { dup , if , }
+		- SUCC   = { }
+
+75 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+75 :	"free_params"
+		- NEIGH  = { free_params , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+75 :	"PJ_CONTEXT"
+		- NEIGH  = { PJ_CONTEXT , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+75 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+75 :	"ctx"
+		- NEIGH  = { ctx , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+75 :	"paralist"
+		- NEIGH  = { paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+75 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+75 :	"start"
+		- NEIGH  = { start , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+75 :	"errlev"
+		- NEIGH  = { errlev , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+83 :	"paralist"
+		- NEIGH  = { n , t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { start , n , t , for , }
+
+83 :	"*"
+		- NEIGH  = { n , t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { start , n , t , for , }
+
+83 :	"t"
+		- NEIGH  = { n , t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { start , n , t , for , }
+
+83 :	"*"
+		- NEIGH  = { n , t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { start , n , t , for , }
+
+83 :	"n"
+		- NEIGH  = { n , t , * , paralist , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { start , n , t , for , }
+
+84 :	"for"
+		- NEIGH  = { start , n , t , for , }
+		- PARENT = { }
+		- CHILD  = { next , free , t , n , }
+		- PRED   = { n , t , * , paralist , }
+		- SUCC   = { errlev , ctx , proj_context_errno_set , }
+
+84 :	"t"
+		- NEIGH  = { start , n , t , for , }
+		- PARENT = { }
+		- CHILD  = { next , free , t , n , }
+		- PRED   = { n , t , * , paralist , }
+		- SUCC   = { errlev , ctx , proj_context_errno_set , }
+
+84 :	"start"
+		- NEIGH  = { start , n , t , for , }
+		- PARENT = { }
+		- CHILD  = { next , free , t , n , }
+		- PRED   = { n , t , * , paralist , }
+		- SUCC   = { errlev , ctx , proj_context_errno_set , }
+
+84 :	"t"
+		- NEIGH  = { start , n , t , for , }
+		- PARENT = { }
+		- CHILD  = { next , free , t , n , }
+		- PRED   = { n , t , * , paralist , }
+		- SUCC   = { errlev , ctx , proj_context_errno_set , }
+
+84 :	"t"
+		- NEIGH  = { start , n , t , for , }
+		- PARENT = { }
+		- CHILD  = { next , free , t , n , }
+		- PRED   = { n , t , * , paralist , }
+		- SUCC   = { errlev , ctx , proj_context_errno_set , }
+
+84 :	"n"
+		- NEIGH  = { start , n , t , for , }
+		- PARENT = { }
+		- CHILD  = { next , free , t , n , }
+		- PRED   = { n , t , * , paralist , }
+		- SUCC   = { errlev , ctx , proj_context_errno_set , }
+
+85 :	"n"
+		- NEIGH  = { next , t , n , }
+		- PARENT = { start , n , t , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , free , }
+
+85 :	"t"
+		- NEIGH  = { next , t , n , }
+		- PARENT = { start , n , t , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , free , }
+
+85 :	"next"
+		- NEIGH  = { next , t , n , }
+		- PARENT = { start , n , t , for , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { t , free , }
+
+86 :	"free"
+		- NEIGH  = { t , free , }
+		- PARENT = { start , n , t , for , }
+		- CHILD  = { }
+		- PRED   = { next , t , n , }
+		- SUCC   = { }
+
+86 :	"t"
+		- NEIGH  = { t , free , }
+		- PARENT = { start , n , t , for , }
+		- CHILD  = { }
+		- PRED   = { next , t , n , }
+		- SUCC   = { }
+
+88 :	"proj_context_errno_set"
+		- NEIGH  = { errlev , ctx , proj_context_errno_set , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { start , n , t , for , }
+		- SUCC   = { * , return , }
+
+88 :	"ctx"
+		- NEIGH  = { errlev , ctx , proj_context_errno_set , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { start , n , t , for , }
+		- SUCC   = { * , return , }
+
+88 :	"errlev"
+		- NEIGH  = { errlev , ctx , proj_context_errno_set , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { start , n , t , for , }
+		- SUCC   = { * , return , }
+
+89 :	"return"
+		- NEIGH  = { * , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { errlev , ctx , proj_context_errno_set , }
+		- SUCC   = { }
+
+89 :	"*"
+		- NEIGH  = { * , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { errlev , ctx , proj_context_errno_set , }
+		- SUCC   = { }
+
+105 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+105 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+105 :	"proj_destroy"
+		- NEIGH  = { proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+105 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+105 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+105 :	"P"
+		- NEIGH  = { P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+106 :	"if"
+		- NEIGH  = { destructor , if , ! , || , P , == , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { proj_errno , destructor , P , }
+
+106 :	"=="
+		- NEIGH  = { destructor , if , ! , || , P , == , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { proj_errno , destructor , P , }
+
+106 :	"P"
+		- NEIGH  = { destructor , if , ! , || , P , == , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { proj_errno , destructor , P , }
+
+106 :	"||"
+		- NEIGH  = { destructor , if , ! , || , P , == , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { proj_errno , destructor , P , }
+
+106 :	"!"
+		- NEIGH  = { destructor , if , ! , || , P , == , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { proj_errno , destructor , P , }
+
+106 :	"P"
+		- NEIGH  = { destructor , if , ! , || , P , == , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { proj_errno , destructor , P , }
+
+106 :	"destructor"
+		- NEIGH  = { destructor , if , ! , || , P , == , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { proj_errno , destructor , P , }
+
+107 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { destructor , if , ! , || , P , == , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+113 :	"P"
+		- NEIGH  = { proj_errno , destructor , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { destructor , if , ! , || , P , == , }
+		- SUCC   = { return , }
+
+113 :	"destructor"
+		- NEIGH  = { proj_errno , destructor , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { destructor , if , ! , || , P , == , }
+		- SUCC   = { return , }
+
+113 :	"P"
+		- NEIGH  = { proj_errno , destructor , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { destructor , if , ! , || , P , == , }
+		- SUCC   = { return , }
+
+113 :	"proj_errno"
+		- NEIGH  = { proj_errno , destructor , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { destructor , if , ! , || , P , == , }
+		- SUCC   = { return , }
+
+113 :	"P"
+		- NEIGH  = { proj_errno , destructor , P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { destructor , if , ! , || , P , == , }
+		- SUCC   = { return , }
+
+114 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { proj_errno , destructor , P , }
+		- SUCC   = { }
+
+119 :	"PJconsts"
+		- NEIGH  = { PJconsts , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+119 :	"PJconsts"
+		- NEIGH  = { PJconsts , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+119 :	"destructor"
+		- NEIGH  = { destructor , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+119 :	"pj_default_destructor"
+		- NEIGH  = { pj_default_destructor , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+123 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+123 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+123 :	"pj_new"
+		- NEIGH  = { pj_new , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"return"
+		- NEIGH  = { PJ , std , new , nothrow , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"new"
+		- NEIGH  = { PJ , std , new , nothrow , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"std"
+		- NEIGH  = { PJ , std , new , nothrow , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"nothrow"
+		- NEIGH  = { PJ , std , new , nothrow , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"PJ"
+		- NEIGH  = { PJ , std , new , nothrow , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"pj_default_destructor"
+		- NEIGH  = { pj_default_destructor , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"PJ"
+		- NEIGH  = { PJ , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"P"
+		- NEIGH  = { P , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"errlev"
+		- NEIGH  = { errlev , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+140 :	"if"
+		- NEIGH  = { != , errlev , if , }
+		- PARENT = { }
+		- CHILD  = { P , errlev , pj_get_ctx , proj_context_errno_set , }
+		- PRED   = { }
+		- SUCC   = { P , == , if , }
+
+140 :	"!="
+		- NEIGH  = { != , errlev , if , }
+		- PARENT = { }
+		- CHILD  = { P , errlev , pj_get_ctx , proj_context_errno_set , }
+		- PRED   = { }
+		- SUCC   = { P , == , if , }
+
+140 :	"errlev"
+		- NEIGH  = { != , errlev , if , }
+		- PARENT = { }
+		- CHILD  = { P , errlev , pj_get_ctx , proj_context_errno_set , }
+		- PRED   = { }
+		- SUCC   = { P , == , if , }
+
+141 :	"proj_context_errno_set"
+		- NEIGH  = { P , errlev , pj_get_ctx , proj_context_errno_set , }
+		- PARENT = { != , errlev , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+141 :	"pj_get_ctx"
+		- NEIGH  = { P , errlev , pj_get_ctx , proj_context_errno_set , }
+		- PARENT = { != , errlev , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+141 :	"P"
+		- NEIGH  = { P , errlev , pj_get_ctx , proj_context_errno_set , }
+		- PARENT = { != , errlev , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+141 :	"errlev"
+		- NEIGH  = { P , errlev , pj_get_ctx , proj_context_errno_set , }
+		- PARENT = { != , errlev , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+143 :	"if"
+		- NEIGH  = { P , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { != , errlev , if , }
+		- SUCC   = { def_size , P , free , }
+
+143 :	"=="
+		- NEIGH  = { P , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { != , errlev , if , }
+		- SUCC   = { def_size , P , free , }
+
+143 :	"P"
+		- NEIGH  = { P , == , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { != , errlev , if , }
+		- SUCC   = { def_size , P , free , }
+
+144 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { P , == , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"free"
+		- NEIGH  = { def_size , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , == , if , }
+		- SUCC   = { def_shape , P , free , }
+
+147 :	"P"
+		- NEIGH  = { def_size , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , == , if , }
+		- SUCC   = { def_shape , P , free , }
+
+147 :	"def_size"
+		- NEIGH  = { def_size , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , == , if , }
+		- SUCC   = { def_shape , P , free , }
+
+148 :	"free"
+		- NEIGH  = { def_shape , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_size , P , free , }
+		- SUCC   = { def_spherification , P , free , }
+
+148 :	"P"
+		- NEIGH  = { def_shape , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_size , P , free , }
+		- SUCC   = { def_spherification , P , free , }
+
+148 :	"def_shape"
+		- NEIGH  = { def_shape , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_size , P , free , }
+		- SUCC   = { def_spherification , P , free , }
+
+149 :	"free"
+		- NEIGH  = { def_spherification , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_shape , P , free , }
+		- SUCC   = { def_ellps , P , free , }
+
+149 :	"P"
+		- NEIGH  = { def_spherification , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_shape , P , free , }
+		- SUCC   = { def_ellps , P , free , }
+
+149 :	"def_spherification"
+		- NEIGH  = { def_spherification , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_shape , P , free , }
+		- SUCC   = { def_ellps , P , free , }
+
+150 :	"free"
+		- NEIGH  = { def_ellps , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_spherification , P , free , }
+		- SUCC   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+
+150 :	"P"
+		- NEIGH  = { def_ellps , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_spherification , P , free , }
+		- SUCC   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+
+150 :	"def_ellps"
+		- NEIGH  = { def_ellps , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_spherification , P , free , }
+		- SUCC   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+
+152 :	"delete"
+		- NEIGH  = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_ellps , P , free , }
+		- SUCC   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+
+152 :	"static_cast"
+		- NEIGH  = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_ellps , P , free , }
+		- SUCC   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+
+152 :	"<"
+		- NEIGH  = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_ellps , P , free , }
+		- SUCC   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+
+152 :	"ListOfHGrids"
+		- NEIGH  = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_ellps , P , free , }
+		- SUCC   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+
+152 :	"*"
+		- NEIGH  = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_ellps , P , free , }
+		- SUCC   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+
+152 :	">"
+		- NEIGH  = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_ellps , P , free , }
+		- SUCC   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+
+152 :	"P"
+		- NEIGH  = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_ellps , P , free , }
+		- SUCC   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+
+152 :	"hgrids_legacy"
+		- NEIGH  = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { def_ellps , P , free , }
+		- SUCC   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+
+153 :	"delete"
+		- NEIGH  = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- SUCC   = { geod , P , free , }
+
+153 :	"static_cast"
+		- NEIGH  = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- SUCC   = { geod , P , free , }
+
+153 :	"<"
+		- NEIGH  = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- SUCC   = { geod , P , free , }
+
+153 :	"ListOfVGrids"
+		- NEIGH  = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- SUCC   = { geod , P , free , }
+
+153 :	"*"
+		- NEIGH  = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- SUCC   = { geod , P , free , }
+
+153 :	">"
+		- NEIGH  = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- SUCC   = { geod , P , free , }
+
+153 :	"P"
+		- NEIGH  = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- SUCC   = { geod , P , free , }
+
+153 :	"vgrids_legacy"
+		- NEIGH  = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , hgrids_legacy , * , ListOfHGrids , < , static_cast , delete , }
+		- SUCC   = { geod , P , free , }
+
+162 :	"free"
+		- NEIGH  = { geod , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- SUCC   = { params , P , errlev , pj_get_ctx , free_params , }
+
+162 :	"P"
+		- NEIGH  = { geod , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- SUCC   = { params , P , errlev , pj_get_ctx , free_params , }
+
+162 :	"geod"
+		- NEIGH  = { geod , P , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , > , vgrids_legacy , static_cast , ListOfVGrids , < , * , delete , }
+		- SUCC   = { params , P , errlev , pj_get_ctx , free_params , }
+
+165 :	"free_params"
+		- NEIGH  = { params , P , errlev , pj_get_ctx , free_params , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { geod , P , free , }
+		- SUCC   = { P , def_full , free , }
+
+165 :	"pj_get_ctx"
+		- NEIGH  = { params , P , errlev , pj_get_ctx , free_params , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { geod , P , free , }
+		- SUCC   = { P , def_full , free , }
+
+165 :	"P"
+		- NEIGH  = { params , P , errlev , pj_get_ctx , free_params , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { geod , P , free , }
+		- SUCC   = { P , def_full , free , }
+
+165 :	"P"
+		- NEIGH  = { params , P , errlev , pj_get_ctx , free_params , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { geod , P , free , }
+		- SUCC   = { P , def_full , free , }
+
+165 :	"params"
+		- NEIGH  = { params , P , errlev , pj_get_ctx , free_params , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { geod , P , free , }
+		- SUCC   = { P , def_full , free , }
+
+165 :	"errlev"
+		- NEIGH  = { params , P , errlev , pj_get_ctx , free_params , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { geod , P , free , }
+		- SUCC   = { P , def_full , free , }
+
+166 :	"free"
+		- NEIGH  = { P , def_full , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { params , P , errlev , pj_get_ctx , free_params , }
+		- SUCC   = { axisswap , P , proj_destroy , }
+
+166 :	"P"
+		- NEIGH  = { P , def_full , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { params , P , errlev , pj_get_ctx , free_params , }
+		- SUCC   = { axisswap , P , proj_destroy , }
+
+166 :	"def_full"
+		- NEIGH  = { P , def_full , free , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { params , P , errlev , pj_get_ctx , free_params , }
+		- SUCC   = { axisswap , P , proj_destroy , }
+
+169 :	"proj_destroy"
+		- NEIGH  = { axisswap , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , def_full , free , }
+		- SUCC   = { P , helmert , proj_destroy , }
+
+169 :	"P"
+		- NEIGH  = { axisswap , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , def_full , free , }
+		- SUCC   = { P , helmert , proj_destroy , }
+
+169 :	"axisswap"
+		- NEIGH  = { axisswap , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , def_full , free , }
+		- SUCC   = { P , helmert , proj_destroy , }
+
+170 :	"proj_destroy"
+		- NEIGH  = { P , helmert , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { axisswap , P , proj_destroy , }
+		- SUCC   = { cart , P , proj_destroy , }
+
+170 :	"P"
+		- NEIGH  = { P , helmert , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { axisswap , P , proj_destroy , }
+		- SUCC   = { cart , P , proj_destroy , }
+
+170 :	"helmert"
+		- NEIGH  = { P , helmert , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { axisswap , P , proj_destroy , }
+		- SUCC   = { cart , P , proj_destroy , }
+
+171 :	"proj_destroy"
+		- NEIGH  = { cart , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , helmert , proj_destroy , }
+		- SUCC   = { cart_wgs84 , P , proj_destroy , }
+
+171 :	"P"
+		- NEIGH  = { cart , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , helmert , proj_destroy , }
+		- SUCC   = { cart_wgs84 , P , proj_destroy , }
+
+171 :	"cart"
+		- NEIGH  = { cart , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , helmert , proj_destroy , }
+		- SUCC   = { cart_wgs84 , P , proj_destroy , }
+
+172 :	"proj_destroy"
+		- NEIGH  = { cart_wgs84 , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cart , P , proj_destroy , }
+		- SUCC   = { hgridshift , P , proj_destroy , }
+
+172 :	"P"
+		- NEIGH  = { cart_wgs84 , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cart , P , proj_destroy , }
+		- SUCC   = { hgridshift , P , proj_destroy , }
+
+172 :	"cart_wgs84"
+		- NEIGH  = { cart_wgs84 , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cart , P , proj_destroy , }
+		- SUCC   = { hgridshift , P , proj_destroy , }
+
+173 :	"proj_destroy"
+		- NEIGH  = { hgridshift , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cart_wgs84 , P , proj_destroy , }
+		- SUCC   = { vgridshift , P , proj_destroy , }
+
+173 :	"P"
+		- NEIGH  = { hgridshift , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cart_wgs84 , P , proj_destroy , }
+		- SUCC   = { vgridshift , P , proj_destroy , }
+
+173 :	"hgridshift"
+		- NEIGH  = { hgridshift , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cart_wgs84 , P , proj_destroy , }
+		- SUCC   = { vgridshift , P , proj_destroy , }
+
+174 :	"proj_destroy"
+		- NEIGH  = { vgridshift , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { hgridshift , P , proj_destroy , }
+		- SUCC   = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+
+174 :	"P"
+		- NEIGH  = { vgridshift , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { hgridshift , P , proj_destroy , }
+		- SUCC   = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+
+174 :	"vgridshift"
+		- NEIGH  = { vgridshift , P , proj_destroy , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { hgridshift , P , proj_destroy , }
+		- SUCC   = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+
+176 :	"free"
+		- NEIGH  = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { vgridshift , P , proj_destroy , }
+		- SUCC   = { P , delete , }
+
+176 :	"static_cast"
+		- NEIGH  = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { vgridshift , P , proj_destroy , }
+		- SUCC   = { P , delete , }
+
+176 :	"<"
+		- NEIGH  = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { vgridshift , P , proj_destroy , }
+		- SUCC   = { P , delete , }
+
+176 :	"pj_opaque"
+		- NEIGH  = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { vgridshift , P , proj_destroy , }
+		- SUCC   = { P , delete , }
+
+176 :	"*"
+		- NEIGH  = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { vgridshift , P , proj_destroy , }
+		- SUCC   = { P , delete , }
+
+176 :	">"
+		- NEIGH  = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { vgridshift , P , proj_destroy , }
+		- SUCC   = { P , delete , }
+
+176 :	"P"
+		- NEIGH  = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { vgridshift , P , proj_destroy , }
+		- SUCC   = { P , delete , }
+
+176 :	"opaque"
+		- NEIGH  = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { vgridshift , P , proj_destroy , }
+		- SUCC   = { P , delete , }
+
+177 :	"delete"
+		- NEIGH  = { P , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+		- SUCC   = { return , }
+
+177 :	"P"
+		- NEIGH  = { P , delete , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { opaque , P , > , * , free , pj_opaque , static_cast , < , }
+		- SUCC   = { return , }
+
+178 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { P , delete , }
+		- SUCC   = { }
+
+182 :	"proj_cleanup"
+		- NEIGH  = { proj_cleanup , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+186 :	"cpp_context"
+		- NEIGH  = { pj_get_default_ctx , cpp_context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cpp_context , if , }
+
+186 :	"pj_get_default_ctx"
+		- NEIGH  = { pj_get_default_ctx , cpp_context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cpp_context , if , }
+
+186 :	"cpp_context"
+		- NEIGH  = { pj_get_default_ctx , cpp_context , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { cpp_context , if , }
+
+187 :	"if"
+		- NEIGH  = { cpp_context , if , }
+		- PARENT = { }
+		- CHILD  = { closeDb , cpp_context , }
+		- PRED   = { pj_get_default_ctx , cpp_context , }
+		- SUCC   = { pj_clear_initcache , }
+
+187 :	"cpp_context"
+		- NEIGH  = { cpp_context , if , }
+		- PARENT = { }
+		- CHILD  = { closeDb , cpp_context , }
+		- PRED   = { pj_get_default_ctx , cpp_context , }
+		- SUCC   = { pj_clear_initcache , }
+
+188 :	"cpp_context"
+		- NEIGH  = { closeDb , cpp_context , }
+		- PARENT = { cpp_context , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+188 :	"closeDb"
+		- NEIGH  = { closeDb , cpp_context , }
+		- PARENT = { cpp_context , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+191 :	"pj_clear_initcache"
+		- NEIGH  = { pj_clear_initcache , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { cpp_context , if , }
+		- SUCC   = { clearMemoryCache , FileManager , }
+
+192 :	"FileManager"
+		- NEIGH  = { clearMemoryCache , FileManager , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pj_clear_initcache , }
+		- SUCC   = { pj_clear_hgridshift_knowngrids_cache , }
+
+192 :	"clearMemoryCache"
+		- NEIGH  = { clearMemoryCache , FileManager , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pj_clear_initcache , }
+		- SUCC   = { pj_clear_hgridshift_knowngrids_cache , }
+
+193 :	"pj_clear_hgridshift_knowngrids_cache"
+		- NEIGH  = { pj_clear_hgridshift_knowngrids_cache , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { clearMemoryCache , FileManager , }
+		- SUCC   = { pj_clear_vgridshift_knowngrids_cache , }
+
+194 :	"pj_clear_vgridshift_knowngrids_cache"
+		- NEIGH  = { pj_clear_vgridshift_knowngrids_cache , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pj_clear_hgridshift_knowngrids_cache , }
+		- SUCC   = { pj_clear_sqlite_cache , }
+
+195 :	"pj_clear_sqlite_cache"
+		- NEIGH  = { pj_clear_sqlite_cache , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { pj_clear_vgridshift_knowngrids_cache , }
+		- SUCC   = { }
+
