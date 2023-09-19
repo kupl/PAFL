@@ -1,13 +1,13 @@
 #include "index.h"
 
 
-// python : keras , luigi , matplotlib , pandas , scrapy , youtube-dl
-int main(int argc, char *argv[])
-{
-    /*PAFL::CppTokenTree tree(fs::path("sample/temp.cpp"), std::make_shared<PAFL::TokenTree::Matcher>());
+/*PAFL::CppTokenTree tree(fs::path("sample/temp.cpp"), std::make_shared<PAFL::TokenTree::Matcher>());
     tree.log("token.txt");
     return 0;*/
+// python : keras , luigi , matplotlib , pandas , scrapy , youtube-dl
 
+int main(int argc, char *argv[])
+{
     // Test
     char *_argv[] = {
         "./main", "cppcheck:cpp", "7,1,27,2,15,29,14,6,23,5,17,30,24,8,16,25,3,19,9,18,12,11,21,28,13,20,22,4,26,10", "pafl,ochiai", "-P/Users/user/defects4cpp/cppcheck", 
@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
 
     PAFL::UI ui(_argc, _argv);
 
+    // Run
     // PAFL::UI ui(argc, argv);
     
 

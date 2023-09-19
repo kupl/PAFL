@@ -1,6 +1,8 @@
 #ifndef __PREDICTOR_H__
 #define __PREDICTOR_H__
 
+#include <cmath>
+
 #include "flmodel_type.h"
 
 

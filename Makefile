@@ -1,5 +1,5 @@
 SUFFIX = .cpp
-COMPILER = /usr/bin/clang++
+COMPILER = g++
 CXXFLAGS = -std=c++20
 
 SRCDIR = .

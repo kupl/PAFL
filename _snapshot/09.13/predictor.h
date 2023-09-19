@@ -3,6 +3,7 @@
 
 #include "testsuite.h"
 #include "tokentree.h"
+#include <cmath>
 
 
 
