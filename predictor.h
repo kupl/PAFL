@@ -1,8 +1,7 @@
 #ifndef __PREDICTOR_H__
 #define __PREDICTOR_H__
 
-#include "testsuite.h"
-#include "tokentree.h"
+#include "flmodel_type.h"
 
 
 
@@ -13,16 +12,17 @@ class Predictor
 public:
     using count_t = unsigned long long;
     using feature_vector = std::unordered_map<std::string, float>;
-    using pattern = size_t;
 
     class TargetInfo
     { public:
+        using value_type = std::pair<pattern, float>;
+
         TargetInfo() = default;
         TargetInfo(TargetInfo& rhs) = delete;
         TargetInfo& operator=(TargetInfo& rhs) = delete;
         TargetInfo(TargetInfo&& rhs) : targets(std::move(rhs.targets)) {}
 
-        std::list<std::pair<pattern, float>> targets;
+        std::list<value_type> targets;
     };
     
 
@@ -34,14 +34,16 @@ public:
 
 private:
     float _getDistance(const feature_vector& lhs, const feature_vector& rhs) const;
-    TargetInfo _setTargetInfo(const feature_vector& failing_vec) const;
+    TargetInfo _setTargetInfo(const feature_vector& failing_vec, size_t k) const;
 
     std::unordered_set<std::string> _dimension;
 
     std::list<feature_vector> _feature_vectors;
     feature_vector _passing_feature;
     unsigned short _passing_cnt;
+
     const unsigned short _cnt_ub = 64;
+    const size_t K = 4;
 };
 }
 
@@ -80,7 +82,7 @@ Predictor::TargetInfo Predictor::predict(const TestSuite::test_suite& test_suite
     for (auto& item : counter)
         failing_vec.emplace(item.first, (item.second / (float)max_cnt));
 
-    TargetInfo info(_setTargetInfo(failing_vec));
+    TargetInfo info(_setTargetInfo(failing_vec, std::numeric_limits<size_t>::max()));
 
     return info;
 }
@@ -139,7 +141,7 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
     for (auto& item : counter)
         failing_vec.emplace(item.first, (item.second / (float)max_cnt));
 
-    TargetInfo info(_setTargetInfo(_feature_vectors.emplace_back(std::move(failing_vec))));
+    TargetInfo info(_setTargetInfo(_feature_vectors.emplace_back(std::move(failing_vec)), K));
 
 
     // Update passing
@@ -179,30 +181,38 @@ float Predictor::_getDistance(const feature_vector& lhs, const feature_vector& r
     return dist;
 }
 
-Predictor::TargetInfo Predictor::_setTargetInfo(const feature_vector& failing_vec) const
+Predictor::TargetInfo Predictor::_setTargetInfo(const feature_vector& failing_vec, size_t k) const
 {
     TargetInfo info;
     float max_dist = _getDistance(failing_vec, _passing_feature);
     if (max_dist <= 0.0f)
         return info;
-    float total_dist = 0.0f;
 
     // Set coefficient
-    pattern pat = 0;
+    pattern ptt = 0;
     for (auto& vec : _feature_vectors) {
 
         float dist = _getDistance(failing_vec, vec);
-        if (dist < max_dist) {
-
-            total_dist += dist = max_dist - dist;
-            info.targets.emplace_back(pat, dist);
-        }
-        pat++;
+        if (dist < max_dist)
+            info.targets.emplace_back(ptt, max_dist - dist);
+        ptt++;
     }
 
+    // Cut low coef
+    info.targets.sort([](const auto& lhs, const auto& rhs){ return lhs.second > rhs.second; });
+    auto iter = info.targets.begin();
+    for (size_t i = 0; i != k && iter != info.targets.end(); i++, iter++);
+
+    if (iter != info.targets.end())
+        info.targets.erase(iter, info.targets.end());
+
+
     // Normalize
+    float total = 0.0f;
     for (auto& item : info.targets)
-        item.second /= total_dist;
+        total += item.second;
+    for (auto& item : info.targets)
+        item.second /= total;
 
     return info;
 }

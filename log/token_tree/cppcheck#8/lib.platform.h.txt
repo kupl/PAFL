@@ -1,0 +1,1169 @@
+33 :	"tinyxml2"
+		- NEIGH  = { tinyxml2 , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+34 :	"XMLDocument"
+		- NEIGH  = { XMLDocument , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+37 :	"cppcheck"
+		- NEIGH  = { cppcheck , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+42 :	"CPPCHECKLIB"
+		- NEIGH  = { CPPCHECKLIB , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+42 :	"Platform"
+		- NEIGH  = { Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+44 :	"min_value"
+		- NEIGH  = { >= , if , bit , min_value , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { if , max_value , bit , >= , return , - , << , }
+
+44 :	"bit"
+		- NEIGH  = { >= , if , bit , min_value , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { if , max_value , bit , >= , return , - , << , }
+
+45 :	"if"
+		- NEIGH  = { >= , if , bit , min_value , }
+		- PARENT = { }
+		- CHILD  = { LLONG_MIN , return , }
+		- PRED   = { }
+		- SUCC   = { if , max_value , bit , >= , return , - , << , }
+
+45 :	"bit"
+		- NEIGH  = { >= , if , bit , min_value , }
+		- PARENT = { }
+		- CHILD  = { LLONG_MIN , return , }
+		- PRED   = { }
+		- SUCC   = { if , max_value , bit , >= , return , - , << , }
+
+45 :	">="
+		- NEIGH  = { >= , if , bit , min_value , }
+		- PARENT = { }
+		- CHILD  = { LLONG_MIN , return , }
+		- PRED   = { }
+		- SUCC   = { if , max_value , bit , >= , return , - , << , }
+
+46 :	"return"
+		- NEIGH  = { LLONG_MIN , return , }
+		- PARENT = { >= , if , bit , min_value , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+46 :	"LLONG_MIN"
+		- NEIGH  = { LLONG_MIN , return , }
+		- PARENT = { >= , if , bit , min_value , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+47 :	"return"
+		- NEIGH  = { if , max_value , bit , >= , return , - , << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { >= , if , bit , min_value , }
+		- SUCC   = { Platform , - , bit , << , return , }
+
+47 :	"-"
+		- NEIGH  = { if , max_value , bit , >= , return , - , << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { >= , if , bit , min_value , }
+		- SUCC   = { Platform , - , bit , << , return , }
+
+47 :	"<<"
+		- NEIGH  = { if , max_value , bit , >= , return , - , << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { >= , if , bit , min_value , }
+		- SUCC   = { Platform , - , bit , << , return , }
+
+47 :	"bit"
+		- NEIGH  = { if , max_value , bit , >= , return , - , << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { >= , if , bit , min_value , }
+		- SUCC   = { Platform , - , bit , << , return , }
+
+47 :	"-"
+		- NEIGH  = { if , max_value , bit , >= , return , - , << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { >= , if , bit , min_value , }
+		- SUCC   = { Platform , - , bit , << , return , }
+
+50 :	"max_value"
+		- NEIGH  = { if , max_value , bit , >= , return , - , << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { >= , if , bit , min_value , }
+		- SUCC   = { Platform , - , bit , << , return , }
+
+50 :	"bit"
+		- NEIGH  = { if , max_value , bit , >= , return , - , << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { >= , if , bit , min_value , }
+		- SUCC   = { Platform , - , bit , << , return , }
+
+51 :	"if"
+		- NEIGH  = { if , max_value , bit , >= , return , - , << , }
+		- PARENT = { }
+		- CHILD  = { >> , return , }
+		- PRED   = { >= , if , bit , min_value , }
+		- SUCC   = { Platform , - , bit , << , return , }
+
+51 :	"bit"
+		- NEIGH  = { if , max_value , bit , >= , return , - , << , }
+		- PARENT = { }
+		- CHILD  = { >> , return , }
+		- PRED   = { >= , if , bit , min_value , }
+		- SUCC   = { Platform , - , bit , << , return , }
+
+51 :	">="
+		- NEIGH  = { if , max_value , bit , >= , return , - , << , }
+		- PARENT = { }
+		- CHILD  = { >> , return , }
+		- PRED   = { >= , if , bit , min_value , }
+		- SUCC   = { Platform , - , bit , << , return , }
+
+52 :	"return"
+		- NEIGH  = { >> , return , }
+		- PARENT = { if , max_value , bit , >= , return , - , << , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+52 :	">>"
+		- NEIGH  = { >> , return , }
+		- PARENT = { if , max_value , bit , >= , return , - , << , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+53 :	"return"
+		- NEIGH  = { Platform , - , bit , << , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { if , max_value , bit , >= , return , - , << , }
+		- SUCC   = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+
+53 :	"<<"
+		- NEIGH  = { Platform , - , bit , << , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { if , max_value , bit , >= , return , - , << , }
+		- SUCC   = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+
+53 :	"bit"
+		- NEIGH  = { Platform , - , bit , << , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { if , max_value , bit , >= , return , - , << , }
+		- SUCC   = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+
+53 :	"-"
+		- NEIGH  = { Platform , - , bit , << , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { if , max_value , bit , >= , return , - , << , }
+		- SUCC   = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+
+53 :	"-"
+		- NEIGH  = { Platform , - , bit , << , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { if , max_value , bit , >= , return , - , << , }
+		- SUCC   = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+
+56 :	"Platform"
+		- NEIGH  = { Platform , - , bit , << , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { if , max_value , bit , >= , return , - , << , }
+		- SUCC   = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+
+57 :	"Platform"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+59 :	"isIntValue"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+59 :	"value"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+60 :	"return"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+60 :	"value"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+60 :	">="
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+60 :	"min_value"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+60 :	"int_bit"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+60 :	"&&"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+60 :	"value"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+60 :	"<="
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+60 :	"max_value"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+60 :	"int_bit"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+63 :	"isLongValue"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+63 :	"value"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+64 :	"return"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+64 :	"value"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+64 :	">="
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+64 :	"min_value"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+64 :	"long_bit"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+64 :	"&&"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+64 :	"value"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+64 :	"<="
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+64 :	"max_value"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+64 :	"long_bit"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+67 :	"nonneg"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+67 :	"char_bit"
+		- NEIGH  = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Platform , - , bit , << , return , }
+		- SUCC   = { short_bit , nonneg , }
+
+68 :	"nonneg"
+		- NEIGH  = { short_bit , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- SUCC   = { int_bit , nonneg , }
+
+68 :	"short_bit"
+		- NEIGH  = { short_bit , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { char_bit , nonneg , isIntValue , isLongValue , <= , min_value , && , >= , return , max_value , value , long_bit , int_bit , Platform , }
+		- SUCC   = { int_bit , nonneg , }
+
+69 :	"nonneg"
+		- NEIGH  = { int_bit , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { short_bit , nonneg , }
+		- SUCC   = { long_bit , nonneg , }
+
+69 :	"int_bit"
+		- NEIGH  = { int_bit , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { short_bit , nonneg , }
+		- SUCC   = { long_bit , nonneg , }
+
+70 :	"nonneg"
+		- NEIGH  = { long_bit , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { int_bit , nonneg , }
+		- SUCC   = { long_long_bit , nonneg , }
+
+70 :	"long_bit"
+		- NEIGH  = { long_bit , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { int_bit , nonneg , }
+		- SUCC   = { long_long_bit , nonneg , }
+
+71 :	"nonneg"
+		- NEIGH  = { long_long_bit , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { long_bit , nonneg , }
+		- SUCC   = { sizeof_bool , nonneg , }
+
+71 :	"long_long_bit"
+		- NEIGH  = { long_long_bit , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { long_bit , nonneg , }
+		- SUCC   = { sizeof_bool , nonneg , }
+
+74 :	"nonneg"
+		- NEIGH  = { sizeof_bool , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { long_long_bit , nonneg , }
+		- SUCC   = { sizeof_short , nonneg , }
+
+74 :	"sizeof_bool"
+		- NEIGH  = { sizeof_bool , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { long_long_bit , nonneg , }
+		- SUCC   = { sizeof_short , nonneg , }
+
+75 :	"nonneg"
+		- NEIGH  = { sizeof_short , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_bool , nonneg , }
+		- SUCC   = { sizeof_int , nonneg , }
+
+75 :	"sizeof_short"
+		- NEIGH  = { sizeof_short , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_bool , nonneg , }
+		- SUCC   = { sizeof_int , nonneg , }
+
+76 :	"nonneg"
+		- NEIGH  = { sizeof_int , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_short , nonneg , }
+		- SUCC   = { sizeof_long , nonneg , }
+
+76 :	"sizeof_int"
+		- NEIGH  = { sizeof_int , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_short , nonneg , }
+		- SUCC   = { sizeof_long , nonneg , }
+
+77 :	"nonneg"
+		- NEIGH  = { sizeof_long , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_int , nonneg , }
+		- SUCC   = { sizeof_long_long , nonneg , }
+
+77 :	"sizeof_long"
+		- NEIGH  = { sizeof_long , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_int , nonneg , }
+		- SUCC   = { sizeof_long_long , nonneg , }
+
+78 :	"nonneg"
+		- NEIGH  = { sizeof_long_long , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_long , nonneg , }
+		- SUCC   = { sizeof_float , nonneg , }
+
+78 :	"sizeof_long_long"
+		- NEIGH  = { sizeof_long_long , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_long , nonneg , }
+		- SUCC   = { sizeof_float , nonneg , }
+
+79 :	"nonneg"
+		- NEIGH  = { sizeof_float , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_long_long , nonneg , }
+		- SUCC   = { sizeof_double , nonneg , }
+
+79 :	"sizeof_float"
+		- NEIGH  = { sizeof_float , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_long_long , nonneg , }
+		- SUCC   = { sizeof_double , nonneg , }
+
+80 :	"nonneg"
+		- NEIGH  = { sizeof_double , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_float , nonneg , }
+		- SUCC   = { sizeof_long_double , nonneg , }
+
+80 :	"sizeof_double"
+		- NEIGH  = { sizeof_double , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_float , nonneg , }
+		- SUCC   = { sizeof_long_double , nonneg , }
+
+81 :	"nonneg"
+		- NEIGH  = { sizeof_long_double , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_double , nonneg , }
+		- SUCC   = { sizeof_wchar_t , nonneg , }
+
+81 :	"sizeof_long_double"
+		- NEIGH  = { sizeof_long_double , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_double , nonneg , }
+		- SUCC   = { sizeof_wchar_t , nonneg , }
+
+82 :	"nonneg"
+		- NEIGH  = { sizeof_wchar_t , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_long_double , nonneg , }
+		- SUCC   = { sizeof_size_t , nonneg , }
+
+82 :	"sizeof_wchar_t"
+		- NEIGH  = { sizeof_wchar_t , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_long_double , nonneg , }
+		- SUCC   = { sizeof_size_t , nonneg , }
+
+83 :	"nonneg"
+		- NEIGH  = { sizeof_size_t , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_wchar_t , nonneg , }
+		- SUCC   = { sizeof_pointer , nonneg , }
+
+83 :	"sizeof_size_t"
+		- NEIGH  = { sizeof_size_t , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_wchar_t , nonneg , }
+		- SUCC   = { sizeof_pointer , nonneg , }
+
+84 :	"nonneg"
+		- NEIGH  = { sizeof_pointer , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_size_t , nonneg , }
+		- SUCC   = { defaultSign , }
+
+84 :	"sizeof_pointer"
+		- NEIGH  = { sizeof_pointer , nonneg , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_size_t , nonneg , }
+		- SUCC   = { defaultSign , }
+
+86 :	"defaultSign"
+		- NEIGH  = { defaultSign , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { sizeof_pointer , nonneg , }
+		- SUCC   = { PlatformType , }
+
+88 :	"PlatformType"
+		- NEIGH  = { PlatformType , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { defaultSign , }
+		- SUCC   = { platformType , PlatformType , }
+
+89 :	"Unspecified"
+		- NEIGH  = { Unspecified , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+90 :	"Native"
+		- NEIGH  = { Native , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+91 :	"Win32A"
+		- NEIGH  = { Win32A , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+92 :	"Win32W"
+		- NEIGH  = { Win32W , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+93 :	"Win64"
+		- NEIGH  = { Win64 , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+94 :	"Unix32"
+		- NEIGH  = { Unix32 , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+95 :	"Unix64"
+		- NEIGH  = { Unix64 , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+96 :	"PlatformFile"
+		- NEIGH  = { PlatformFile , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+100 :	"PlatformType"
+		- NEIGH  = { platformType , PlatformType , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { PlatformType , }
+		- SUCC   = { type , PlatformType , platform , }
+
+100 :	"platformType"
+		- NEIGH  = { platformType , PlatformType , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { PlatformType , }
+		- SUCC   = { type , PlatformType , platform , }
+
+103 :	"platform"
+		- NEIGH  = { type , PlatformType , platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { platformType , PlatformType , }
+		- SUCC   = { filename , & , string , std , exename , loadPlatformFile , }
+
+103 :	"PlatformType"
+		- NEIGH  = { type , PlatformType , platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { platformType , PlatformType , }
+		- SUCC   = { filename , & , string , std , exename , loadPlatformFile , }
+
+103 :	"type"
+		- NEIGH  = { type , PlatformType , platform , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { platformType , PlatformType , }
+		- SUCC   = { filename , & , string , std , exename , loadPlatformFile , }
+
+111 :	"loadPlatformFile"
+		- NEIGH  = { filename , & , string , std , exename , loadPlatformFile , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { type , PlatformType , platform , }
+		- SUCC   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+
+111 :	"exename"
+		- NEIGH  = { filename , & , string , std , exename , loadPlatformFile , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { type , PlatformType , platform , }
+		- SUCC   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+
+111 :	"std"
+		- NEIGH  = { filename , & , string , std , exename , loadPlatformFile , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { type , PlatformType , platform , }
+		- SUCC   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+
+111 :	"string"
+		- NEIGH  = { filename , & , string , std , exename , loadPlatformFile , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { type , PlatformType , platform , }
+		- SUCC   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+
+111 :	"&"
+		- NEIGH  = { filename , & , string , std , exename , loadPlatformFile , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { type , PlatformType , platform , }
+		- SUCC   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+
+111 :	"filename"
+		- NEIGH  = { filename , & , string , std , exename , loadPlatformFile , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { type , PlatformType , platform , }
+		- SUCC   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+
+114 :	"loadFromXmlDocument"
+		- NEIGH  = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { filename , & , string , std , exename , loadPlatformFile , }
+		- SUCC   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+
+114 :	"tinyxml2"
+		- NEIGH  = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { filename , & , string , std , exename , loadPlatformFile , }
+		- SUCC   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+
+114 :	"XMLDocument"
+		- NEIGH  = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { filename , & , string , std , exename , loadPlatformFile , }
+		- SUCC   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+
+114 :	"*"
+		- NEIGH  = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { filename , & , string , std , exename , loadPlatformFile , }
+		- SUCC   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+
+114 :	"doc"
+		- NEIGH  = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { filename , & , string , std , exename , loadPlatformFile , }
+		- SUCC   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+
+120 :	"isWindowsPlatform"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+121 :	"return"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+121 :	"platformType"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+121 :	"=="
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+121 :	"Win32A"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+121 :	"||"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+122 :	"platformType"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+122 :	"=="
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+122 :	"Win32W"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+122 :	"||"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+123 :	"platformType"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+123 :	"=="
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+123 :	"Win64"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+126 :	"*"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+126 :	"platformString"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+127 :	"return"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+127 :	"platformString"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+127 :	"platformType"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+130 :	"*"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+130 :	"platformString"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+130 :	"PlatformType"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+130 :	"pt"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+131 :	"switch"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { Unix64 , Unix32 , Win64 , Win32W , PlatformFile , Win32A , Native , return , Unspecified , }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+131 :	"pt"
+		- NEIGH  = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- PARENT = { }
+		- CHILD  = { Unix64 , Unix32 , Win64 , Win32W , PlatformFile , Win32A , Native , return , Unspecified , }
+		- PRED   = { doc , XMLDocument , tinyxml2 , * , loadFromXmlDocument , }
+		- SUCC   = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+
+132 :	"Unspecified"
+		- NEIGH  = { Unspecified , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+133 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { Unspecified , }
+		- SUCC   = { Native , }
+
+134 :	"Native"
+		- NEIGH  = { Native , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { return , }
+		- SUCC   = { return , }
+
+135 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { Native , }
+		- SUCC   = { Win32A , }
+
+136 :	"Win32A"
+		- NEIGH  = { Win32A , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { return , }
+		- SUCC   = { return , }
+
+137 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { Win32A , }
+		- SUCC   = { Win32W , }
+
+138 :	"Win32W"
+		- NEIGH  = { Win32W , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { return , }
+		- SUCC   = { return , }
+
+139 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { Win32W , }
+		- SUCC   = { Win64 , }
+
+140 :	"Win64"
+		- NEIGH  = { Win64 , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { return , }
+		- SUCC   = { return , }
+
+141 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { Win64 , }
+		- SUCC   = { Unix32 , }
+
+142 :	"Unix32"
+		- NEIGH  = { Unix32 , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { return , }
+		- SUCC   = { return , }
+
+143 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { Unix32 , }
+		- SUCC   = { Unix64 , }
+
+144 :	"Unix64"
+		- NEIGH  = { Unix64 , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { return , }
+		- SUCC   = { return , }
+
+145 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { Unix64 , }
+		- SUCC   = { PlatformFile , }
+
+146 :	"PlatformFile"
+		- NEIGH  = { PlatformFile , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { return , }
+		- SUCC   = { return , }
+
+147 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { PlatformFile , }
+		- SUCC   = { }
+
+149 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"unsignedCharMax"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+154 :	"return"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+154 :	"max_value"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+154 :	"char_bit"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+154 :	"+"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+157 :	"signedCharMax"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+158 :	"return"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+158 :	"max_value"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+158 :	"char_bit"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+161 :	"signedCharMin"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+162 :	"return"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+162 :	"min_value"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+
+162 :	"char_bit"
+		- NEIGH  = { min_value , signedCharMin , char_bit , + , return , max_value , signedCharMax , unsignedCharMax , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { switch , pt , return , || , PlatformType , Win32A , == , platformString , isWindowsPlatform , Win32W , Win64 , platformType , * , }
+		- SUCC   = { }
+

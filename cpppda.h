@@ -79,7 +79,6 @@ private:
     void _left(Token* tok)
         { _otherwise(tok); _ttype_stack.push(tok->type); }
     // symbol
-    void _l_paren(Token* tok);
     void _r_paren(Token* tok);
     void _l_brace(Token* tok);
     void _r_brace(Token* tok);
@@ -308,7 +307,11 @@ void CppPda::_deleteWhileBranch()
 ////////////
 void CppPda::_identifier(Token* tok)
 {
-    if (_state_stack.top() == _State::ROOT) {
+    // New line
+    if (_isBlock(_state_stack.top()))
+        _beginLine(_State::STMT, Token::Type::STMT);
+
+    else if (_state_stack.top() == _State::ROOT) {
         
         tok->parent = tok->root;
         tok->neighbors = std::make_shared<Token::string_set>();
@@ -331,10 +334,6 @@ void CppPda::_identifier(Token* tok)
 
     // Set Flat
     _setFlatRelation(tok);
-
-    // New line
-    if (_isBlock(_state_stack.top()))
-        _beginLine(_State::STMT, Token::Type::STMT);
 }
 
 void CppPda::_branch(Token* tok)
@@ -419,8 +418,13 @@ void CppPda::_l_brace(Token* tok)
     }
 
     // Otherwise,
-    else
+    else {
+
+        // New line
+        if (_isBlock(_state_stack.top()) && _ttype_stack.top() == Token::Type::L_BRACE)
+            _beginLine(_State::STMT, Token::Type::STMT);
         _ttype_stack.push(tok->type);
+    }
 }
 
 void CppPda::_r_brace(Token* tok)
@@ -464,9 +468,11 @@ void CppPda::_r_brace(Token* tok)
 
 void CppPda::_l_square(Token* tok)
 {
-    _otherwise(tok);
+    // New line
+    if (_isBlock(_state_stack.top()))
+        _beginLine(_State::STMT, Token::Type::STMT);
 
-    if (_lambda_stack.top() == _Lambda::OPERATOR)
+    else if (_lambda_stack.top() == _Lambda::OPERATOR)
         _lambda_stack.pop();
 
     else { // _lambda_stack.top() != _Lambda::OPERATOR
@@ -487,8 +493,6 @@ void CppPda::_r_square(Token* tok)
 
 void CppPda::_semi(Token* tok)
 {
-    _otherwise(tok);
-
     // End line
     if (_state_stack.top() == _State::ROOT) {
 
@@ -510,8 +514,6 @@ void CppPda::_semi(Token* tok)
 
 void CppPda::_colon(Token* tok)
 {
-    _otherwise(tok);
-
     if (_ttype_stack.top() == Token::Type::CASE || _ttype_stack.top() == Token::Type::DEFAULT) {
 
         _ttype_stack.pop();

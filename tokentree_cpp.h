@@ -8,9 +8,20 @@
 
 namespace PAFL
 {
-constexpr auto TEMPORARY_CPP = "___temp.cpp";
-constexpr auto TEMPORARY_TXT = "___temp.txt";
-constexpr auto DUMP_COMMAND = "clang++ -fsyntax-only -Xclang -dump-tokens ___temp.cpp 2>&1 | tee ___temp.txt";
+namespace Command
+{
+    constexpr auto TEMPORARY_CPP = "___temp.cpp";
+    constexpr auto TEMPORARY_TXT = "___temp.txt";
+    constexpr auto DUMP_COMMAND = "clang++ -fsyntax-only -Xclang -dump-tokens ___temp.cpp 2>&1 | tee ___temp.txt";
+#ifdef _WIN32
+    constexpr auto CLEAR = "cls";
+#elif _WIN64
+    constexpr auto CLEAR = "cls";
+#else
+    constexpr auto CLEAR = "clear";
+#endif
+}
+
 
 
 class CppTokenTree : public TokenTree
@@ -61,6 +72,9 @@ CppTokenTree::CppTokenTree(const std::filesystem::path& path_with_filename, std:
     _tokens_indexer.reserve(_stream.size());
     for (auto& list : _stream)
         _tokens_indexer.emplace(list.begin()->loc, &list);
+    
+     if (!pda.isTerminated(&*_root))
+        throw std::string("Incomplete token tree <") + path_with_filename.string() + '>';
 }
 
 
@@ -144,7 +158,7 @@ void _eraseInclude(const std::filesystem::path& path_with_filename)
 
 
     std::cout.write(buf, size);
-    std::ofstream ofs(TEMPORARY_CPP);
+    std::ofstream ofs(Command::TEMPORARY_CPP);
     ofs.write(buf, size);
     ofs.close();
     std::free(buf);
@@ -157,25 +171,25 @@ std::list<Token> CppTokenTree::_getRawStream(const std::filesystem::path& path_w
     // Erase header info
     _eraseInclude(path_with_filename);
     // clang++ dump-tokens
-    std::system(DUMP_COMMAND);
-    std::remove(TEMPORARY_CPP);
+    std::system(Command::DUMP_COMMAND);
+    std::remove(Command::TEMPORARY_CPP);
 
     // Read .txt file
-    std::ifstream ifs(TEMPORARY_TXT);
+    std::ifstream ifs(Command::TEMPORARY_TXT);
     ifs.seekg(0, std::ios::end);
     auto size = ifs.tellg();
 
     char* buf = (char*)std::malloc(size * sizeof(char));
     if (!buf) {
 
-        std::remove(TEMPORARY_TXT);
+        std::remove(Command::TEMPORARY_TXT);
         throw std::range_error("malloc failed");
     }
 
     ifs.seekg(0);
     ifs.read(buf, size);
     ifs.close();
-    std::remove(TEMPORARY_TXT);
+    std::remove(Command::TEMPORARY_TXT);
 
 
     // Tokenize
@@ -207,6 +221,7 @@ std::list<Token> CppTokenTree::_getRawStream(const std::filesystem::path& path_w
 
 
     std::free(buf);
+    std::system(Command::CLEAR);
     return stream;
 }
 }

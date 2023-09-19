@@ -28,20 +28,25 @@ public:
     PrgLang getLanguage() const
         { return _pl; }
     size_t numVersion() const
-        { return _num_version; }
+        { return _version.size(); }
     const method_set& getMethodSet() const
         { return _method; }
     
-    const fs::path& getProjectPath(size_t version) const
-        { return _src_path[version]; }
-    const fault_loc& getFaultLocation(size_t version) const
-        { return _faults[version]; }
+    const fs::path& getProjectPath(size_t iter) const
+        { return _src_path[iter]; }
+    const fault_loc& getFaultLocation(size_t iter) const
+        { return _faults[iter]; }
+    size_t getVersion(size_t iter) const
+        { return _version[iter]; }
+
     bool hasLogger() const
         { return _logger; }
     bool hasTimeLogger() const
         { return _time_logger; }
+    bool hasCache() const
+        { return __cache; }
 
-    docs getCoverageList(size_t version) const;
+    docs getCoverageList(size_t iter) const;
 
 
 private:
@@ -53,7 +58,7 @@ private:
 
     std::string _project;
     PrgLang _pl;
-    size_t _num_version;
+    std::vector<size_t> _version;
     std::set<Method> _method;
 
     fs::path _project_path;
@@ -61,6 +66,7 @@ private:
     fs::path _bug_info_path;
     bool _logger;
     bool _time_logger;
+    bool __cache;
 
     Config _config;
     std::vector<fs::path> _src_path;
@@ -79,7 +85,7 @@ namespace PAFL
 {
 UI::UI(int argc, char *argv[]) :
     _project_path(fs::current_path()), _testsuite_path(fs::current_path()), _bug_info_path(fs::current_path()),
-    _logger(false), _time_logger(false), _num_version(0)
+    _logger(false), _time_logger(false), __cache(false)
 {
     _readIn(argc, argv);
     _config.configure(_pl);
@@ -88,10 +94,10 @@ UI::UI(int argc, char *argv[]) :
 
 
 
-UI::docs UI::getCoverageList(size_t version) const
+UI::docs UI::getCoverageList(size_t iter) const
 {
     docs ret;
-    std::string VER(std::to_string(version));
+    std::string VER(std::to_string(_version[iter]));
 
     // Set docs
     for (size_t tc = 0;; tc++) {
@@ -151,8 +157,31 @@ void UI::_readIn(int argc, char *argv[])
             _throwInvalidInput();
     }
 
-    {// <SIZE>
-        _num_version = std::atoi(argv[2]);
+    {// <VERSION>
+        std::string arg(argv[2]);
+        for (size_t pos = 0; pos < arg.size(); ) {
+
+            auto split = arg.find(',', pos);
+
+            std::string interval(arg.substr(pos, split - pos));
+            auto connector = interval.find('-');
+            // Interval
+            if (connector != std::string::npos) {
+                
+                auto left = std::stoi(interval.substr(0, connector));
+                auto right = std::stoi(interval.substr(connector + 1));
+                if (left > right)
+                    _throwInvalidInput();
+
+                for (auto i = left; i <= right; i++)
+                    _version.push_back(i);
+            }
+            // Single value
+            else
+                _version.push_back(std::stoi(interval));
+
+            pos = split == std::string::npos ? std::string::npos : split + 1;
+        }
     }
 
     {// <METHOD>
@@ -193,11 +222,14 @@ void UI::_readIn(int argc, char *argv[])
         else if (arg.starts_with("-B"))
             _bug_info_path = arg.substr(2);
 
-        else if (arg == "-tl" || arg == "--timelog")
+        else if (arg == "-l" || arg == "--log")
             _logger = true;
 
-        else if (arg == "-l" || arg == "--log")
+        else if (arg == "-tl" || arg == "--timelog")
             _time_logger = true;
+
+        else if (arg == "--dev-cache")
+            __cache = true;
         
         else 
             _throwInvalidInput();
@@ -209,12 +241,12 @@ void UI::_readIn(int argc, char *argv[])
 void UI::_setContainer()
 {
     // Set version path
-    _src_path.reserve(_num_version);
-    _faults.reserve(_num_version);
+    _src_path.reserve(_version.size());
+    _faults.reserve(_version.size());
     
-    for (size_t v = 0; v != _num_version; v++) {
+    for (auto v : _version) {
 
-        std::string VER(std::to_string(v+1));
+        std::string VER(std::to_string(v));
         _src_path.emplace_back(_project_path / _config.getStringFromLine(_config.PROJECT_LOC, _project, VER, ""));
         _faults.emplace_back();
     }
@@ -223,11 +255,11 @@ void UI::_setContainer()
     rapidjson::Document info(parseDoc(_bug_info_path / (_project + ".json")));
     const auto& ver = info["version"].GetArray();
 
-    for (size_t v = 0; v != _num_version; v++)
-        for (const auto& fault : ver[v].GetArray()) {
+    for (size_t i = 0; i != _version.size(); i++) 
+        for (const auto& fault : ver[_version[i] - 1].GetArray()) {
 
             const auto& fileline = fault.GetObject();
-            auto& line_set = _faults[v].emplace(fileline["file"].GetString(), std::unordered_set<line_t>()).first->second;
+            auto& line_set = _faults[i].emplace(fileline["file"].GetString(), std::unordered_set<line_t>()).first->second;
 
             for (auto& line : fileline["lines"].GetArray())
                 line_set.insert(line.GetUint());

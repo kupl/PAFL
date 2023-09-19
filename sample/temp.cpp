@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2020 Cppcheck team.
+ * Copyright (C) 2007-2019 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,1643 +16,1187 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//---------------------------------------------------------------------------
-// Check for condition mismatches
-//---------------------------------------------------------------------------
+#include "cmdlineparser.h"
 
-#include "checkcondition.h"
-
-#include "astutils.h"
+#include "check.h"
+#include "cppcheckexecutor.h"
+#include "filelister.h"
+#include "importproject.h"
+#include "path.h"
+#include "platform.h"
 #include "settings.h"
-#include "symboldatabase.h"
-#include "token.h"
-#include "tokenize.h"
-#include "valueflow.h"
+#include "standards.h"
+#include "suppressions.h"
+#include "threadexecutor.h" // Threading model
+#include "timer.h"
+#include "utils.h"
 
 #include <algorithm>
-#include <cstddef>
-#include <limits>
+#include <cstdio>
+#include <cstdlib> // EXIT_FAILURE
+#include <cstring>
+#include <iostream>
 #include <list>
-#include <ostream>
 #include <set>
-#include <stack>
-#include <utility>
 
-// CWE ids used
-static const struct CWE CWE398(398U);   // Indicator of Poor Code Quality
-static const struct CWE CWE570(570U);   // Expression is Always False
-static const struct CWE CWE571(571U);   // Expression is Always True
+#ifdef HAVE_RULES
+// xml is used for rules
+#include <tinyxml2.h>
+#endif
 
-//---------------------------------------------------------------------------
-
-// Register this check class (by creating a static instance of it)
-namespace {
-    CheckCondition instance;
-}
-
-bool CheckCondition::diag(const Token* tok, bool insert)
+static void addFilesToList(const std::string& FileList, std::vector<std::string>& PathNames)
 {
-    if (!tok)
-        return false;
-    if (mCondDiags.find(tok) == mCondDiags.end()) {
-        if (insert)
-            mCondDiags.insert(tok);
-        return false;
-    }
-    return true;
-}
-
-bool CheckCondition::isAliased(const std::set<int> &vars) const
-{
-    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
-        if (Token::Match(tok, "= & %var% ;") && vars.find(tok->tokAt(2)->varId()) != vars.end())
-            return true;
-    }
-    return false;
-}
-
-void CheckCondition::assignIf()
-{
-    if (!mSettings->isEnabled(Settings::STYLE))
-        return;
-
-    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
-        if (tok->str() != "=")
-            continue;
-
-        if (Token::Match(tok->tokAt(-2), "[;{}] %var% =")) {
-            const Variable *var = tok->previous()->variable();
-            if (var == nullptr)
-                continue;
-
-            char bitop = '\0';
-            MathLib::bigint num = 0;
-
-            if (Token::Match(tok->next(), "%num% [&|]")) {
-                bitop = tok->strAt(2).at(0);
-                num = MathLib::toLongNumber(tok->next()->str());
-            } else {
-                const Token *endToken = Token::findsimplematch(tok, ";");
-
-                // Casting address
-                if (endToken && Token::Match(endToken->tokAt(-4), "* ) & %any% ;"))
-                    endToken = nullptr;
-
-                if (endToken && Token::Match(endToken->tokAt(-2), "[&|] %num% ;")) {
-                    bitop = endToken->strAt(-2).at(0);
-                    num = MathLib::toLongNumber(endToken->previous()->str());
-                }
-            }
-
-            if (bitop == '\0')
-                continue;
-
-            if (num < 0 && bitop == '|')
-                continue;
-
-            assignIfParseScope(tok, tok->tokAt(4), var->declarationId(), var->isLocal(), bitop, num);
-        }
-    }
-}
-
-static bool isParameterChanged(const Token *partok)
-{
-    bool addressOf = Token::Match(partok, "[(,] &");
-    int argumentNumber = 0;
-    const Token *ftok;
-    for (ftok = partok; ftok && ftok->str() != "("; ftok = ftok->previous()) {
-        if (ftok->str() == ")")
-            ftok = ftok->link();
-        else if (argumentNumber == 0U && ftok->str() == "&")
-            addressOf = true;
-        else if (ftok->str() == ",")
-            argumentNumber++;
-    }
-    ftok = ftok ? ftok->previous() : nullptr;
-    if (!(ftok && ftok->function()))
-        return true;
-    const Variable *par = ftok->function()->getArgumentVar(argumentNumber);
-    if (!par)
-        return true;
-    if (par->isConst())
-        return false;
-    if (addressOf || par->isReference() || par->isPointer())
-        return true;
-    return false;
-}
-
-/** parse scopes recursively */
-bool CheckCondition::assignIfParseScope(const Token * const assignTok,
-                                        const Token * const startTok,
-                                        const nonneg int varid,
-                                        const bool islocal,
-                                        const char bitop,
-                                        const MathLib::bigint num)
-{
-    bool ret = false;
-
-    for (const Token *tok2 = startTok; tok2; tok2 = tok2->next()) {
-        if ((bitop == '&') && Token::Match(tok2->tokAt(2), "%varid% %cop% %num% ;", varid) && tok2->strAt(3) == std::string(1U, bitop)) {
-            const MathLib::bigint num2 = MathLib::toLongNumber(tok2->strAt(4));
-            if (0 == (num & num2))
-                mismatchingBitAndError(assignTok, num, tok2, num2);
-        }
-        if (Token::Match(tok2, "%varid% =", varid)) {
-            return true;
-        }
-        if (bitop == '&' && Token::Match(tok2, "%varid% &= %num% ;", varid)) {
-            const MathLib::bigint num2 = MathLib::toLongNumber(tok2->strAt(2));
-            if (0 == (num & num2))
-                mismatchingBitAndError(assignTok, num, tok2, num2);
-        }
-        if (Token::Match(tok2, "++|-- %varid%", varid) || Token::Match(tok2, "%varid% ++|--", varid))
-            return true;
-        if (Token::Match(tok2, "[(,] &| %varid% [,)]", varid) && isParameterChanged(tok2))
-            return true;
-        if (tok2->str() == "}")
-            return false;
-        if (Token::Match(tok2, "break|continue|return"))
-            ret = true;
-        if (ret && tok2->str() == ";")
-            return false;
-        if (!islocal && Token::Match(tok2, "%name% (") && !Token::simpleMatch(tok2->next()->link(), ") {"))
-            return true;
-        if (Token::Match(tok2, "if|while (")) {
-            if (!islocal && tok2->str() == "while")
-                continue;
-            if (tok2->str() == "while") {
-                // is variable changed in loop?
-                const Token *bodyStart = tok2->linkAt(1)->next();
-                const Token *bodyEnd   = bodyStart ? bodyStart->link() : nullptr;
-                if (!bodyEnd || bodyEnd->str() != "}" || isVariableChanged(bodyStart, bodyEnd, varid, !islocal, mSettings, mTokenizer->isCPP()))
-                    continue;
-            }
-
-            // parse condition
-            const Token * const end = tok2->next()->link();
-            for (; tok2 != end; tok2 = tok2->next()) {
-                if (Token::Match(tok2, "[(,] &| %varid% [,)]", varid)) {
-                    return true;
-                }
-                if (Token::Match(tok2,"&&|%oror%|( %varid% ==|!= %num% &&|%oror%|)", varid)) {
-                    const Token *vartok = tok2->next();
-                    const MathLib::bigint num2 = MathLib::toLongNumber(vartok->strAt(2));
-                    if ((num & num2) != ((bitop=='&') ? num2 : num)) {
-                        const std::string& op(vartok->strAt(1));
-                        const bool alwaysTrue = op == "!=";
-                        const std::string condition(vartok->str() + op + vartok->strAt(2));
-                        assignIfError(assignTok, tok2, condition, alwaysTrue);
-                    }
-                }
-                if (Token::Match(tok2, "%varid% %op%", varid) && tok2->next()->isAssignmentOp()) {
-                    return true;
-                }
-            }
-
-            const bool ret1 = assignIfParseScope(assignTok, end->tokAt(2), varid, islocal, bitop, num);
-            bool ret2 = false;
-            if (Token::simpleMatch(end->next()->link(), "} else {"))
-                ret2 = assignIfParseScope(assignTok, end->next()->link()->tokAt(3), varid, islocal, bitop, num);
-            if (ret1 || ret2)
-                return true;
-        }
-    }
-    return false;
-}
-
-void CheckCondition::assignIfError(const Token *tok1, const Token *tok2, const std::string &condition, bool result)
-{
-    if (tok2 && diag(tok2->tokAt(2)))
-        return;
-    std::list<const Token *> locations = { tok1, tok2 };
-    reportError(locations,
-                Severity::style,
-                "assignIfError",
-                "Mismatching assignment and comparison, comparison '" + condition + "' is always " + std::string(result ? "true" : "false") + ".", CWE398, false);
-}
-
-
-void CheckCondition::mismatchingBitAndError(const Token *tok1, const MathLib::bigint num1, const Token *tok2, const MathLib::bigint num2)
-{
-    std::list<const Token *> locations = { tok1, tok2 };
-
-    std::ostringstream msg;
-    msg << "Mismatching bitmasks. Result is always 0 ("
-        << "X = Y & 0x" << std::hex << num1 << "; Z = X & 0x" << std::hex << num2 << "; => Z=0).";
-
-    reportError(locations,
-                Severity::style,
-                "mismatchingBitAnd",
-                msg.str(), CWE398, false);
-}
-
-
-static void getnumchildren(const Token *tok, std::list<MathLib::bigint> &numchildren)
-{
-    if (tok->astOperand1() && tok->astOperand1()->isNumber())
-        numchildren.push_back(MathLib::toLongNumber(tok->astOperand1()->str()));
-    else if (tok->astOperand1() && tok->str() == tok->astOperand1()->str())
-        getnumchildren(tok->astOperand1(), numchildren);
-    if (tok->astOperand2() && tok->astOperand2()->isNumber())
-        numchildren.push_back(MathLib::toLongNumber(tok->astOperand2()->str()));
-    else if (tok->astOperand2() && tok->str() == tok->astOperand2()->str())
-        getnumchildren(tok->astOperand2(), numchildren);
-}
-
-/* Return whether tok is in the body for a function returning a boolean. */
-static bool inBooleanFunction(const Token *tok)
-{
-    const Scope *scope = tok ? tok->scope() : nullptr;
-    while (scope && scope->isLocal())
-        scope = scope->nestedIn;
-    if (scope && scope->type == Scope::eFunction) {
-        const Function *func = scope->function;
-        if (func) {
-            const Token *ret = func->retDef;
-            while (Token::Match(ret, "static|const"))
-                ret = ret->next();
-            return Token::Match(ret, "bool|_Bool");
-        }
-    }
-    return false;
-}
-
-void CheckCondition::checkBadBitmaskCheck()
-{
-    if (!mSettings->isEnabled(Settings::WARNING))
-        return;
-
-    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
-        if (tok->str() == "|" && tok->astOperand1() && tok->astOperand2() && tok->astParent()) {
-            const Token* parent = tok->astParent();
-            const bool isBoolean = Token::Match(parent, "&&|%oror%") ||
-                                   (parent->str() == "?" && parent->astOperand1() == tok) ||
-                                   (parent->str() == "=" && parent->astOperand2() == tok && parent->astOperand1() && parent->astOperand1()->variable() && Token::Match(parent->astOperand1()->variable()->typeStartToken(), "bool|_Bool")) ||
-                                   (parent->str() == "(" && Token::Match(parent->astOperand1(), "if|while")) ||
-                                   (parent->str() == "return" && parent->astOperand1() == tok && inBooleanFunction(tok));
-
-            const bool isTrue = (tok->astOperand1()->hasKnownIntValue() && tok->astOperand1()->values().front().intvalue != 0) ||
-                                (tok->astOperand2()->hasKnownIntValue() && tok->astOperand2()->values().front().intvalue != 0);
-
-            if (isBoolean && isTrue)
-                badBitmaskCheckError(tok);
-        }
-    }
-}
-
-void CheckCondition::badBitmaskCheckError(const Token *tok)
-{
-    reportError(tok, Severity::warning, "badBitmaskCheck", "Result of operator '|' is always true if one operand is non-zero. Did you intend to use '&'?", CWE571, false);
-}
-
-void CheckCondition::comparison()
-{
-    if (!mSettings->isEnabled(Settings::STYLE))
-        return;
-
-    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
-        if (!tok->isComparisonOp())
-            continue;
-
-        const Token *expr1 = tok->astOperand1();
-        const Token *expr2 = tok->astOperand2();
-        if (!expr1 || !expr2)
-            continue;
-        if (expr1->isNumber())
-            std::swap(expr1,expr2);
-        if (!expr2->isNumber())
-            continue;
-        const MathLib::bigint num2 = MathLib::toLongNumber(expr2->str());
-        if (num2 < 0)
-            continue;
-        if (!Token::Match(expr1,"[&|]"))
-            continue;
-        std::list<MathLib::bigint> numbers;
-        getnumchildren(expr1, numbers);
-        for (const MathLib::bigint num1 : numbers) {
-            if (num1 < 0)
-                continue;
-            if (Token::Match(tok, "==|!=")) {
-                if ((expr1->str() == "&" && (num1 & num2) != num2) ||
-                    (expr1->str() == "|" && (num1 | num2) != num2)) {
-                    const std::string& op(tok->str());
-                    comparisonError(expr1, expr1->str(), num1, op, num2, op=="==" ? false : true);
-                }
-            } else if (expr1->str() == "&") {
-                const bool or_equal = Token::Match(tok, ">=|<=");
-                const std::string& op(tok->str());
-                if ((Token::Match(tok, ">=|<")) && (num1 < num2)) {
-                    comparisonError(expr1, expr1->str(), num1, op, num2, or_equal ? false : true);
-                } else if ((Token::Match(tok, "<=|>")) && (num1 <= num2)) {
-                    comparisonError(expr1, expr1->str(), num1, op, num2, or_equal ? true : false);
-                }
-            } else if (expr1->str() == "|") {
-                if ((expr1->astOperand1()->valueType()) &&
-                    (expr1->astOperand1()->valueType()->sign == ValueType::Sign::UNSIGNED)) {
-                    const bool or_equal = Token::Match(tok, ">=|<=");
-                    const std::string& op(tok->str());
-                    if ((Token::Match(tok, ">=|<")) && (num1 >= num2)) {
-                        //"(a | 0x07) >= 7U" is always true for unsigned a
-                        //"(a | 0x07) < 7U" is always false for unsigned a
-                        comparisonError(expr1, expr1->str(), num1, op, num2, or_equal ? true : false);
-                    } else if ((Token::Match(tok, "<=|>")) && (num1 > num2)) {
-                        //"(a | 0x08) <= 7U" is always false for unsigned a
-                        //"(a | 0x07) > 6U" is always true for unsigned a
-                        comparisonError(expr1, expr1->str(), num1, op, num2, or_equal ? false : true);
-                    }
-                }
-            }
-        }
-    }
-}
-
-void CheckCondition::comparisonError(const Token *tok, const std::string &bitop, MathLib::bigint value1, const std::string &op, MathLib::bigint value2, bool result)
-{
-    std::ostringstream expression;
-    expression << std::hex << "(X " << bitop << " 0x" << value1 << ") " << op << " 0x" << value2;
-
-    const std::string errmsg("Expression '" + expression.str() + "' is always " + (result?"true":"false") + ".\n"
-                             "The expression '" + expression.str() + "' is always " + (result?"true":"false") +
-                             ". Check carefully constants and operators used, these errors might be hard to "
-                             "spot sometimes. In case of complex expression it might help to split it to "
-                             "separate expressions.");
-
-    reportError(tok, Severity::style, "comparisonError", errmsg, CWE398, false);
-}
-
-bool CheckCondition::isOverlappingCond(const Token * const cond1, const Token * const cond2, bool pure) const
-{
-    if (!cond1 || !cond2)
-        return false;
-
-    // same expressions
-    if (isSameExpression(mTokenizer->isCPP(), true, cond1, cond2, mSettings->library, pure, false))
-        return true;
-
-    // bitwise overlap for example 'x&7' and 'x==1'
-    if (cond1->str() == "&" && cond1->astOperand1() && cond2->astOperand2()) {
-        const Token *expr1 = cond1->astOperand1();
-        const Token *num1  = cond1->astOperand2();
-        if (!num1) // unary operator&
-            return false;
-        if (!num1->isNumber())
-            std::swap(expr1,num1);
-        if (!num1->isNumber() || MathLib::isNegative(num1->str()))
-            return false;
-
-        if (!Token::Match(cond2, "&|==") || !cond2->astOperand1() || !cond2->astOperand2())
-            return false;
-        const Token *expr2 = cond2->astOperand1();
-        const Token *num2  = cond2->astOperand2();
-        if (!num2->isNumber())
-            std::swap(expr2,num2);
-        if (!num2->isNumber() || MathLib::isNegative(num2->str()))
-            return false;
-
-        if (!isSameExpression(mTokenizer->isCPP(), true, expr1, expr2, mSettings->library, pure, false))
-            return false;
-
-        const MathLib::bigint value1 = MathLib::toLongNumber(num1->str());
-        const MathLib::bigint value2 = MathLib::toLongNumber(num2->str());
-        if (cond2->str() == "&")
-            return ((value1 & value2) == value2);
-        return ((value1 & value2) > 0);
-    }
-    return false;
-}
-
-void CheckCondition::duplicateCondition()
-{
-    if (!mSettings->isEnabled(Settings::STYLE))
-        return;
-
-    const SymbolDatabase *const symbolDatabase = mTokenizer->getSymbolDatabase();
-
-    for (const Scope &scope : symbolDatabase->scopeList) {
-        if (scope.type != Scope::eIf)
-            continue;
-
-        const Token *cond1 = scope.classDef->next()->astOperand2();
-        if (!cond1)
-            continue;
-        if (cond1->hasKnownIntValue())
-            continue;
-
-        const Token *tok2 = scope.classDef->next();
-        if (!tok2)
-            continue;
-        tok2 = tok2->link();
-        if (!Token::simpleMatch(tok2, ") {"))
-            continue;
-        tok2 = tok2->linkAt(1);
-        if (!Token::simpleMatch(tok2, "} if ("))
-            continue;
-        const Token *cond2 = tok2->tokAt(2)->astOperand2();
-        if (!cond2)
-            continue;
-
-        bool modified = false;
-        visitAstNodes(cond1, [&](const Token* tok3) {
-            if (exprDependsOnThis(tok3)) {
-                if (isThisChanged(scope.classDef->next(), cond2, false, mSettings, mTokenizer->isCPP())) {
-                    modified = true;
-                    return ChildrenToVisit::done;
-                }
-            }
-            if (tok3->varId() > 0 &&
-                isVariableChanged(scope.classDef->next(), cond2, tok3->varId(), false, mSettings, mTokenizer->isCPP())) {
-                modified = true;
-                return ChildrenToVisit::done;
-            }
-            return ChildrenToVisit::op1_and_op2;
-        });
-        ErrorPath errorPath;
-        if (!modified &&
-            isSameExpression(mTokenizer->isCPP(), true, cond1, cond2, mSettings->library, true, true, &errorPath))
-            duplicateConditionError(cond1, cond2, errorPath);
-    }
-}
-
-void CheckCondition::duplicateConditionError(const Token *tok1, const Token *tok2, ErrorPath errorPath)
-{
-    if (diag(tok1) & diag(tok2))
-        return;
-    errorPath.emplace_back(tok1, "First condition");
-    errorPath.emplace_back(tok2, "Second condition");
-
-    std::string msg = "The if condition is the same as the previous if condition";
-
-    reportError(errorPath, Severity::style, "duplicateCondition", msg, CWE398, false);
-}
-
-void CheckCondition::multiCondition()
-{
-    if (!mSettings->isEnabled(Settings::STYLE))
-        return;
-
-    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
-
-    for (const Scope &scope : symbolDatabase->scopeList) {
-        if (scope.type != Scope::eIf)
-            continue;
-
-        const Token * const cond1 = scope.classDef->next()->astOperand2();
-        if (!cond1)
-            continue;
-
-        const Token * tok2 = scope.classDef->next();
-
-        // Check each 'else if'
-        for (;;) {
-            tok2 = tok2->link();
-            if (!Token::simpleMatch(tok2, ") {"))
-                break;
-            tok2 = tok2->linkAt(1);
-            if (!Token::simpleMatch(tok2, "} else { if ("))
-                break;
-            tok2 = tok2->tokAt(4);
-
-            if (tok2->astOperand2() &&
-                !cond1->hasKnownIntValue() &&
-                !tok2->astOperand2()->hasKnownIntValue()) {
-                ErrorPath errorPath;
-                if (isOverlappingCond(cond1, tok2->astOperand2(), true))
-                    overlappingElseIfConditionError(tok2, cond1->linenr());
-                else if (isOppositeCond(true, mTokenizer->isCPP(), cond1, tok2->astOperand2(), mSettings->library, true, true, &errorPath))
-                    oppositeElseIfConditionError(cond1, tok2, errorPath);
-            }
-        }
-    }
-}
-
-void CheckCondition::overlappingElseIfConditionError(const Token *tok, nonneg int line1)
-{
-    if (diag(tok))
-        return;
-    std::ostringstream errmsg;
-    errmsg << "Expression is always false because 'else if' condition matches previous condition at line "
-           << line1 << ".";
-
-    reportError(tok, Severity::style, "multiCondition", errmsg.str(), CWE398, false);
-}
-
-void CheckCondition::oppositeElseIfConditionError(const Token *ifCond, const Token *elseIfCond, ErrorPath errorPath)
-{
-    if (diag(ifCond) & diag(elseIfCond))
-        return;
-    std::ostringstream errmsg;
-    errmsg << "Expression is always true because 'else if' condition is opposite to previous condition at line "
-           << ifCond->linenr() << ".";
-
-    errorPath.emplace_back(ifCond, "first condition");
-    errorPath.emplace_back(elseIfCond, "else if condition is opposite to first condition");
-
-    reportError(errorPath, Severity::style, "multiCondition", errmsg.str(), CWE398, false);
-}
-
-//---------------------------------------------------------------------------
-// - Opposite inner conditions => always false
-// - (TODO) Same/Overlapping inner condition => always true
-// - same condition after early exit => always false
-//---------------------------------------------------------------------------
-
-static bool isNonConstFunctionCall(const Token *ftok, const Library &library)
-{
-    if (library.isFunctionConst(ftok))
-        return false;
-    const Token *obj = ftok->next()->astOperand1();
-    while (obj && obj->str() == ".")
-        obj = obj->astOperand1();
-    if (!obj)
-        return true;
-    else if (obj->variable() && obj->variable()->isConst())
-        return false;
-    else if (ftok->function() && ftok->function()->isConst())
-        return false;
-    return true;
-}
-
-void CheckCondition::multiCondition2()
-{
-    if (!mSettings->isEnabled(Settings::WARNING))
-        return;
-
-    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
-
-    for (const Scope &scope : symbolDatabase->scopeList) {
-        const Token *condTok = nullptr;
-        if (scope.type == Scope::eIf || scope.type == Scope::eWhile)
-            condTok = scope.classDef->next()->astOperand2();
-        else if (scope.type == Scope::eFor) {
-            condTok = scope.classDef->next()->astOperand2();
-            if (!condTok || condTok->str() != ";")
-                continue;
-            condTok = condTok->astOperand2();
-            if (!condTok || condTok->str() != ";")
-                continue;
-            condTok = condTok->astOperand1();
-        }
-        if (!condTok)
-            continue;
-        const Token * const cond1 = condTok;
-
-        if (!Token::simpleMatch(scope.classDef->linkAt(1), ") {"))
-            continue;
-
-        bool nonConstFunctionCall = false;
-        bool nonlocal = false; // nonlocal variable used in condition
-        std::set<int> vars; // variables used in condition
-        visitAstNodes(condTok,
-        [&](const Token *cond) {
-            if (Token::Match(cond, "%name% (")) {
-                nonConstFunctionCall = isNonConstFunctionCall(cond, mSettings->library);
-                if (nonConstFunctionCall)
-                    return ChildrenToVisit::done;
-            }
-
-            if (cond->varId()) {
-                vars.insert(cond->varId());
-                const Variable *var = cond->variable();
-                if (!nonlocal && var) {
-                    if (!(var->isLocal() || var->isArgument()))
-                        nonlocal = true;
-                    else if ((var->isPointer() || var->isReference()) && !Token::Match(cond->astParent(), "%oror%|&&|!"))
-                        // TODO: if var is pointer check what it points at
-                        nonlocal = true;
-                }
-            } else if (!nonlocal && cond->isName()) {
-                // varid is 0. this is possibly a nonlocal variable..
-                nonlocal = Token::Match(cond->astParent(), "%cop%|(|[") || Token::Match(cond, "%name% .") || (mTokenizer->isCPP() && cond->str() == "this");
-            } else {
-                return ChildrenToVisit::op1_and_op2;
-            }
-            return ChildrenToVisit::none;
-        });
-
-        if (nonConstFunctionCall)
-            continue;
-
-        std::vector<const Variable*> varsInCond;
-        visitAstNodes(condTok,
-        [&varsInCond](const Token *cond) {
-            if (cond->variable()) {
-                const Variable *var = cond->variable();
-                if (std::find(varsInCond.begin(), varsInCond.end(), var) == varsInCond.end())
-                    varsInCond.push_back(var);
-            }
-            return ChildrenToVisit::op1_and_op2;
-        });
-
-        // parse until second condition is reached..
-        enum MULTICONDITIONTYPE { INNER, AFTER };
-        const Token *tok;
-
-        // Parse inner condition first and then early return condition
-        std::vector<MULTICONDITIONTYPE> types = {MULTICONDITIONTYPE::INNER};
-        if (Token::Match(scope.bodyStart, "{ return|throw|continue|break"))
-            types.push_back(MULTICONDITIONTYPE::AFTER);
-        for (MULTICONDITIONTYPE type:types) {
-            if (type == MULTICONDITIONTYPE::AFTER) {
-                tok = scope.bodyEnd->next();
-            } else {
-                tok = scope.bodyStart;
-            }
-            const Token * const endToken = tok->scope()->bodyEnd;
-
-            for (; tok && tok != endToken; tok = tok->next()) {
-                if (Token::Match(tok, "if|return")) {
-                    const Token * condStartToken = tok->str() == "if" ? tok->next() : tok;
-                    const Token * condEndToken = tok->str() == "if" ? condStartToken->link() : Token::findsimplematch(condStartToken, ";");
-                    // Does condition modify tracked variables?
-                    if (const Token *op = Token::findmatch(tok, "++|--", condEndToken)) {
-                        bool bailout = false;
-                        while (op) {
-                            if (vars.find(op->astOperand1()->varId()) != vars.end()) {
-                                bailout = true;
-                                break;
-                            }
-                            if (nonlocal && op->astOperand1()->varId() == 0) {
-                                bailout = true;
-                                break;
-                            }
-                            op = Token::findmatch(op->next(), "++|--", condEndToken);
-                        }
-                        if (bailout)
-                            break;
-                    }
-
-                    // Condition..
-                    const Token *cond2 = tok->str() == "if" ? condStartToken->astOperand2() : condStartToken->astOperand1();
-                    const bool isReturnVar = (tok->str() == "return" && !Token::Match(cond2, "%cop%"));
-
-                    ErrorPath errorPath;
-
-                    if (type == MULTICONDITIONTYPE::INNER) {
-                        visitAstNodes(cond1, [&](const Token* firstCondition) {
-                            if (!firstCondition)
-                                return ChildrenToVisit::none;
-                            if (firstCondition->str() == "&&") {
-                                return ChildrenToVisit::op1_and_op2;
-                            } else if (!firstCondition->hasKnownIntValue()) {
-                                if (!isReturnVar && isOppositeCond(false, mTokenizer->isCPP(), firstCondition, cond2, mSettings->library, true, true, &errorPath)) {
-                                    if (!isAliased(vars))
-                                        oppositeInnerConditionError(firstCondition, cond2, errorPath);
-                                } else if (!isReturnVar && isSameExpression(mTokenizer->isCPP(), true, firstCondition, cond2, mSettings->library, true, true, &errorPath)) {
-                                    identicalInnerConditionError(firstCondition, cond2, errorPath);
-                                }
-                            }
-                            return ChildrenToVisit::none;
-                        });
-                    } else {
-                        visitAstNodes(cond2, [&](const Token *secondCondition) {
-                            if (secondCondition->str() == "||" || secondCondition->str() == "&&")
-                                return ChildrenToVisit::op1_and_op2;
-
-                            if ((!cond1->hasKnownIntValue() || !secondCondition->hasKnownIntValue()) &&
-                                isSameExpression(mTokenizer->isCPP(), true, cond1, secondCondition, mSettings->library, true, true, &errorPath)) {
-                                if (!isAliased(vars) && !mTokenizer->hasIfdef(cond1, secondCondition)) {
-                                    identicalConditionAfterEarlyExitError(cond1, secondCondition, errorPath);
-                                    return ChildrenToVisit::done;
-                                }
-                            }
-                            return ChildrenToVisit::none;
-                        });
-                    }
-                }
-                if (Token::Match(tok, "%name% (") && isVariablesChanged(tok, tok->linkAt(1), true, varsInCond, mSettings, mTokenizer->isCPP())) {
-                    break;
-                }
-                if (Token::Match(tok, "%type% (") && nonlocal && isNonConstFunctionCall(tok, mSettings->library)) // non const function call -> bailout if there are nonlocal variables
-                    break;
-                if (Token::Match(tok, "case|break|continue|return|throw") && tok->scope() == endToken->scope())
-                    break;
-                if (Token::Match(tok, "[;{}] %name% :"))
-                    break;
-                // bailout if loop is seen.
-                // TODO: handle loops better.
-                if (Token::Match(tok, "for|while|do")) {
-                    const Token *tok1 = tok->next();
-                    const Token *tok2;
-                    if (Token::simpleMatch(tok, "do {")) {
-                        if (!Token::simpleMatch(tok->linkAt(1), "} while ("))
-                            break;
-                        tok2 = tok->linkAt(1)->linkAt(2);
-                    } else if (Token::Match(tok, "if|while (")) {
-                        tok2 = tok->linkAt(1);
-                        if (Token::simpleMatch(tok2, ") {"))
-                            tok2 = tok2->linkAt(1);
-                        if (!tok2)
-                            break;
-                    } else {
-                        // Incomplete code
-                        break;
-                    }
-                    bool changed = false;
-                    for (int varid : vars) {
-                        if (isVariableChanged(tok1, tok2, varid, nonlocal, mSettings, mTokenizer->isCPP())) {
-                            changed = true;
-                            break;
-                        }
-                    }
-                    if (changed)
-                        break;
-                }
-                if ((tok->varId() && vars.find(tok->varId()) != vars.end()) ||
-                    (!tok->varId() && nonlocal)) {
-                    if (Token::Match(tok, "%name% %assign%|++|--"))
-                        break;
-                    if (Token::Match(tok->astParent(), "*|.|[")) {
-                        const Token *parent = tok;
-                        while (Token::Match(parent->astParent(), ".|[") || (parent->astParent() && parent->astParent()->isUnaryOp("*")))
-                            parent = parent->astParent();
-                        if (Token::Match(parent->astParent(), "%assign%|++|--"))
-                            break;
-                    }
-                    if (mTokenizer->isCPP() && Token::Match(tok, "%name% <<") && (!tok->valueType() || !tok->valueType()->isIntegral()))
-                        break;
-                    if (isLikelyStreamRead(mTokenizer->isCPP(), tok->next()) || isLikelyStreamRead(mTokenizer->isCPP(), tok->previous()))
-                        break;
-                    if (Token::Match(tok, "%name% [")) {
-                        const Token *tok2 = tok->linkAt(1);
-                        while (Token::simpleMatch(tok2, "] ["))
-                            tok2 = tok2->linkAt(1);
-                        if (Token::Match(tok2, "] %assign%|++|--"))
-                            break;
-                    }
-                    if (Token::Match(tok->previous(), "++|--|& %name%"))
-                        break;
-                    if (tok->variable() &&
-                        !tok->variable()->isConst() &&
-                        Token::Match(tok, "%name% . %name% (")) {
-                        const Function* function = tok->tokAt(2)->function();
-                        if (!function || !function->isConst())
-                            break;
-                    }
-                    if (Token::Match(tok->previous(), "[(,] %name% [,)]") && isParameterChanged(tok))
-                        break;
-                }
-            }
-        }
-    }
-}
-
-static std::string innerSmtString(const Token * tok)
-{
-    if (!tok)
-        return "if";
-    if (!tok->astTop())
-        return "if";
-    const Token * top = tok->astTop();
-    if (top->str() == "(" && top->astOperand1())
-        return top->astOperand1()->str();
-    return top->str();
-}
-
-void CheckCondition::oppositeInnerConditionError(const Token *tok1, const Token* tok2, ErrorPath errorPath)
-{
-    if (diag(tok1) & diag(tok2))
-        return;
-    const std::string s1(tok1 ? tok1->expressionString() : "x");
-    const std::string s2(tok2 ? tok2->expressionString() : "!x");
-    const std::string innerSmt = innerSmtString(tok2);
-    errorPath.emplace_back(ErrorPathItem(tok1, "outer condition: " + s1));
-    errorPath.emplace_back(ErrorPathItem(tok2, "opposite inner condition: " + s2));
-
-    const std::string msg("Opposite inner '" + innerSmt + "' condition leads to a dead code block.\n"
-                          "Opposite inner '" + innerSmt + "' condition leads to a dead code block (outer condition is '" + s1 + "' and inner condition is '" + s2 + "').");
-    reportError(errorPath, Severity::warning, "oppositeInnerCondition", msg, CWE398, false);
-}
-
-void CheckCondition::identicalInnerConditionError(const Token *tok1, const Token* tok2, ErrorPath errorPath)
-{
-    if (diag(tok1) & diag(tok2))
-        return;
-    const std::string s1(tok1 ? tok1->expressionString() : "x");
-    const std::string s2(tok2 ? tok2->expressionString() : "x");
-    const std::string innerSmt = innerSmtString(tok2);
-    errorPath.emplace_back(ErrorPathItem(tok1, "outer condition: " + s1));
-    errorPath.emplace_back(ErrorPathItem(tok2, "identical inner condition: " + s2));
-
-    const std::string msg("Identical inner '" + innerSmt + "' condition is always true.\n"
-                          "Identical inner '" + innerSmt + "' condition is always true (outer condition is '" + s1 + "' and inner condition is '" + s2 + "').");
-    reportError(errorPath, Severity::warning, "identicalInnerCondition", msg, CWE398, false);
-}
-
-void CheckCondition::identicalConditionAfterEarlyExitError(const Token *cond1, const Token* cond2, ErrorPath errorPath)
-{
-    if (diag(cond1) & diag(cond2))
-        return;
-
-    const bool isReturnValue = cond2 && Token::simpleMatch(cond2->astParent(), "return");
-
-    const std::string cond(cond1 ? cond1->expressionString() : "x");
-    const std::string value = (cond2 && cond2->valueType() && cond2->valueType()->type == ValueType::Type::BOOL) ? "false" : "0";
-
-    errorPath.emplace_back(ErrorPathItem(cond1, "If condition '" + cond + "' is true, the function will return/exit"));
-    errorPath.emplace_back(ErrorPathItem(cond2, (isReturnValue ? "Returning identical expression '" : "Testing identical condition '") + cond + "'"));
-
-    reportError(errorPath,
-                Severity::warning,
-                "identicalConditionAfterEarlyExit",
-                isReturnValue
-                ? ("Identical condition and return expression '" + cond + "', return value is always " + value)
-                : ("Identical condition '" + cond + "', second condition is always false"),
-                CWE398,
-                false);
-}
-
-//---------------------------------------------------------------------------
-//    if ((x != 1) || (x != 3))            // expression always true
-//    if ((x == 1) && (x == 3))            // expression always false
-//    if ((x < 1)  && (x > 3))             // expression always false
-//    if ((x > 3)  || (x < 10))            // expression always true
-//    if ((x > 5)  && (x != 1))            // second comparison always true
-//
-//    Check for suspect logic for an expression consisting of 2 comparison
-//    expressions with a shared variable and constants and a logical operator
-//    between them.
-//
-//    Suggest a different logical operator when the logical operator between
-//    the comparisons is probably wrong.
-//
-//    Inform that second comparison is always true when first comparison is true.
-//---------------------------------------------------------------------------
-
-static std::string invertOperatorForOperandSwap(std::string s)
-{
-    if (s[0] == '<')
-        s[0] = '>';
-    else if (s[0] == '>')
-        s[0] = '<';
-    return s;
-}
-
-template <typename T>
-static bool checkIntRelation(const std::string &op, const T value1, const T value2)
-{
-    return (op == "==" && value1 == value2) ||
-           (op == "!=" && value1 != value2) ||
-           (op == ">"  && value1 >  value2) ||
-           (op == ">=" && value1 >= value2) ||
-           (op == "<"  && value1 <  value2) ||
-           (op == "<=" && value1 <= value2);
-}
-
-static bool checkFloatRelation(const std::string &op, const double value1, const double value2)
-{
-    return (op == ">"  && value1 >  value2) ||
-           (op == ">=" && value1 >= value2) ||
-           (op == "<"  && value1 <  value2) ||
-           (op == "<=" && value1 <= value2);
-}
-
-template<class T>
-T getvalue3(const T value1, const T value2)
-{
-    const T min = std::min(value1, value2);
-    if (min== std::numeric_limits<T>::max())
-        return min;
-    else
-        return min+1; // see #5895
-}
-
-template<>
-double getvalue3(const double value1, const double value2)
-{
-    return (value1 + value2) / 2.0f;
-}
-
-
-template<class T>
-static inline T getvalue(const int test, const T value1, const T value2)
-{
-    // test:
-    // 1 => return value that is less than both value1 and value2
-    // 2 => return value1
-    // 3 => return value that is between value1 and value2
-    // 4 => return value2
-    // 5 => return value that is larger than both value1 and value2
-    switch (test) {
-    case 1:
-        return std::numeric_limits<T>::lowest();
-    case 2:
-        return value1;
-    case 3:
-        return getvalue3<T>(value1, value2);
-    case 4:
-        return value2;
-    case 5:
-        return std::numeric_limits<T>::max();
-    }
-    return 0;
-}
-
-static bool parseComparison(const Token *comp, bool *not1, std::string *op, std::string *value, const Token **expr, bool* inconclusive)
-{
-    *not1 = false;
-    while (comp && comp->str() == "!") {
-        *not1 = !(*not1);
-        comp = comp->astOperand1();
-    }
-
-    if (!comp)
-        return false;
-
-    const Token* op1 = comp->astOperand1();
-    const Token* op2 = comp->astOperand2();
-    if (!comp->isComparisonOp() || !op1 || !op2) {
-        *op = "!=";
-        *value = "0";
-        *expr = comp;
-    } else if (op1->isLiteral()) {
-        if (op1->isExpandedMacro())
-            return false;
-        *op = invertOperatorForOperandSwap(comp->str());
-        if (op1->enumerator() && op1->enumerator()->value_known)
-            *value = MathLib::toString(op1->enumerator()->value);
-        else
-            *value = op1->str();
-        *expr = op2;
-    } else if (comp->astOperand2()->isLiteral()) {
-        if (op2->isExpandedMacro())
-            return false;
-        *op = comp->str();
-        if (op2->enumerator() && op2->enumerator()->value_known)
-            *value = MathLib::toString(op2->enumerator()->value);
-        else
-            *value = op2->str();
-        *expr = op1;
+    // To keep things initially simple, if the file can't be opened, just be silent and move on.
+    std::istream *Files;
+    std::ifstream Infile;
+    if (FileList == "-") { // read from stdin
+        Files = &std::cin;
     } else {
-        *op = "!=";
-        *value = "0";
-        *expr = comp;
+        Infile.open(FileList);
+        Files = &Infile;
+    }
+    if (Files && *Files) {
+        std::string FileName;
+        while (std::getline(*Files, FileName)) { // next line
+            if (!FileName.empty()) {
+                PathNames.push_back(FileName);
+            }
+        }
+    }
+}
+
+static bool addIncludePathsToList(const std::string& FileList, std::list<std::string>* PathNames)
+{
+    std::ifstream Files(FileList);
+    if (Files) {
+        std::string PathName;
+        while (std::getline(Files, PathName)) { // next line
+            if (!PathName.empty()) {
+                PathName = Path::removeQuotationMarks(PathName);
+                PathName = Path::fromNativeSeparators(PathName);
+
+                // If path doesn't end with / or \, add it
+                if (!endsWith(PathName, '/'))
+                    PathName += '/';
+
+                PathNames->push_back(PathName);
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+static bool addPathsToSet(const std::string& FileName, std::set<std::string>* set)
+{
+    std::list<std::string> templist;
+    if (!addIncludePathsToList(FileName, &templist))
+        return false;
+    set->insert(templist.begin(), templist.end());
+    return true;
+}
+
+CmdLineParser::CmdLineParser(Settings *settings)
+    : mSettings(settings)
+    , mShowHelp(false)
+    , mShowVersion(false)
+    , mShowErrorMessages(false)
+    , mExitAfterPrint(false)
+{
+}
+
+void CmdLineParser::printMessage(const std::string &message)
+{
+    std::cout << message << std::endl;
+}
+
+void CmdLineParser::printMessage(const char* message)
+{
+    std::cout << message << std::endl;
+}
+
+bool CmdLineParser::parseFromArgs(int argc, const char* const argv[])
+{
+    bool def = false;
+    bool maxconfigs = false;
+
+    mSettings->exename = argv[0];
+
+    for (int i = 1; i < argc; i++) {
+        if (argv[i][0] == '-') {
+            if (std::strcmp(argv[i], "--version") == 0) {
+                mShowVersion = true;
+                mExitAfterPrint = true;
+                return true;
+            }
+
+            else if (std::strncmp(argv[i], "--addon=", 8) == 0)
+                mSettings->addons.emplace_back(argv[i]+8);
+
+            else if (std::strncmp(argv[i], "--cppcheck-build-dir=", 21) == 0) {
+                mSettings->buildDir = Path::fromNativeSeparators(argv[i] + 21);
+                if (endsWith(mSettings->buildDir, '/'))
+                    mSettings->buildDir.erase(mSettings->buildDir.size() - 1U);
+            }
+
+            // Flag used for various purposes during debugging
+            else if (std::strcmp(argv[i], "--debug-simplified") == 0)
+                mSettings->debugSimplified = true;
+
+            // Show --debug output after the first simplifications
+            else if (std::strcmp(argv[i], "--debug") == 0 ||
+                     std::strcmp(argv[i], "--debug-normal") == 0)
+                mSettings->debugnormal = true;
+
+            // Show debug warnings
+            else if (std::strcmp(argv[i], "--debug-warnings") == 0)
+                mSettings->debugwarnings = true;
+
+            // Show template information
+            else if (std::strcmp(argv[i], "--debug-template") == 0)
+                mSettings->debugtemplate = true;
+
+            // dump cppcheck data
+            else if (std::strcmp(argv[i], "--dump") == 0)
+                mSettings->dump = true;
+
+            // max ctu depth
+            else if (std::strncmp(argv[i], "--max-ctu-depth=", 16) == 0)
+                mSettings->maxCtuDepth = std::atoi(argv[i] + 16);
+
+            else if (std::strcmp(argv[i], "--experimental-fast") == 0)
+                // TODO: Reomve this flag!
+                ;
+
+            // (Experimental) exception handling inside cppcheck client
+            else if (std::strcmp(argv[i], "--exception-handling") == 0)
+                mSettings->exceptionHandling = true;
+            else if (std::strncmp(argv[i], "--exception-handling=", 21) == 0) {
+                mSettings->exceptionHandling = true;
+                const std::string exceptionOutfilename = &(argv[i][21]);
+                CppCheckExecutor::setExceptionOutput((exceptionOutfilename=="stderr") ? stderr : stdout);
+            }
+
+            // Inconclusive checking
+            else if (std::strcmp(argv[i], "--inconclusive") == 0)
+                mSettings->inconclusive = true;
+
+            // Experimental: Safe checking
+            else if (std::strcmp(argv[i], "--safe-classes") == 0)
+                mSettings->safeChecks.classes = true;
+
+            // Experimental: Safe checking
+            else if (std::strcmp(argv[i], "--safe-functions") == 0)
+                mSettings->safeChecks.externalFunctions = mSettings->safeChecks.internalFunctions = true;
+
+            // Experimental: Verify
+            else if (std::strcmp(argv[i], "--verify") == 0)
+                mSettings->verification = true;
+
+            // Enforce language (--language=, -x)
+            else if (std::strncmp(argv[i], "--language=", 11) == 0 || std::strcmp(argv[i], "-x") == 0) {
+                std::string str;
+                if (argv[i][2]) {
+                    str = argv[i]+11;
+                } else {
+                    i++;
+                    if (i >= argc || argv[i][0] == '-') {
+                        printMessage("cppcheck: No language given to '-x' option.");
+                        return false;
+                    }
+                    str = argv[i];
+                }
+
+                if (str == "c")
+                    mSettings->enforcedLang = Settings::C;
+                else if (str == "c++")
+                    mSettings->enforcedLang = Settings::CPP;
+                else {
+                    printMessage("cppcheck: Unknown language '" + str + "' enforced.");
+                    return false;
+                }
+            }
+
+            // Filter errors
+            else if (std::strncmp(argv[i], "--exitcode-suppressions=", 24) == 0) {
+                // exitcode-suppressions=filename.txt
+                std::string filename = 24 + argv[i];
+
+                std::ifstream f(filename);
+                if (!f.is_open()) {
+                    printMessage("cppcheck: Couldn't open the file: \"" + filename + "\".");
+                    return false;
+                }
+                const std::string errmsg(mSettings->nofail.parseFile(f));
+                if (!errmsg.empty()) {
+                    printMessage(errmsg);
+                    return false;
+                }
+            }
+
+            // Filter errors
+            else if (std::strncmp(argv[i], "--suppressions-list=", 20) == 0) {
+                std::string filename = argv[i]+20;
+                std::ifstream f(filename);
+                if (!f.is_open()) {
+                    std::string message("cppcheck: Couldn't open the file: \"");
+                    message += filename;
+                    message += "\".";
+                    if (std::count(filename.begin(), filename.end(), ',') > 0 ||
+                        std::count(filename.begin(), filename.end(), '.') > 1) {
+                        // If user tried to pass multiple files (we can only guess that)
+                        // e.g. like this: --suppressions-list=a.txt,b.txt
+                        // print more detailed error message to tell user how he can solve the problem
+                        message += "\nIf you want to pass two files, you can do it e.g. like this:";
+                        message += "\n    cppcheck --suppressions-list=a.txt --suppressions-list=b.txt file.cpp";
+                    }
+
+                    printMessage(message);
+                    return false;
+                }
+                const std::string errmsg(mSettings->nomsg.parseFile(f));
+                if (!errmsg.empty()) {
+                    printMessage(errmsg);
+                    return false;
+                }
+            }
+
+            else if (std::strncmp(argv[i], "--suppress-xml=", 15) == 0) {
+                const char * filename = argv[i] + 15;
+                const std::string errmsg(mSettings->nomsg.parseXmlFile(filename));
+                if (!errmsg.empty()) {
+                    printMessage(errmsg);
+                    return false;
+                }
+            }
+
+            else if (std::strncmp(argv[i], "--suppress=", 11) == 0) {
+                const std::string suppression = argv[i]+11;
+                const std::string errmsg(mSettings->nomsg.addSuppressionLine(suppression));
+                if (!errmsg.empty()) {
+                    printMessage(errmsg);
+                    return false;
+                }
+            }
+
+            // Enables inline suppressions.
+            else if (std::strcmp(argv[i], "--inline-suppr") == 0)
+                mSettings->inlineSuppressions = true;
+
+            // Verbose error messages (configuration info)
+            else if (std::strcmp(argv[i], "-v") == 0 || std::strcmp(argv[i], "--verbose") == 0)
+                mSettings->verbose = true;
+
+            // Force checking of files that have "too many" configurations
+            else if (std::strcmp(argv[i], "-f") == 0 || std::strcmp(argv[i], "--force") == 0)
+                mSettings->force = true;
+
+            // Output relative paths
+            else if (std::strcmp(argv[i], "-rp") == 0 || std::strcmp(argv[i], "--relative-paths") == 0)
+                mSettings->relativePaths = true;
+            else if (std::strncmp(argv[i], "-rp=", 4) == 0 || std::strncmp(argv[i], "--relative-paths=", 17) == 0) {
+                mSettings->relativePaths = true;
+                if (argv[i][argv[i][3]=='='?4:17] != 0) {
+                    std::string paths = argv[i]+(argv[i][3]=='='?4:17);
+                    for (;;) {
+                        const std::string::size_type pos = paths.find(';');
+                        if (pos == std::string::npos) {
+                            mSettings->basePaths.push_back(Path::fromNativeSeparators(paths));
+                            break;
+                        }
+                        mSettings->basePaths.push_back(Path::fromNativeSeparators(paths.substr(0, pos)));
+                        paths.erase(0, pos + 1);
+                    }
+                } else {
+                    printMessage("cppcheck: No paths specified for the '" + std::string(argv[i]) + "' option.");
+                    return false;
+                }
+            }
+
+            // Write results in file
+            else if (std::strncmp(argv[i], "--output-file=", 14) == 0)
+                mSettings->outputFile = Path::simplifyPath(Path::fromNativeSeparators(argv[i] + 14));
+
+            // Write results in results.plist
+            else if (std::strncmp(argv[i], "--plist-output=", 15) == 0) {
+                mSettings->plistOutput = Path::simplifyPath(Path::fromNativeSeparators(argv[i] + 15));
+                if (mSettings->plistOutput.empty())
+                    mSettings->plistOutput = "./";
+                else if (!endsWith(mSettings->plistOutput,'/'))
+                    mSettings->plistOutput += '/';
+            }
+
+            // Write results in results.xml
+            else if (std::strcmp(argv[i], "--xml") == 0)
+                mSettings->xml = true;
+
+            // Define the XML file version (and enable XML output)
+            else if (std::strncmp(argv[i], "--xml-version=", 14) == 0) {
+                const std::string numberString(argv[i]+14);
+
+                std::istringstream iss(numberString);
+                if (!(iss >> mSettings->xml_version)) {
+                    printMessage("cppcheck: argument to '--xml-version' is not a number.");
+                    return false;
+                }
+
+                if (mSettings->xml_version != 2) {
+                    // We only have xml version 2
+                    printMessage("cppcheck: '--xml-version' can only be 2.");
+                    return false;
+                }
+
+                // Enable also XML if version is set
+                mSettings->xml = true;
+            }
+
+            // Only print something when there are errors
+            else if (std::strcmp(argv[i], "-q") == 0 || std::strcmp(argv[i], "--quiet") == 0)
+                mSettings->quiet = true;
+
+            // Check configuration
+            else if (std::strcmp(argv[i], "--check-config") == 0) {
+                mSettings->checkConfiguration = true;
+            }
+
+            // Check library definitions
+            else if (std::strcmp(argv[i], "--check-library") == 0) {
+                mSettings->checkLibrary = true;
+            }
+
+            else if (std::strncmp(argv[i], "--enable=", 9) == 0) {
+                const std::string errmsg = mSettings->addEnabled(argv[i] + 9);
+                if (!errmsg.empty()) {
+                    printMessage(errmsg);
+                    return false;
+                }
+                // when "style" is enabled, also enable "warning", "performance" and "portability"
+                if (mSettings->isEnabled(Settings::STYLE)) {
+                    mSettings->addEnabled("warning");
+                    mSettings->addEnabled("performance");
+                    mSettings->addEnabled("portability");
+                }
+            }
+
+            // --error-exitcode=1
+            else if (std::strncmp(argv[i], "--error-exitcode=", 17) == 0) {
+                const std::string temp = argv[i]+17;
+                std::istringstream iss(temp);
+                if (!(iss >> mSettings->exitCode)) {
+                    mSettings->exitCode = 0;
+                    printMessage("cppcheck: Argument must be an integer. Try something like '--error-exitcode=1'.");
+                    return false;
+                }
+            }
+
+            // User define
+            else if (std::strncmp(argv[i], "-D", 2) == 0) {
+                std::string define;
+
+                // "-D define"
+                if (std::strcmp(argv[i], "-D") == 0) {
+                    ++i;
+                    if (i >= argc || argv[i][0] == '-') {
+                        printMessage("cppcheck: argument to '-D' is missing.");
+                        return false;
+                    }
+
+                    define = argv[i];
+                }
+                // "-Ddefine"
+                else {
+                    define = 2 + argv[i];
+                }
+
+                // No "=", append a "=1"
+                if (define.find('=') == std::string::npos)
+                    define += "=1";
+
+                if (!mSettings->userDefines.empty())
+                    mSettings->userDefines += ";";
+                mSettings->userDefines += define;
+
+                def = true;
+            }
+            // User undef
+            else if (std::strncmp(argv[i], "-U", 2) == 0) {
+                std::string undef;
+
+                // "-U undef"
+                if (std::strcmp(argv[i], "-U") == 0) {
+                    ++i;
+                    if (i >= argc || argv[i][0] == '-') {
+                        printMessage("cppcheck: argument to '-U' is missing.");
+                        return false;
+                    }
+
+                    undef = argv[i];
+                }
+                // "-Uundef"
+                else {
+                    undef = 2 + argv[i];
+                }
+
+                mSettings->userUndefs.insert(undef);
+            }
+
+            // -E
+            else if (std::strcmp(argv[i], "-E") == 0) {
+                mSettings->preprocessOnly = true;
+                mSettings->quiet = true;
+            }
+
+            // Include paths
+            else if (std::strncmp(argv[i], "-I", 2) == 0) {
+                std::string path;
+
+                // "-I path/"
+                if (std::strcmp(argv[i], "-I") == 0) {
+                    ++i;
+                    if (i >= argc || argv[i][0] == '-') {
+                        printMessage("cppcheck: argument to '-I' is missing.");
+                        return false;
+                    }
+                    path = argv[i];
+                }
+
+                // "-Ipath/"
+                else {
+                    path = 2 + argv[i];
+                }
+                path = Path::removeQuotationMarks(path);
+                path = Path::fromNativeSeparators(path);
+
+                // If path doesn't end with / or \, add it
+                if (!endsWith(path,'/'))
+                    path += '/';
+
+                mSettings->includePaths.push_back(path);
+            } else if (std::strncmp(argv[i], "--include=", 10) == 0) {
+                std::string path = argv[i] + 10;
+
+                path = Path::fromNativeSeparators(path);
+
+                mSettings->userIncludes.push_back(path);
+            } else if (std::strncmp(argv[i], "--includes-file=", 16) == 0) {
+                // open this file and read every input file (1 file name per line)
+                const std::string includesFile(16 + argv[i]);
+                if (!addIncludePathsToList(includesFile, &mSettings->includePaths)) {
+                    printMessage("Cppcheck: unable to open includes file at '" + includesFile + "'");
+                    return false;
+                }
+            } else if (std::strncmp(argv[i], "--config-exclude=",17) ==0) {
+                std::string path = argv[i] + 17;
+                path = Path::fromNativeSeparators(path);
+                mSettings->configExcludePaths.insert(path);
+            } else if (std::strncmp(argv[i], "--config-excludes-file=", 23) == 0) {
+                // open this file and read every input file (1 file name per line)
+                const std::string cfgExcludesFile(23 + argv[i]);
+                if (!addPathsToSet(cfgExcludesFile, &mSettings->configExcludePaths)) {
+                    printMessage("Cppcheck: unable to open config excludes file at '" + cfgExcludesFile + "'");
+                    return false;
+                }
+            }
+
+            // file list specified
+            else if (std::strncmp(argv[i], "--file-list=", 12) == 0) {
+                // open this file and read every input file (1 file name per line)
+                addFilesToList(12 + argv[i], mPathNames);
+            }
+
+            // Ignored paths
+            else if (std::strncmp(argv[i], "-i", 2) == 0) {
+                std::string path;
+
+                // "-i path/"
+                if (std::strcmp(argv[i], "-i") == 0) {
+                    ++i;
+                    if (i >= argc || argv[i][0] == '-') {
+                        printMessage("cppcheck: argument to '-i' is missing.");
+                        return false;
+                    }
+                    path = argv[i];
+                }
+
+                // "-ipath/"
+                else {
+                    path = 2 + argv[i];
+                }
+
+                if (!path.empty()) {
+                    path = Path::removeQuotationMarks(path);
+                    path = Path::fromNativeSeparators(path);
+                    path = Path::simplifyPath(path);
+
+                    if (FileLister::isDirectory(path)) {
+                        // If directory name doesn't end with / or \, add it
+                        if (!endsWith(path, '/'))
+                            path += '/';
+                    }
+                    mIgnoredPaths.push_back(path);
+                }
+            }
+
+            // --library
+            else if (std::strncmp(argv[i], "--library=", 10) == 0) {
+                std::string lib(argv[i] + 10);
+                mSettings->libraries.push_back(lib);
+            }
+
+            // --project
+            else if (std::strncmp(argv[i], "--project=", 10) == 0) {
+                const std::string projectFile = argv[i]+10;
+                ImportProject::Type projType = mSettings->project.import(projectFile, mSettings);
+                if (projType == ImportProject::Type::CPPCHECK_GUI) {
+                    mPathNames = mSettings->project.guiProject.pathNames;
+                    for (const std::string &lib : mSettings->project.guiProject.libraries)
+                        mSettings->libraries.push_back(lib);
+
+                    for (const std::string &ignorePath : mSettings->project.guiProject.excludedPaths)
+                        mIgnoredPaths.emplace_back(ignorePath);
+
+                    const std::string platform(mSettings->project.guiProject.platform);
+
+                    if (platform == "win32A")
+                        mSettings->platform(Settings::Win32A);
+                    else if (platform == "win32W")
+                        mSettings->platform(Settings::Win32W);
+                    else if (platform == "win64")
+                        mSettings->platform(Settings::Win64);
+                    else if (platform == "unix32")
+                        mSettings->platform(Settings::Unix32);
+                    else if (platform == "unix64")
+                        mSettings->platform(Settings::Unix64);
+                    else if (platform == "native")
+                        mSettings->platform(Settings::Native);
+                    else if (platform == "unspecified" || platform == "Unspecified" || platform == "")
+                        ;
+                    else if (!mSettings->loadPlatformFile(argv[0], platform)) {
+                        std::string message("cppcheck: error: unrecognized platform: \"");
+                        message += platform;
+                        message += "\".";
+                        printMessage(message);
+                        return false;
+                    }
+
+                    if (!mSettings->project.guiProject.projectFile.empty())
+                        projType = mSettings->project.import(mSettings->project.guiProject.projectFile, mSettings);
+                }
+                if (projType == ImportProject::Type::VS_SLN || projType == ImportProject::Type::VS_VCXPROJ) {
+                    if (mSettings->project.guiProject.analyzeAllVsConfigs == "false")
+                        mSettings->project.selectOneVsConfig(mSettings->platformType);
+                    if (!CppCheckExecutor::tryLoadLibrary(mSettings->library, argv[0], "windows.cfg")) {
+                        // This shouldn't happen normally.
+                        printMessage("cppcheck: Failed to load 'windows.cfg'. Your Cppcheck installation is broken. Please re-install.");
+                        return false;
+                    }
+                }
+                if (projType == ImportProject::Type::MISSING) {
+                    printMessage("cppcheck: Failed to open project '" + projectFile + "'.");
+                    return false;
+                }
+                if (projType == ImportProject::Type::UNKNOWN) {
+                    printMessage("cppcheck: Failed to load project '" + projectFile + "'. The format is unknown.");
+                    return false;
+                }
+            }
+
+            // Report progress
+            else if (std::strcmp(argv[i], "--report-progress") == 0) {
+                mSettings->reportProgress = true;
+            }
+
+            // --std
+            else if (std::strcmp(argv[i], "--std=posix") == 0) {
+                printMessage("cppcheck: Option --std=posix is deprecated and will be removed in 1.95.");
+            } else if (std::strcmp(argv[i], "--std=c89") == 0) {
+                mSettings->standards.c = Standards::C89;
+            } else if (std::strcmp(argv[i], "--std=c99") == 0) {
+                mSettings->standards.c = Standards::C99;
+            } else if (std::strcmp(argv[i], "--std=c11") == 0) {
+                mSettings->standards.c = Standards::C11;
+            } else if (std::strcmp(argv[i], "--std=c++03") == 0) {
+                mSettings->standards.cpp = Standards::CPP03;
+            } else if (std::strcmp(argv[i], "--std=c++11") == 0) {
+                mSettings->standards.cpp = Standards::CPP11;
+            } else if (std::strcmp(argv[i], "--std=c++14") == 0) {
+                mSettings->standards.cpp = Standards::CPP14;
+            } else if (std::strcmp(argv[i], "--std=c++17") == 0) {
+                mSettings->standards.cpp = Standards::CPP17;
+            } else if (std::strcmp(argv[i], "--std=c++20") == 0) {
+                mSettings->standards.cpp = Standards::CPP20;
+            }
+
+            // Output formatter
+            else if (std::strcmp(argv[i], "--template") == 0 ||
+                     std::strncmp(argv[i], "--template=", 11) == 0) {
+                // "--template format"
+                if (argv[i][10] == '=')
+                    mSettings->templateFormat = argv[i] + 11;
+                else if ((i+1) < argc && argv[i+1][0] != '-') {
+                    ++i;
+                    mSettings->templateFormat = argv[i];
+                } else {
+                    printMessage("cppcheck: argument to '--template' is missing.");
+                    return false;
+                }
+
+                if (mSettings->templateFormat == "gcc") {
+                    mSettings->templateFormat = "{file}:{line}:{column}: warning: {message} [{id}]\\n{code}";
+                    mSettings->templateLocation = "{file}:{line}:{column}: note: {info}\\n{code}";
+                } else if (mSettings->templateFormat == "daca2") {
+                    mSettings->templateFormat = "{file}:{line}:{column}: {severity}: {message} [{id}]";
+                    mSettings->templateLocation = "{file}:{line}:{column}: note: {info}";
+                } else if (mSettings->templateFormat == "vs")
+                    mSettings->templateFormat = "{file}({line}): {severity}: {message}";
+                else if (mSettings->templateFormat == "edit")
+                    mSettings->templateFormat = "{file} +{line}: {severity}: {message}";
+                else if (mSettings->templateFormat == "cppcheck1")
+                    mSettings->templateFormat = "{callstack}: ({severity}{inconclusive:, inconclusive}) {message}";
+            }
+
+            else if (std::strcmp(argv[i], "--template-location") == 0 ||
+                     std::strncmp(argv[i], "--template-location=", 20) == 0) {
+                // "--template-location format"
+                if (argv[i][19] == '=')
+                    mSettings->templateLocation = argv[i] + 20;
+                else if ((i+1) < argc && argv[i+1][0] != '-') {
+                    ++i;
+                    mSettings->templateLocation = argv[i];
+                } else {
+                    printMessage("cppcheck: argument to '--template' is missing.");
+                    return false;
+                }
+            }
+
+            // Checking threads
+            else if (std::strncmp(argv[i], "-j", 2) == 0) {
+                std::string numberString;
+
+                // "-j 3"
+                if (std::strcmp(argv[i], "-j") == 0) {
+                    ++i;
+                    if (i >= argc || argv[i][0] == '-') {
+                        printMessage("cppcheck: argument to '-j' is missing.");
+                        return false;
+                    }
+
+                    numberString = argv[i];
+                }
+
+                // "-j3"
+                else
+                    numberString = argv[i]+2;
+
+                std::istringstream iss(numberString);
+                if (!(iss >> mSettings->jobs)) {
+                    printMessage("cppcheck: argument to '-j' is not a number.");
+                    return false;
+                }
+
+                if (mSettings->jobs > 10000) {
+                    // This limit is here just to catch typos. If someone has
+                    // need for more jobs, this value should be increased.
+                    printMessage("cppcheck: argument for '-j' is allowed to be 10000 at max.");
+                    return false;
+                }
+            } else if (std::strncmp(argv[i], "-l", 2) == 0) {
+                std::string numberString;
+
+                // "-l 3"
+                if (std::strcmp(argv[i], "-l") == 0) {
+                    ++i;
+                    if (i >= argc || argv[i][0] == '-') {
+                        printMessage("cppcheck: argument to '-l' is missing.");
+                        return false;
+                    }
+
+                    numberString = argv[i];
+                }
+
+                // "-l3"
+                else
+                    numberString = argv[i]+2;
+
+                std::istringstream iss(numberString);
+                if (!(iss >> mSettings->loadAverage)) {
+                    printMessage("cppcheck: argument to '-l' is not a number.");
+                    return false;
+                }
+            }
+
+            // print all possible error messages..
+            else if (std::strcmp(argv[i], "--errorlist") == 0) {
+                mShowErrorMessages = true;
+                mSettings->xml = true;
+                mExitAfterPrint = true;
+            }
+
+            // documentation..
+            else if (std::strcmp(argv[i], "--doc") == 0) {
+                std::ostringstream doc;
+                // Get documentation..
+                for (const Check * it : Check::instances()) {
+                    const std::string& name(it->name());
+                    const std::string info(it->classInfo());
+                    if (!name.empty() && !info.empty())
+                        doc << "## " << name << " ##\n"
+                            << info << "\n";
+                }
+
+                std::cout << doc.str();
+                mExitAfterPrint = true;
+                return true;
+            }
+
+            // show timing information..
+            else if (std::strncmp(argv[i], "--showtime=", 11) == 0) {
+                const std::string showtimeMode = argv[i] + 11;
+                if (showtimeMode == "file")
+                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_FILE;
+                else if (showtimeMode == "summary")
+                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_SUMMARY;
+                else if (showtimeMode == "top5")
+                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_TOP5;
+                else if (showtimeMode.empty())
+                    mSettings->showtime = SHOWTIME_MODES::SHOWTIME_NONE;
+                else {
+                    std::string message("cppcheck: error: unrecognized showtime mode: \"");
+                    message += showtimeMode;
+                    message += "\". Supported modes: file, summary, top5.";
+                    printMessage(message);
+                    return false;
+                }
+            }
+
+#ifdef HAVE_RULES
+            // Rule given at command line
+            else if (std::strncmp(argv[i], "--rule=", 7) == 0) {
+                Settings::Rule rule;
+                rule.pattern = 7 + argv[i];
+                mSettings->rules.push_back(rule);
+            }
+
+            // Rule file
+            else if (std::strncmp(argv[i], "--rule-file=", 12) == 0) {
+                tinyxml2::XMLDocument doc;
+                if (doc.LoadFile(12+argv[i]) == tinyxml2::XML_SUCCESS) {
+                    tinyxml2::XMLElement *node = doc.FirstChildElement();
+                    for (; node && strcmp(node->Value(), "rule") == 0; node = node->NextSiblingElement()) {
+                        Settings::Rule rule;
+
+                        tinyxml2::XMLElement *tokenlist = node->FirstChildElement("tokenlist");
+                        if (tokenlist)
+                            rule.tokenlist = tokenlist->GetText();
+
+                        tinyxml2::XMLElement *pattern = node->FirstChildElement("pattern");
+                        if (pattern) {
+                            rule.pattern = pattern->GetText();
+                        }
+
+                        tinyxml2::XMLElement *message = node->FirstChildElement("message");
+                        if (message) {
+                            tinyxml2::XMLElement *severity = message->FirstChildElement("severity");
+                            if (severity)
+                                rule.severity = Severity::fromString(severity->GetText());
+
+                            tinyxml2::XMLElement *id = message->FirstChildElement("id");
+                            if (id)
+                                rule.id = id->GetText();
+
+                            tinyxml2::XMLElement *summary = message->FirstChildElement("summary");
+                            if (summary)
+                                rule.summary = summary->GetText() ? summary->GetText() : "";
+                        }
+
+                        if (!rule.pattern.empty())
+                            mSettings->rules.push_back(rule);
+                    }
+                } else {
+                    printMessage("cppcheck: error: unable to load rule-file: " + std::string(12+argv[i]));
+                    return false;
+                }
+            }
+#endif
+
+            // Specify platform
+            else if (std::strncmp(argv[i], "--platform=", 11) == 0) {
+                const std::string platform(11+argv[i]);
+
+                if (platform == "win32A")
+                    mSettings->platform(Settings::Win32A);
+                else if (platform == "win32W")
+                    mSettings->platform(Settings::Win32W);
+                else if (platform == "win64")
+                    mSettings->platform(Settings::Win64);
+                else if (platform == "unix32")
+                    mSettings->platform(Settings::Unix32);
+                else if (platform == "unix64")
+                    mSettings->platform(Settings::Unix64);
+                else if (platform == "native")
+                    mSettings->platform(Settings::Native);
+                else if (platform == "unspecified")
+                    mSettings->platform(Settings::Unspecified);
+                else if (!mSettings->loadPlatformFile(argv[0], platform)) {
+                    std::string message("cppcheck: error: unrecognized platform: \"");
+                    message += platform;
+                    message += "\".";
+                    printMessage(message);
+                    return false;
+                }
+            }
+
+            // Set maximum number of #ifdef configurations to check
+            else if (std::strncmp(argv[i], "--max-configs=", 14) == 0) {
+                mSettings->force = false;
+
+                std::istringstream iss(14+argv[i]);
+                if (!(iss >> mSettings->maxConfigs)) {
+                    printMessage("cppcheck: argument to '--max-configs=' is not a number.");
+                    return false;
+                }
+
+                if (mSettings->maxConfigs < 1) {
+                    printMessage("cppcheck: argument to '--max-configs=' must be greater than 0.");
+                    return false;
+                }
+
+                maxconfigs = true;
+            }
+
+            // Print help
+            else if (std::strcmp(argv[i], "-h") == 0 || std::strcmp(argv[i], "--help") == 0) {
+                mPathNames.clear();
+                mShowHelp = true;
+                mExitAfterPrint = true;
+                break;
+            }
+
+            else {
+                std::string message("cppcheck: error: unrecognized command line option: \"");
+                message += argv[i];
+                message += "\".";
+                printMessage(message);
+                return false;
+            }
+        }
+
+        else {
+            std::string path = Path::removeQuotationMarks(argv[i]);
+            path = Path::fromNativeSeparators(path);
+            mPathNames.push_back(path);
+        }
     }
 
-    *inconclusive = *inconclusive || ((*value)[0] == '\'' && !(*op == "!=" || *op == "=="));
+    // Default template format..
+    if (mSettings->templateFormat.empty()) {
+        mSettings->templateFormat = "{file}:{line}:{column}: {severity}:{inconclusive:inconclusive:} {message} [{id}]\\n{code}";
+        if (mSettings->templateLocation.empty())
+            mSettings->templateLocation = "{file}:{line}:{column}: note: {info}\\n{code}";
+    }
 
-    // Only float and int values are currently handled
-    if (!MathLib::isInt(*value) && !MathLib::isFloat(*value) && (*value)[0] != '\'')
+    mSettings->project.ignorePaths(mIgnoredPaths);
+
+    if (mSettings->force)
+        mSettings->maxConfigs = ~0U;
+
+    else if ((def || mSettings->preprocessOnly) && !maxconfigs)
+        mSettings->maxConfigs = 1U;
+
+    if (mSettings->isEnabled(Settings::UNUSED_FUNCTION) && mSettings->jobs > 1) {
+        printMessage("cppcheck: unusedFunction check can't be used with '-j' option. Disabling unusedFunction check.");
+    }
+
+    if (argc <= 1) {
+        mShowHelp = true;
+        mExitAfterPrint = true;
+    }
+
+    if (mShowHelp) {
+        printHelp();
+        return true;
+    }
+
+    // Print error only if we have "real" command and expect files
+    if (!mExitAfterPrint && mPathNames.empty() && mSettings->project.fileSettings.empty()) {
+        printMessage("cppcheck: No C or C++ source files found.");
         return false;
+    }
+
+    // Use paths _pathnames if no base paths for relative path output are given
+    if (mSettings->basePaths.empty() && mSettings->relativePaths)
+        mSettings->basePaths = mPathNames;
 
     return true;
 }
 
-static std::string conditionString(bool not1, const Token *expr1, const std::string &op, const std::string &value1)
+void CmdLineParser::printHelp()
 {
-    if (expr1->astParent()->isComparisonOp())
-        return std::string(not1 ? "!(" : "") +
-               (expr1->isName() ? expr1->str() : std::string("EXPR")) +
-               " " +
-               op +
-               " " +
-               value1 +
-               (not1 ? ")" : "");
-
-    return std::string(not1 ? "!" : "") +
-           (expr1->isName() ? expr1->str() : std::string("EXPR"));
-}
-
-static std::string conditionString(const Token * tok)
-{
-    if (!tok)
-        return "";
-    if (tok->isComparisonOp()) {
-        bool inconclusive = false;
-        bool not_;
-        std::string op, value;
-        const Token *expr;
-        if (parseComparison(tok, &not_, &op, &value, &expr, &inconclusive) && expr->isName()) {
-            return conditionString(not_, expr, op, value);
-        }
-    }
-    if (Token::Match(tok, "%cop%|&&|%oror%")) {
-        if (tok->astOperand2())
-            return conditionString(tok->astOperand1()) + " " + tok->str() + " " + conditionString(tok->astOperand2());
-        return tok->str() + "(" + conditionString(tok->astOperand1()) + ")";
-
-    }
-    return tok->expressionString();
-}
-
-void CheckCondition::checkIncorrectLogicOperator()
-{
-    const bool printStyle = mSettings->isEnabled(Settings::STYLE);
-    const bool printWarning = mSettings->isEnabled(Settings::WARNING);
-    if (!printWarning && !printStyle)
-        return;
-    const bool printInconclusive = mSettings->inconclusive;
-
-    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
-    for (const Scope * scope : symbolDatabase->functionScopes) {
-
-        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
-            if (!Token::Match(tok, "%oror%|&&") || !tok->astOperand1() || !tok->astOperand2())
-                continue;
-
-
-            // 'A && (!A || B)' is equivalent to 'A && B'
-            // 'A || (!A && B)' is equivalent to 'A || B'
-            // 'A && (A || B)' is equivalent to 'A'
-            // 'A || (A && B)' is equivalent to 'A'
-            if (printStyle &&
-                ((tok->str() == "||" && tok->astOperand2()->str() == "&&") ||
-                 (tok->str() == "&&" && tok->astOperand2()->str() == "||"))) {
-                const Token* tok2 = tok->astOperand2()->astOperand1();
-                if (isOppositeCond(true, mTokenizer->isCPP(), tok->astOperand1(), tok2, mSettings->library, true, false)) {
-                    std::string expr1(tok->astOperand1()->expressionString());
-                    std::string expr2(tok->astOperand2()->astOperand1()->expressionString());
-                    std::string expr3(tok->astOperand2()->astOperand2()->expressionString());
-                    // make copy for later because the original string might get overwritten
-                    const std::string expr1VerboseMsg = expr1;
-                    const std::string expr2VerboseMsg = expr2;
-                    const std::string expr3VerboseMsg = expr3;
-
-                    if (expr1.length() + expr2.length() + expr3.length() > 50U) {
-                        if (expr1[0] == '!' && expr2[0] != '!') {
-                            expr1 = "!A";
-                            expr2 = "A";
-                        } else {
-                            expr1 = "A";
-                            expr2 = "!A";
-                        }
-
-                        expr3 = "B";
-                    }
-
-                    const std::string cond1 = expr1 + " " + tok->str() + " (" + expr2 + " " + tok->astOperand2()->str() + " " + expr3 + ")";
-                    const std::string cond2 = expr1 + " " + tok->str() + " " + expr3;
-
-                    const std::string cond1VerboseMsg = expr1VerboseMsg + " " + tok->str() + " " + expr2VerboseMsg + " " + tok->astOperand2()->str() + " " + expr3VerboseMsg;
-                    const std::string cond2VerboseMsg = expr1VerboseMsg + " " + tok->str() + " " + expr3VerboseMsg;
-                    // for the --verbose message, transform the actual condition and print it
-                    const std::string msg = tok2->expressionString() + ". '" + cond1 + "' is equivalent to '" + cond2 + "'\n"
-                                            "The condition '" + cond1VerboseMsg + "' is equivalent to '" + cond2VerboseMsg + "'.";
-                    redundantConditionError(tok, msg, false);
-                    continue;
-                } else if (isSameExpression(mTokenizer->isCPP(), false, tok->astOperand1(), tok2, mSettings->library, true, true)) {
-                    std::string expr1(tok->astOperand1()->expressionString());
-                    std::string expr2(tok->astOperand2()->astOperand1()->expressionString());
-                    std::string expr3(tok->astOperand2()->astOperand2()->expressionString());
-                    // make copy for later because the original string might get overwritten
-                    const std::string expr1VerboseMsg = expr1;
-                    const std::string expr2VerboseMsg = expr2;
-                    const std::string expr3VerboseMsg = expr3;
-
-                    if (expr1.length() + expr2.length() + expr3.length() > 50U) {
-                        expr1 = "A";
-                        expr2 = "A";
-                        expr3 = "B";
-                    }
-
-                    const std::string cond1 = expr1 + " " + tok->str() + " (" + expr2 + " " + tok->astOperand2()->str() + " " + expr3 + ")";
-                    const std::string cond2 = expr1;
-
-                    const std::string cond1VerboseMsg = expr1VerboseMsg + " " + tok->str() + " " + expr2VerboseMsg + " " + tok->astOperand2()->str() + " " + expr3VerboseMsg;
-                    const std::string cond2VerboseMsg = expr1VerboseMsg;
-                    // for the --verbose message, transform the actual condition and print it
-                    const std::string msg = tok2->expressionString() + ". '" + cond1 + "' is equivalent to '" + cond2 + "'\n"
-                                            "The condition '" + cond1VerboseMsg + "' is equivalent to '" + cond2VerboseMsg + "'.";
-                    redundantConditionError(tok, msg, false);
-                    continue;
-                }
-            }
-
-            // Comparison #1 (LHS)
-            const Token *comp1 = tok->astOperand1();
-            if (comp1->str() == tok->str())
-                comp1 = comp1->astOperand2();
-
-            // Comparison #2 (RHS)
-            const Token *comp2 = tok->astOperand2();
-
-            bool inconclusive = false;
-            bool parseable = true;
-
-            // Parse LHS
-            bool not1;
-            std::string op1, value1;
-            const Token *expr1 = nullptr;
-            parseable &= (parseComparison(comp1, &not1, &op1, &value1, &expr1, &inconclusive));
-
-            // Parse RHS
-            bool not2;
-            std::string op2, value2;
-            const Token *expr2 = nullptr;
-            parseable &= (parseComparison(comp2, &not2, &op2, &value2, &expr2, &inconclusive));
-
-            if (inconclusive && !printInconclusive)
-                continue;
-
-            const bool isfloat = astIsFloat(expr1, true) || MathLib::isFloat(value1) || astIsFloat(expr2, true) || MathLib::isFloat(value2);
-
-            ErrorPath errorPath;
-
-            // Opposite comparisons around || or && => always true or always false
-            if (!isfloat && isOppositeCond(tok->str() == "||", mTokenizer->isCPP(), tok->astOperand1(), tok->astOperand2(), mSettings->library, true, true, &errorPath)) {
-
-                const bool alwaysTrue(tok->str() == "||");
-                incorrectLogicOperatorError(tok, conditionString(tok), alwaysTrue, inconclusive, errorPath);
-                continue;
-            }
-
-            if (!parseable)
-                continue;
-
-            if (isSameExpression(mTokenizer->isCPP(), true, comp1, comp2, mSettings->library, true, true))
-                continue; // same expressions => only report that there are same expressions
-            if (!isSameExpression(mTokenizer->isCPP(), true, expr1, expr2, mSettings->library, true, true))
-                continue;
-
-
-            // don't check floating point equality comparisons. that is bad
-            // and deserves different warnings.
-            if (isfloat && (op1 == "==" || op1 == "!=" || op2 == "==" || op2 == "!="))
-                continue;
-
-
-            const double d1 = (isfloat) ? MathLib::toDoubleNumber(value1) : 0;
-            const double d2 = (isfloat) ? MathLib::toDoubleNumber(value2) : 0;
-            const MathLib::bigint i1 = (isfloat) ? 0 : MathLib::toLongNumber(value1);
-            const MathLib::bigint i2 = (isfloat) ? 0 : MathLib::toLongNumber(value2);
-            const bool useUnsignedInt = (std::numeric_limits<MathLib::bigint>::max()==i1)||(std::numeric_limits<MathLib::bigint>::max()==i2);
-            const MathLib::biguint u1 = (useUnsignedInt) ? MathLib::toLongNumber(value1) : 0;
-            const MathLib::biguint u2 = (useUnsignedInt) ? MathLib::toLongNumber(value2) : 0;
-            // evaluate if expression is always true/false
-            bool alwaysTrue = true, alwaysFalse = true;
-            bool firstTrue = true, secondTrue = true;
-            for (int test = 1; test <= 5; ++test) {
-                // test:
-                // 1 => testvalue is less than both value1 and value2
-                // 2 => testvalue is value1
-                // 3 => testvalue is between value1 and value2
-                // 4 => testvalue value2
-                // 5 => testvalue is larger than both value1 and value2
-                bool result1, result2;
-                if (isfloat) {
-                    const double testvalue = getvalue<double>(test, d1, d2);
-                    result1 = checkFloatRelation(op1, testvalue, d1);
-                    result2 = checkFloatRelation(op2, testvalue, d2);
-                } else if (useUnsignedInt) {
-                    const MathLib::biguint testvalue = getvalue<MathLib::biguint>(test, u1, u2);
-                    result1 = checkIntRelation(op1, testvalue, u1);
-                    result2 = checkIntRelation(op2, testvalue, u2);
-                } else {
-                    const MathLib::bigint testvalue = getvalue<MathLib::bigint>(test, i1, i2);
-                    result1 = checkIntRelation(op1, testvalue, i1);
-                    result2 = checkIntRelation(op2, testvalue, i2);
-                }
-                if (not1)
-                    result1 = !result1;
-                if (not2)
-                    result2 = !result2;
-                if (tok->str() == "&&") {
-                    alwaysTrue &= (result1 && result2);
-                    alwaysFalse &= !(result1 && result2);
-                } else {
-                    alwaysTrue &= (result1 || result2);
-                    alwaysFalse &= !(result1 || result2);
-                }
-                firstTrue &= !(!result1 && result2);
-                secondTrue &= !(result1 && !result2);
-            }
-
-            const std::string cond1str = conditionString(not1, expr1, op1, value1);
-            const std::string cond2str = conditionString(not2, expr2, op2, value2);
-            if (printWarning && (alwaysTrue || alwaysFalse)) {
-                const std::string text = cond1str + " " + tok->str() + " " + cond2str;
-                incorrectLogicOperatorError(tok, text, alwaysTrue, inconclusive, errorPath);
-            } else if (printStyle && secondTrue) {
-                const std::string text = "If '" + cond1str + "', the comparison '" + cond2str +
-                                         "' is always true.";
-                redundantConditionError(tok, text, inconclusive);
-            } else if (printStyle && firstTrue) {
-                //const std::string text = "The comparison " + cond1str + " is always " +
-                //                         (firstTrue ? "true" : "false") + " when " +
-                //                         cond2str + ".";
-                const std::string text = "If '" + cond2str + "', the comparison '" + cond1str +
-                                         "' is always true.";
-                redundantConditionError(tok, text, inconclusive);
-            }
-        }
-    }
-}
-
-void CheckCondition::incorrectLogicOperatorError(const Token *tok, const std::string &condition, bool always, bool inconclusive, ErrorPath errors)
-{
-    errors.emplace_back(tok, "");
-    if (always)
-        reportError(errors, Severity::warning, "incorrectLogicOperator",
-                    "Logical disjunction always evaluates to true: " + condition + ".\n"
-                    "Logical disjunction always evaluates to true: " + condition + ". "
-                    "Are these conditions necessary? Did you intend to use && instead? Are the numbers correct? Are you comparing the correct variables?", CWE571, inconclusive);
-    else
-        reportError(errors, Severity::warning, "incorrectLogicOperator",
-                    "Logical conjunction always evaluates to false: " + condition + ".\n"
-                    "Logical conjunction always evaluates to false: " + condition + ". "
-                    "Are these conditions necessary? Did you intend to use || instead? Are the numbers correct? Are you comparing the correct variables?", CWE570, inconclusive);
-}
-
-void CheckCondition::redundantConditionError(const Token *tok, const std::string &text, bool inconclusive)
-{
-    reportError(tok, Severity::style, "redundantCondition", "Redundant condition: " + text, CWE398, inconclusive);
-}
-
-//-----------------------------------------------------------------------------
-// Detect "(var % val1) > val2" where val2 is >= val1.
-//-----------------------------------------------------------------------------
-void CheckCondition::checkModuloAlwaysTrueFalse()
-{
-    if (!mSettings->isEnabled(Settings::WARNING))
-        return;
-
-    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
-    for (const Scope * scope : symbolDatabase->functionScopes) {
-        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
-            if (!tok->isComparisonOp())
-                continue;
-            const Token *num, *modulo;
-            if (Token::simpleMatch(tok->astOperand1(), "%") && Token::Match(tok->astOperand2(), "%num%")) {
-                modulo = tok->astOperand1();
-                num = tok->astOperand2();
-            } else if (Token::Match(tok->astOperand1(), "%num%") && Token::simpleMatch(tok->astOperand2(), "%")) {
-                num = tok->astOperand1();
-                modulo = tok->astOperand2();
-            } else {
-                continue;
-            }
-
-            if (Token::Match(modulo->astOperand2(), "%num%") &&
-                MathLib::isLessEqual(modulo->astOperand2()->str(), num->str()))
-                moduloAlwaysTrueFalseError(tok, modulo->astOperand2()->str());
-        }
-    }
-}
-
-void CheckCondition::moduloAlwaysTrueFalseError(const Token* tok, const std::string& maxVal)
-{
-    reportError(tok, Severity::warning, "moduloAlwaysTrueFalse",
-                "Comparison of modulo result is predetermined, because it is always less than " + maxVal + ".", CWE398, false);
-}
-
-static int countPar(const Token *tok1, const Token *tok2)
-{
-    int par = 0;
-    for (const Token *tok = tok1; tok && tok != tok2; tok = tok->next()) {
-        if (tok->str() == "(")
-            ++par;
-        else if (tok->str() == ")")
-            --par;
-        else if (tok->str() == ";")
-            return -1;
-    }
-    return par;
-}
-
-//---------------------------------------------------------------------------
-// Clarify condition '(x = a < 0)' into '((x = a) < 0)' or '(x = (a < 0))'
-// Clarify condition '(a & b == c)' into '((a & b) == c)' or '(a & (b == c))'
-//---------------------------------------------------------------------------
-void CheckCondition::clarifyCondition()
-{
-    if (!mSettings->isEnabled(Settings::STYLE))
-        return;
-
-    const bool isC = mTokenizer->isC();
-
-    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
-    for (const Scope * scope : symbolDatabase->functionScopes) {
-        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
-            if (Token::Match(tok, "( %name% [=&|^]")) {
-                for (const Token *tok2 = tok->tokAt(3); tok2; tok2 = tok2->next()) {
-                    if (tok2->str() == "(" || tok2->str() == "[")
-                        tok2 = tok2->link();
-                    else if (tok2->isComparisonOp()) {
-                        // This might be a template
-                        if (!isC && tok2->link())
-                            break;
-                        if (Token::simpleMatch(tok2->astParent(), "?"))
-                            break;
-                        clarifyConditionError(tok, tok->strAt(2) == "=", false);
-                        break;
-                    } else if (!tok2->isName() && !tok2->isNumber() && tok2->str() != ".")
-                        break;
-                }
-            } else if (tok->tokType() == Token::eBitOp && !tok->isUnaryOp("&")) {
-                if (tok->astOperand2() && tok->astOperand2()->variable() && tok->astOperand2()->variable()->nameToken() == tok->astOperand2())
-                    continue;
-
-                // using boolean result in bitwise operation ! x [&|^]
-                const ValueType* vt1 = tok->astOperand1() ? tok->astOperand1()->valueType() : nullptr;
-                const ValueType* vt2 = tok->astOperand2() ? tok->astOperand2()->valueType() : nullptr;
-                if (vt1 && vt1->type == ValueType::BOOL && !Token::Match(tok->astOperand1(), "%name%|(|[|::|.") && countPar(tok->astOperand1(), tok) == 0)
-                    clarifyConditionError(tok, false, true);
-                else if (vt2 && vt2->type == ValueType::BOOL && !Token::Match(tok->astOperand2(), "%name%|(|[|::|.") && countPar(tok, tok->astOperand2()) == 0)
-                    clarifyConditionError(tok, false, true);
-            }
-        }
-    }
-}
-
-void CheckCondition::clarifyConditionError(const Token *tok, bool assign, bool boolop)
-{
-    std::string errmsg;
-
-    if (assign)
-        errmsg = "Suspicious condition (assignment + comparison); Clarify expression with parentheses.";
-
-    else if (boolop)
-        errmsg = "Boolean result is used in bitwise operation. Clarify expression with parentheses.\n"
-                 "Suspicious expression. Boolean result is used in bitwise operation. The operator '!' "
-                 "and the comparison operators have higher precedence than bitwise operators. "
-                 "It is recommended that the expression is clarified with parentheses.";
-    else
-        errmsg = "Suspicious condition (bitwise operator + comparison); Clarify expression with parentheses.\n"
-                 "Suspicious condition. Comparison operators have higher precedence than bitwise operators. "
-                 "Please clarify the condition with parentheses.";
-
-    reportError(tok,
-                Severity::style,
-                "clarifyCondition",
-                errmsg, CWE398, false);
-}
-
-void CheckCondition::alwaysTrueFalse()
-{
-    if (!mSettings->isEnabled(Settings::STYLE))
-        return;
-
-    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
-    for (const Scope * scope : symbolDatabase->functionScopes) {
-        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
-            if (tok->link()) // don't write false positives when templates are used
-                continue;
-            if (!tok->hasKnownIntValue())
-                continue;
-            {
-                // is this a condition..
-                const Token *parent = tok->astParent();
-                while (Token::Match(parent, "%oror%|&&"))
-                    parent = parent->astParent();
-                if (!parent)
-                    continue;
-                const Token *condition = nullptr;
-                if (parent->str() == "?" && precedes(tok, parent))
-                    condition = parent->astOperand1();
-                else if (Token::Match(parent->previous(), "if|while ("))
-                    condition = parent->astOperand2();
-                else if (Token::simpleMatch(parent, "return"))
-                    condition = parent->astOperand1();
-                else if (parent->str() == ";" && parent->astParent() && parent->astParent()->astParent() && Token::simpleMatch(parent->astParent()->astParent()->previous(), "for ("))
-                    condition = parent->astOperand1();
-                else
-                    continue;
-                (void)condition;
-            }
-            // Skip already diagnosed values
-            if (diag(tok, false))
-                continue;
-            if (Token::Match(tok, "%num%|%bool%|%char%"))
-                continue;
-            if (Token::Match(tok, "! %num%|%bool%|%char%"))
-                continue;
-            if (Token::Match(tok, "%oror%|&&|:"))
-                continue;
-            if (Token::Match(tok, "%comp%") && isSameExpression(mTokenizer->isCPP(), true, tok->astOperand1(), tok->astOperand2(), mSettings->library, true, true))
-                continue;
-            if (isConstVarExpression(tok, "[|(|&|+|-|*|/|%|^|>>|<<"))
-                continue;
-
-            const bool constIfWhileExpression =
-                tok->astParent() && Token::Match(tok->astTop()->astOperand1(), "if|while") && !tok->astTop()->astOperand1()->isConstexpr() &&
-                (Token::Match(tok->astParent(), "%oror%|&&") || Token::Match(tok->astParent()->astOperand1(), "if|while"));
-            const bool constValExpr = tok->isNumber() && Token::Match(tok->astParent(),"%oror%|&&|?"); // just one number in boolean expression
-            const bool compExpr = Token::Match(tok, "%comp%|!"); // a compare expression
-            const bool ternaryExpression = Token::simpleMatch(tok->astParent(), "?");
-            const bool returnExpression = Token::simpleMatch(tok->astTop(), "return") && (tok->isComparisonOp() || Token::Match(tok, "&&|%oror%"));
-
-            if (!(constIfWhileExpression || constValExpr || compExpr || ternaryExpression || returnExpression))
-                continue;
-
-            // Don't warn when there are expanded macros..
-            bool isExpandedMacro = false;
-            visitAstNodes(tok, [&](const Token * tok2) {
-                if (!tok2)
-                    return ChildrenToVisit::none;
-                if (tok2->isExpandedMacro()) {
-                    isExpandedMacro = true;
-                    return ChildrenToVisit::done;
-                }
-                return ChildrenToVisit::op1_and_op2;
-            });
-            if (isExpandedMacro)
-                continue;
-            for (const Token *parent = tok; parent; parent = parent->astParent()) {
-                if (parent->isExpandedMacro()) {
-                    isExpandedMacro = true;
-                    break;
-                }
-            }
-            if (isExpandedMacro)
-                continue;
-
-            // don't warn when condition checks sizeof result
-            bool hasSizeof = false;
-            bool hasNonNumber = false;
-            visitAstNodes(tok, [&](const Token * tok2) {
-                if (!tok2)
-                    return ChildrenToVisit::none;
-                if (tok2->isNumber())
-                    return ChildrenToVisit::none;
-                if (Token::simpleMatch(tok2->previous(), "sizeof (")) {
-                    hasSizeof = true;
-                    return ChildrenToVisit::none;
-                }
-                if (tok2->isComparisonOp() || tok2->isArithmeticalOp()) {
-                    return ChildrenToVisit::op1_and_op2;
-                } else
-                    hasNonNumber = true;
-                return ChildrenToVisit::none;
-            });
-            if (!hasNonNumber && hasSizeof)
-                continue;
-
-            alwaysTrueFalseError(tok, &tok->values().front());
-        }
-    }
-}
-
-void CheckCondition::alwaysTrueFalseError(const Token *tok, const ValueFlow::Value *value)
-{
-    const bool alwaysTrue = value && (value->intvalue != 0);
-    const std::string expr = tok ? tok->expressionString() : std::string("x");
-    const std::string errmsg = "Condition '" + expr + "' is always " + (alwaysTrue ? "true" : "false");
-    const ErrorPath errorPath = getErrorPath(tok, value, errmsg);
-    reportError(errorPath,
-                Severity::style,
-                "knownConditionTrueFalse",
-                errmsg,
-                (alwaysTrue ? CWE571 : CWE570), false);
-}
-
-void CheckCondition::checkInvalidTestForOverflow()
-{
-    if (!mSettings->isEnabled(Settings::WARNING))
-        return;
-
-    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
-    for (const Scope * scope : symbolDatabase->functionScopes) {
-
-        for (const Token* tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
-            if (!tok->isComparisonOp() || !tok->astOperand1() || !tok->astOperand2())
-                continue;
-
-            const Token *calcToken, *exprToken;
-            bool result;
-            if (Token::Match(tok, "<|>=") && tok->astOperand1()->str() == "+") {
-                calcToken = tok->astOperand1();
-                exprToken = tok->astOperand2();
-                result = (tok->str() == ">=");
-            } else if (Token::Match(tok, ">|<=") && tok->astOperand2()->str() == "+") {
-                calcToken = tok->astOperand2();
-                exprToken = tok->astOperand1();
-                result = (tok->str() == "<=");
-            } else
-                continue;
-
-            // Only warn for signed integer overflows and pointer overflows.
-            if (!(calcToken->valueType() && (calcToken->valueType()->pointer || calcToken->valueType()->sign == ValueType::Sign::SIGNED)))
-                continue;
-            if (!(exprToken->valueType() && (exprToken->valueType()->pointer || exprToken->valueType()->sign == ValueType::Sign::SIGNED)))
-                continue;
-
-            const Token *termToken;
-            if (isSameExpression(mTokenizer->isCPP(), true, exprToken, calcToken->astOperand1(), mSettings->library, true, false))
-                termToken = calcToken->astOperand2();
-            else if (isSameExpression(mTokenizer->isCPP(), true, exprToken, calcToken->astOperand2(), mSettings->library, true, false))
-                termToken = calcToken->astOperand1();
-            else
-                continue;
-
-            if (!termToken)
-                continue;
-
-            // Only warn when termToken is always positive
-            if (termToken->valueType() && termToken->valueType()->sign == ValueType::Sign::UNSIGNED)
-                invalidTestForOverflow(tok, result);
-            else if (termToken->isNumber() && MathLib::isPositive(termToken->str()))
-                invalidTestForOverflow(tok, result);
-        }
-    }
-}
-
-void CheckCondition::invalidTestForOverflow(const Token* tok, bool result)
-{
-    const std::string errmsg = "Invalid test for overflow '" +
-                               (tok ? tok->expressionString() : std::string("x + u < x")) +
-                               "'. Condition is always " +
-                               std::string(result ? "true" : "false") +
-                               " unless there is overflow, and overflow is undefined behaviour.";
-    reportError(tok, Severity::warning, "invalidTestForOverflow", errmsg, (result ? CWE571 : CWE570), false);
-}
-
-
-void CheckCondition::checkPointerAdditionResultNotNull()
-{
-    if (!mSettings->isEnabled(Settings::WARNING))
-        return;
-
-    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
-    for (const Scope * scope : symbolDatabase->functionScopes) {
-
-        for (const Token* tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
-            if (!tok->isComparisonOp() || !tok->astOperand1() || !tok->astOperand2())
-                continue;
-
-            // Macros might have pointless safety checks
-            if (tok->isExpandedMacro())
-                continue;
-
-            const Token *calcToken, *exprToken;
-            if (tok->astOperand1()->str() == "+") {
-                calcToken = tok->astOperand1();
-                exprToken = tok->astOperand2();
-            } else if (tok->astOperand2()->str() == "+") {
-                calcToken = tok->astOperand2();
-                exprToken = tok->astOperand1();
-            } else
-                continue;
-
-            // pointer comparison against NULL (ptr+12==0)
-            if (calcToken->hasKnownIntValue())
-                continue;
-            if (!calcToken->valueType() || calcToken->valueType()->pointer==0)
-                continue;
-            if (!exprToken->hasKnownIntValue() || !exprToken->getValue(0))
-                continue;
-
-            pointerAdditionResultNotNullError(tok, calcToken);
-        }
-    }
-}
-
-void CheckCondition::pointerAdditionResultNotNullError(const Token *tok, const Token *calc)
-{
-    const std::string s = calc ? calc->expressionString() : "ptr+1";
-    reportError(tok, Severity::warning, "pointerAdditionResultNotNull", "Comparison is wrong. Result of '" + s + "' can't be 0 unless there is pointer overflow, and pointer overflow is undefined behaviour.");
-}
-
-void CheckCondition::checkDuplicateConditionalAssign()
-{
-    if (!mSettings->isEnabled(Settings::STYLE))
-        return;
-
-    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
-    for (const Scope *scope : symbolDatabase->functionScopes) {
-        for (const Token *tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
-            if (!Token::simpleMatch(tok, "if ("))
-                continue;
-            if (!Token::simpleMatch(tok->next()->link(), ") {"))
-                continue;
-            const Token *blockTok = tok->next()->link()->next();
-            const Token *condTok = tok->next()->astOperand2();
-            if (!Token::Match(condTok, "==|!="))
-                continue;
-            if (condTok->str() == "!=" && Token::simpleMatch(blockTok->link(), "} else {"))
-                continue;
-            if (!blockTok->next())
-                continue;
-            const Token *assignTok = blockTok->next()->astTop();
-            if (!Token::simpleMatch(assignTok, "="))
-                continue;
-            if (nextAfterAstRightmostLeaf(assignTok) != blockTok->link()->previous())
-                continue;
-            if (!isSameExpression(
-                    mTokenizer->isCPP(), true, condTok->astOperand1(), assignTok->astOperand1(), mSettings->library, true, true))
-                continue;
-            if (!isSameExpression(
-                    mTokenizer->isCPP(), true, condTok->astOperand2(), assignTok->astOperand2(), mSettings->library, true, true))
-                continue;
-            duplicateConditionalAssignError(condTok, assignTok);
-        }
-    }
-}
-
-void CheckCondition::duplicateConditionalAssignError(const Token *condTok, const Token* assignTok)
-{
-    ErrorPath errors;
-    std::string msg = "Duplicate expression for the condition and assignment.";
-    if (condTok && assignTok) {
-        if (condTok->str() == "==") {
-            msg = "Assignment '" + assignTok->expressionString() + "' is redundant with condition '" + condTok->expressionString() + "'.";
-            errors.emplace_back(condTok, "Condition '" + condTok->expressionString() + "'");
-            errors.emplace_back(assignTok, "Assignment '" + assignTok->expressionString() + "' is redundant");
-        } else {
-            msg = "The statement 'if (" + condTok->expressionString() + ") " + assignTok->expressionString() + "' is logically equivalent to '" + assignTok->expressionString() + "'.";
-            errors.emplace_back(assignTok, "Assignment '" + assignTok->expressionString() + "'");
-            errors.emplace_back(condTok, "Condition '" + condTok->expressionString() + "' is redundant");
-        }
-    }
-
-    reportError(
-        errors, Severity::style, "duplicateConditionalAssign", msg, CWE398, false);
+    std::cout << "Cppcheck - A tool for static C/C++ code analysis\n"
+              "\n"
+              "Syntax:\n"
+              "    cppcheck [OPTIONS] [files or paths]\n"
+              "\n"
+              "If a directory is given instead of a filename, *.cpp, *.cxx, *.cc, *.c++, *.c,\n"
+              "*.tpp, and *.txx files are checked recursively from the given directory.\n\n"
+              "Options:\n"
+              "    --addon=<addon>\n"
+              "                         Execute addon. i.e. cert.\n"
+              "    --cppcheck-build-dir=<dir>\n"
+              "                         Analysis output directory. Useful for various data.\n"
+              "                         Some possible usages are; whole program analysis,\n"
+              "                         incremental analysis, distributed analysis.\n"
+              "    --check-config       Check cppcheck configuration. The normal code\n"
+              "                         analysis is disabled by this flag.\n"
+              "    --check-library      Show information messages when library files have\n"
+              "                         incomplete info.\n"
+              "    --config-exclude=<dir>\n"
+              "                         Path (prefix) to be excluded from configuration\n"
+              "                         checking. Preprocessor configurations defined in\n"
+              "                         headers (but not sources) matching the prefix will not\n"
+              "                         be considered for evaluation.\n"
+              "    --config-excludes-file=<file>\n"
+              "                         A file that contains a list of config-excludes\n"
+              "    --doc                Print a list of all available checks.\n"
+              "    --dump               Dump xml data for each translation unit. The dump\n"
+              "                         files have the extension .dump and contain ast,\n"
+              "                         tokenlist, symboldatabase, valueflow.\n"
+              "    -D<ID>               Define preprocessor symbol. Unless --max-configs or\n"
+              "                         --force is used, Cppcheck will only check the given\n"
+              "                         configuration when -D is used.\n"
+              "                         Example: '-DDEBUG=1 -D__cplusplus'.\n"
+              "    -U<ID>               Undefine preprocessor symbol. Use -U to explicitly\n"
+              "                         hide certain #ifdef <ID> code paths from checking.\n"
+              "                         Example: '-UDEBUG'\n"
+              "    -E                   Print preprocessor output on stdout and don't do any\n"
+              "                         further processing.\n"
+              "    --enable=<id>        Enable additional checks. The available ids are:\n"
+              "                          * all\n"
+              "                                  Enable all checks. It is recommended to only\n"
+              "                                  use --enable=all when the whole program is\n"
+              "                                  scanned, because this enables unusedFunction.\n"
+              "                          * warning\n"
+              "                                  Enable warning messages\n"
+              "                          * style\n"
+              "                                  Enable all coding style checks. All messages\n"
+              "                                  with the severities 'style', 'performance' and\n"
+              "                                  'portability' are enabled.\n"
+              "                          * performance\n"
+              "                                  Enable performance messages\n"
+              "                          * portability\n"
+              "                                  Enable portability messages\n"
+              "                          * information\n"
+              "                                  Enable information messages\n"
+              "                          * unusedFunction\n"
+              "                                  Check for unused functions. It is recommend\n"
+              "                                  to only enable this when the whole program is\n"
+              "                                  scanned.\n"
+              "                          * missingInclude\n"
+              "                                  Warn if there are missing includes. For\n"
+              "                                  detailed information, use '--check-config'.\n"
+              "                         Several ids can be given if you separate them with\n"
+              "                         commas. See also --std\n"
+              "    --error-exitcode=<n> If errors are found, integer [n] is returned instead of\n"
+              "                         the default '0'. '" << EXIT_FAILURE << "' is returned\n"
+              "                         if arguments are not valid or if no input files are\n"
+              "                         provided. Note that your operating system can modify\n"
+              "                         this value, e.g. '256' can become '0'.\n"
+              "    --errorlist          Print a list of all the error messages in XML format.\n"
+              "    --exitcode-suppressions=<file>\n"
+              "                         Used when certain messages should be displayed but\n"
+              "                         should not cause a non-zero exitcode.\n"
+              "    --file-list=<file>   Specify the files to check in a text file. Add one\n"
+              "                         filename per line. When file is '-,' the file list will\n"
+              "                         be read from standard input.\n"
+              "    -f, --force          Force checking of all configurations in files. If used\n"
+              "                         together with '--max-configs=', the last option is the\n"
+              "                         one that is effective.\n"
+              "    -h, --help           Print this help.\n"
+              "    -I <dir>             Give path to search for include files. Give several -I\n"
+              "                         parameters to give several paths. First given path is\n"
+              "                         searched for contained header files first. If paths are\n"
+              "                         relative to source files, this is not needed.\n"
+              "    --includes-file=<file>\n"
+              "                         Specify directory paths to search for included header\n"
+              "                         files in a text file. Add one include path per line.\n"
+              "                         First given path is searched for contained header\n"
+              "                         files first. If paths are relative to source files,\n"
+              "                         this is not needed.\n"
+              "    --include=<file>\n"
+              "                         Force inclusion of a file before the checked file. Can\n"
+              "                         be used for example when checking the Linux kernel,\n"
+              "                         where autoconf.h needs to be included for every file\n"
+              "                         compiled. Works the same way as the GCC -include\n"
+              "                         option.\n"
+              "    -i <dir or file>     Give a source file or source file directory to exclude\n"
+              "                         from the check. This applies only to source files so\n"
+              "                         header files included by source files are not matched.\n"
+              "                         Directory name is matched to all parts of the path.\n"
+              "    --inconclusive       Allow that Cppcheck reports even though the analysis is\n"
+              "                         inconclusive.\n"
+              "                         There are false positives with this option. Each result\n"
+              "                         must be carefully investigated before you know if it is\n"
+              "                         good or bad.\n"
+              "    --inline-suppr       Enable inline suppressions. Use them by placing one or\n"
+              "                         more comments, like: '// cppcheck-suppress warningId'\n"
+              "                         on the lines before the warning to suppress.\n"
+              "    -j <jobs>            Start <jobs> threads to do the checking simultaneously.\n"
+#ifdef THREADING_MODEL_FORK
+              "    -l <load>            Specifies that no new threads should be started if\n"
+              "                         there are other threads running and the load average is\n"
+              "                         at least <load>.\n"
+#endif
+              "    --language=<language>, -x <language>\n"
+              "                         Forces cppcheck to check all files as the given\n"
+              "                         language. Valid values are: c, c++\n"
+              "    --library=<cfg>      Load file <cfg> that contains information about types\n"
+              "                         and functions. With such information Cppcheck\n"
+              "                         understands your code better and therefore you\n"
+              "                         get better results. The std.cfg file that is\n"
+              "                         distributed with Cppcheck is loaded automatically.\n"
+              "                         For more information about library files, read the\n"
+              "                         manual.\n"
+              "    --max-ctu-depth=N    Max depth in whole program analysis. The default value\n"
+              "                         is 2. A larger value will mean more errors can be found\n"
+              "                         but also means the analysis will be slower.\n"
+              "    --output-file=<file> Write results to file, rather than standard error.\n"
+              "    --project=<file>     Run Cppcheck on project. The <file> can be a Visual\n"
+              "                         Studio Solution (*.sln), Visual Studio Project\n"
+              "                         (*.vcxproj), compile database (compile_commands.json),\n"
+              "                         or Borland C++ Builder 6 (*.bpr). The files to analyse,\n"
+              "                         include paths, defines, platform and undefines in\n"
+              "                         the specified file will be used.\n"
+              "    --max-configs=<limit>\n"
+              "                         Maximum number of configurations to check in a file\n"
+              "                         before skipping it. Default is '12'. If used together\n"
+              "                         with '--force', the last option is the one that is\n"
+              "                         effective.\n"
+              "    --platform=<type>, --platform=<file>\n"
+              "                         Specifies platform specific types and sizes. The\n"
+              "                         available builtin platforms are:\n"
+              "                          * unix32\n"
+              "                                 32 bit unix variant\n"
+              "                          * unix64\n"
+              "                                 64 bit unix variant\n"
+              "                          * win32A\n"
+              "                                 32 bit Windows ASCII character encoding\n"
+              "                          * win32W\n"
+              "                                 32 bit Windows UNICODE character encoding\n"
+              "                          * win64\n"
+              "                                 64 bit Windows\n"
+              "                          * avr8\n"
+              "                                 8 bit AVR microcontrollers\n"
+              "                          * native\n"
+              "                                 Type sizes of host system are assumed, but no\n"
+              "                                 further assumptions.\n"
+              "                          * unspecified\n"
+              "                                 Unknown type sizes\n"
+              "    --plist-output=<path>\n"
+              "                         Generate Clang-plist output files in folder.\n"
+              "    -q, --quiet          Do not show progress reports.\n"
+              "    -rp, --relative-paths\n"
+              "    -rp=<paths>, --relative-paths=<paths>\n"
+              "                         Use relative paths in output. When given, <paths> are\n"
+              "                         used as base. You can separate multiple paths by ';'.\n"
+              "                         Otherwise path where source files are searched is used.\n"
+              "                         We use string comparison to create relative paths, so\n"
+              "                         using e.g. ~ for home folder does not work. It is\n"
+              "                         currently only possible to apply the base paths to\n"
+              "                         files that are on a lower level in the directory tree.\n"
+              "    --report-progress    Report progress messages while checking a file.\n"
+#ifdef HAVE_RULES
+              "    --rule=<rule>        Match regular expression.\n"
+              "    --rule-file=<file>   Use given rule file. For more information, see: \n"
+              "                         http://sourceforge.net/projects/cppcheck/files/Articles/\n"
+#endif
+              "    --std=<id>           Set standard.\n"
+              "                         The available options are:\n"
+              "                          * c89\n"
+              "                                 C code is C89 compatible\n"
+              "                          * c99\n"
+              "                                 C code is C99 compatible\n"
+              "                          * c11\n"
+              "                                 C code is C11 compatible (default)\n"
+              "                          * c++03\n"
+              "                                 C++ code is C++03 compatible\n"
+              "                          * c++11\n"
+              "                                 C++ code is C++11 compatible\n"
+              "                          * c++14\n"
+              "                                 C++ code is C++14 compatible\n"
+              "                          * c++17\n"
+              "                                 C++ code is C++17 compatible\n"
+              "                          * c++20\n"
+              "                                 C++ code is C++20 compatible (default)\n"
+              "    --suppress=<spec>    Suppress warnings that match <spec>. The format of\n"
+              "                         <spec> is:\n"
+              "                         [error id]:[filename]:[line]\n"
+              "                         The [filename] and [line] are optional. If [error id]\n"
+              "                         is a wildcard '*', all error ids match.\n"
+              "    --suppressions-list=<file>\n"
+              "                         Suppress warnings listed in the file. Each suppression\n"
+              "                         is in the same format as <spec> above.\n"
+              "    --template='<text>'  Format the error messages. Available fields:\n"
+              "                           {file}              file name\n"
+              "                           {line}              line number\n"
+              "                           {column}            column number\n"
+              "                           {callstack}         show a callstack. Example:\n"
+              "                                                 [file.c:1] -> [file.c:100]\n"
+              "                           {inconclusive:text} if warning is inconclusive, text\n"
+              "                                               is written\n"
+              "                           {severity}          severity\n"
+              "                           {message}           warning message\n"
+              "                           {id}                warning id\n"
+              "                           {cwe}               CWE id (Common Weakness Enumeration)\n"
+              "                           {code}              show the real code\n"
+              "                           \\t                 insert tab\n"
+              "                           \\n                 insert newline\n"
+              "                           \\r                 insert carriage return\n"
+              "                         Example formats:\n"
+              "                         '{file}:{line},{severity},{id},{message}' or\n"
+              "                         '{file}({line}):({severity}) {message}' or\n"
+              "                         '{callstack} {message}'\n"
+              "                         Pre-defined templates: gcc, vs, edit, cppcheck1\n"
+              "                         The default format is 'gcc'.\n"
+              "    --template-location='<text>'\n"
+              "                         Format error message location. If this is not provided\n"
+              "                         then no extra location info is shown.\n"
+              "                         Available fields:\n"
+              "                           {file}      file name\n"
+              "                           {line}      line number\n"
+              "                           {column}    column number\n"
+              "                           {info}      location info\n"
+              "                           {code}      show the real code\n"
+              "                           \\t         insert tab\n"
+              "                           \\n         insert newline\n"
+              "                           \\r         insert carriage return\n"
+              "                         Example format (gcc-like):\n"
+              "                         '{file}:{line}:{column}: note: {info}\\n{code}'\n"
+              "    -v, --verbose        Output more detailed error information.\n"
+              "    --version            Print out version number.\n"
+              "    --xml                Write results in xml format to error stream (stderr).\n"
+              "    --xml-version=<version>\n"
+              "                         Select the XML file version. Currently only versions 2 is available."
+              "\n"
+              "Example usage:\n"
+              "  # Recursively check the current folder. Print the progress on the screen and\n"
+              "  # write errors to a file:\n"
+              "  cppcheck . 2> err.txt\n"
+              "\n"
+              "  # Recursively check ../myproject/ and don't print progress:\n"
+              "  cppcheck --quiet ../myproject/\n"
+              "\n"
+              "  # Check test.cpp, enable all checks:\n"
+              "  cppcheck --enable=all --inconclusive --std=posix test.cpp\n"
+              "\n"
+              "  # Check f.cpp and search include files from inc1/ and inc2/:\n"
+              "  cppcheck -I inc1/ -I inc2/ f.cpp\n"
+              "\n"
+              "For more information:\n"
+              "    http://cppcheck.net/manual.pdf\n"
+              "\n"
+              "Many thanks to the 3rd party libraries we use:\n"
+              " * tinyxml2 -- loading project/library/ctu files.\n"
+              " * picojson -- loading compile database.\n"
+              " * pcre -- rules.\n"
+              " * qt -- used in GUI\n";
 }

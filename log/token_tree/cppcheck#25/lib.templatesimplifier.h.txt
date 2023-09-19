@@ -1,0 +1,4340 @@
+35 :	"ErrorLogger"
+		- NEIGH  = { ErrorLogger , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+36 :	"Settings"
+		- NEIGH  = { Settings , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+37 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+38 :	"Tokenizer"
+		- NEIGH  = { Tokenizer , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+39 :	"TokenList"
+		- NEIGH  = { TokenList , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+45 :	"CPPCHECKLIB"
+		- NEIGH  = { CPPCHECKLIB , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+45 :	"TemplateSimplifier"
+		- NEIGH  = { TemplateSimplifier , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+47 :	"TemplateSimplifier"
+		- NEIGH  = { tokenizer , * , Tokenizer , TemplateSimplifier , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { TemplateSimplifier , }
+
+47 :	"Tokenizer"
+		- NEIGH  = { tokenizer , * , Tokenizer , TemplateSimplifier , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { TemplateSimplifier , }
+
+47 :	"*"
+		- NEIGH  = { tokenizer , * , Tokenizer , TemplateSimplifier , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { TemplateSimplifier , }
+
+47 :	"tokenizer"
+		- NEIGH  = { tokenizer , * , Tokenizer , TemplateSimplifier , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { TemplateSimplifier , }
+
+48 :	"TemplateSimplifier"
+		- NEIGH  = { TemplateSimplifier , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tokenizer , * , Tokenizer , TemplateSimplifier , }
+		- SUCC   = { checkComplicatedSyntaxErrorsInTemplates , }
+
+52 :	"checkComplicatedSyntaxErrorsInTemplates"
+		- NEIGH  = { checkComplicatedSyntaxErrorsInTemplates , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { TemplateSimplifier , }
+		- SUCC   = { tok , * , Token , templateParameters , }
+
+60 :	"templateParameters"
+		- NEIGH  = { tok , * , Token , templateParameters , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { checkComplicatedSyntaxErrorsInTemplates , }
+		- SUCC   = { TokenAndName , }
+
+60 :	"Token"
+		- NEIGH  = { tok , * , Token , templateParameters , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { checkComplicatedSyntaxErrorsInTemplates , }
+		- SUCC   = { TokenAndName , }
+
+60 :	"*"
+		- NEIGH  = { tok , * , Token , templateParameters , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { checkComplicatedSyntaxErrorsInTemplates , }
+		- SUCC   = { TokenAndName , }
+
+60 :	"tok"
+		- NEIGH  = { tok , * , Token , templateParameters , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { checkComplicatedSyntaxErrorsInTemplates , }
+		- SUCC   = { TokenAndName , }
+
+65 :	"TokenAndName"
+		- NEIGH  = { TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , templateParameters , }
+		- SUCC   = { tok , findTemplateDeclarationEnd , * , Token , }
+
+66 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+66 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+66 :	"mToken"
+		- NEIGH  = { mToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+67 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+67 :	"string"
+		- NEIGH  = { string , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+67 :	"mScope"
+		- NEIGH  = { mScope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+68 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+68 :	"string"
+		- NEIGH  = { string , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+68 :	"mName"
+		- NEIGH  = { mName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"string"
+		- NEIGH  = { string , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"mFullName"
+		- NEIGH  = { mFullName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+70 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+70 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+70 :	"mNameToken"
+		- NEIGH  = { mNameToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+71 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+71 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+71 :	"mParamEnd"
+		- NEIGH  = { mParamEnd , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+72 :	"mFlags"
+		- NEIGH  = { mFlags , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+75 :	"fIsClass"
+		- NEIGH  = { fIsClass , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+75 :	"<<"
+		- NEIGH  = { << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+76 :	"fIsFunction"
+		- NEIGH  = { fIsFunction , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+76 :	"<<"
+		- NEIGH  = { << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+77 :	"fIsVariable"
+		- NEIGH  = { fIsVariable , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+77 :	"<<"
+		- NEIGH  = { << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+78 :	"fIsAlias"
+		- NEIGH  = { fIsAlias , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+78 :	"<<"
+		- NEIGH  = { << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+79 :	"fIsSpecialization"
+		- NEIGH  = { fIsSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+79 :	"<<"
+		- NEIGH  = { << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+80 :	"fIsPartialSpecialization"
+		- NEIGH  = { fIsPartialSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+80 :	"<<"
+		- NEIGH  = { << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+81 :	"fIsForwardDeclaration"
+		- NEIGH  = { fIsForwardDeclaration , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+81 :	"<<"
+		- NEIGH  = { << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+82 :	"fIsVariadic"
+		- NEIGH  = { fIsVariadic , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+82 :	"<<"
+		- NEIGH  = { << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+83 :	"fIsFriend"
+		- NEIGH  = { fIsFriend , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+83 :	"<<"
+		- NEIGH  = { << , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+84 :	"fFamilyMask"
+		- NEIGH  = { fFamilyMask , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+84 :	"fIsClass"
+		- NEIGH  = { fIsClass , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+84 :	"|"
+		- NEIGH  = { | , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+84 :	"fIsFunction"
+		- NEIGH  = { fIsFunction , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+84 :	"|"
+		- NEIGH  = { | , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+84 :	"fIsVariable"
+		- NEIGH  = { fIsVariable , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+87 :	"isClass"
+		- NEIGH  = { isClass , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+87 :	"state"
+		- NEIGH  = { state , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+88 :	"setFlag"
+		- NEIGH  = { fIsClass , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+88 :	"fIsClass"
+		- NEIGH  = { fIsClass , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+88 :	"state"
+		- NEIGH  = { fIsClass , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+90 :	"isFunction"
+		- NEIGH  = { isFunction , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+90 :	"state"
+		- NEIGH  = { state , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+91 :	"setFlag"
+		- NEIGH  = { fIsFunction , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+91 :	"fIsFunction"
+		- NEIGH  = { fIsFunction , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+91 :	"state"
+		- NEIGH  = { fIsFunction , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+93 :	"isVariable"
+		- NEIGH  = { isVariable , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+93 :	"state"
+		- NEIGH  = { state , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+94 :	"setFlag"
+		- NEIGH  = { fIsVariable , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+94 :	"fIsVariable"
+		- NEIGH  = { fIsVariable , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+94 :	"state"
+		- NEIGH  = { fIsVariable , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+96 :	"isAlias"
+		- NEIGH  = { isAlias , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+96 :	"state"
+		- NEIGH  = { state , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+97 :	"setFlag"
+		- NEIGH  = { fIsAlias , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+97 :	"fIsAlias"
+		- NEIGH  = { fIsAlias , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+97 :	"state"
+		- NEIGH  = { fIsAlias , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+99 :	"isSpecialization"
+		- NEIGH  = { isSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+99 :	"state"
+		- NEIGH  = { state , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+100 :	"setFlag"
+		- NEIGH  = { fIsSpecialization , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+100 :	"fIsSpecialization"
+		- NEIGH  = { fIsSpecialization , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+100 :	"state"
+		- NEIGH  = { fIsSpecialization , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+102 :	"isPartialSpecialization"
+		- NEIGH  = { isPartialSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+102 :	"state"
+		- NEIGH  = { state , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+103 :	"setFlag"
+		- NEIGH  = { fIsPartialSpecialization , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+103 :	"fIsPartialSpecialization"
+		- NEIGH  = { fIsPartialSpecialization , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+103 :	"state"
+		- NEIGH  = { fIsPartialSpecialization , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+105 :	"isForwardDeclaration"
+		- NEIGH  = { isForwardDeclaration , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+105 :	"state"
+		- NEIGH  = { state , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+106 :	"setFlag"
+		- NEIGH  = { fIsForwardDeclaration , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+106 :	"fIsForwardDeclaration"
+		- NEIGH  = { fIsForwardDeclaration , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+106 :	"state"
+		- NEIGH  = { fIsForwardDeclaration , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+108 :	"isVariadic"
+		- NEIGH  = { isVariadic , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+108 :	"state"
+		- NEIGH  = { state , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+109 :	"setFlag"
+		- NEIGH  = { fIsVariadic , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+109 :	"fIsVariadic"
+		- NEIGH  = { fIsVariadic , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+109 :	"state"
+		- NEIGH  = { fIsVariadic , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+111 :	"isFriend"
+		- NEIGH  = { isFriend , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+111 :	"state"
+		- NEIGH  = { state , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+112 :	"setFlag"
+		- NEIGH  = { fIsFriend , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+112 :	"fIsFriend"
+		- NEIGH  = { fIsFriend , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+112 :	"state"
+		- NEIGH  = { fIsFriend , state , setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+120 :	"getFlag"
+		- NEIGH  = { getFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+120 :	"flag"
+		- NEIGH  = { flag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+121 :	"return"
+		- NEIGH  = { & , != , mFlags , flag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+121 :	"mFlags"
+		- NEIGH  = { & , != , mFlags , flag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+121 :	"&"
+		- NEIGH  = { & , != , mFlags , flag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+121 :	"flag"
+		- NEIGH  = { & , != , mFlags , flag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+121 :	"!="
+		- NEIGH  = { & , != , mFlags , flag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+129 :	"setFlag"
+		- NEIGH  = { setFlag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+129 :	"flag"
+		- NEIGH  = { flag , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+129 :	"state"
+		- NEIGH  = { state , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"mFlags"
+		- NEIGH  = { flag , | , & , state , mFlags , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"state"
+		- NEIGH  = { flag , | , & , state , mFlags , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"mFlags"
+		- NEIGH  = { flag , | , & , state , mFlags , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"|"
+		- NEIGH  = { flag , | , & , state , mFlags , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"flag"
+		- NEIGH  = { flag , | , & , state , mFlags , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"mFlags"
+		- NEIGH  = { flag , | , & , state , mFlags , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"&"
+		- NEIGH  = { flag , | , & , state , mFlags , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+130 :	"flag"
+		- NEIGH  = { flag , | , & , state , mFlags , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+139 :	"TokenAndName"
+		- NEIGH  = { TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+139 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+139 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+139 :	"token"
+		- NEIGH  = { token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+139 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+139 :	"string"
+		- NEIGH  = { string , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+139 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+139 :	"scope"
+		- NEIGH  = { scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"TokenAndName"
+		- NEIGH  = { TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"token"
+		- NEIGH  = { token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"string"
+		- NEIGH  = { string , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"scope"
+		- NEIGH  = { scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"nameToken"
+		- NEIGH  = { nameToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"paramEnd"
+		- NEIGH  = { paramEnd , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+148 :	"TokenAndName"
+		- NEIGH  = { TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+148 :	"TokenAndName"
+		- NEIGH  = { TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+148 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+148 :	"other"
+		- NEIGH  = { other , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+149 :	"TokenAndName"
+		- NEIGH  = { TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+151 :	"=="
+		- NEIGH  = { == , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+151 :	"TokenAndName"
+		- NEIGH  = { TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+151 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+151 :	"rhs"
+		- NEIGH  = { rhs , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"return"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"mToken"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"=="
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"rhs"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"mToken"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"&&"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"mScope"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"=="
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"rhs"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"mScope"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"&&"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"mName"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"=="
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"rhs"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"mName"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"&&"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"mFullName"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"=="
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"rhs"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"mFullName"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+152 :	"&&"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"mNameToken"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"=="
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"rhs"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"mNameToken"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"&&"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"mParamEnd"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"=="
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"rhs"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"mParamEnd"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"&&"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"mFlags"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"=="
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"rhs"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+153 :	"mFlags"
+		- NEIGH  = { mFlags , mParamEnd , mFullName , mName , mNameToken , && , == , rhs , mToken , mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+156 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+156 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+156 :	"token"
+		- NEIGH  = { token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+157 :	"return"
+		- NEIGH  = { mToken , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+157 :	"mToken"
+		- NEIGH  = { mToken , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+159 :	"token"
+		- NEIGH  = { token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+159 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+159 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+159 :	"token"
+		- NEIGH  = { token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+160 :	"mToken"
+		- NEIGH  = { token , mToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+160 :	"token"
+		- NEIGH  = { token , mToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+162 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+162 :	"string"
+		- NEIGH  = { string , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+162 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+162 :	"scope"
+		- NEIGH  = { scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"return"
+		- NEIGH  = { mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"mScope"
+		- NEIGH  = { mScope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+165 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+165 :	"string"
+		- NEIGH  = { string , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+165 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+165 :	"name"
+		- NEIGH  = { name , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+166 :	"return"
+		- NEIGH  = { mName , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+166 :	"mName"
+		- NEIGH  = { mName , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+168 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+168 :	"string"
+		- NEIGH  = { string , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+168 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+168 :	"fullName"
+		- NEIGH  = { fullName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+169 :	"return"
+		- NEIGH  = { mFullName , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+169 :	"mFullName"
+		- NEIGH  = { mFullName , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+171 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+171 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+171 :	"nameToken"
+		- NEIGH  = { nameToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+172 :	"return"
+		- NEIGH  = { mNameToken , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+172 :	"mNameToken"
+		- NEIGH  = { mNameToken , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+174 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+174 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+174 :	"paramEnd"
+		- NEIGH  = { paramEnd , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+175 :	"return"
+		- NEIGH  = { mParamEnd , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+175 :	"mParamEnd"
+		- NEIGH  = { mParamEnd , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+177 :	"paramEnd"
+		- NEIGH  = { paramEnd , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+177 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+177 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+177 :	"end"
+		- NEIGH  = { end , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+178 :	"mParamEnd"
+		- NEIGH  = { end , mParamEnd , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+178 :	"end"
+		- NEIGH  = { end , mParamEnd , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+181 :	"isClass"
+		- NEIGH  = { isClass , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+182 :	"return"
+		- NEIGH  = { fIsClass , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+182 :	"getFlag"
+		- NEIGH  = { fIsClass , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+182 :	"fIsClass"
+		- NEIGH  = { fIsClass , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+184 :	"isFunction"
+		- NEIGH  = { isFunction , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+185 :	"return"
+		- NEIGH  = { fIsFunction , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+185 :	"getFlag"
+		- NEIGH  = { fIsFunction , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+185 :	"fIsFunction"
+		- NEIGH  = { fIsFunction , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+187 :	"isVariable"
+		- NEIGH  = { isVariable , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+188 :	"return"
+		- NEIGH  = { fIsVariable , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+188 :	"getFlag"
+		- NEIGH  = { fIsVariable , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+188 :	"fIsVariable"
+		- NEIGH  = { fIsVariable , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+190 :	"isAlias"
+		- NEIGH  = { isAlias , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+191 :	"return"
+		- NEIGH  = { fIsAlias , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+191 :	"getFlag"
+		- NEIGH  = { fIsAlias , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+191 :	"fIsAlias"
+		- NEIGH  = { fIsAlias , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+193 :	"isSpecialization"
+		- NEIGH  = { isSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+194 :	"return"
+		- NEIGH  = { fIsSpecialization , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+194 :	"getFlag"
+		- NEIGH  = { fIsSpecialization , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+194 :	"fIsSpecialization"
+		- NEIGH  = { fIsSpecialization , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+196 :	"isPartialSpecialization"
+		- NEIGH  = { isPartialSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+197 :	"return"
+		- NEIGH  = { fIsPartialSpecialization , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+197 :	"getFlag"
+		- NEIGH  = { fIsPartialSpecialization , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+197 :	"fIsPartialSpecialization"
+		- NEIGH  = { fIsPartialSpecialization , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+199 :	"isForwardDeclaration"
+		- NEIGH  = { isForwardDeclaration , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+200 :	"return"
+		- NEIGH  = { fIsForwardDeclaration , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+200 :	"getFlag"
+		- NEIGH  = { fIsForwardDeclaration , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+200 :	"fIsForwardDeclaration"
+		- NEIGH  = { fIsForwardDeclaration , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+202 :	"isVariadic"
+		- NEIGH  = { isVariadic , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+203 :	"return"
+		- NEIGH  = { fIsVariadic , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+203 :	"getFlag"
+		- NEIGH  = { fIsVariadic , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+203 :	"fIsVariadic"
+		- NEIGH  = { fIsVariadic , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+205 :	"isFriend"
+		- NEIGH  = { isFriend , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+206 :	"return"
+		- NEIGH  = { fIsFriend , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+206 :	"getFlag"
+		- NEIGH  = { fIsFriend , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+206 :	"fIsFriend"
+		- NEIGH  = { fIsFriend , getFlag , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+215 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+215 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+215 :	"aliasStartToken"
+		- NEIGH  = { aliasStartToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+223 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+223 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+223 :	"aliasEndToken"
+		- NEIGH  = { aliasEndToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+232 :	"isAliasToken"
+		- NEIGH  = { isAliasToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+232 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+232 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+232 :	"tok"
+		- NEIGH  = { tok , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+240 :	"isSameFamily"
+		- NEIGH  = { isSameFamily , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+240 :	"TemplateSimplifier"
+		- NEIGH  = { TemplateSimplifier , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+240 :	"TokenAndName"
+		- NEIGH  = { TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+240 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+240 :	"decl"
+		- NEIGH  = { decl , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+243 :	"return"
+		- NEIGH  = { != , mFlags , decl , fFamilyMask , & , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+243 :	"mFlags"
+		- NEIGH  = { != , mFlags , decl , fFamilyMask , & , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+243 :	"&"
+		- NEIGH  = { != , mFlags , decl , fFamilyMask , & , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+243 :	"fFamilyMask"
+		- NEIGH  = { != , mFlags , decl , fFamilyMask , & , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+243 :	"&"
+		- NEIGH  = { != , mFlags , decl , fFamilyMask , & , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+243 :	"decl"
+		- NEIGH  = { != , mFlags , decl , fFamilyMask , & , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+243 :	"mFlags"
+		- NEIGH  = { != , mFlags , decl , fFamilyMask , & , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+243 :	"&"
+		- NEIGH  = { != , mFlags , decl , fFamilyMask , & , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+243 :	"fFamilyMask"
+		- NEIGH  = { != , mFlags , decl , fFamilyMask , & , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+243 :	"!="
+		- NEIGH  = { != , mFlags , decl , fFamilyMask , & , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+252 :	"Token"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { TokenAndName , }
+		- SUCC   = { tok , findTemplateDeclarationEnd , * , Token , }
+
+252 :	"*"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { TokenAndName , }
+		- SUCC   = { tok , findTemplateDeclarationEnd , * , Token , }
+
+252 :	"findTemplateDeclarationEnd"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { TokenAndName , }
+		- SUCC   = { tok , findTemplateDeclarationEnd , * , Token , }
+
+252 :	"Token"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { TokenAndName , }
+		- SUCC   = { tok , findTemplateDeclarationEnd , * , Token , }
+
+252 :	"*"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { TokenAndName , }
+		- SUCC   = { tok , findTemplateDeclarationEnd , * , Token , }
+
+252 :	"tok"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { TokenAndName , }
+		- SUCC   = { tok , findTemplateDeclarationEnd , * , Token , }
+
+253 :	"Token"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+
+253 :	"*"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+
+253 :	"findTemplateDeclarationEnd"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+
+253 :	"Token"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+
+253 :	"*"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+
+253 :	"tok"
+		- NEIGH  = { tok , findTemplateDeclarationEnd , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+
+262 :	"instantiateMatch"
+		- NEIGH  = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { tok , * , Token , getTemplateNamePosition , }
+
+262 :	"Token"
+		- NEIGH  = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { tok , * , Token , getTemplateNamePosition , }
+
+262 :	"*"
+		- NEIGH  = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { tok , * , Token , getTemplateNamePosition , }
+
+262 :	"instance"
+		- NEIGH  = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { tok , * , Token , getTemplateNamePosition , }
+
+262 :	"std"
+		- NEIGH  = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { tok , * , Token , getTemplateNamePosition , }
+
+262 :	"size_t"
+		- NEIGH  = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { tok , * , Token , getTemplateNamePosition , }
+
+262 :	"numberOfArguments"
+		- NEIGH  = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { tok , * , Token , getTemplateNamePosition , }
+
+262 :	"patternAfter"
+		- NEIGH  = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , findTemplateDeclarationEnd , * , Token , }
+		- SUCC   = { tok , * , Token , getTemplateNamePosition , }
+
+270 :	"getTemplateNamePosition"
+		- NEIGH  = { tok , * , Token , getTemplateNamePosition , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- SUCC   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+
+270 :	"Token"
+		- NEIGH  = { tok , * , Token , getTemplateNamePosition , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- SUCC   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+
+270 :	"*"
+		- NEIGH  = { tok , * , Token , getTemplateNamePosition , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- SUCC   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+
+270 :	"tok"
+		- NEIGH  = { tok , * , Token , getTemplateNamePosition , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { numberOfArguments , patternAfter , size_t , std , instance , * , Token , instantiateMatch , }
+		- SUCC   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+
+278 :	"getTemplateNamePositionTemplateClass"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , getTemplateNamePosition , }
+		- SUCC   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+
+278 :	"Token"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , getTemplateNamePosition , }
+		- SUCC   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+
+278 :	"*"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , getTemplateNamePosition , }
+		- SUCC   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+
+278 :	"tok"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , getTemplateNamePosition , }
+		- SUCC   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+
+278 :	"&"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , getTemplateNamePosition , }
+		- SUCC   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+
+278 :	"namepos"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , getTemplateNamePosition , }
+		- SUCC   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+
+286 :	"getTemplateNamePositionTemplateFunction"
+		- NEIGH  = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- SUCC   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+
+286 :	"Token"
+		- NEIGH  = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- SUCC   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+
+286 :	"*"
+		- NEIGH  = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- SUCC   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+
+286 :	"tok"
+		- NEIGH  = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- SUCC   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+
+286 :	"&"
+		- NEIGH  = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- SUCC   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+
+286 :	"namepos"
+		- NEIGH  = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateClass , }
+		- SUCC   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+
+294 :	"getTemplateNamePositionTemplateVariable"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- SUCC   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+
+294 :	"Token"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- SUCC   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+
+294 :	"*"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- SUCC   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+
+294 :	"tok"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- SUCC   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+
+294 :	"&"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- SUCC   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+
+294 :	"namepos"
+		- NEIGH  = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , tok , getTemplateNamePositionTemplateFunction , * , Token , & , }
+		- SUCC   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+
+301 :	"simplifyTemplates"
+		- NEIGH  = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- SUCC   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+
+302 :	"std"
+		- NEIGH  = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- SUCC   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+
+302 :	"time_t"
+		- NEIGH  = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- SUCC   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+
+302 :	"maxtime"
+		- NEIGH  = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- SUCC   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+
+303 :	"&"
+		- NEIGH  = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- SUCC   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+
+303 :	"codeWithTemplates"
+		- NEIGH  = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { namepos , & , tok , * , Token , getTemplateNamePositionTemplateVariable , }
+		- SUCC   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+
+311 :	"simplifyNumericCalculations"
+		- NEIGH  = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- SUCC   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+
+311 :	"Token"
+		- NEIGH  = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- SUCC   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+
+311 :	"*"
+		- NEIGH  = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- SUCC   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+
+311 :	"tok"
+		- NEIGH  = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- SUCC   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+
+311 :	"isTemplate"
+		- NEIGH  = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { codeWithTemplates , & , maxtime , std , time_t , simplifyTemplates , }
+		- SUCC   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+
+319 :	"simplifyCalculations"
+		- NEIGH  = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- SUCC   = { end , * , Token , start , simplifyTemplateArgs , }
+
+319 :	"Token"
+		- NEIGH  = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- SUCC   = { end , * , Token , start , simplifyTemplateArgs , }
+
+319 :	"*"
+		- NEIGH  = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- SUCC   = { end , * , Token , start , simplifyTemplateArgs , }
+
+319 :	"frontToken"
+		- NEIGH  = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- SUCC   = { end , * , Token , start , simplifyTemplateArgs , }
+
+319 :	"Token"
+		- NEIGH  = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- SUCC   = { end , * , Token , start , simplifyTemplateArgs , }
+
+319 :	"*"
+		- NEIGH  = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- SUCC   = { end , * , Token , start , simplifyTemplateArgs , }
+
+319 :	"backToken"
+		- NEIGH  = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- SUCC   = { end , * , Token , start , simplifyTemplateArgs , }
+
+319 :	"isTemplate"
+		- NEIGH  = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , tok , * , Token , simplifyNumericCalculations , }
+		- SUCC   = { end , * , Token , start , simplifyTemplateArgs , }
+
+325 :	"simplifyTemplateArgs"
+		- NEIGH  = { end , * , Token , start , simplifyTemplateArgs , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- SUCC   = { getTemplateDeclarations , }
+
+325 :	"Token"
+		- NEIGH  = { end , * , Token , start , simplifyTemplateArgs , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- SUCC   = { getTemplateDeclarations , }
+
+325 :	"*"
+		- NEIGH  = { end , * , Token , start , simplifyTemplateArgs , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- SUCC   = { getTemplateDeclarations , }
+
+325 :	"start"
+		- NEIGH  = { end , * , Token , start , simplifyTemplateArgs , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- SUCC   = { getTemplateDeclarations , }
+
+325 :	"Token"
+		- NEIGH  = { end , * , Token , start , simplifyTemplateArgs , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- SUCC   = { getTemplateDeclarations , }
+
+325 :	"*"
+		- NEIGH  = { end , * , Token , start , simplifyTemplateArgs , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- SUCC   = { getTemplateDeclarations , }
+
+325 :	"end"
+		- NEIGH  = { end , * , Token , start , simplifyTemplateArgs , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isTemplate , backToken , * , Token , frontToken , simplifyCalculations , }
+		- SUCC   = { getTemplateDeclarations , }
+
+332 :	"getTemplateDeclarations"
+		- NEIGH  = { getTemplateDeclarations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { end , * , Token , start , simplifyTemplateArgs , }
+		- SUCC   = { scope , std , * , string , Token , token , & , addInstantiation , }
+
+338 :	"addInstantiation"
+		- NEIGH  = { scope , std , * , string , Token , token , & , addInstantiation , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getTemplateDeclarations , }
+		- SUCC   = { getTemplateInstantiations , }
+
+338 :	"Token"
+		- NEIGH  = { scope , std , * , string , Token , token , & , addInstantiation , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getTemplateDeclarations , }
+		- SUCC   = { getTemplateInstantiations , }
+
+338 :	"*"
+		- NEIGH  = { scope , std , * , string , Token , token , & , addInstantiation , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getTemplateDeclarations , }
+		- SUCC   = { getTemplateInstantiations , }
+
+338 :	"token"
+		- NEIGH  = { scope , std , * , string , Token , token , & , addInstantiation , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getTemplateDeclarations , }
+		- SUCC   = { getTemplateInstantiations , }
+
+338 :	"std"
+		- NEIGH  = { scope , std , * , string , Token , token , & , addInstantiation , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getTemplateDeclarations , }
+		- SUCC   = { getTemplateInstantiations , }
+
+338 :	"string"
+		- NEIGH  = { scope , std , * , string , Token , token , & , addInstantiation , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getTemplateDeclarations , }
+		- SUCC   = { getTemplateInstantiations , }
+
+338 :	"&"
+		- NEIGH  = { scope , std , * , string , Token , token , & , addInstantiation , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getTemplateDeclarations , }
+		- SUCC   = { getTemplateInstantiations , }
+
+338 :	"scope"
+		- NEIGH  = { scope , std , * , string , Token , token , & , addInstantiation , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getTemplateDeclarations , }
+		- SUCC   = { getTemplateInstantiations , }
+
+343 :	"getTemplateInstantiations"
+		- NEIGH  = { getTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { scope , std , * , string , Token , token , & , addInstantiation , }
+		- SUCC   = { fixForwardDeclaredDefaultArgumentValues , }
+
+349 :	"fixForwardDeclaredDefaultArgumentValues"
+		- NEIGH  = { fixForwardDeclaredDefaultArgumentValues , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getTemplateInstantiations , }
+		- SUCC   = { useDefaultArgumentValues , }
+
+354 :	"useDefaultArgumentValues"
+		- NEIGH  = { useDefaultArgumentValues , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { fixForwardDeclaredDefaultArgumentValues , }
+		- SUCC   = { declaration , & , TokenAndName , useDefaultArgumentValues , }
+
+360 :	"useDefaultArgumentValues"
+		- NEIGH  = { declaration , & , TokenAndName , useDefaultArgumentValues , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { useDefaultArgumentValues , }
+		- SUCC   = { getSpecializations , }
+
+360 :	"TokenAndName"
+		- NEIGH  = { declaration , & , TokenAndName , useDefaultArgumentValues , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { useDefaultArgumentValues , }
+		- SUCC   = { getSpecializations , }
+
+360 :	"&"
+		- NEIGH  = { declaration , & , TokenAndName , useDefaultArgumentValues , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { useDefaultArgumentValues , }
+		- SUCC   = { getSpecializations , }
+
+360 :	"declaration"
+		- NEIGH  = { declaration , & , TokenAndName , useDefaultArgumentValues , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { useDefaultArgumentValues , }
+		- SUCC   = { getSpecializations , }
+
+366 :	"getSpecializations"
+		- NEIGH  = { getSpecializations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { declaration , & , TokenAndName , useDefaultArgumentValues , }
+		- SUCC   = { getPartialSpecializations , }
+
+372 :	"getPartialSpecializations"
+		- NEIGH  = { getPartialSpecializations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getSpecializations , }
+		- SUCC   = { simplifyTemplateAliases , }
+
+377 :	"simplifyTemplateAliases"
+		- NEIGH  = { simplifyTemplateAliases , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { getPartialSpecializations , }
+		- SUCC   = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+
+388 :	"simplifyTemplateInstantiations"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+389 :	"TokenAndName"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+389 :	"&"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+389 :	"templateDeclaration"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+390 :	"std"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+390 :	"list"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+390 :	"<"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+390 :	"Token"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+390 :	"*"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+390 :	">"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+390 :	"&"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+390 :	"specializations"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+391 :	"std"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+391 :	"time_t"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+391 :	"maxtime"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+392 :	"std"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+392 :	"set"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+392 :	"<"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+392 :	"std"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+392 :	"string"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+392 :	">"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+392 :	"&"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+392 :	"expandedtemplates"
+		- NEIGH  = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { simplifyTemplateAliases , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+
+399 :	"addNamespace"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+
+399 :	"TokenAndName"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+
+399 :	"&"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+
+399 :	"templateDeclaration"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+
+399 :	"Token"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+
+399 :	"*"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+
+399 :	"tok"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { expandedtemplates , set , > , string , Token , < , list , std , & , templateDeclaration , TokenAndName , specializations , maxtime , * , time_t , simplifyTemplateInstantiations , }
+		- SUCC   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+
+407 :	"alreadyHasNamespace"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- SUCC   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+
+407 :	"TokenAndName"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- SUCC   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+
+407 :	"&"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- SUCC   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+
+407 :	"templateDeclaration"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- SUCC   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+
+407 :	"Token"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- SUCC   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+
+407 :	"*"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- SUCC   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+
+407 :	"tok"
+		- NEIGH  = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , addNamespace , }
+		- SUCC   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+
+417 :	"expandTemplate"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+418 :	"TokenAndName"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+418 :	"&"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+418 :	"templateDeclaration"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+419 :	"TokenAndName"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+419 :	"&"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+419 :	"templateInstantiation"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+420 :	"std"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+420 :	"vector"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+420 :	"<"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+420 :	"Token"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+420 :	"*"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+420 :	">"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+420 :	"&"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+420 :	"typeParametersInDeclaration"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+421 :	"std"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+421 :	"string"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+421 :	"&"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+421 :	"newName"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+422 :	"copy"
+		- NEIGH  = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , & , Token , templateDeclaration , TokenAndName , alreadyHasNamespace , }
+		- SUCC   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+
+430 :	"replaceTemplateUsage"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+430 :	"TokenAndName"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+430 :	"&"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+430 :	"instantiation"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+431 :	"std"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+431 :	"list"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+431 :	"<"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+431 :	"std"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+431 :	"string"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+431 :	">"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+431 :	"&"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+431 :	"typeStringsUsedInTemplateInstantiation"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+432 :	"std"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+432 :	"string"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+432 :	"&"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+432 :	"newName"
+		- NEIGH  = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , vector , > , * , string , Token , < , std , expandTemplate , templateInstantiation , copy , & , templateDeclaration , typeParametersInDeclaration , TokenAndName , }
+		- SUCC   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+
+443 :	"Token"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+443 :	"*"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+443 :	"getTemplateParametersInDeclaration"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+444 :	"Token"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+444 :	"*"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+444 :	"tok"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+445 :	"std"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+445 :	"vector"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+445 :	"<"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+445 :	"Token"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+445 :	"*"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+445 :	">"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+445 :	"&"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+445 :	"typeParametersInDeclaration"
+		- NEIGH  = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { newName , > , string , < , list , std , & , instantiation , TokenAndName , typeStringsUsedInTemplateInstantiation , replaceTemplateUsage , }
+		- SUCC   = { * , Token , tok , removeTemplate , }
+
+450 :	"removeTemplate"
+		- NEIGH  = { * , Token , tok , removeTemplate , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- SUCC   = { tok , * , Token , syntaxError , }
+
+450 :	"Token"
+		- NEIGH  = { * , Token , tok , removeTemplate , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- SUCC   = { tok , * , Token , syntaxError , }
+
+450 :	"*"
+		- NEIGH  = { * , Token , tok , removeTemplate , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- SUCC   = { tok , * , Token , syntaxError , }
+
+450 :	"tok"
+		- NEIGH  = { * , Token , tok , removeTemplate , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeParametersInDeclaration , & , < , vector , std , > , tok , getTemplateParametersInDeclaration , * , Token , }
+		- SUCC   = { tok , * , Token , syntaxError , }
+
+453 :	"syntaxError"
+		- NEIGH  = { tok , * , Token , syntaxError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { * , Token , tok , removeTemplate , }
+		- SUCC   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+
+453 :	"Token"
+		- NEIGH  = { tok , * , Token , syntaxError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { * , Token , tok , removeTemplate , }
+		- SUCC   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+
+453 :	"*"
+		- NEIGH  = { tok , * , Token , syntaxError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { * , Token , tok , removeTemplate , }
+		- SUCC   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+
+453 :	"tok"
+		- NEIGH  = { tok , * , Token , syntaxError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { * , Token , tok , removeTemplate , }
+		- SUCC   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+
+455 :	"matchSpecialization"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+456 :	"Token"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+456 :	"*"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+456 :	"templateDeclarationNameToken"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+457 :	"Token"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+457 :	"*"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+457 :	"templateInstantiationNameToken"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+458 :	"std"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+458 :	"list"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+458 :	"<"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+458 :	"Token"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+458 :	"*"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+458 :	">"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+458 :	"&"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+458 :	"specializations"
+		- NEIGH  = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , syntaxError , }
+		- SUCC   = { begin , end , * , Token , eraseTokens , }
+
+465 :	"eraseTokens"
+		- NEIGH  = { begin , end , * , Token , eraseTokens , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- SUCC   = { tok , * , Token , deleteToken , }
+
+465 :	"Token"
+		- NEIGH  = { begin , end , * , Token , eraseTokens , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- SUCC   = { tok , * , Token , deleteToken , }
+
+465 :	"*"
+		- NEIGH  = { begin , end , * , Token , eraseTokens , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- SUCC   = { tok , * , Token , deleteToken , }
+
+465 :	"begin"
+		- NEIGH  = { begin , end , * , Token , eraseTokens , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- SUCC   = { tok , * , Token , deleteToken , }
+
+465 :	"Token"
+		- NEIGH  = { begin , end , * , Token , eraseTokens , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- SUCC   = { tok , * , Token , deleteToken , }
+
+465 :	"*"
+		- NEIGH  = { begin , end , * , Token , eraseTokens , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- SUCC   = { tok , * , Token , deleteToken , }
+
+465 :	"end"
+		- NEIGH  = { begin , end , * , Token , eraseTokens , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { & , > , < , std , templateDeclarationNameToken , list , templateInstantiationNameToken , specializations , * , Token , matchSpecialization , }
+		- SUCC   = { tok , * , Token , deleteToken , }
+
+472 :	"deleteToken"
+		- NEIGH  = { tok , * , Token , deleteToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { begin , end , * , Token , eraseTokens , }
+		- SUCC   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+
+472 :	"Token"
+		- NEIGH  = { tok , * , Token , deleteToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { begin , end , * , Token , eraseTokens , }
+		- SUCC   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+
+472 :	"*"
+		- NEIGH  = { tok , * , Token , deleteToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { begin , end , * , Token , eraseTokens , }
+		- SUCC   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+
+472 :	"tok"
+		- NEIGH  = { tok , * , Token , deleteToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { begin , end , * , Token , eraseTokens , }
+		- SUCC   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+
+480 :	"std"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+480 :	"string"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+480 :	"getNewName"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+481 :	"Token"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+481 :	"*"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+481 :	"tok2"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+482 :	"std"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+482 :	"list"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+482 :	"<"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+482 :	"std"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+482 :	"string"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+482 :	">"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+482 :	"&"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+482 :	"typeStringsUsedInTemplateInstantiation"
+		- NEIGH  = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , * , Token , deleteToken , }
+		- SUCC   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+
+484 :	"printOut"
+		- NEIGH  = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- SUCC   = { & , string , text , std , printOut , }
+
+485 :	"TokenAndName"
+		- NEIGH  = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- SUCC   = { & , string , text , std , printOut , }
+
+485 :	"&"
+		- NEIGH  = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- SUCC   = { & , string , text , std , printOut , }
+
+485 :	"tokenAndName"
+		- NEIGH  = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- SUCC   = { & , string , text , std , printOut , }
+
+486 :	"std"
+		- NEIGH  = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- SUCC   = { & , string , text , std , printOut , }
+
+486 :	"string"
+		- NEIGH  = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- SUCC   = { & , string , text , std , printOut , }
+
+486 :	"&"
+		- NEIGH  = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- SUCC   = { & , string , text , std , printOut , }
+
+486 :	"indent"
+		- NEIGH  = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { typeStringsUsedInTemplateInstantiation , & , > , < , list , tok2 , * , string , Token , getNewName , std , }
+		- SUCC   = { & , string , text , std , printOut , }
+
+487 :	"printOut"
+		- NEIGH  = { & , string , text , std , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- SUCC   = { mTokenizer , * , Tokenizer , }
+
+487 :	"std"
+		- NEIGH  = { & , string , text , std , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- SUCC   = { mTokenizer , * , Tokenizer , }
+
+487 :	"string"
+		- NEIGH  = { & , string , text , std , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- SUCC   = { mTokenizer , * , Tokenizer , }
+
+487 :	"&"
+		- NEIGH  = { & , string , text , std , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- SUCC   = { mTokenizer , * , Tokenizer , }
+
+487 :	"text"
+		- NEIGH  = { & , string , text , std , printOut , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { string , std , & , TokenAndName , tokenAndName , indent , printOut , }
+		- SUCC   = { mTokenizer , * , Tokenizer , }
+
+489 :	"Tokenizer"
+		- NEIGH  = { mTokenizer , * , Tokenizer , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { & , string , text , std , printOut , }
+		- SUCC   = { mTokenList , & , TokenList , }
+
+489 :	"*"
+		- NEIGH  = { mTokenizer , * , Tokenizer , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { & , string , text , std , printOut , }
+		- SUCC   = { mTokenList , & , TokenList , }
+
+489 :	"mTokenizer"
+		- NEIGH  = { mTokenizer , * , Tokenizer , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { & , string , text , std , printOut , }
+		- SUCC   = { mTokenList , & , TokenList , }
+
+490 :	"TokenList"
+		- NEIGH  = { mTokenList , & , TokenList , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTokenizer , * , Tokenizer , }
+		- SUCC   = { mSettings , * , Settings , }
+
+490 :	"&"
+		- NEIGH  = { mTokenList , & , TokenList , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTokenizer , * , Tokenizer , }
+		- SUCC   = { mSettings , * , Settings , }
+
+490 :	"mTokenList"
+		- NEIGH  = { mTokenList , & , TokenList , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTokenizer , * , Tokenizer , }
+		- SUCC   = { mSettings , * , Settings , }
+
+491 :	"Settings"
+		- NEIGH  = { mSettings , * , Settings , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTokenList , & , TokenList , }
+		- SUCC   = { mErrorLogger , * , ErrorLogger , }
+
+491 :	"*"
+		- NEIGH  = { mSettings , * , Settings , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTokenList , & , TokenList , }
+		- SUCC   = { mErrorLogger , * , ErrorLogger , }
+
+491 :	"mSettings"
+		- NEIGH  = { mSettings , * , Settings , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTokenList , & , TokenList , }
+		- SUCC   = { mErrorLogger , * , ErrorLogger , }
+
+492 :	"ErrorLogger"
+		- NEIGH  = { mErrorLogger , * , ErrorLogger , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mSettings , * , Settings , }
+		- SUCC   = { mChanged , }
+
+492 :	"*"
+		- NEIGH  = { mErrorLogger , * , ErrorLogger , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mSettings , * , Settings , }
+		- SUCC   = { mChanged , }
+
+492 :	"mErrorLogger"
+		- NEIGH  = { mErrorLogger , * , ErrorLogger , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mSettings , * , Settings , }
+		- SUCC   = { mChanged , }
+
+493 :	"mChanged"
+		- NEIGH  = { mChanged , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mErrorLogger , * , ErrorLogger , }
+		- SUCC   = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+
+495 :	"std"
+		- NEIGH  = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mChanged , }
+		- SUCC   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+
+495 :	"list"
+		- NEIGH  = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mChanged , }
+		- SUCC   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+
+495 :	"<"
+		- NEIGH  = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mChanged , }
+		- SUCC   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+
+495 :	"TokenAndName"
+		- NEIGH  = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mChanged , }
+		- SUCC   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+
+495 :	">"
+		- NEIGH  = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mChanged , }
+		- SUCC   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+
+495 :	"mTemplateDeclarations"
+		- NEIGH  = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mChanged , }
+		- SUCC   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+
+496 :	"std"
+		- NEIGH  = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+
+496 :	"list"
+		- NEIGH  = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+
+496 :	"<"
+		- NEIGH  = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+
+496 :	"TokenAndName"
+		- NEIGH  = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+
+496 :	">"
+		- NEIGH  = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+
+496 :	"mTemplateForwardDeclarations"
+		- NEIGH  = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+
+497 :	"std"
+		- NEIGH  = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+
+497 :	"map"
+		- NEIGH  = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+
+497 :	"<"
+		- NEIGH  = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+
+497 :	"Token"
+		- NEIGH  = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+
+497 :	"*"
+		- NEIGH  = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+
+497 :	"Token"
+		- NEIGH  = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+
+497 :	"*"
+		- NEIGH  = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+
+497 :	">"
+		- NEIGH  = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+
+497 :	"mTemplateForwardDeclarationsMap"
+		- NEIGH  = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateForwardDeclarations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+
+498 :	"std"
+		- NEIGH  = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- SUCC   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+
+498 :	"map"
+		- NEIGH  = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- SUCC   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+
+498 :	"<"
+		- NEIGH  = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- SUCC   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+
+498 :	"Token"
+		- NEIGH  = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- SUCC   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+
+498 :	"*"
+		- NEIGH  = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- SUCC   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+
+498 :	"Token"
+		- NEIGH  = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- SUCC   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+
+498 :	"*"
+		- NEIGH  = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- SUCC   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+
+498 :	">"
+		- NEIGH  = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- SUCC   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+
+498 :	"mTemplateSpecializationMap"
+		- NEIGH  = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateForwardDeclarationsMap , < , map , std , }
+		- SUCC   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+
+499 :	"std"
+		- NEIGH  = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- SUCC   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+
+499 :	"map"
+		- NEIGH  = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- SUCC   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+
+499 :	"<"
+		- NEIGH  = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- SUCC   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+
+499 :	"Token"
+		- NEIGH  = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- SUCC   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+
+499 :	"*"
+		- NEIGH  = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- SUCC   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+
+499 :	"Token"
+		- NEIGH  = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- SUCC   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+
+499 :	"*"
+		- NEIGH  = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- SUCC   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+
+499 :	">"
+		- NEIGH  = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- SUCC   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+
+499 :	"mTemplatePartialSpecializationMap"
+		- NEIGH  = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , mTemplateSpecializationMap , < , map , std , }
+		- SUCC   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+
+500 :	"std"
+		- NEIGH  = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- SUCC   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+
+500 :	"list"
+		- NEIGH  = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- SUCC   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+
+500 :	"<"
+		- NEIGH  = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- SUCC   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+
+500 :	"TokenAndName"
+		- NEIGH  = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- SUCC   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+
+500 :	">"
+		- NEIGH  = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- SUCC   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+
+500 :	"mTemplateInstantiations"
+		- NEIGH  = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , * , Token , < , mTemplatePartialSpecializationMap , map , std , }
+		- SUCC   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+
+501 :	"std"
+		- NEIGH  = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+
+501 :	"list"
+		- NEIGH  = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+
+501 :	"<"
+		- NEIGH  = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+
+501 :	"TokenAndName"
+		- NEIGH  = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+
+501 :	">"
+		- NEIGH  = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+
+501 :	"mInstantiatedTemplates"
+		- NEIGH  = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTemplateInstantiations , > , < , TokenAndName , list , std , }
+		- SUCC   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+
+502 :	"std"
+		- NEIGH  = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- SUCC   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+
+502 :	"list"
+		- NEIGH  = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- SUCC   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+
+502 :	"<"
+		- NEIGH  = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- SUCC   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+
+502 :	"TokenAndName"
+		- NEIGH  = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- SUCC   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+
+502 :	">"
+		- NEIGH  = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- SUCC   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+
+502 :	"mMemberFunctionsToDelete"
+		- NEIGH  = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mInstantiatedTemplates , > , < , TokenAndName , list , std , }
+		- SUCC   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+
+503 :	"std"
+		- NEIGH  = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- SUCC   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+
+503 :	"vector"
+		- NEIGH  = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- SUCC   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+
+503 :	"<"
+		- NEIGH  = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- SUCC   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+
+503 :	"TokenAndName"
+		- NEIGH  = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- SUCC   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+
+503 :	">"
+		- NEIGH  = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- SUCC   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+
+503 :	"mExplicitInstantiationsToDelete"
+		- NEIGH  = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { > , mMemberFunctionsToDelete , < , TokenAndName , list , std , }
+		- SUCC   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+
+504 :	"std"
+		- NEIGH  = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- SUCC   = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+
+504 :	"vector"
+		- NEIGH  = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- SUCC   = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+
+504 :	"<"
+		- NEIGH  = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- SUCC   = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+
+504 :	"TokenAndName"
+		- NEIGH  = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- SUCC   = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+
+504 :	">"
+		- NEIGH  = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- SUCC   = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+
+504 :	"mTypesUsedInTemplateInstantiation"
+		- NEIGH  = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mExplicitInstantiationsToDelete , > , TokenAndName , < , vector , std , }
+		- SUCC   = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+
+505 :	"std"
+		- NEIGH  = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- SUCC   = { }
+
+505 :	"unordered_map"
+		- NEIGH  = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- SUCC   = { }
+
+505 :	"<"
+		- NEIGH  = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- SUCC   = { }
+
+505 :	"Token"
+		- NEIGH  = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- SUCC   = { }
+
+505 :	"*"
+		- NEIGH  = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- SUCC   = { }
+
+505 :	">"
+		- NEIGH  = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- SUCC   = { }
+
+505 :	"mTemplateNamePos"
+		- NEIGH  = { > , * , Token , < , unordered_map , mTemplateNamePos , std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { mTypesUsedInTemplateInstantiation , > , TokenAndName , < , vector , std , }
+		- SUCC   = { }
+

@@ -195,7 +195,7 @@ public:
     decltype(auto) getTokens(line_t line) const
         { return _tokens_indexer.contains(line) ? _tokens_indexer.at(line) : nullptr; }
 
-    void log(std::ofstream& ofs);
+    void log(const fs::path& path) const;
 
 
 protected:
@@ -203,6 +203,15 @@ protected:
     std::list<std::list<Token>> _stream;
     std::unordered_map<line_t, decltype(_stream)::value_type*> _tokens_indexer;
 };
+
+
+
+TokenTree::TokenTree(const fs::path& path_with_filename, std::shared_ptr<TokenTree::Matcher> matcher) :
+        _root(std::make_unique<Token>(Token::Type::ROOT, 0, ""))
+{ 
+    _root->root = _root->parent = nullptr;
+    _root->predecessor = _root->neighbors = _root->successor = std::make_shared<Token::string_set>();
+}
 }
 
 
@@ -326,24 +335,14 @@ public:
 private:
     const std::unordered_map<std::string, Token::Type> _table;
 };
-}
 
 
 
 
-
-
-namespace PAFL
+void TokenTree::log(const fs::path& path) const
 {
-TokenTree::TokenTree(const fs::path& path_with_filename, std::shared_ptr<TokenTree::Matcher> matcher) :
-        _root(std::make_unique<Token>(Token::Type::ROOT, 0, ""))
-{ 
-    _root->root = _root->parent = nullptr;
-    _root->predecessor = _root->neighbors = _root->successor = std::make_shared<Token::string_set>();
-}
-
-void TokenTree::log(std::ofstream& ofs)
-{
+    std::ofstream ofs(path);
+        
     for (auto& list : _stream)
         for (auto& tok : list) {
 

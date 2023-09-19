@@ -1,0 +1,721 @@
+26 :	"CheckBoost"
+		- NEIGH  = { CheckBoost , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+26 :	"instance"
+		- NEIGH  = { instance , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+29 :	"CWE"
+		- NEIGH  = { CWE , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+29 :	"CWE664"
+		- NEIGH  = { CWE664 , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+31 :	"CheckBoost"
+		- NEIGH  = { CheckBoost , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+31 :	"checkBoostForeachModification"
+		- NEIGH  = { checkBoostForeachModification , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+33 :	"SymbolDatabase"
+		- NEIGH  = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+
+33 :	"*"
+		- NEIGH  = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+
+33 :	"symbolDatabase"
+		- NEIGH  = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+
+33 :	"mTokenizer"
+		- NEIGH  = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+
+33 :	"getSymbolDatabase"
+		- NEIGH  = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+
+34 :	"for"
+		- NEIGH  = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- PARENT = { }
+		- CHILD  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PRED   = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- SUCC   = { }
+
+34 :	"Scope"
+		- NEIGH  = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- PARENT = { }
+		- CHILD  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PRED   = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- SUCC   = { }
+
+34 :	"*"
+		- NEIGH  = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- PARENT = { }
+		- CHILD  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PRED   = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- SUCC   = { }
+
+34 :	"scope"
+		- NEIGH  = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- PARENT = { }
+		- CHILD  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PRED   = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- SUCC   = { }
+
+34 :	"symbolDatabase"
+		- NEIGH  = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- PARENT = { }
+		- CHILD  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PRED   = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- SUCC   = { }
+
+34 :	"functionScopes"
+		- NEIGH  = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- PARENT = { }
+		- CHILD  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PRED   = { getSymbolDatabase , mTokenizer , symbolDatabase , * , SymbolDatabase , }
+		- SUCC   = { }
+
+35 :	"for"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"Token"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"*"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"tok"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"scope"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"bodyStart"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"next"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"tok"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"&&"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"tok"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"!="
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"scope"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"bodyEnd"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"tok"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"tok"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+35 :	"next"
+		- NEIGH  = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- PARENT = { symbolDatabase , functionScopes , * , scope , Scope , for , }
+		- CHILD  = { != , for , tokAt , tok2 , Match , end , ! , Token , link , * , tok , previous , simpleMatch , next , containerTok , if , }
+		- PRED   = { }
+		- SUCC   = { }
+
+36 :	"if"
+		- NEIGH  = { tok , simpleMatch , Token , ! , if , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { continue , }
+		- PRED   = { }
+		- SUCC   = { previous , link , Token , containerTok , next , tok , * , }
+
+36 :	"!"
+		- NEIGH  = { tok , simpleMatch , Token , ! , if , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { continue , }
+		- PRED   = { }
+		- SUCC   = { previous , link , Token , containerTok , next , tok , * , }
+
+36 :	"Token"
+		- NEIGH  = { tok , simpleMatch , Token , ! , if , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { continue , }
+		- PRED   = { }
+		- SUCC   = { previous , link , Token , containerTok , next , tok , * , }
+
+36 :	"simpleMatch"
+		- NEIGH  = { tok , simpleMatch , Token , ! , if , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { continue , }
+		- PRED   = { }
+		- SUCC   = { previous , link , Token , containerTok , next , tok , * , }
+
+36 :	"tok"
+		- NEIGH  = { tok , simpleMatch , Token , ! , if , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { continue , }
+		- PRED   = { }
+		- SUCC   = { previous , link , Token , containerTok , next , tok , * , }
+
+37 :	"continue"
+		- NEIGH  = { continue , }
+		- PARENT = { tok , simpleMatch , Token , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+39 :	"Token"
+		- NEIGH  = { previous , link , Token , containerTok , next , tok , * , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , ! , if , }
+		- SUCC   = { containerTok , Token , ! , Match , if , }
+
+39 :	"*"
+		- NEIGH  = { previous , link , Token , containerTok , next , tok , * , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , ! , if , }
+		- SUCC   = { containerTok , Token , ! , Match , if , }
+
+39 :	"containerTok"
+		- NEIGH  = { previous , link , Token , containerTok , next , tok , * , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , ! , if , }
+		- SUCC   = { containerTok , Token , ! , Match , if , }
+
+39 :	"tok"
+		- NEIGH  = { previous , link , Token , containerTok , next , tok , * , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , ! , if , }
+		- SUCC   = { containerTok , Token , ! , Match , if , }
+
+39 :	"next"
+		- NEIGH  = { previous , link , Token , containerTok , next , tok , * , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , ! , if , }
+		- SUCC   = { containerTok , Token , ! , Match , if , }
+
+39 :	"link"
+		- NEIGH  = { previous , link , Token , containerTok , next , tok , * , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , ! , if , }
+		- SUCC   = { containerTok , Token , ! , Match , if , }
+
+39 :	"previous"
+		- NEIGH  = { previous , link , Token , containerTok , next , tok , * , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , ! , if , }
+		- SUCC   = { containerTok , Token , ! , Match , if , }
+
+40 :	"if"
+		- NEIGH  = { containerTok , Token , ! , Match , if , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { continue , }
+		- PRED   = { previous , link , Token , containerTok , next , tok , * , }
+		- SUCC   = { containerTok , tokAt , tok2 , * , Token , }
+
+40 :	"!"
+		- NEIGH  = { containerTok , Token , ! , Match , if , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { continue , }
+		- PRED   = { previous , link , Token , containerTok , next , tok , * , }
+		- SUCC   = { containerTok , tokAt , tok2 , * , Token , }
+
+40 :	"Token"
+		- NEIGH  = { containerTok , Token , ! , Match , if , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { continue , }
+		- PRED   = { previous , link , Token , containerTok , next , tok , * , }
+		- SUCC   = { containerTok , tokAt , tok2 , * , Token , }
+
+40 :	"Match"
+		- NEIGH  = { containerTok , Token , ! , Match , if , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { continue , }
+		- PRED   = { previous , link , Token , containerTok , next , tok , * , }
+		- SUCC   = { containerTok , tokAt , tok2 , * , Token , }
+
+40 :	"containerTok"
+		- NEIGH  = { containerTok , Token , ! , Match , if , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { continue , }
+		- PRED   = { previous , link , Token , containerTok , next , tok , * , }
+		- SUCC   = { containerTok , tokAt , tok2 , * , Token , }
+
+41 :	"continue"
+		- NEIGH  = { continue , }
+		- PARENT = { containerTok , Token , ! , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+43 :	"Token"
+		- NEIGH  = { containerTok , tokAt , tok2 , * , Token , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { containerTok , Token , ! , Match , if , }
+		- SUCC   = { link , tok2 , end , * , Token , }
+
+43 :	"*"
+		- NEIGH  = { containerTok , tokAt , tok2 , * , Token , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { containerTok , Token , ! , Match , if , }
+		- SUCC   = { link , tok2 , end , * , Token , }
+
+43 :	"tok2"
+		- NEIGH  = { containerTok , tokAt , tok2 , * , Token , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { containerTok , Token , ! , Match , if , }
+		- SUCC   = { link , tok2 , end , * , Token , }
+
+43 :	"containerTok"
+		- NEIGH  = { containerTok , tokAt , tok2 , * , Token , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { containerTok , Token , ! , Match , if , }
+		- SUCC   = { link , tok2 , end , * , Token , }
+
+43 :	"tokAt"
+		- NEIGH  = { containerTok , tokAt , tok2 , * , Token , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { containerTok , Token , ! , Match , if , }
+		- SUCC   = { link , tok2 , end , * , Token , }
+
+44 :	"Token"
+		- NEIGH  = { link , tok2 , end , * , Token , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { containerTok , tokAt , tok2 , * , Token , }
+		- SUCC   = { != , end , tok2 , next , for , }
+
+44 :	"*"
+		- NEIGH  = { link , tok2 , end , * , Token , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { containerTok , tokAt , tok2 , * , Token , }
+		- SUCC   = { != , end , tok2 , next , for , }
+
+44 :	"end"
+		- NEIGH  = { link , tok2 , end , * , Token , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { containerTok , tokAt , tok2 , * , Token , }
+		- SUCC   = { != , end , tok2 , next , for , }
+
+44 :	"tok2"
+		- NEIGH  = { link , tok2 , end , * , Token , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { containerTok , tokAt , tok2 , * , Token , }
+		- SUCC   = { != , end , tok2 , next , for , }
+
+44 :	"link"
+		- NEIGH  = { link , tok2 , end , * , Token , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { }
+		- PRED   = { containerTok , tokAt , tok2 , * , Token , }
+		- SUCC   = { != , end , tok2 , next , for , }
+
+45 :	"for"
+		- NEIGH  = { != , end , tok2 , next , for , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PRED   = { link , tok2 , end , * , Token , }
+		- SUCC   = { }
+
+45 :	"tok2"
+		- NEIGH  = { != , end , tok2 , next , for , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PRED   = { link , tok2 , end , * , Token , }
+		- SUCC   = { }
+
+45 :	"!="
+		- NEIGH  = { != , end , tok2 , next , for , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PRED   = { link , tok2 , end , * , Token , }
+		- SUCC   = { }
+
+45 :	"end"
+		- NEIGH  = { != , end , tok2 , next , for , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PRED   = { link , tok2 , end , * , Token , }
+		- SUCC   = { }
+
+45 :	"tok2"
+		- NEIGH  = { != , end , tok2 , next , for , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PRED   = { link , tok2 , end , * , Token , }
+		- SUCC   = { }
+
+45 :	"tok2"
+		- NEIGH  = { != , end , tok2 , next , for , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PRED   = { link , tok2 , end , * , Token , }
+		- SUCC   = { }
+
+45 :	"next"
+		- NEIGH  = { != , end , tok2 , next , for , }
+		- PARENT = { && , scope , bodyEnd , != , tok , bodyStart , * , next , Token , for , }
+		- CHILD  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PRED   = { link , tok2 , end , * , Token , }
+		- SUCC   = { }
+
+46 :	"if"
+		- NEIGH  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PARENT = { != , end , tok2 , next , for , }
+		- CHILD  = { Match , ! , if , end , linkAt , break , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PRED   = { }
+		- SUCC   = { }
+
+46 :	"Token"
+		- NEIGH  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PARENT = { != , end , tok2 , next , for , }
+		- CHILD  = { Match , ! , if , end , linkAt , break , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PRED   = { }
+		- SUCC   = { }
+
+46 :	"Match"
+		- NEIGH  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PARENT = { != , end , tok2 , next , for , }
+		- CHILD  = { Match , ! , if , end , linkAt , break , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PRED   = { }
+		- SUCC   = { }
+
+46 :	"tok2"
+		- NEIGH  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PARENT = { != , end , tok2 , next , for , }
+		- CHILD  = { Match , ! , if , end , linkAt , break , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PRED   = { }
+		- SUCC   = { }
+
+46 :	"containerTok"
+		- NEIGH  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PARENT = { != , end , tok2 , next , for , }
+		- CHILD  = { Match , ! , if , end , linkAt , break , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PRED   = { }
+		- SUCC   = { }
+
+46 :	"varId"
+		- NEIGH  = { Token , containerTok , tok2 , varId , Match , if , }
+		- PARENT = { != , end , tok2 , next , for , }
+		- CHILD  = { Match , ! , if , end , linkAt , break , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PRED   = { }
+		- SUCC   = { }
+
+47 :	"Token"
+		- NEIGH  = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Token , ! , nextStatement , Match , if , }
+
+47 :	"*"
+		- NEIGH  = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Token , ! , nextStatement , Match , if , }
+
+47 :	"nextStatement"
+		- NEIGH  = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Token , ! , nextStatement , Match , if , }
+
+47 :	"Token"
+		- NEIGH  = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Token , ! , nextStatement , Match , if , }
+
+47 :	"findsimplematch"
+		- NEIGH  = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Token , ! , nextStatement , Match , if , }
+
+47 :	"tok2"
+		- NEIGH  = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Token , ! , nextStatement , Match , if , }
+
+47 :	"linkAt"
+		- NEIGH  = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Token , ! , nextStatement , Match , if , }
+
+47 :	"end"
+		- NEIGH  = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Token , ! , nextStatement , Match , if , }
+
+48 :	"if"
+		- NEIGH  = { Token , ! , nextStatement , Match , if , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { tok2 , boostForeachError , }
+		- PRED   = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- SUCC   = { break , }
+
+48 :	"!"
+		- NEIGH  = { Token , ! , nextStatement , Match , if , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { tok2 , boostForeachError , }
+		- PRED   = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- SUCC   = { break , }
+
+48 :	"Token"
+		- NEIGH  = { Token , ! , nextStatement , Match , if , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { tok2 , boostForeachError , }
+		- PRED   = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- SUCC   = { break , }
+
+48 :	"Match"
+		- NEIGH  = { Token , ! , nextStatement , Match , if , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { tok2 , boostForeachError , }
+		- PRED   = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- SUCC   = { break , }
+
+48 :	"nextStatement"
+		- NEIGH  = { Token , ! , nextStatement , Match , if , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { tok2 , boostForeachError , }
+		- PRED   = { end , linkAt , findsimplematch , nextStatement , tok2 , * , Token , }
+		- SUCC   = { break , }
+
+49 :	"boostForeachError"
+		- NEIGH  = { tok2 , boostForeachError , }
+		- PARENT = { Token , ! , nextStatement , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+49 :	"tok2"
+		- NEIGH  = { tok2 , boostForeachError , }
+		- PARENT = { Token , ! , nextStatement , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+50 :	"break"
+		- NEIGH  = { break , }
+		- PARENT = { Token , containerTok , tok2 , varId , Match , if , }
+		- CHILD  = { }
+		- PRED   = { Token , ! , nextStatement , Match , if , }
+		- SUCC   = { }
+
+57 :	"CheckBoost"
+		- NEIGH  = { CheckBoost , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+57 :	"boostForeachError"
+		- NEIGH  = { boostForeachError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+57 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+57 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+57 :	"tok"
+		- NEIGH  = { tok , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+59 :	"reportError"
+		- NEIGH  = { Certainty , error , CWE664 , normal , tok , Severity , reportError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+59 :	"tok"
+		- NEIGH  = { Certainty , error , CWE664 , normal , tok , Severity , reportError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+59 :	"Severity"
+		- NEIGH  = { Certainty , error , CWE664 , normal , tok , Severity , reportError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+59 :	"error"
+		- NEIGH  = { Certainty , error , CWE664 , normal , tok , Severity , reportError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+60 :	"CWE664"
+		- NEIGH  = { Certainty , error , CWE664 , normal , tok , Severity , reportError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+60 :	"Certainty"
+		- NEIGH  = { Certainty , error , CWE664 , normal , tok , Severity , reportError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+60 :	"normal"
+		- NEIGH  = { Certainty , error , CWE664 , normal , tok , Severity , reportError , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+

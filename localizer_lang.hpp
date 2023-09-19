@@ -48,6 +48,8 @@ public:
         { return iterator(_target, _parent, _child, _pred, _succ); }
     decltype(auto) end()
         { return _succ.end(); }
+    
+    void log(const fs::path& path) const;
 
     
 private:
@@ -126,13 +128,14 @@ float Localizer::Lang::similarity(const Token& token) const
 float Localizer::Lang::_maxWeight(decltype(Token::neighbors) set_ptr, const block& blck) const
 {
     float ret = 0.0f;
-    for (auto& tok : *set_ptr)
-        if (blck.contains(tok)) {
+    if (!blck.empty())
+        for (auto& tok : *set_ptr)
+            if (blck.contains(tok)) {
 
-            auto temp = blck.at(tok).weight;
-            if (temp > ret)
-                ret = temp;
-        }
+                auto temp = blck.at(tok).weight;
+                if (temp > ret)
+                    ret = temp;
+            }
 
     return ret;
 }
@@ -142,5 +145,23 @@ void Localizer::Lang::_insert(decltype(Token::neighbors) set_ptr, block& blck, f
     for (auto& tok : *set_ptr)
         if (!blck.contains(tok))
             blck.emplace(tok, Weight{base, base});
+}
+
+
+
+
+
+
+void Localizer::Lang::log(const fs::path& path) const
+{
+    std::ofstream ofs(path);
+
+    auto _logBlock = [](std::ofstream& ofs, const Lang::block& block)
+        { for (auto& item : block) ofs << "  -:\"" << item.first << "\"  ->  " << item.second.weight << '\n'; };
+    ofs << "\n<Target>\n\n"; _logBlock(ofs, _target);
+    ofs << "\n<Parent>\n\n"; _logBlock(ofs, _parent);
+    ofs << "\n<Child>\n\n"; _logBlock(ofs, _child);
+    ofs << "\n<Pred>\n\n"; _logBlock(ofs, _pred);
+    ofs << "\n<Succ>\n\n"; _logBlock(ofs, _succ);
 }
 }

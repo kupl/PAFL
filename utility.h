@@ -21,10 +21,12 @@ namespace Coef
 
 namespace Normalizer
 {
-    float CbrtOchiai(float sus, float higest)
-        { return sus > 0.0f ? std::cbrt(sus / higest) : 0.0f; }
-    float SqrtOchiai(float sus, float higest)
+    float SqrtOchiai(float sus, float higest) // 2
         { return sus > 0.0f ? std::sqrt(sus / higest) : 0.0f; }
+    float CbrtOchiai(float sus, float higest) // 3
+        { return sus > 0.0f ? std::cbrt(sus / higest) : 0.0f; }
+    float BqrtOchiai(float sus, float higest) // 4
+        { return sus > 0.0f ? std::sqrt(std::sqrt(sus / higest)) : 0.0f; }
 }
 
 }

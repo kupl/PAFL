@@ -39,7 +39,7 @@ public:
         { return _file2index.contains(file) ? _file2index.at(file) : throw std::out_of_range(file + " is out of range"); }
     index_t MaxIndex() const
         { return _index2file.size(); }
-    std::string getFileFromIndex(index_t idx) const
+    const std::string& getFileFromIndex(index_t idx) const
         { return _index2file[idx]; }
     ranking_info* getRankingInfo(index_t idx, line_t line)
         { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking : nullptr; }
@@ -55,9 +55,9 @@ public:
         { return _test_suite; }
 
 
-    void save(std::ofstream& ofs) const;
-    void _write(std::ofstream& ofs);
-    void _read(std::ifstream& ifs);
+    void save(const fs::path& path) const;
+    void _write(const fs::path& path) const;
+    bool _read(const fs::path& path);
 
 
     decltype(auto) begin()
@@ -239,8 +239,9 @@ line_t TestSuite::getRankingSum(const fault_loc& faults) const
 
 
 
-void TestSuite::save(std::ofstream& ofs) const
+void TestSuite::save(const fs::path& path) const
 {
+    std::ofstream ofs(path);
     char buf[10];
 
     // files
@@ -287,9 +288,10 @@ void TestSuite::save(std::ofstream& ofs) const
 
 
 
-void TestSuite::_write(std::ofstream& ofs)
+void TestSuite::_write(const fs::path& path) const
 {
     // TestSuite
+    std::ofstream ofs(path);
     ofs << _is_initialized << '\n' << _fail << '\n' << _index2file.size() << '\n';
     
     for (auto& iter : _index2file) {
@@ -316,8 +318,12 @@ void TestSuite::_write(std::ofstream& ofs)
 
 }
 
-void TestSuite::_read(std::ifstream& ifs)
+bool TestSuite::_read(const fs::path& path)
 {
+    if (!fs::exists(path))
+        return false;
+
+    std::ifstream ifs(path);
     index_t index_size = 0;
     ifs >> _is_initialized >> _fail >> index_size;
 
@@ -345,11 +351,11 @@ void TestSuite::_read(std::ifstream& ifs)
         for (line_t j = 0; j != file_size; j++) {
 
             line_t line;
-            size_t Ncf, Ncs;
-            ifs >> line >> Ncf >> Ncs;
+            size_t Ncs, Ncf;
+            ifs >> line >> Ncs >> Ncf;
 
             auto& ptr = _ranking.emplace_back(ranking_info{ idx, line, 0.0f, 0.0f, 0 });
-            _line_param[idx].emplace(line, param{ Ncf, Ncs, &ptr });
+            _line_param[idx].emplace(line, param{ Ncs, Ncf, &ptr });
         }
     }
 
@@ -372,6 +378,8 @@ void TestSuite::_read(std::ifstream& ifs)
             tc_lines.emplace_back(index, line);
         }
     }
+
+    return true;
 }
 }
 #endif

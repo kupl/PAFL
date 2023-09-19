@@ -1,0 +1,4074 @@
+8 :	"Scope"
+		- NEIGH  = { Scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+8 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+8 :	"PathAnalysis"
+		- NEIGH  = { PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+8 :	"findOuterScope"
+		- NEIGH  = { findOuterScope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+8 :	"Scope"
+		- NEIGH  = { Scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+8 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+8 :	"scope"
+		- NEIGH  = { scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+10 :	"if"
+		- NEIGH  = { scope , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+
+10 :	"!"
+		- NEIGH  = { scope , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+
+10 :	"scope"
+		- NEIGH  = { scope , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+
+11 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { scope , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+12 :	"if"
+		- NEIGH  = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- PARENT = { }
+		- CHILD  = { scope , nestedIn , findOuterScope , return , }
+		- PRED   = { scope , ! , if , }
+		- SUCC   = { scope , return , }
+
+12 :	"scope"
+		- NEIGH  = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- PARENT = { }
+		- CHILD  = { scope , nestedIn , findOuterScope , return , }
+		- PRED   = { scope , ! , if , }
+		- SUCC   = { scope , return , }
+
+12 :	"isLocal"
+		- NEIGH  = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- PARENT = { }
+		- CHILD  = { scope , nestedIn , findOuterScope , return , }
+		- PRED   = { scope , ! , if , }
+		- SUCC   = { scope , return , }
+
+12 :	"&&"
+		- NEIGH  = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- PARENT = { }
+		- CHILD  = { scope , nestedIn , findOuterScope , return , }
+		- PRED   = { scope , ! , if , }
+		- SUCC   = { scope , return , }
+
+12 :	"scope"
+		- NEIGH  = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- PARENT = { }
+		- CHILD  = { scope , nestedIn , findOuterScope , return , }
+		- PRED   = { scope , ! , if , }
+		- SUCC   = { scope , return , }
+
+12 :	"type"
+		- NEIGH  = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- PARENT = { }
+		- CHILD  = { scope , nestedIn , findOuterScope , return , }
+		- PRED   = { scope , ! , if , }
+		- SUCC   = { scope , return , }
+
+12 :	"!="
+		- NEIGH  = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- PARENT = { }
+		- CHILD  = { scope , nestedIn , findOuterScope , return , }
+		- PRED   = { scope , ! , if , }
+		- SUCC   = { scope , return , }
+
+12 :	"Scope"
+		- NEIGH  = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- PARENT = { }
+		- CHILD  = { scope , nestedIn , findOuterScope , return , }
+		- PRED   = { scope , ! , if , }
+		- SUCC   = { scope , return , }
+
+12 :	"eSwitch"
+		- NEIGH  = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- PARENT = { }
+		- CHILD  = { scope , nestedIn , findOuterScope , return , }
+		- PRED   = { scope , ! , if , }
+		- SUCC   = { scope , return , }
+
+13 :	"return"
+		- NEIGH  = { scope , nestedIn , findOuterScope , return , }
+		- PARENT = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+13 :	"findOuterScope"
+		- NEIGH  = { scope , nestedIn , findOuterScope , return , }
+		- PARENT = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+13 :	"scope"
+		- NEIGH  = { scope , nestedIn , findOuterScope , return , }
+		- PARENT = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+13 :	"nestedIn"
+		- NEIGH  = { scope , nestedIn , findOuterScope , return , }
+		- PARENT = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+14 :	"return"
+		- NEIGH  = { scope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- SUCC   = { }
+
+14 :	"scope"
+		- NEIGH  = { scope , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { eSwitch , Scope , != , type , if , isLocal , && , scope , }
+		- SUCC   = { }
+
+17 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+17 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+17 :	"getCondTok"
+		- NEIGH  = { getCondTok , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+17 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+17 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+17 :	"tok"
+		- NEIGH  = { tok , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+19 :	"if"
+		- NEIGH  = { tok , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { tok , simpleMatch , Token , if , }
+
+19 :	"!"
+		- NEIGH  = { tok , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { tok , simpleMatch , Token , if , }
+
+19 :	"tok"
+		- NEIGH  = { tok , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { }
+		- SUCC   = { tok , simpleMatch , Token , if , }
+
+20 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { tok , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+21 :	"if"
+		- NEIGH  = { tok , simpleMatch , Token , if , }
+		- PARENT = { }
+		- CHILD  = { previous , tok , getCondTok , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+
+21 :	"Token"
+		- NEIGH  = { tok , simpleMatch , Token , if , }
+		- PARENT = { }
+		- CHILD  = { previous , tok , getCondTok , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+
+21 :	"simpleMatch"
+		- NEIGH  = { tok , simpleMatch , Token , if , }
+		- PARENT = { }
+		- CHILD  = { previous , tok , getCondTok , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+
+21 :	"tok"
+		- NEIGH  = { tok , simpleMatch , Token , if , }
+		- PARENT = { }
+		- CHILD  = { previous , tok , getCondTok , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+
+22 :	"return"
+		- NEIGH  = { previous , tok , getCondTok , return , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+22 :	"getCondTok"
+		- NEIGH  = { previous , tok , getCondTok , return , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+22 :	"tok"
+		- NEIGH  = { previous , tok , getCondTok , return , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+22 :	"previous"
+		- NEIGH  = { previous , tok , getCondTok , return , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+23 :	"if"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"Token"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"simpleMatch"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"tok"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"&&"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"Token"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"simpleMatch"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"tok"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"next"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"astOperand2"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"&&"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"tok"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"next"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"astOperand2"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+23 :	"astOperand2"
+		- NEIGH  = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { tok , simpleMatch , Token , if , }
+		- SUCC   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+
+24 :	"return"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+24 :	"tok"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+24 :	"next"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+24 :	"astOperand2"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+24 :	"astOperand2"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+24 :	"astOperand1"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+25 :	"if"
+		- NEIGH  = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- SUCC   = { next , tok , astOperand2 , return , }
+
+25 :	"Token"
+		- NEIGH  = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- SUCC   = { next , tok , astOperand2 , return , }
+
+25 :	"simpleMatch"
+		- NEIGH  = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- SUCC   = { next , tok , astOperand2 , return , }
+
+25 :	"tok"
+		- NEIGH  = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- SUCC   = { next , tok , astOperand2 , return , }
+
+25 :	"next"
+		- NEIGH  = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- SUCC   = { next , tok , astOperand2 , return , }
+
+25 :	"astOperand2"
+		- NEIGH  = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- PARENT = { }
+		- CHILD  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PRED   = { && , tok , simpleMatch , next , Token , astOperand2 , if , }
+		- SUCC   = { next , tok , astOperand2 , return , }
+
+26 :	"return"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+26 :	"tok"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+26 :	"next"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+26 :	"astOperand2"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+26 :	"astOperand1"
+		- NEIGH  = { astOperand1 , next , tok , astOperand2 , return , }
+		- PARENT = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+27 :	"return"
+		- NEIGH  = { next , tok , astOperand2 , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- SUCC   = { }
+
+27 :	"tok"
+		- NEIGH  = { next , tok , astOperand2 , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- SUCC   = { }
+
+27 :	"next"
+		- NEIGH  = { next , tok , astOperand2 , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- SUCC   = { }
+
+27 :	"astOperand2"
+		- NEIGH  = { next , tok , astOperand2 , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , simpleMatch , Token , next , astOperand2 , if , }
+		- SUCC   = { }
+
+30 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+30 :	"pair"
+		- NEIGH  = { pair , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+30 :	"<"
+		- NEIGH  = { < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+30 :	">"
+		- NEIGH  = { > , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+30 :	"PathAnalysis"
+		- NEIGH  = { PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+30 :	"checkCond"
+		- NEIGH  = { checkCond , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+30 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+30 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+30 :	"tok"
+		- NEIGH  = { tok , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+30 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+30 :	"known"
+		- NEIGH  = { known , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+32 :	"if"
+		- NEIGH  = { tok , hasKnownIntValue , if , }
+		- PARENT = { }
+		- CHILD  = { ! , intvalue , front , values , tok , make_pair , return , std , known , }
+		- PRED   = { }
+		- SUCC   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+
+32 :	"tok"
+		- NEIGH  = { tok , hasKnownIntValue , if , }
+		- PARENT = { }
+		- CHILD  = { ! , intvalue , front , values , tok , make_pair , return , std , known , }
+		- PRED   = { }
+		- SUCC   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+
+32 :	"hasKnownIntValue"
+		- NEIGH  = { tok , hasKnownIntValue , if , }
+		- PARENT = { }
+		- CHILD  = { ! , intvalue , front , values , tok , make_pair , return , std , known , }
+		- PRED   = { }
+		- SUCC   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+
+33 :	"known"
+		- NEIGH  = { known , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { ! , intvalue , front , tok , make_pair , values , std , return , }
+
+34 :	"return"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"std"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"make_pair"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"tok"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"values"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"front"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"intvalue"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"!"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"tok"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"values"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"front"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+34 :	"intvalue"
+		- NEIGH  = { ! , intvalue , front , tok , make_pair , values , std , return , }
+		- PARENT = { tok , hasKnownIntValue , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+36 :	"it"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"std"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"find_if"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"tok"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"values"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"begin"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"tok"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"values"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"end"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"ValueFlow"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"Value"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"&"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+36 :	"v"
+		- NEIGH  = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { tok , hasKnownIntValue , if , }
+		- SUCC   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+
+37 :	"return"
+		- NEIGH  = { isIntValue , v , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+37 :	"v"
+		- NEIGH  = { isIntValue , v , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+37 :	"isIntValue"
+		- NEIGH  = { isIntValue , v , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+40 :	"if"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"it"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"!="
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"tok"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"values"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"end"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"&&"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"std"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"all_of"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"it"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"tok"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"values"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"end"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"&"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"ValueFlow"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"Value"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"&"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+40 :	"v"
+		- NEIGH  = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- PARENT = { }
+		- CHILD  = { intvalue , make_pair , std , return , ! , it , known , }
+		- PRED   = { v , & , Value , end , begin , tok , find_if , values , ValueFlow , std , it , }
+		- SUCC   = { make_pair , std , return , }
+
+41 :	"if"
+		- NEIGH  = { isIntValue , v , if , }
+		- PARENT = { }
+		- CHILD  = { it , == , intvalue , v , return , }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+41 :	"v"
+		- NEIGH  = { isIntValue , v , if , }
+		- PARENT = { }
+		- CHILD  = { it , == , intvalue , v , return , }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+41 :	"isIntValue"
+		- NEIGH  = { isIntValue , v , if , }
+		- PARENT = { }
+		- CHILD  = { it , == , intvalue , v , return , }
+		- PRED   = { }
+		- SUCC   = { return , }
+
+42 :	"return"
+		- NEIGH  = { it , == , intvalue , v , return , }
+		- PARENT = { isIntValue , v , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+42 :	"v"
+		- NEIGH  = { it , == , intvalue , v , return , }
+		- PARENT = { isIntValue , v , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+42 :	"intvalue"
+		- NEIGH  = { it , == , intvalue , v , return , }
+		- PARENT = { isIntValue , v , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+42 :	"=="
+		- NEIGH  = { it , == , intvalue , v , return , }
+		- PARENT = { isIntValue , v , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+42 :	"it"
+		- NEIGH  = { it , == , intvalue , v , return , }
+		- PARENT = { isIntValue , v , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+42 :	"intvalue"
+		- NEIGH  = { it , == , intvalue , v , return , }
+		- PARENT = { isIntValue , v , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+43 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { isIntValue , v , if , }
+		- SUCC   = { }
+
+45 :	"known"
+		- NEIGH  = { known , }
+		- PARENT = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { intvalue , make_pair , ! , it , std , return , }
+
+46 :	"return"
+		- NEIGH  = { intvalue , make_pair , ! , it , std , return , }
+		- PARENT = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+46 :	"std"
+		- NEIGH  = { intvalue , make_pair , ! , it , std , return , }
+		- PARENT = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+46 :	"make_pair"
+		- NEIGH  = { intvalue , make_pair , ! , it , std , return , }
+		- PARENT = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+46 :	"it"
+		- NEIGH  = { intvalue , make_pair , ! , it , std , return , }
+		- PARENT = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+46 :	"intvalue"
+		- NEIGH  = { intvalue , make_pair , ! , it , std , return , }
+		- PARENT = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+46 :	"!"
+		- NEIGH  = { intvalue , make_pair , ! , it , std , return , }
+		- PARENT = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+46 :	"it"
+		- NEIGH  = { intvalue , make_pair , ! , it , std , return , }
+		- PARENT = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+46 :	"intvalue"
+		- NEIGH  = { intvalue , make_pair , ! , it , std , return , }
+		- PARENT = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- CHILD  = { }
+		- PRED   = { known , }
+		- SUCC   = { }
+
+48 :	"return"
+		- NEIGH  = { make_pair , std , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- SUCC   = { }
+
+48 :	"std"
+		- NEIGH  = { make_pair , std , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- SUCC   = { }
+
+48 :	"make_pair"
+		- NEIGH  = { make_pair , std , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { v , & , ValueFlow , all_of , Value , std , && , values , end , tok , != , it , if , }
+		- SUCC   = { }
+
+51 :	"PathAnalysis"
+		- NEIGH  = { PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"Progress"
+		- NEIGH  = { Progress , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"PathAnalysis"
+		- NEIGH  = { PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"forwardRecursive"
+		- NEIGH  = { forwardRecursive , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"tok"
+		- NEIGH  = { tok , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"Info"
+		- NEIGH  = { Info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"info"
+		- NEIGH  = { info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"function"
+		- NEIGH  = { function , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"<"
+		- NEIGH  = { < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"PathAnalysis"
+		- NEIGH  = { PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"Progress"
+		- NEIGH  = { Progress , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"Info"
+		- NEIGH  = { Info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	">"
+		- NEIGH  = { > , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+51 :	"f"
+		- NEIGH  = { f , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+53 :	"if"
+		- NEIGH  = { tok , ! , if , }
+		- PARENT = { }
+		- CHILD  = { Continue , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+
+53 :	"!"
+		- NEIGH  = { tok , ! , if , }
+		- PARENT = { }
+		- CHILD  = { Continue , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+
+53 :	"tok"
+		- NEIGH  = { tok , ! , if , }
+		- PARENT = { }
+		- CHILD  = { Continue , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+
+54 :	"return"
+		- NEIGH  = { Continue , Progress , return , }
+		- PARENT = { tok , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+54 :	"Progress"
+		- NEIGH  = { Continue , Progress , return , }
+		- PARENT = { tok , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+54 :	"Continue"
+		- NEIGH  = { Continue , Progress , return , }
+		- PARENT = { tok , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+55 :	"if"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"tok"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"astOperand1"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"&&"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"forwardRecursive"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"tok"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"astOperand1"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"info"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"f"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"=="
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"Progress"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+55 :	"Break"
+		- NEIGH  = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , ! , if , }
+		- SUCC   = { tok , info , }
+
+56 :	"return"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+56 :	"Progress"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+56 :	"Break"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+57 :	"info"
+		- NEIGH  = { tok , info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- SUCC   = { Break , Progress , info , == , f , if , }
+
+57 :	"tok"
+		- NEIGH  = { tok , info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- SUCC   = { Break , Progress , info , == , f , if , }
+
+57 :	"tok"
+		- NEIGH  = { tok , info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Progress , info , == , f , && , astOperand1 , forwardRecursive , Break , tok , if , }
+		- SUCC   = { Break , Progress , info , == , f , if , }
+
+58 :	"if"
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+
+58 :	"f"
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+
+58 :	"info"
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+
+58 :	"=="
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+
+58 :	"Progress"
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+
+58 :	"Break"
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+
+59 :	"return"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Break , Progress , info , == , f , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+59 :	"Progress"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Break , Progress , info , == , f , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+59 :	"Break"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Break , Progress , info , == , f , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+60 :	"if"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"tok"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"astOperand2"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"&&"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"forwardRecursive"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"tok"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"astOperand2"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"info"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"f"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"=="
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"Progress"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+60 :	"Break"
+		- NEIGH  = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- PARENT = { }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { Break , Progress , info , == , f , if , }
+		- SUCC   = { Continue , Progress , return , }
+
+61 :	"return"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+61 :	"Progress"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+61 :	"Break"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+62 :	"return"
+		- NEIGH  = { Continue , Progress , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- SUCC   = { }
+
+62 :	"Progress"
+		- NEIGH  = { Continue , Progress , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- SUCC   = { }
+
+62 :	"Continue"
+		- NEIGH  = { Continue , Progress , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { Progress , info , == , f , && , if , astOperand2 , forwardRecursive , Break , tok , }
+		- SUCC   = { }
+
+65 :	"PathAnalysis"
+		- NEIGH  = { PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"Progress"
+		- NEIGH  = { Progress , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"PathAnalysis"
+		- NEIGH  = { PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"forwardRange"
+		- NEIGH  = { forwardRange , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"startToken"
+		- NEIGH  = { startToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"endToken"
+		- NEIGH  = { endToken , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"Info"
+		- NEIGH  = { Info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"info"
+		- NEIGH  = { info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"function"
+		- NEIGH  = { function , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"<"
+		- NEIGH  = { < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"PathAnalysis"
+		- NEIGH  = { PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"Progress"
+		- NEIGH  = { Progress , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"Info"
+		- NEIGH  = { Info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	">"
+		- NEIGH  = { > , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+65 :	"f"
+		- NEIGH  = { f , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+67 :	"for"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"Token"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"*"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"tok"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"startToken"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"tok"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"&&"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"tok"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"!="
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"endToken"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"tok"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"tok"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+67 :	"next"
+		- NEIGH  = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- PARENT = { }
+		- CHILD  = { == , linkAt , - , Token , link , && , previous , start , simpleMatch , tok , next , Match , if , }
+		- PRED   = { }
+		- SUCC   = { Continue , Progress , return , }
+
+68 :	"if"
+		- NEIGH  = { tok , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { tok , Token , Match , if , }
+
+68 :	"Token"
+		- NEIGH  = { tok , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { tok , Token , Match , if , }
+
+68 :	"Match"
+		- NEIGH  = { tok , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { tok , Token , Match , if , }
+
+68 :	"tok"
+		- NEIGH  = { tok , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { tok , Token , Match , if , }
+
+69 :	"return"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { tok , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"Progress"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { tok , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+69 :	"Break"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { tok , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+70 :	"if"
+		- NEIGH  = { tok , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Progress , return , info , f , Break , tok , forwardRecursive , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+
+70 :	"Token"
+		- NEIGH  = { tok , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Progress , return , info , f , Break , tok , forwardRecursive , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+
+70 :	"Match"
+		- NEIGH  = { tok , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Progress , return , info , f , Break , tok , forwardRecursive , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+
+70 :	"tok"
+		- NEIGH  = { tok , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Progress , return , info , f , Break , tok , forwardRecursive , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+
+71 :	"forwardRecursive"
+		- NEIGH  = { info , f , tok , forwardRecursive , }
+		- PARENT = { tok , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Break , Progress , return , }
+
+71 :	"tok"
+		- NEIGH  = { info , f , tok , forwardRecursive , }
+		- PARENT = { tok , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Break , Progress , return , }
+
+71 :	"info"
+		- NEIGH  = { info , f , tok , forwardRecursive , }
+		- PARENT = { tok , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Break , Progress , return , }
+
+71 :	"f"
+		- NEIGH  = { info , f , tok , forwardRecursive , }
+		- PARENT = { tok , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Break , Progress , return , }
+
+72 :	"return"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { tok , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { info , f , tok , forwardRecursive , }
+		- SUCC   = { }
+
+72 :	"Progress"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { tok , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { info , f , tok , forwardRecursive , }
+		- SUCC   = { }
+
+72 :	"Break"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { tok , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { info , f , tok , forwardRecursive , }
+		- SUCC   = { }
+
+74 :	"if"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"Token"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"simpleMatch"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"tok"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"&&"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"Token"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"simpleMatch"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"tok"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"link"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"previous"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"&&"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"Token"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"Match"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"tok"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"link"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"linkAt"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"-"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+74 :	"previous"
+		- NEIGH  = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { Match , emplace_back , errorPath , info , if , condTok , ! , Token , link , getCondTok , previous , - , linkAt , * , blockStart , tok , }
+		- PRED   = { tok , Token , Match , if , }
+		- SUCC   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+
+75 :	"Token"
+		- NEIGH  = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { blockStart , condTok , getCondTok , * , Token , }
+
+75 :	"*"
+		- NEIGH  = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { blockStart , condTok , getCondTok , * , Token , }
+
+75 :	"blockStart"
+		- NEIGH  = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { blockStart , condTok , getCondTok , * , Token , }
+
+75 :	"tok"
+		- NEIGH  = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { blockStart , condTok , getCondTok , * , Token , }
+
+75 :	"link"
+		- NEIGH  = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { blockStart , condTok , getCondTok , * , Token , }
+
+75 :	"linkAt"
+		- NEIGH  = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { blockStart , condTok , getCondTok , * , Token , }
+
+75 :	"-"
+		- NEIGH  = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { blockStart , condTok , getCondTok , * , Token , }
+
+75 :	"previous"
+		- NEIGH  = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { blockStart , condTok , getCondTok , * , Token , }
+
+76 :	"Token"
+		- NEIGH  = { blockStart , condTok , getCondTok , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- SUCC   = { condTok , ! , if , }
+
+76 :	"*"
+		- NEIGH  = { blockStart , condTok , getCondTok , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- SUCC   = { condTok , ! , if , }
+
+76 :	"condTok"
+		- NEIGH  = { blockStart , condTok , getCondTok , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- SUCC   = { condTok , ! , if , }
+
+76 :	"getCondTok"
+		- NEIGH  = { blockStart , condTok , getCondTok , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- SUCC   = { condTok , ! , if , }
+
+76 :	"blockStart"
+		- NEIGH  = { blockStart , condTok , getCondTok , * , Token , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { previous , linkAt , blockStart , tok , - , link , * , Token , }
+		- SUCC   = { condTok , ! , if , }
+
+77 :	"if"
+		- NEIGH  = { condTok , ! , if , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { continue , }
+		- PRED   = { blockStart , condTok , getCondTok , * , Token , }
+		- SUCC   = { condTok , emplace_back , errorPath , info , }
+
+77 :	"!"
+		- NEIGH  = { condTok , ! , if , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { continue , }
+		- PRED   = { blockStart , condTok , getCondTok , * , Token , }
+		- SUCC   = { condTok , emplace_back , errorPath , info , }
+
+77 :	"condTok"
+		- NEIGH  = { condTok , ! , if , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { continue , }
+		- PRED   = { blockStart , condTok , getCondTok , * , Token , }
+		- SUCC   = { condTok , emplace_back , errorPath , info , }
+
+78 :	"continue"
+		- NEIGH  = { continue , }
+		- PARENT = { condTok , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+79 :	"info"
+		- NEIGH  = { condTok , emplace_back , errorPath , info , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { blockStart , Token , Match , if , }
+
+79 :	"errorPath"
+		- NEIGH  = { condTok , emplace_back , errorPath , info , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { blockStart , Token , Match , if , }
+
+79 :	"emplace_back"
+		- NEIGH  = { condTok , emplace_back , errorPath , info , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { blockStart , Token , Match , if , }
+
+79 :	"condTok"
+		- NEIGH  = { condTok , emplace_back , errorPath , info , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { blockStart , Token , Match , if , }
+
+81 :	"if"
+		- NEIGH  = { blockStart , Token , Match , if , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { tokAt , Match , && , Token , ! , if , traverseLoop , - , linkAt , * , blockStart , simpleMatch , endCond , }
+		- PRED   = { condTok , emplace_back , errorPath , info , }
+		- SUCC   = { }
+
+81 :	"Token"
+		- NEIGH  = { blockStart , Token , Match , if , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { tokAt , Match , && , Token , ! , if , traverseLoop , - , linkAt , * , blockStart , simpleMatch , endCond , }
+		- PRED   = { condTok , emplace_back , errorPath , info , }
+		- SUCC   = { }
+
+81 :	"Match"
+		- NEIGH  = { blockStart , Token , Match , if , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { tokAt , Match , && , Token , ! , if , traverseLoop , - , linkAt , * , blockStart , simpleMatch , endCond , }
+		- PRED   = { condTok , emplace_back , errorPath , info , }
+		- SUCC   = { }
+
+81 :	"blockStart"
+		- NEIGH  = { blockStart , Token , Match , if , }
+		- PARENT = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- CHILD  = { tokAt , Match , && , Token , ! , if , traverseLoop , - , linkAt , * , blockStart , simpleMatch , endCond , }
+		- PRED   = { condTok , emplace_back , errorPath , info , }
+		- SUCC   = { }
+
+82 :	"Token"
+		- NEIGH  = { linkAt , blockStart , endCond , * , Token , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { traverseLoop , }
+
+82 :	"*"
+		- NEIGH  = { linkAt , blockStart , endCond , * , Token , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { traverseLoop , }
+
+82 :	"endCond"
+		- NEIGH  = { linkAt , blockStart , endCond , * , Token , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { traverseLoop , }
+
+82 :	"blockStart"
+		- NEIGH  = { linkAt , blockStart , endCond , * , Token , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { traverseLoop , }
+
+82 :	"linkAt"
+		- NEIGH  = { linkAt , blockStart , endCond , * , Token , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { traverseLoop , }
+
+83 :	"traverseLoop"
+		- NEIGH  = { traverseLoop , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { linkAt , blockStart , endCond , * , Token , }
+		- SUCC   = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+
+85 :	"if"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+85 :	"Token"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+85 :	"simpleMatch"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+85 :	"blockStart"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+85 :	"&&"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+85 :	"!"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+85 :	"Token"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+85 :	"Match"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+85 :	"endCond"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+85 :	"tokAt"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+85 :	"-"
+		- NEIGH  = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { traverseLoop , }
+		- PRED   = { traverseLoop , }
+		- SUCC   = { traverseLoop , if , }
+
+86 :	"traverseLoop"
+		- NEIGH  = { traverseLoop , }
+		- PARENT = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+88 :	"if"
+		- NEIGH  = { traverseLoop , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- PRED   = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- SUCC   = { }
+
+88 :	"traverseLoop"
+		- NEIGH  = { traverseLoop , if , }
+		- PARENT = { blockStart , Token , Match , if , }
+		- CHILD  = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- PRED   = { - , Match , && , blockStart , tokAt , endCond , simpleMatch , Token , ! , if , }
+		- SUCC   = { }
+
+90 :	"if"
+		- NEIGH  = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- PARENT = { traverseLoop , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+90 :	"forwardRecursive"
+		- NEIGH  = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- PARENT = { traverseLoop , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+90 :	"condTok"
+		- NEIGH  = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- PARENT = { traverseLoop , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+90 :	"info"
+		- NEIGH  = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- PARENT = { traverseLoop , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+90 :	"f"
+		- NEIGH  = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- PARENT = { traverseLoop , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+90 :	"=="
+		- NEIGH  = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- PARENT = { traverseLoop , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+90 :	"Progress"
+		- NEIGH  = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- PARENT = { traverseLoop , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+90 :	"Break"
+		- NEIGH  = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- PARENT = { traverseLoop , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+91 :	"return"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+91 :	"Progress"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+91 :	"Break"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Break , Progress , info , if , condTok , == , f , forwardRecursive , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+96 :	"if"
+		- NEIGH  = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { std , checkThen , errorPath , i , Info , simpleMatch , emplace_back , Break , checkCond , Token , == , * , f , info , Progress , getCondTok , link , tie , ! , known , if , endBlock , condTok , next , checkElse , forwardRange , tok , endCond , }
+		- PRED   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- SUCC   = { start , == , tok , next , if , }
+
+96 :	"Token"
+		- NEIGH  = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { std , checkThen , errorPath , i , Info , simpleMatch , emplace_back , Break , checkCond , Token , == , * , f , info , Progress , getCondTok , link , tie , ! , known , if , endBlock , condTok , next , checkElse , forwardRange , tok , endCond , }
+		- PRED   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- SUCC   = { start , == , tok , next , if , }
+
+96 :	"Match"
+		- NEIGH  = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { std , checkThen , errorPath , i , Info , simpleMatch , emplace_back , Break , checkCond , Token , == , * , f , info , Progress , getCondTok , link , tie , ! , known , if , endBlock , condTok , next , checkElse , forwardRange , tok , endCond , }
+		- PRED   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- SUCC   = { start , == , tok , next , if , }
+
+96 :	"tok"
+		- NEIGH  = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { std , checkThen , errorPath , i , Info , simpleMatch , emplace_back , Break , checkCond , Token , == , * , f , info , Progress , getCondTok , link , tie , ! , known , if , endBlock , condTok , next , checkElse , forwardRange , tok , endCond , }
+		- PRED   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- SUCC   = { start , == , tok , next , if , }
+
+96 :	"&&"
+		- NEIGH  = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { std , checkThen , errorPath , i , Info , simpleMatch , emplace_back , Break , checkCond , Token , == , * , f , info , Progress , getCondTok , link , tie , ! , known , if , endBlock , condTok , next , checkElse , forwardRange , tok , endCond , }
+		- PRED   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- SUCC   = { start , == , tok , next , if , }
+
+96 :	"Token"
+		- NEIGH  = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { std , checkThen , errorPath , i , Info , simpleMatch , emplace_back , Break , checkCond , Token , == , * , f , info , Progress , getCondTok , link , tie , ! , known , if , endBlock , condTok , next , checkElse , forwardRange , tok , endCond , }
+		- PRED   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- SUCC   = { start , == , tok , next , if , }
+
+96 :	"simpleMatch"
+		- NEIGH  = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { std , checkThen , errorPath , i , Info , simpleMatch , emplace_back , Break , checkCond , Token , == , * , f , info , Progress , getCondTok , link , tie , ! , known , if , endBlock , condTok , next , checkElse , forwardRange , tok , endCond , }
+		- PRED   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- SUCC   = { start , == , tok , next , if , }
+
+96 :	"tok"
+		- NEIGH  = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { std , checkThen , errorPath , i , Info , simpleMatch , emplace_back , Break , checkCond , Token , == , * , f , info , Progress , getCondTok , link , tie , ! , known , if , endBlock , condTok , next , checkElse , forwardRange , tok , endCond , }
+		- PRED   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- SUCC   = { start , == , tok , next , if , }
+
+96 :	"next"
+		- NEIGH  = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { std , checkThen , errorPath , i , Info , simpleMatch , emplace_back , Break , checkCond , Token , == , * , f , info , Progress , getCondTok , link , tie , ! , known , if , endBlock , condTok , next , checkElse , forwardRange , tok , endCond , }
+		- PRED   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- SUCC   = { start , == , tok , next , if , }
+
+96 :	"link"
+		- NEIGH  = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { std , checkThen , errorPath , i , Info , simpleMatch , emplace_back , Break , checkCond , Token , == , * , f , info , Progress , getCondTok , link , tie , ! , known , if , endBlock , condTok , next , checkElse , forwardRange , tok , endCond , }
+		- PRED   = { Match , - , link , && , linkAt , tok , previous , simpleMatch , Token , if , }
+		- SUCC   = { start , == , tok , next , if , }
+
+97 :	"Token"
+		- NEIGH  = { link , Token , next , tok , endCond , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { link , Token , next , endCond , endBlock , * , }
+
+97 :	"*"
+		- NEIGH  = { link , Token , next , tok , endCond , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { link , Token , next , endCond , endBlock , * , }
+
+97 :	"endCond"
+		- NEIGH  = { link , Token , next , tok , endCond , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { link , Token , next , endCond , endBlock , * , }
+
+97 :	"tok"
+		- NEIGH  = { link , Token , next , tok , endCond , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { link , Token , next , endCond , endBlock , * , }
+
+97 :	"next"
+		- NEIGH  = { link , Token , next , tok , endCond , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { link , Token , next , endCond , endBlock , * , }
+
+97 :	"link"
+		- NEIGH  = { link , Token , next , tok , endCond , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { link , Token , next , endCond , endBlock , * , }
+
+98 :	"Token"
+		- NEIGH  = { link , Token , next , endCond , endBlock , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , tok , endCond , * , }
+		- SUCC   = { tok , condTok , getCondTok , * , Token , }
+
+98 :	"*"
+		- NEIGH  = { link , Token , next , endCond , endBlock , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , tok , endCond , * , }
+		- SUCC   = { tok , condTok , getCondTok , * , Token , }
+
+98 :	"endBlock"
+		- NEIGH  = { link , Token , next , endCond , endBlock , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , tok , endCond , * , }
+		- SUCC   = { tok , condTok , getCondTok , * , Token , }
+
+98 :	"endCond"
+		- NEIGH  = { link , Token , next , endCond , endBlock , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , tok , endCond , * , }
+		- SUCC   = { tok , condTok , getCondTok , * , Token , }
+
+98 :	"next"
+		- NEIGH  = { link , Token , next , endCond , endBlock , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , tok , endCond , * , }
+		- SUCC   = { tok , condTok , getCondTok , * , Token , }
+
+98 :	"link"
+		- NEIGH  = { link , Token , next , endCond , endBlock , * , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , tok , endCond , * , }
+		- SUCC   = { tok , condTok , getCondTok , * , Token , }
+
+99 :	"Token"
+		- NEIGH  = { tok , condTok , getCondTok , * , Token , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , endCond , endBlock , * , }
+		- SUCC   = { condTok , ! , if , }
+
+99 :	"*"
+		- NEIGH  = { tok , condTok , getCondTok , * , Token , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , endCond , endBlock , * , }
+		- SUCC   = { condTok , ! , if , }
+
+99 :	"condTok"
+		- NEIGH  = { tok , condTok , getCondTok , * , Token , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , endCond , endBlock , * , }
+		- SUCC   = { condTok , ! , if , }
+
+99 :	"getCondTok"
+		- NEIGH  = { tok , condTok , getCondTok , * , Token , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , endCond , endBlock , * , }
+		- SUCC   = { condTok , ! , if , }
+
+99 :	"tok"
+		- NEIGH  = { tok , condTok , getCondTok , * , Token , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { link , Token , next , endCond , endBlock , * , }
+		- SUCC   = { condTok , ! , if , }
+
+100 :	"if"
+		- NEIGH  = { condTok , ! , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { continue , }
+		- PRED   = { tok , condTok , getCondTok , * , Token , }
+		- SUCC   = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+
+100 :	"!"
+		- NEIGH  = { condTok , ! , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { continue , }
+		- PRED   = { tok , condTok , getCondTok , * , Token , }
+		- SUCC   = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+
+100 :	"condTok"
+		- NEIGH  = { condTok , ! , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { continue , }
+		- PRED   = { tok , condTok , getCondTok , * , Token , }
+		- SUCC   = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+
+101 :	"continue"
+		- NEIGH  = { continue , }
+		- PARENT = { condTok , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+103 :	"if"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"forwardRange"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"tok"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"next"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"tok"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"next"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"link"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"info"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"f"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"=="
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"Progress"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+103 :	"Break"
+		- NEIGH  = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { condTok , ! , if , }
+		- SUCC   = { info , i , Info , }
+
+104 :	"return"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+104 :	"Progress"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+104 :	"Break"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+105 :	"Info"
+		- NEIGH  = { info , i , Info , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- SUCC   = { known , i , }
+
+105 :	"i"
+		- NEIGH  = { info , i , Info , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- SUCC   = { known , i , }
+
+105 :	"info"
+		- NEIGH  = { info , i , Info , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { Progress , == , f , info , link , Break , tok , forwardRange , next , if , }
+		- SUCC   = { known , i , }
+
+106 :	"i"
+		- NEIGH  = { known , i , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { info , i , Info , }
+		- SUCC   = { errorPath , condTok , emplace_back , i , }
+
+106 :	"known"
+		- NEIGH  = { known , i , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { info , i , Info , }
+		- SUCC   = { errorPath , condTok , emplace_back , i , }
+
+107 :	"i"
+		- NEIGH  = { errorPath , condTok , emplace_back , i , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { known , i , }
+		- SUCC   = { checkThen , }
+
+107 :	"errorPath"
+		- NEIGH  = { errorPath , condTok , emplace_back , i , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { known , i , }
+		- SUCC   = { checkThen , }
+
+107 :	"emplace_back"
+		- NEIGH  = { errorPath , condTok , emplace_back , i , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { known , i , }
+		- SUCC   = { checkThen , }
+
+107 :	"condTok"
+		- NEIGH  = { errorPath , condTok , emplace_back , i , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { known , i , }
+		- SUCC   = { checkThen , }
+
+110 :	"checkThen"
+		- NEIGH  = { checkThen , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { errorPath , condTok , emplace_back , i , }
+		- SUCC   = { checkElse , }
+
+111 :	"checkElse"
+		- NEIGH  = { checkElse , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { checkThen , }
+		- SUCC   = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+
+112 :	"std"
+		- NEIGH  = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , }
+		- SUCC   = { checkThen , if , }
+
+112 :	"tie"
+		- NEIGH  = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , }
+		- SUCC   = { checkThen , if , }
+
+112 :	"checkThen"
+		- NEIGH  = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , }
+		- SUCC   = { checkThen , if , }
+
+112 :	"checkElse"
+		- NEIGH  = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , }
+		- SUCC   = { checkThen , if , }
+
+112 :	"checkCond"
+		- NEIGH  = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , }
+		- SUCC   = { checkThen , if , }
+
+112 :	"condTok"
+		- NEIGH  = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , }
+		- SUCC   = { checkThen , if , }
+
+112 :	"i"
+		- NEIGH  = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , }
+		- SUCC   = { checkThen , if , }
+
+112 :	"known"
+		- NEIGH  = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , }
+		- SUCC   = { checkThen , if , }
+
+115 :	"if"
+		- NEIGH  = { checkThen , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PRED   = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+		- SUCC   = { endBlock , simpleMatch , Token , if , }
+
+115 :	"checkThen"
+		- NEIGH  = { checkThen , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PRED   = { condTok , checkCond , checkElse , known , checkThen , tie , i , std , }
+		- SUCC   = { endBlock , simpleMatch , Token , if , }
+
+116 :	"if"
+		- NEIGH  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PARENT = { checkThen , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+116 :	"forwardRange"
+		- NEIGH  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PARENT = { checkThen , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+116 :	"endCond"
+		- NEIGH  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PARENT = { checkThen , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+116 :	"next"
+		- NEIGH  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PARENT = { checkThen , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+116 :	"endBlock"
+		- NEIGH  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PARENT = { checkThen , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+116 :	"i"
+		- NEIGH  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PARENT = { checkThen , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+116 :	"f"
+		- NEIGH  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PARENT = { checkThen , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+116 :	"=="
+		- NEIGH  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PARENT = { checkThen , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+116 :	"Progress"
+		- NEIGH  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PARENT = { checkThen , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+116 :	"Break"
+		- NEIGH  = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- PARENT = { checkThen , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { }
+		- SUCC   = { }
+
+117 :	"return"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+117 :	"Progress"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+117 :	"Break"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Progress , == , f , i , Break , endBlock , endCond , forwardRange , next , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+120 :	"if"
+		- NEIGH  = { endBlock , simpleMatch , Token , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { linkAt , endBlock , tok , checkElse , if , }
+		- PRED   = { checkThen , if , }
+		- SUCC   = { }
+
+120 :	"Token"
+		- NEIGH  = { endBlock , simpleMatch , Token , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { linkAt , endBlock , tok , checkElse , if , }
+		- PRED   = { checkThen , if , }
+		- SUCC   = { }
+
+120 :	"simpleMatch"
+		- NEIGH  = { endBlock , simpleMatch , Token , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { linkAt , endBlock , tok , checkElse , if , }
+		- PRED   = { checkThen , if , }
+		- SUCC   = { }
+
+120 :	"endBlock"
+		- NEIGH  = { endBlock , simpleMatch , Token , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { linkAt , endBlock , tok , checkElse , if , }
+		- PRED   = { checkThen , if , }
+		- SUCC   = { }
+
+121 :	"if"
+		- NEIGH  = { checkElse , if , }
+		- PARENT = { endBlock , simpleMatch , Token , if , }
+		- CHILD  = { Break , == , if , f , endBlock , forwardRange , endCond , next , result , errorPath , second , Progress , back , i , }
+		- PRED   = { }
+		- SUCC   = { linkAt , endBlock , tok , }
+
+121 :	"checkElse"
+		- NEIGH  = { checkElse , if , }
+		- PARENT = { endBlock , simpleMatch , Token , if , }
+		- CHILD  = { Break , == , if , f , endBlock , forwardRange , endCond , next , result , errorPath , second , Progress , back , i , }
+		- PRED   = { }
+		- SUCC   = { linkAt , endBlock , tok , }
+
+122 :	"i"
+		- NEIGH  = { second , errorPath , back , i , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+
+122 :	"errorPath"
+		- NEIGH  = { second , errorPath , back , i , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+
+122 :	"back"
+		- NEIGH  = { second , errorPath , back , i , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+
+122 :	"second"
+		- NEIGH  = { second , errorPath , back , i , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+
+123 :	"Progress"
+		- NEIGH  = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { second , errorPath , back , i , }
+		- SUCC   = { == , Progress , result , Break , if , }
+
+123 :	"result"
+		- NEIGH  = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { second , errorPath , back , i , }
+		- SUCC   = { == , Progress , result , Break , if , }
+
+123 :	"forwardRange"
+		- NEIGH  = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { second , errorPath , back , i , }
+		- SUCC   = { == , Progress , result , Break , if , }
+
+123 :	"endCond"
+		- NEIGH  = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { second , errorPath , back , i , }
+		- SUCC   = { == , Progress , result , Break , if , }
+
+123 :	"next"
+		- NEIGH  = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { second , errorPath , back , i , }
+		- SUCC   = { == , Progress , result , Break , if , }
+
+123 :	"endBlock"
+		- NEIGH  = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { second , errorPath , back , i , }
+		- SUCC   = { == , Progress , result , Break , if , }
+
+123 :	"i"
+		- NEIGH  = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { second , errorPath , back , i , }
+		- SUCC   = { == , Progress , result , Break , if , }
+
+123 :	"f"
+		- NEIGH  = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { }
+		- PRED   = { second , errorPath , back , i , }
+		- SUCC   = { == , Progress , result , Break , if , }
+
+124 :	"if"
+		- NEIGH  = { == , Progress , result , Break , if , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- SUCC   = { }
+
+124 :	"result"
+		- NEIGH  = { == , Progress , result , Break , if , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- SUCC   = { }
+
+124 :	"=="
+		- NEIGH  = { == , Progress , result , Break , if , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- SUCC   = { }
+
+124 :	"Progress"
+		- NEIGH  = { == , Progress , result , Break , if , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- SUCC   = { }
+
+124 :	"Break"
+		- NEIGH  = { == , Progress , result , Break , if , }
+		- PARENT = { checkElse , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { f , i , endBlock , next , forwardRange , endCond , result , Progress , }
+		- SUCC   = { }
+
+125 :	"return"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { == , Progress , result , Break , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"Progress"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { == , Progress , result , Break , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+125 :	"Break"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { == , Progress , result , Break , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+127 :	"tok"
+		- NEIGH  = { linkAt , endBlock , tok , }
+		- PARENT = { endBlock , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , if , }
+		- SUCC   = { }
+
+127 :	"endBlock"
+		- NEIGH  = { linkAt , endBlock , tok , }
+		- PARENT = { endBlock , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , if , }
+		- SUCC   = { }
+
+127 :	"linkAt"
+		- NEIGH  = { linkAt , endBlock , tok , }
+		- PARENT = { endBlock , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { checkElse , if , }
+		- SUCC   = { }
+
+129 :	"tok"
+		- NEIGH  = { endBlock , tok , }
+		- PARENT = { endBlock , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+129 :	"endBlock"
+		- NEIGH  = { endBlock , tok , }
+		- PARENT = { endBlock , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+131 :	"if"
+		- NEIGH  = { tok , simpleMatch , Token , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Progress , if , info , Break , tok , linkAt , == , f , }
+		- PRED   = { }
+		- SUCC   = { }
+
+131 :	"Token"
+		- NEIGH  = { tok , simpleMatch , Token , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Progress , if , info , Break , tok , linkAt , == , f , }
+		- PRED   = { }
+		- SUCC   = { }
+
+131 :	"simpleMatch"
+		- NEIGH  = { tok , simpleMatch , Token , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Progress , if , info , Break , tok , linkAt , == , f , }
+		- PRED   = { }
+		- SUCC   = { }
+
+131 :	"tok"
+		- NEIGH  = { tok , simpleMatch , Token , if , }
+		- PARENT = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- CHILD  = { Progress , if , info , Break , tok , linkAt , == , f , }
+		- PRED   = { }
+		- SUCC   = { }
+
+132 :	"tok"
+		- NEIGH  = { linkAt , tok , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+132 :	"tok"
+		- NEIGH  = { linkAt , tok , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+132 :	"linkAt"
+		- NEIGH  = { linkAt , tok , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+134 :	"info"
+		- NEIGH  = { tok , info , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Break , Progress , info , == , f , if , }
+
+134 :	"tok"
+		- NEIGH  = { tok , info , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Break , Progress , info , == , f , if , }
+
+134 :	"tok"
+		- NEIGH  = { tok , info , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { Break , Progress , info , == , f , if , }
+
+135 :	"if"
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { }
+
+135 :	"f"
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { }
+
+135 :	"info"
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { }
+
+135 :	"=="
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { }
+
+135 :	"Progress"
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { }
+
+135 :	"Break"
+		- NEIGH  = { Break , Progress , info , == , f , if , }
+		- PARENT = { tok , simpleMatch , Token , if , }
+		- CHILD  = { Break , Progress , return , }
+		- PRED   = { tok , info , }
+		- SUCC   = { }
+
+136 :	"return"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Break , Progress , info , == , f , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+136 :	"Progress"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Break , Progress , info , == , f , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+136 :	"Break"
+		- NEIGH  = { Break , Progress , return , }
+		- PARENT = { Break , Progress , info , == , f , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+139 :	"if"
+		- NEIGH  = { start , == , tok , next , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { break , }
+		- PRED   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- SUCC   = { }
+
+139 :	"tok"
+		- NEIGH  = { start , == , tok , next , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { break , }
+		- PRED   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- SUCC   = { }
+
+139 :	"next"
+		- NEIGH  = { start , == , tok , next , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { break , }
+		- PRED   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- SUCC   = { }
+
+139 :	"=="
+		- NEIGH  = { start , == , tok , next , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { break , }
+		- PRED   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- SUCC   = { }
+
+139 :	"start"
+		- NEIGH  = { start , == , tok , next , if , }
+		- PARENT = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- CHILD  = { break , }
+		- PRED   = { link , simpleMatch , && , tok , next , Token , Match , if , }
+		- SUCC   = { }
+
+140 :	"break"
+		- NEIGH  = { break , }
+		- PARENT = { start , == , tok , next , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+142 :	"return"
+		- NEIGH  = { Continue , Progress , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- SUCC   = { }
+
+142 :	"Progress"
+		- NEIGH  = { Continue , Progress , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- SUCC   = { }
+
+142 :	"Continue"
+		- NEIGH  = { Continue , Progress , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { endToken , && , != , tok , * , next , for , Token , startToken , }
+		- SUCC   = { }
+
+145 :	"PathAnalysis"
+		- NEIGH  = { PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+145 :	"forward"
+		- NEIGH  = { forward , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+145 :	"std"
+		- NEIGH  = { std , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+145 :	"function"
+		- NEIGH  = { function , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+145 :	"<"
+		- NEIGH  = { < , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+145 :	"Progress"
+		- NEIGH  = { Progress , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+145 :	"Info"
+		- NEIGH  = { Info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+145 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+145 :	">"
+		- NEIGH  = { > , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+145 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+145 :	"f"
+		- NEIGH  = { f , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+147 :	"Scope"
+		- NEIGH  = { scope , findOuterScope , * , start , endScope , Scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { endScope , ! , if , }
+
+147 :	"*"
+		- NEIGH  = { scope , findOuterScope , * , start , endScope , Scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { endScope , ! , if , }
+
+147 :	"endScope"
+		- NEIGH  = { scope , findOuterScope , * , start , endScope , Scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { endScope , ! , if , }
+
+147 :	"findOuterScope"
+		- NEIGH  = { scope , findOuterScope , * , start , endScope , Scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { endScope , ! , if , }
+
+147 :	"start"
+		- NEIGH  = { scope , findOuterScope , * , start , endScope , Scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { endScope , ! , if , }
+
+147 :	"scope"
+		- NEIGH  = { scope , findOuterScope , * , start , endScope , Scope , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { endScope , ! , if , }
+
+148 :	"if"
+		- NEIGH  = { endScope , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { scope , findOuterScope , * , start , endScope , Scope , }
+		- SUCC   = { bodyEnd , endScope , endToken , * , Token , }
+
+148 :	"!"
+		- NEIGH  = { endScope , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { scope , findOuterScope , * , start , endScope , Scope , }
+		- SUCC   = { bodyEnd , endScope , endToken , * , Token , }
+
+148 :	"endScope"
+		- NEIGH  = { endScope , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { scope , findOuterScope , * , start , endScope , Scope , }
+		- SUCC   = { bodyEnd , endScope , endToken , * , Token , }
+
+149 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { endScope , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+150 :	"Token"
+		- NEIGH  = { bodyEnd , endScope , endToken , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { endScope , ! , if , }
+		- SUCC   = { ErrorPath , start , info , Info , }
+
+150 :	"*"
+		- NEIGH  = { bodyEnd , endScope , endToken , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { endScope , ! , if , }
+		- SUCC   = { ErrorPath , start , info , Info , }
+
+150 :	"endToken"
+		- NEIGH  = { bodyEnd , endScope , endToken , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { endScope , ! , if , }
+		- SUCC   = { ErrorPath , start , info , Info , }
+
+150 :	"endScope"
+		- NEIGH  = { bodyEnd , endScope , endToken , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { endScope , ! , if , }
+		- SUCC   = { ErrorPath , start , info , Info , }
+
+150 :	"bodyEnd"
+		- NEIGH  = { bodyEnd , endScope , endToken , * , Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { endScope , ! , if , }
+		- SUCC   = { ErrorPath , start , info , Info , }
+
+151 :	"Info"
+		- NEIGH  = { ErrorPath , start , info , Info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { bodyEnd , endScope , endToken , * , Token , }
+		- SUCC   = { f , info , endToken , start , forwardRange , }
+
+151 :	"info"
+		- NEIGH  = { ErrorPath , start , info , Info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { bodyEnd , endScope , endToken , * , Token , }
+		- SUCC   = { f , info , endToken , start , forwardRange , }
+
+151 :	"start"
+		- NEIGH  = { ErrorPath , start , info , Info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { bodyEnd , endScope , endToken , * , Token , }
+		- SUCC   = { f , info , endToken , start , forwardRange , }
+
+151 :	"ErrorPath"
+		- NEIGH  = { ErrorPath , start , info , Info , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { bodyEnd , endScope , endToken , * , Token , }
+		- SUCC   = { f , info , endToken , start , forwardRange , }
+
+152 :	"forwardRange"
+		- NEIGH  = { f , info , endToken , start , forwardRange , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ErrorPath , start , info , Info , }
+		- SUCC   = { }
+
+152 :	"start"
+		- NEIGH  = { f , info , endToken , start , forwardRange , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ErrorPath , start , info , Info , }
+		- SUCC   = { }
+
+152 :	"endToken"
+		- NEIGH  = { f , info , endToken , start , forwardRange , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ErrorPath , start , info , Info , }
+		- SUCC   = { }
+
+152 :	"info"
+		- NEIGH  = { f , info , endToken , start , forwardRange , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ErrorPath , start , info , Info , }
+		- SUCC   = { }
+
+152 :	"f"
+		- NEIGH  = { f , info , endToken , start , forwardRange , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { ErrorPath , start , info , Info , }
+		- SUCC   = { }
+
+155 :	"reaches"
+		- NEIGH  = { reaches , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"start"
+		- NEIGH  = { start , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"Token"
+		- NEIGH  = { Token , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"dest"
+		- NEIGH  = { dest , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"Library"
+		- NEIGH  = { Library , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"&"
+		- NEIGH  = { & , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"library"
+		- NEIGH  = { library , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"ErrorPath"
+		- NEIGH  = { ErrorPath , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"*"
+		- NEIGH  = { * , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+155 :	"errorPath"
+		- NEIGH  = { errorPath , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+157 :	"PathAnalysis"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"Info"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"info"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"PathAnalysis"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"start"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"library"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"forwardFind"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"&"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"PathAnalysis"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"Info"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"&"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+157 :	"i"
+		- NEIGH  = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { tok , info , ! , if , }
+
+158 :	"return"
+		- NEIGH  = { == , tok , dest , i , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+158 :	"i"
+		- NEIGH  = { == , tok , dest , i , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+158 :	"tok"
+		- NEIGH  = { == , tok , dest , i , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+158 :	"=="
+		- NEIGH  = { == , tok , dest , i , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+158 :	"dest"
+		- NEIGH  = { == , tok , dest , i , return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+160 :	"if"
+		- NEIGH  = { tok , info , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- SUCC   = { errorPath , if , }
+
+160 :	"!"
+		- NEIGH  = { tok , info , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- SUCC   = { errorPath , if , }
+
+160 :	"info"
+		- NEIGH  = { tok , info , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- SUCC   = { errorPath , if , }
+
+160 :	"tok"
+		- NEIGH  = { tok , info , ! , if , }
+		- PARENT = { }
+		- CHILD  = { return , }
+		- PRED   = { forwardFind , info , Info , & , library , i , start , PathAnalysis , }
+		- SUCC   = { errorPath , if , }
+
+161 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { tok , info , ! , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+162 :	"if"
+		- NEIGH  = { errorPath , if , }
+		- PARENT = { }
+		- CHILD  = { end , begin , insert , info , errorPath , }
+		- PRED   = { tok , info , ! , if , }
+		- SUCC   = { return , }
+
+162 :	"errorPath"
+		- NEIGH  = { errorPath , if , }
+		- PARENT = { }
+		- CHILD  = { end , begin , insert , info , errorPath , }
+		- PRED   = { tok , info , ! , if , }
+		- SUCC   = { return , }
+
+163 :	"errorPath"
+		- NEIGH  = { end , begin , insert , info , errorPath , }
+		- PARENT = { errorPath , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"insert"
+		- NEIGH  = { end , begin , insert , info , errorPath , }
+		- PARENT = { errorPath , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"errorPath"
+		- NEIGH  = { end , begin , insert , info , errorPath , }
+		- PARENT = { errorPath , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"end"
+		- NEIGH  = { end , begin , insert , info , errorPath , }
+		- PARENT = { errorPath , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"info"
+		- NEIGH  = { end , begin , insert , info , errorPath , }
+		- PARENT = { errorPath , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"errorPath"
+		- NEIGH  = { end , begin , insert , info , errorPath , }
+		- PARENT = { errorPath , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"begin"
+		- NEIGH  = { end , begin , insert , info , errorPath , }
+		- PARENT = { errorPath , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"info"
+		- NEIGH  = { end , begin , insert , info , errorPath , }
+		- PARENT = { errorPath , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"errorPath"
+		- NEIGH  = { end , begin , insert , info , errorPath , }
+		- PARENT = { errorPath , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+163 :	"end"
+		- NEIGH  = { end , begin , insert , info , errorPath , }
+		- PARENT = { errorPath , if , }
+		- CHILD  = { }
+		- PRED   = { }
+		- SUCC   = { }
+
+164 :	"return"
+		- NEIGH  = { return , }
+		- PARENT = { }
+		- CHILD  = { }
+		- PRED   = { errorPath , if , }
+		- SUCC   = { }
+
