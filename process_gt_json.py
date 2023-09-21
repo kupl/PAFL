@@ -51,7 +51,49 @@ def process():
     with open('example.json','w') as f:
         json.dump(_bug_info, f, ensure_ascii=False, indent=4)
 
+def print_performance():
+    with open('my_example/_bug_info/example.json', 'r') as f:
+        _bug_info = json.load(f)
+    
+    VERSIONS = 3
+    METHODS = ["Ochiai","PAFL"]
+    ranking_map = {}
+    
+    for method in METHODS:
+        ranking_map[method] = []
+        print("Method : {}".format(method))
+        for idx in range(VERSIONS):
+            #version
+            ranking_map[method].append([])            
+            version = idx + 1
+            result_path = "coverage/{}-example#{}.json".format(method, version)
+            with open(result_path, 'r') as f:
+                result = json.load(f)
+            #print(version)
+            #print(_bug_info["version"])
+            gt_file_line_list = _bug_info["version"][idx]
+            for _, file_lines in enumerate(gt_file_line_list):
+                file_name = file_lines["file"]
+                lines = file_lines["lines"]
+                for line in lines:
+                    file_idx = result["files"].index(file_name)
+                    result_list = result["lines"]
+                    for _, my_result in enumerate(result_list):
+                        if (my_result["index"] == file_idx) and (my_result["line"] == line):
+                            print("Version : {}".format(version))
+                            print("GT_line ranking : {}".format(my_result["ranking"]))
+                            ranking_map[method][idx].append(my_result["ranking"])
 
+    #For each method for each version for each GT ranking
+    #ranking[method][version][ranking_list]
+    print(ranking_map)                            
 if __name__ == '__main__':
+    # process
     process()
+    # print ranking
+    print_performance()
+    
+
+
+
 
