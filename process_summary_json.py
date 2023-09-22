@@ -111,6 +111,10 @@ def process():
 
 
 if __name__ == '__main__':
+    #version_block_to_lines = {}
+    #bugID_to_version = load_pickle
+    #version_block_to_lines = loadpickle
+    #version_tcID_to_int = {}
     #process()
     sample_txt = "modules/math.c;namespace::fun_name@1#2$1"
     #block_to_lines(sample_txt)
