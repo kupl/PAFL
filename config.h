@@ -40,7 +40,7 @@ public:
     using Line = std::list<Token>;
 
 
-    void configure(PrgLang pl);
+    void configure(PrgLang pl, const fs::path& path);
 
     std::string getStringFromLine(const Line& line,
                 const std::string& proj, const std::string& ver, const std::string& tc) const;
@@ -62,12 +62,12 @@ private:
 
 namespace PAFL
 {
-void Config::configure(PrgLang pl)
+void Config::configure(PrgLang pl, const fs::path& path)
 {
     // Generate default config
-    if (!fs::exists("config")) {
+    if (!fs::exists(path / "config")) {
 
-        std::ofstream config("config");
+        std::ofstream config(path / "config");
         config << "#begin ALL\n\n" <<
 
                 "PROJECT_LOC = \"buggy#\" VER\n" <<

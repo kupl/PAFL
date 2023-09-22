@@ -4,13 +4,14 @@
 /*PAFL::CppTokenTree tree(fs::path("sample/temp.cpp"), std::make_shared<PAFL::TokenTree::Matcher>());
     tree.log("token.txt");
     return 0;*/
-// python : keras , luigi , matplotlib , pandas , scrapy , youtube-dl
+// python : keras:45 , luigi:33 , matplotlib , pandas , scrapy , youtube-dl
 
 int main(int argc, char *argv[])
 {
     // Test
     /*char *_argv[] = {
-"/Users/user/Documents/C++/PAFL/main","proj:cpp","24,8,13,12,11,21,22,9,18,16,1,3,17,2,4,19,10,6,20,5,27,23,14,28,15,7,26,25","pafl,ochiai","-P/Users/user/defects4cpp/proj","-T/Users/user/defects4cpp","-B/Users/user/Documents/C++/PAFL/_bug_info","-l","--dev-cache"};
+        "/Users/user/Documents/C++/PAFL/main", "openssl:cpp","13,1,2,9,12,19,14,28,11,15,5,18,16,22,10,23,26,8,24,25,17,6,4,7,3,27,20,21","pafl,ochiai",
+        "-P/Users/user/defects4cpp/openssl","-T/Users/user/defects4cpp","-B/Users/user/Documents/C++/_bug_info","-l","--dev-cache" };
     constexpr int _argc = 9;
     std::system(PAFL::Command::CLEAR);
     PAFL::UI ui(_argc, _argv);*/
@@ -93,12 +94,12 @@ int main(int argc, char *argv[])
                     auto file = suite[iter].getFileFromIndex(idx);
                     tkt_vector.push_back(PAFL::CppTokenTree(ui.getProjectPath(iter) / file, matcher));
 
-                    if (ui.hasLogger()) {
+                    /*if (ui.hasLogger()) {
 
                         std::replace(file.begin(), file.end(), '/', '.');
-                        tkt_vector[idx].log(PAFL::createDirRecursively(ui.getExePath() / "log/token_tree"\
+                        tkt_vector[idx].log(PAFL::createDirRecursively(ui.getExePath() / "log/token_tree"
                                             / (ui.getProject() + '#' + std::to_string(iter+1))) / (file + ".txt"));
-                    }
+                    }*/
                 }
                 std::cout << "Done\n";
             

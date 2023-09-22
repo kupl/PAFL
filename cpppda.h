@@ -420,7 +420,7 @@ void CppPda::_r_brace(Token* tok)
         _ttype_stack.pop(); // TType - STMT
     }
     _ttype_stack.pop(); // TType - {
-        
+
 
     // Delete ROOT
     if (isEnumOrClass(_ttype_stack.top()))

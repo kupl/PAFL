@@ -91,7 +91,7 @@ UI::UI(int argc, char *argv[]) :
     _logger(false), _time_logger(false), __cache(false)
 {
     _readIn(argc, argv);
-    _config.configure(_pl);
+    _config.configure(_pl, _exe_path);
     _setContainer();
 }
 
