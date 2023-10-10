@@ -91,7 +91,7 @@ void Config::configure(PrgLang pl, const fs::path& path)
         { "TEST_NAME", &TEST_NAME }, { "TEST_PASS", &TEST_PASS }
     };
 
-    std::ifstream config("config");
+    std::ifstream config(path / "config");
     std::string is;
     while (std::getline(config, is)) {
 
