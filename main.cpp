@@ -17,9 +17,7 @@ int main(int argc, char *argv[])
     PAFL::UI ui(_argc, _argv);*/
 
     // Run
-    std::system(PAFL::Command::CLEAR);
     const PAFL::UI ui(argc, argv);
-    
 
     // Collect coverage of every version
     std::vector<PAFL::TestSuite> suite(ui.numVersion());
