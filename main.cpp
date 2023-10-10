@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     // Run
     std::system(PAFL::Command::CLEAR);
-    PAFL::UI ui(argc, argv);
+    const PAFL::UI ui(argc, argv);
     
 
     // Collect coverage of every version
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
                 for (PAFL::index_t idx = 0;  idx != suite[iter].MaxIndex(); idx++) {
                     
                     auto file = suite[iter].getFileFromIndex(idx);
-                    tkt_vector.push_back(PAFL::CppTokenTree(ui.getProjectPath(iter) / file, matcher));
+                    tkt_vector.push_back(PAFL::CppTokenTree(ui.getFilePath(iter, file), matcher));
 
                     /*if (ui.hasLogger()) {
 

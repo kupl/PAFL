@@ -48,6 +48,7 @@ public:
     bool hasCache() const
         { return __cache; }
 
+    fs::path getFilePath(size_t iter, const std::string& file) const;
     docs getCoverageList(size_t iter) const;
 
 
@@ -62,6 +63,7 @@ private:
     PrgLang _pl;
     std::vector<size_t> _version;
     std::set<Method> _method;
+    std::list<std::string> _sub_dir;
 
     fs::path _exe_path;
     fs::path _project_path;
@@ -93,6 +95,22 @@ UI::UI(int argc, char *argv[]) :
     _readIn(argc, argv);
     _config.configure(_pl, _exe_path);
     _setContainer();
+}
+
+
+
+fs::path UI::getFilePath(size_t iter, const std::string& file) const
+{
+    fs::path ret(_src_path[iter] / file);
+    if (fs::exists(ret))
+        return ret;
+    else for (auto& dir : _sub_dir) {
+
+        ret = _src_path[iter] / dir / file;
+        if (fs::exists(ret))
+            return ret;
+    }
+    std::cerr << "Invalid file path\n"; throw "Invalid file path";
 }
 
 
@@ -232,6 +250,17 @@ void UI::_readIn(int argc, char *argv[])
         else if (arg.starts_with('B'))
             _oracle_path = arg.substr(1);
 
+        else if (arg == "-sub-dir=") {// --sub-dir=<DIRECTORY>
+
+            arg = arg.substr(9);
+            for (size_t pos = 0; pos < arg.size(); ) {
+
+                auto split = arg.find(',', pos);
+                _sub_dir.emplace_back(arg.substr(pos, split - pos));
+                pos = split == std::string::npos ? std::string::npos : split + 1;
+            }
+        }
+
         else if (arg == "-log")
             _logger = true;
 
@@ -248,6 +277,8 @@ void UI::_readIn(int argc, char *argv[])
                 _logger = true;
             else if (arg.starts_with('t'))
                 _time_logger = true;
+            else if (arg.starts_with('c'))
+                __cache = true;
             else
                 _throwInvalidInput();
         }
