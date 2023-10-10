@@ -253,10 +253,10 @@ void UI::_readIn(int argc, char *argv[])
         else if (arg.starts_with("-sub-dir=")) {// --sub-dir=<DIRECTORY>
 
             std::string dirs(arg.substr(9));
-            for (size_t pos = 0; pos < arg.size(); ) {
+            for (size_t pos = 0; pos < dirs.size(); ) {
 
-                auto split = arg.find(',', pos);
-                _sub_dir.emplace_back(arg.substr(pos, split - pos));
+                auto split = dirs.find(',', pos);
+                _sub_dir.emplace_back(dirs.substr(pos, split - pos));
                 pos = split == std::string::npos ? std::string::npos : split + 1;
             }
         }
