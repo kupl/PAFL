@@ -37,7 +37,8 @@ public:
 
 
 private:
-    float _getDistance(const feature_vector& target, const feature_vector& passing, const feature_vector& failing, const CrossWord& word) const;
+    //float _getDistance(const feature_vector& target, const feature_vector& passing, const feature_vector& failing, const CrossWord& word) const;
+    float _getDistance(const feature_vector& lhs, const feature_vector& rhs) const;
     TargetInfo _setTargetInfo(const feature_vector& failing_vec, size_t k) const;
 
     std::unordered_set<std::string> _dimension;
@@ -175,7 +176,8 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
 
 
 
-float Predictor::_getDistance(const feature_vector& target, const feature_vector& passing, const feature_vector& failing, const CrossWord& word) const
+//float Predictor::_getDistance(const feature_vector& target, const feature_vector& passing, const feature_vector& failing, const CrossWord& word) const
+float Predictor::_getDistance(const feature_vector& lhs, const feature_vector& rhs) const
 {
     /*float dist = 0.0f;
     float denom = 0.0f;
@@ -244,9 +246,9 @@ Predictor::TargetInfo Predictor::_setTargetInfo(const feature_vector& failing_ve
 
     // Set coefficient
     pattern ptt = 0;
-    for (auto& vec : _feature_vectors) {
+    for (auto& vec : _features) {
 
-        float dist = _getDistance(failing_vec, vec);
+        float dist = _getDistance(failing_vec, vec.first);
         if (dist < max_dist)
             info.targets.emplace_back(ptt, max_dist - dist);
         ptt++;
