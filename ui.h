@@ -66,7 +66,7 @@ private:
     fs::path _exe_path;
     fs::path _project_path;
     fs::path _testsuite_path;
-    fs::path _bug_info_path;
+    fs::path _oracle_path;
     bool _logger;
     bool _time_logger;
     bool __cache;
@@ -87,7 +87,7 @@ rapidjson::Document parseDoc(const fs::path& path);
 namespace PAFL
 {
 UI::UI(int argc, char *argv[]) :
-    _project_path(fs::current_path()), _testsuite_path(fs::current_path()), _bug_info_path(fs::current_path()),
+    _project_path(fs::current_path()), _testsuite_path(fs::current_path()), _oracle_path(fs::current_path()),
     _logger(false), _time_logger(false), __cache(false)
 {
     _readIn(argc, argv);
@@ -219,27 +219,38 @@ void UI::_readIn(int argc, char *argv[])
     for (int i = 4; i != argc; i++) {
 
         std::string arg(argv[i]);
+        if (!arg.starts_with('-'))
+            _throwInvalidInput();
+        arg.erase(0, 1);
 
-        if (arg.starts_with("-P"))
-            _project_path = arg.substr(2);
+        if (arg.starts_with('P'))
+            _project_path = arg.substr(1);
 
-        else if (arg.starts_with("-T"))
-            _testsuite_path = arg.substr(2);
+        else if (arg.starts_with('T'))
+            _testsuite_path = arg.substr(1);
 
-        else if (arg.starts_with("-B"))
-            _bug_info_path = arg.substr(2);
+        else if (arg.starts_with('B'))
+            _oracle_path = arg.substr(1);
 
-        else if (arg == "-l" || arg == "--log")
+        else if (arg == "-log")
             _logger = true;
 
-        else if (arg == "-tl" || arg == "--timelog")
+        else if (arg == "-timelog")
             _time_logger = true;
 
-        else if (arg == "--dev-cache")
+        else if (arg == "-dev-cache")
             __cache = true;
         
-        else 
-            _throwInvalidInput();
+        // abbreviation
+        else for(; !arg.empty(); arg.erase(0, 1)) {
+
+            if (arg.starts_with('l'))
+                _logger = true;
+            else if (arg.starts_with('t'))
+                _time_logger = true;
+            else
+                _throwInvalidInput();
+        }
     }
 }
 
@@ -259,7 +270,7 @@ void UI::_setContainer()
     }
 
     // Set fault location
-    rapidjson::Document info(parseDoc(_bug_info_path / (_project + ".json")));
+    rapidjson::Document info(parseDoc(_oracle_path / (_project + ".json")));
     const auto& ver = info["version"].GetArray();
 
     for (size_t i = 0; i != _version.size(); i++) 

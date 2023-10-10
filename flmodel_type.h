@@ -8,6 +8,7 @@
 
 namespace PAFL
 {
+constexpr size_t K = 3;
 using pattern = size_t;
 
 using target_tokens = std::list<Token*>;

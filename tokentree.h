@@ -48,7 +48,7 @@ public:
         UNION,
 
         // outer
-        OPERATOR,        
+        OPERATOR,
         NAMESPACE,
 
         // parenthesis

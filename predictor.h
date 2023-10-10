@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include "flmodel_type.h"
+#include "cross_word.h"
 
 
 
@@ -14,14 +15,15 @@ class Predictor
 public:
     using count_t = unsigned long long;
     using feature_vector = std::unordered_map<std::string, float>;
+    using feature = std::pair<feature_vector, CrossWord>;
 
     class TargetInfo
     { public:
         using value_type = std::pair<pattern, float>;
 
         TargetInfo() = default;
-        TargetInfo(TargetInfo& rhs) = delete;
-        TargetInfo& operator=(TargetInfo& rhs) = delete;
+        TargetInfo(TargetInfo&) = delete;
+        TargetInfo& operator=(TargetInfo&) = delete;
         TargetInfo(TargetInfo&& rhs) : targets(std::move(rhs.targets)) {}
 
         std::list<value_type> targets;
@@ -31,21 +33,20 @@ public:
     Predictor() : _passing_cnt(0) {}
 
     TargetInfo predict(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec);
-    TargetInfo step(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec);
+    TargetInfo step(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec, const target_tokens& targets);
 
 
 private:
-    float _getDistance(const feature_vector& lhs, const feature_vector& rhs) const;
+    float _getDistance(const feature_vector& target, const feature_vector& passing, const feature_vector& failing, const CrossWord& word) const;
     TargetInfo _setTargetInfo(const feature_vector& failing_vec, size_t k) const;
 
     std::unordered_set<std::string> _dimension;
 
-    std::list<feature_vector> _feature_vectors;
+    std::list<feature> _features;
     feature_vector _passing_feature;
     unsigned short _passing_cnt;
 
-    const unsigned short _cnt_ub = 64;
-    const size_t K = 6;
+    const unsigned short _cnt_ub = 16;
 };
 }
 
@@ -84,14 +85,14 @@ Predictor::TargetInfo Predictor::predict(const TestSuite::test_suite& test_suite
     for (auto& item : counter)
         failing_vec.emplace(item.first, (item.second / (float)max_cnt));
 
-    TargetInfo info(_setTargetInfo(failing_vec, std::numeric_limits<size_t>::max()));
+    TargetInfo info(_setTargetInfo(failing_vec, K));
 
     return info;
 }
 
 
 
-Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec)
+Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec, const target_tokens& targets)
 {
     static size_t debug = 0;
     count_t max_cnt = 1;
@@ -142,8 +143,12 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
     failing_vec.reserve(counter.size());
     for (auto& item : counter)
         failing_vec.emplace(item.first, (item.second / (float)max_cnt));
-
-    TargetInfo info(_setTargetInfo(_feature_vectors.emplace_back(std::move(failing_vec)), K));
+    
+    auto& feature = _features.emplace_back(std::move(failing_vec), CrossWord());
+    for (auto ptr : targets)
+        feature.second.insertToken(*ptr);
+    
+    TargetInfo info(_setTargetInfo(feature.first, K+1));
 
 
     // Update passing
@@ -170,8 +175,25 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
 
 
 
-float Predictor::_getDistance(const feature_vector& lhs, const feature_vector& rhs) const
+float Predictor::_getDistance(const feature_vector& target, const feature_vector& passing, const feature_vector& failing, const CrossWord& word) const
 {
+    /*float dist = 0.0f;
+    float denom = 0.0f;
+
+    auto end(word.cend());
+    for (auto iter(word.cbegin()); iter != end; ++iter) {
+
+        auto& str = iter->first;
+        float target_val = target.contains(str) ? target.at(str) : 0.0f;
+        float failing_val = failing.contains(str) ? failing.at(str) : 0.0f;
+        float passing_val = passing.contains(str) ? passing.at(str) : 0.0f;
+
+        dist += (target_val - failing_val) * (target_val - failing_val);
+        denom += (target_val - passing_val) * (target_val - passing_val);
+    }
+
+    return denom > 0 ? dist / denom : 0.0f;*/
+
     float dist = 0.0f;
     for (auto& str : _dimension) {
 
@@ -185,6 +207,36 @@ float Predictor::_getDistance(const feature_vector& lhs, const feature_vector& r
 
 Predictor::TargetInfo Predictor::_setTargetInfo(const feature_vector& failing_vec, size_t k) const
 {
+    /*TargetInfo info;
+
+    // Set coefficient
+    pattern ptt = 0;
+    for (auto& feature : _features) {
+
+        float dist = _getDistance(failing_vec, _passing_feature, feature.first, feature.second);
+        if (dist <= 1.0f)
+            info.targets.emplace_back(ptt, 1.0f - dist);
+        ptt++;
+    }
+
+    // Cut low coef
+    info.targets.sort([](const auto& lhs, const auto& rhs){ return lhs.second > rhs.second; });
+    auto iter = info.targets.begin();
+    for (size_t i = 0; i != k && iter != info.targets.end(); i++, iter++);
+
+    if (iter != info.targets.end())
+        info.targets.erase(iter, info.targets.end());
+
+
+    // Normalize
+    float total = 0.0f;
+    for (auto& item : info.targets)
+        total += item.second;
+    for (auto& item : info.targets)
+        item.second /= total;
+
+    return info;*/
+
     TargetInfo info;
     float max_dist = _getDistance(failing_vec, _passing_feature);
     if (max_dist <= 0.0f)

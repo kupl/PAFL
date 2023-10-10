@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include "flmodel_type.h"
+#include "cross_word.h"
 
 
 
@@ -11,24 +12,25 @@ namespace PAFL
 class Localizer
 {
 public:
-    class Lang;
-
-    Localizer(pattern ptt) :
-        _language(std::make_unique<Lang>()) {}
-     
+    Localizer() : _maturity(0) {}
     void localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef) const;
     void step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef);
 
-    void log(const fs::path& _path) const;
-
+    void log(const fs::path& _path) const
+        { _word.log(_path); }
 
 private:
-    line_t _newRankingSum(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults) const;
-
-    std::unique_ptr<Lang> _language;
+    unsigned char _maturity;
+    CrossWord _word;
 };
+
+
+void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef);
+line_t _newRankingSum(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults);
+
+constexpr float _gradientFormula(size_t base_ranking, size_t new_ranking, float coef, float max = 1.0f)
+    { float grad = coef * (base_ranking - new_ranking) / (float)base_ranking; return grad > max ? max : grad; }
 }
-#include "localizer_lang.hpp"
 
 
 
@@ -38,6 +40,54 @@ private:
 namespace PAFL
 {
 void Localizer::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef) const
+    { _localize(_word, suite, tkt_vec, coef * (_maturity / (float)K)); }
+
+void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef)
+{
+    if (_maturity != K)
+        _maturity++;
+    auto base_rankingsum = _newRankingSum(_word, suite, tkt_vec, faults);
+    
+    // New tokens from fault
+    for (auto token : targets)
+        _word.insertToken(*token, 0.1f);
+
+    // Reserve future weight
+    auto end(_word.end());
+    for (auto iter = _word.begin(); iter != end; ++iter) {
+        
+        auto& ref = iter->second;
+        ref.weight = 2.0f;
+        auto rankingsum = _newRankingSum(_word, suite, tkt_vec, faults);
+        ref.weight = ref.future;
+
+        // Positive update
+        if (rankingsum < base_rankingsum)
+            ref.future += (1.0f - ref.future) * _gradientFormula(base_rankingsum, rankingsum, coef, (1.0f / K));
+        
+        // Negative update
+        else if (rankingsum > base_rankingsum) {
+
+            auto grad = _gradientFormula(rankingsum, base_rankingsum, coef, (1.0f / K));
+            ref.future *= (ref.future * grad + (1.0f - grad));
+            //ref.future *= 1.0f - coef * gradient;
+        }
+    }
+    // future to weight
+    _word.assignFuture();
+    // Delete weight under threshold
+    _word.eraseIf(0.1f);
+}
+}
+
+
+
+
+
+
+namespace PAFL
+{
+void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef)
 {
     index_t idx = 0;
     for (auto& file : suite) {
@@ -65,7 +115,7 @@ void Localizer::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, flo
                     }
                     else {
 
-                        similarity = _language->similarity(token);
+                        similarity = word.similarity(token);
                         archive.emplace(key, similarity);
                     }
 
@@ -81,66 +131,12 @@ void Localizer::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, flo
 
 
 
-void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef)
+line_t _newRankingSum(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
 {
     suite.assignSbfl();
-    suite.rank();
-    auto sbfl_rankingsum = suite.getRankingSum(faults);
-    
-    // New tokens from fault
-    for (auto token : targets)
-        _language->insertToken(*token, 0.1f);
-
-    // Reserve future weight
-    auto end(_language->end());
-    for (auto iter = _language->begin(); iter != end; ++iter) {
-        
-        auto& ref = iter->second;
-        ref.weight = 1.0f;
-        auto rankingsum = _newRankingSum(suite, tkt_vec, faults);
-        ref.weight = ref.future;
-
-        // Positive update
-        if (rankingsum < sbfl_rankingsum) {
-
-            float gradient = (sbfl_rankingsum - rankingsum) / (float)sbfl_rankingsum;
-            ref.future += (1.0f - ref.future) * coef * gradient;
-        }
-        else { // Nonpositive
-
-            ref.weight = 0.0f;
-            auto rankingsum = _newRankingSum(suite, tkt_vec, faults);
-            ref.weight = ref.future;
-            
-            // Negative update
-            if (rankingsum < sbfl_rankingsum) {
-
-                float gradient = (sbfl_rankingsum - rankingsum) / (float)sbfl_rankingsum;
-                //ref.future *= (ref.future * coef * gradient + (1.0f - coef * gradient));
-                ref.future *= 1.0f - coef * gradient;
-            }
-        }
-    }
-
-    // future to weight
-    _language->assignFuture();
-    // Delete weight under threshold
-    _language->eraseIf(0.1f);
-}
-
-
-
-line_t Localizer::_newRankingSum(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults) const
-{
-    suite.assignSbfl();
-    localize(suite, tkt_vec, 1.0f);
+    _localize(word, suite, tkt_vec, 1.0f);
     suite.rank();
     return suite.getRankingSum(faults);
 }
-
-
-
-void Localizer::log(const fs::path& _path) const
-    { _language->log(_path); }
 }
 #endif

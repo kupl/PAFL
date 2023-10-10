@@ -65,14 +65,14 @@ void FLModel::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec)
 
 void FLModel::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
 {
-    auto info(_predictor.step(suite.getTestSuite(), tkt_vec));
     auto targets(toTokenFromFault(suite, tkt_vec, faults));
+    auto info(_predictor.step(suite.getTestSuite(), tkt_vec, targets));
 
     for (auto& item : info.targets) {
 
         // New localizer
         if (item.first == _localizers.size())
-            _localizers.emplace_back(item.first);
+            _localizers.emplace_back();
         // Update target localizers
         _localizers[item.first].step(suite, tkt_vec, faults, targets, item.second);
     }

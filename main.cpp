@@ -4,14 +4,14 @@
 /*PAFL::CppTokenTree tree(fs::path("sample/temp.cpp"), std::make_shared<PAFL::TokenTree::Matcher>());
     tree.log("token.txt");
     return 0;*/
-// python : keras:45 , luigi:33 , matplotlib , pandas , scrapy , youtube-dl
+// python - keras:45 , luigi:33 , matplotlib , pandas , scrapy:40 , youtube-dl:43
 
 int main(int argc, char *argv[])
 {
     // Test
     /*char *_argv[] = {
         "/Users/user/Documents/C++/PAFL/main", "openssl:cpp","13,1,2,9,12,19,14,28,11,15,5,18,16,22,10,23,26,8,24,25,17,6,4,7,3,27,20,21","pafl,ochiai",
-        "-P/Users/user/defects4cpp/openssl","-T/Users/user/defects4cpp","-B/Users/user/Documents/C++/_bug_info","-l","--dev-cache" };
+        "-P/Users/user/defects4cpp/openssl","-T/Users/user/defects4cpp","-B/Users/user/Documents/C++/oracle","-l","--dev-cache" };
     constexpr int _argc = 9;
     std::system(PAFL::Command::CLEAR);
     PAFL::UI ui(_argc, _argv);*/
