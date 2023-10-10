@@ -253,6 +253,7 @@ void UI::_readIn(int argc, char *argv[])
         else if (arg.starts_with("-sub-dir=")) {// --sub-dir=<DIRECTORY>
 
             std::string dirs(arg.substr(9));
+            std::cout << dirs << std::endl;
             for (size_t pos = 0; pos < dirs.size(); ) {
 
                 auto split = dirs.find(',', pos);
