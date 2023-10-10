@@ -250,7 +250,7 @@ void UI::_readIn(int argc, char *argv[])
         else if (arg.starts_with('B'))
             _oracle_path = arg.substr(1);
 
-        else if (arg == "-sub-dir=") {// --sub-dir=<DIRECTORY>
+        else if (arg.starts_with("-sub-dir=")) {// --sub-dir=<DIRECTORY>
 
             std::string dirs(arg.substr(9));
             for (size_t pos = 0; pos < arg.size(); ) {
