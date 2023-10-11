@@ -331,6 +331,7 @@ rapidjson::Document parseDoc(const fs::path& path)
     ifs.seekg(0);
     ifs.read(buf, size);
     ifs.close();
+    *(&buf[size] - 1) = '\0';
 
     doc.Parse(buf);
     std::cout << doc.HasParseError() << '\n';
