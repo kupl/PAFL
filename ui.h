@@ -2,6 +2,7 @@
 #define __UI_H__
 
 #include <iostream>
+#include <cstdio>
 #include <set>
 #include <vector>
 
@@ -319,22 +320,19 @@ void UI::_setContainer()
 
 rapidjson::Document parseDoc(const fs::path& path)
 {
-    rapidjson::Document doc;
-    std::ifstream ifs(path);
-    ifs.seekg(0, std::ios::end);
-    auto size = ifs.tellg();
+    std::FILE* fp = std::fopen(path.c_str(), "rb");
+    std::fseek(fp, 0, SEEK_END);
+    auto size = std::ftell(fp);
+    std::rewind(fp);
 
-    char* buf = (char*)std::calloc(size, sizeof(char));
+    char* buf = (char*)std::calloc(size + 1, sizeof(char));
     if (!buf)
         throw std::range_error("malloc failed");
+    std::fread(buf, size, 1, fp);
+    std::fclose(fp);
 
-    ifs.seekg(0);
-    ifs.read(buf, size);
-    ifs.close();
-    *(&buf[size] - 1) = '\0';
-
+    rapidjson::Document doc;
     doc.Parse(buf);
-    std::cout << doc.HasParseError() << '\n';
     std::free(buf);
 
     return doc;

@@ -8,11 +8,6 @@
 
 int main(int argc, char *argv[])
 {
-    PAFL::parseDoc("/home/donguk/bugscpp/test_cpp_peglib/buggy-8/cpp_peglib-buggy-8-2/summary.json");
-    PAFL::parseDoc("/home/donguk/bugscpp/test_cpp_peglib/buggy-8/cpp_peglib-buggy-8-2/summary.json");
-    return 0;
-
-
     // Test
     /*char *_argv[] = {
         "/Users/user/Documents/C++/PAFL/main", "openssl:cpp","13,1,2,9,12,19,14,28,11,15,5,18,16,22,10,23,26,8,24,25,17,6,4,7,3,27,20,21","pafl,ochiai",
