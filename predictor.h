@@ -201,9 +201,9 @@ float Predictor::_getDistance(const feature_vector& lhs, const feature_vector& r
 
         float lhval = (lhs.contains(str) ? lhs.at(str) : 0.0f);
         float rhval = (rhs.contains(str) ? rhs.at(str) : 0.0f);
-        //dist += (lhval - rhval) * (lhval - rhval);
-        if (lhval > 0.0f || rhval > 0.0f)
-            dist += lhval < rhval ? 1.0f - lhval / rhval : 1.0f - rhval / lhval;
+        dist += (lhval - rhval) * (lhval - rhval);
+        //if (lhval > 0.0f || rhval > 0.0f)
+        //   dist += lhval < rhval ? 1.0f - lhval / rhval : 1.0f - rhval / lhval;
     }
 
     return dist;

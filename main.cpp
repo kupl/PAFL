@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 
     // Project Aware FL Model
     PAFL::FLModel flmodel;
+    PAFL::createDirRecursively(ui.getExePath() / "coverage");
     if (ui.hasLogger())
         flmodel.setLogger(std::make_unique<PAFL::FLModel::Logger>(PAFL::createDirRecursively(ui.getExePath() / "log/model") / ui.getProject()));
     auto matcher = std::make_shared<PAFL::TokenTree::Matcher>(); // Tokenize files
