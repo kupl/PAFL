@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
         }
 
         // Collect Coverage data
-        for (auto& item : ui.getCoverageList(iter))
-            suite[iter].addTestCase(item.first, item.second);
+        for (auto& item : ui.getCoverageList(iter)) { std::cout << item.first.IsObject() << '\n';
+            suite[iter].addTestCase(item.first, item.second); }
 
         if (ui.hasCache())
             suite[iter]._write(path);

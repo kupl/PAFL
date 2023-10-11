@@ -124,7 +124,7 @@ UI::docs UI::getCoverageList(size_t iter) const
     for (size_t tc = 0;; tc++) {
 
         std::string CASE(std::to_string(tc+1));
-        fs::path tc_path = _testsuite_path / _config.getStringFromLine(_config.TESTCASE_LOC, _project, VER, CASE);
+        fs::path tc_path = _testsuite_path / _config.TESTCASE_LOC(_project, VER, CASE);
         if (!fs::exists(tc_path))
             break;
         
@@ -133,14 +133,14 @@ UI::docs UI::getCoverageList(size_t iter) const
         // Parse document
         bool pf = false;
         {// Check pass/fail
-            std::ifstream ifs(tc_path / _config.getStringFromLine(_config.TEST_NAME, _project, VER, CASE));
+            std::ifstream ifs(tc_path / _config.TEST_NAME(_project, VER, CASE));
             std::string buf;
             std::getline(ifs, buf);
 
-            if (buf == _config.getStringFromLine(_config.TEST_PASS, _project, VER, CASE))
+            if (buf == _config.TEST_PASS(_project, VER, CASE))
                 pf = true;
         }
-        ret.emplace_back(parseDoc(tc_path / _config.getStringFromLine(_config.COVERAGE_NAME, _project, VER, CASE)), pf);
+        ret.emplace_back(parseDoc(tc_path / _config.COVERAGE_NAME(_project, VER, CASE)), pf);
     }
     std::cout << '\n';
 
@@ -296,7 +296,7 @@ void UI::_setContainer()
     for (auto v : _version) {
 
         std::string VER(std::to_string(v));
-        _src_path.emplace_back(_project_path / _config.getStringFromLine(_config.PROJECT_LOC, _project, VER, ""));
+        _src_path.emplace_back(_project_path / _config.PROJECT_LOC(_project, VER, ""));
         _faults.emplace_back();
     }
 
@@ -319,7 +319,6 @@ void UI::_setContainer()
 
 rapidjson::Document parseDoc(const fs::path& path)
 {
-    std::cout << path << '\n';
     rapidjson::Document doc;
     std::ifstream ifs(path);
     ifs.seekg(0, std::ios::end);

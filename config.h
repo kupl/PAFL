@@ -37,13 +37,19 @@ public:
         decltype(&Config::Token::operator()) _func;
     };
 
-    using Line = std::list<Token>;
+    class Line : public std::list<Token>
+    {
+        public: std::string operator()(const std::string& proj, const std::string& ver, const std::string& tc) const
+        {
+            std::string ret;
+            for (auto& tok : *this)
+                ret.append(tok(proj, ver, tc));
+            return ret;
+        }
+    };
 
 
     void configure(PrgLang pl, const fs::path& path);
-
-    std::string getStringFromLine(const Line& line,
-                const std::string& proj, const std::string& ver, const std::string& tc) const;
 
     Line PROJECT_LOC; Line TESTCASE_LOC; Line COVERAGE_NAME;
     Line TEST_NAME; Line TEST_PASS;
@@ -162,15 +168,6 @@ Config::Token::Token(Config::Token::Type ttype, const std::string& str) :
     case Config::Token::Type::VER: _func = &Config::Token::_VER; break;
     case Config::Token::Type::CASE: _func = &Config::Token::_CASE;
     }
-}
-
-std::string Config::getStringFromLine(const Line& line,
-                const std::string& proj, const std::string& ver, const std::string& tc) const
-{
-    std::string ret;
-    for (auto& functor : line)
-        ret.append(functor(proj, ver, tc));
-    return ret;
 }
 }
 #endif
