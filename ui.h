@@ -319,6 +319,7 @@ void UI::_setContainer()
 
 rapidjson::Document parseDoc(const fs::path& path)
 {
+    std::cout << path << '\n';
     rapidjson::Document doc;
     std::ifstream ifs(path);
     ifs.seekg(0, std::ios::end);

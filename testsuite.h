@@ -119,10 +119,6 @@ void TestSuite::addTestCase(const rapidjson::Document& d, bool is_successed)
         const auto& json_lines = json_file["lines"].GetArray();
         std::string key(json_file["file"].GetString());
         
-        // If the file is empty, ignore
-        if (json_lines.Size() == 0)
-            continue;
-        
         // "file" is not in filelist --> initialize
         if (!_file2index.contains(key)) {
             
