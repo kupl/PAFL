@@ -12,7 +12,7 @@ namespace PAFL
 class Localizer
 {
 public:
-    Localizer() : _maturity(0) {}
+    Localizer() : _isFresh(true), _maturity(0) {}
     void localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef) const;
     void step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef);
 
@@ -20,8 +20,10 @@ public:
         { _word.log(_path); }
 
 private:
-    unsigned char _maturity;
     CrossWord _word;
+
+    bool _isFresh;
+    unsigned char _maturity;
 };
 
 
@@ -44,8 +46,11 @@ void Localizer::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, flo
 
 void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef)
 {
-    if (_maturity != K)
+    if (_isFresh)
+        _isFresh = false;
+    else if (_maturity != K)
         _maturity++;
+        
     auto base_rankingsum = _newRankingSum(_word, suite, tkt_vec, faults);
     
     // New tokens from fault
