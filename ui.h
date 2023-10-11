@@ -121,9 +121,9 @@ UI::docs UI::getCoverageList(size_t iter) const
     std::string VER(std::to_string(_version[iter]));
 
     // Set docs
-    for (size_t tc = 0;; tc++) {
+    for (size_t tc = 1;; tc++) {
 
-        std::string CASE(std::to_string(tc+1));
+        std::string CASE(std::to_string(tc));
         fs::path tc_path = _testsuite_path / _config.TESTCASE_LOC(_project, VER, CASE);
         if (!fs::exists(tc_path))
             break;
@@ -333,6 +333,7 @@ rapidjson::Document parseDoc(const fs::path& path)
     ifs.close();
 
     doc.Parse(buf);
+    std::cout << doc.HasParseError() << '\n';
     std::free(buf);
 
     return doc;
