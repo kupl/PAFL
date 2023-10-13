@@ -50,12 +50,12 @@ void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const f
         _isFresh = false;
     else if (_maturity != K)
         _maturity++;
-        
+
     auto base_rankingsum = _newRankingSum(_word, suite, tkt_vec, faults);
     
     // New tokens from fault
     for (auto token : targets)
-        _word.insertToken(*token, 0.1f);
+        _word.insertToken(*token, 0.0f);
 
     // Reserve future weight
     auto end(_word.end());
