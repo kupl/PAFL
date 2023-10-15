@@ -35,8 +35,7 @@ public:
     const std::list<ranking_info>& rank();
 
 
-    index_t getIndexFromFile(const std::string& file) const
-        { return _file2index.contains(file) ? _file2index.at(file) : throw std::out_of_range(file + " is out of range"); }
+    index_t getIndexFromFile(const std::string& file) const;
     index_t MaxIndex() const
         { return _index2file.size(); }
     const std::string& getFileFromIndex(index_t idx) const
@@ -211,6 +210,14 @@ const std::list<TestSuite::ranking_info>& TestSuite::rank()
 }
 
 
+
+index_t TestSuite::getIndexFromFile(const std::string& file) const
+{
+    if (_file2index.contains(file))
+        return _file2index.at(file);
+    std::cerr << file + " is out of range";
+    throw std::out_of_range(file);
+}
 
 line_t TestSuite::getRankingSum(const fault_loc& faults) const
 {
