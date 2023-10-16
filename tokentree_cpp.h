@@ -231,7 +231,7 @@ std::list<Token> CppTokenTree::_getRawStream(const std::filesystem::path& path, 
 
 
     std::free(buf);
-    std::system(Command::CLEAR);
+    //std::system(Command::CLEAR);
     return stream;
 }
 }
