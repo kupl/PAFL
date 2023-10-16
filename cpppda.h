@@ -466,6 +466,7 @@ void CppPda::_l_square(Token* tok)
 
 void CppPda::_r_square(Token* tok)
 {
+    std::cout << _ttype_stack.size() << std::endl;
     _ttype_stack.pop();
     if (_ttype_stack.top() == Token::Type::LAMBDA)
         _lambda_stack.top() = _Lambda::ARGS_BEGIN;
