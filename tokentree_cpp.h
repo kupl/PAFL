@@ -73,7 +73,7 @@ CppTokenTree::CppTokenTree(const std::filesystem::path& path, std::shared_ptr<To
     for (auto& list : _stream)
         _tokens_indexer.emplace(list.begin()->loc, &list);
     
-
+    return;
     if (!pda.isTerminated(&*_root)) {
 
         std::cerr << "Incomplete token tree : " << path << '\n';
