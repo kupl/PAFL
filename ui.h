@@ -60,11 +60,12 @@ private:
     void _readIn(int argc, char *argv[]);
     void _setContainer();
 
+
     std::string _project;
     PrgLang _pl;
     std::vector<size_t> _version;
     std::set<Method> _method;
-    std::list<std::string> _sub_dir;
+    std::list<fs::path> _sub_dir;
 
     fs::path _exe_path;
     fs::path _project_path;
@@ -80,6 +81,7 @@ private:
 };
 
 rapidjson::Document parseDoc(const fs::path& path);
+std::list<fs::path> _collectDir(const fs::path& path, std::string key);
 }
 
 
@@ -105,11 +107,17 @@ fs::path UI::getFilePath(size_t iter, const std::string& file) const
     fs::path ret(_src_path[iter] / file);
     if (fs::exists(ret))
         return ret;
-    else for (auto& dir : _sub_dir) {
+    else for (auto& dir: _sub_dir) {
+        
+        fs::path src(_src_path[iter] / dir.parent_path());
+        auto key(dir.filename().string());
 
-        ret = _src_path[iter] / dir / file;
-        if (fs::exists(ret))
-            return ret;
+        for (auto& dir : _collectDir(src, key)) {
+
+            ret = dir / file;
+            if (fs::exists(ret))
+                return ret;
+        }
     }
 
     std::cerr << "Invalid file path : " << file << '\n';
@@ -253,7 +261,7 @@ void UI::_readIn(int argc, char *argv[])
         else if (arg.starts_with('B'))
             _oracle_path = arg.substr(1);
 
-        else if (arg.starts_with("-sub-dir=")) {// --sub-dir=<DIRECTORY>
+        else if (arg.starts_with("-sub-dir=")) {// --sub-dir=<DIR1>,<DIR2>,...
 
             std::string dirs(arg.substr(9));
             for (size_t pos = 0; pos < dirs.size(); ) {
@@ -338,6 +346,42 @@ rapidjson::Document parseDoc(const fs::path& path)
     std::free(buf);
 
     return doc;
+}
+
+
+
+std::list<fs::path> _collectDir(const fs::path& path, std::string key)
+{
+    std::list<fs::path> ret;
+
+    if (key[0] != '*') {
+
+        if (*key.rbegin() != '*')
+            return std::list<fs::path>{path / key};
+
+        key.erase(key.end() - 1);
+        for (const auto& entry : fs::directory_iterator(path))
+            if (entry.path().filename().string().starts_with(key))
+                ret.emplace_back(entry.path());
+        return ret;
+    }
+
+    key.erase(key.front());
+    {
+        if (*key.rbegin() != '*') {
+
+            for (const auto& entry : fs::directory_iterator(path))
+                if (entry.path().filename().string().ends_with(key))
+                    ret.emplace_back(entry.path());
+            return ret;
+        }
+
+        key.erase(key.end() - 1);
+        for (const auto& entry : fs::directory_iterator(path))
+            if (entry.path().filename().string().find(key) != std::string::npos)
+                ret.emplace_back(entry.path());
+        return ret;
+    }
 }
 }
 #endif
