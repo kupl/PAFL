@@ -41,6 +41,8 @@ public:
         { return _faults[iter]; }
     size_t getVersion(size_t iter) const
         { return _version[iter]; }
+    const std::vector<std::string>& getExtensions() const
+        { return _extensions; }
 
     bool hasLogger() const
         { return _logger; }
@@ -54,7 +56,7 @@ public:
 
 
 private:
-    void _throwInvalidInput()
+    void _throwInvalidInput() const
         { std::cerr << "Invalid arguments\n"; throw "Invalid arguments"; }
 
     void _readIn(int argc, char *argv[]);
@@ -66,6 +68,7 @@ private:
     std::vector<size_t> _version;
     std::set<Method> _method;
     std::list<fs::path> _sub_dir;
+    std::vector<std::string> _extensions;
 
     fs::path _exe_path;
     fs::path _project_path;
@@ -183,12 +186,20 @@ void UI::_readIn(int argc, char *argv[])
         std::transform(pl.begin(), pl.end(), pl.begin(),
                         [](std::string::value_type c){ return std::tolower(c); });
 
-        if (pl == "cpp" || pl == "c++" || pl == "c")
+        if (pl == "cpp" || pl == "c++" || pl == "c") {
+
             _pl = PrgLang::CPP;
-        else if (pl == "python" || pl == "py")
+            _extensions = { ".h", ".c", ".hpp", ".cpp", ".cc" };
+        }
+        else if (pl == "python" || pl == "py") {
+
             _pl = PrgLang::PYTHON;
-        else if (pl == "java")
+            _extensions = { ".py", "pyi", "pyc" };
+        }
+        else if (pl == "java") {
+
             _pl = PrgLang::JAVA;
+        }
         else
             _throwInvalidInput();
     }

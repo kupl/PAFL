@@ -26,7 +26,7 @@ public:
 
 
     TestSuite() : _is_initialized(false), _fail(0), _highest_sbfl(0.0f) {}
-    void addTestCase(const rapidjson::Document& d, bool is_successed);
+    void addTestCase(const rapidjson::Document& d, bool is_successed, const std::vector<std::string>& extensions);
 
     template<class Func>
     void setSbflSus(Func func);
@@ -92,7 +92,7 @@ private:
 
 namespace PAFL
 {
-void TestSuite::addTestCase(const rapidjson::Document& d, bool is_successed)
+void TestSuite::addTestCase(const rapidjson::Document& d, bool is_successed, const std::vector<std::string>& extensions)
 {
     const auto& json_files = d["files"].GetArray();
     const auto sizeof_files = json_files.Size();
@@ -116,7 +116,13 @@ void TestSuite::addTestCase(const rapidjson::Document& d, bool is_successed)
         
         const auto& json_file = json_files[i].GetObject();
         const auto& json_lines = json_file["lines"].GetArray();
+
         std::string key(json_file["file"].GetString());
+        { // Check if it is permitted extension
+            auto ext(fs::path(key).extension().string());
+            if (std::find(extensions.begin(), extensions.end(), ext) == extensions.end())
+                continue;
+        }
         
         // "file" is not in filelist --> initialize
         if (!_file2index.contains(key)) {

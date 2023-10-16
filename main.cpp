@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
         // Collect Coverage data
         for (auto& item : ui.getCoverageList(iter))
-            suite[iter].addTestCase(item.first, item.second);
+            suite[iter].addTestCase(item.first, item.second, ui.getExtensions());
 
         if (ui.hasCache())
             suite[iter]._write(path);
