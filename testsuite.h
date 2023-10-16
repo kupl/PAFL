@@ -107,7 +107,6 @@ void TestSuite::addTestCase(const rapidjson::Document& d, bool is_successed, con
     }
     is_successed ? _succ++ : _fail++;
 
-
     // Add test case
     auto& tc_lines = _test_suite.emplace_back(test_case{std::list<std::pair<index_t, line_t>>(), is_successed}).lines;
     
@@ -117,8 +116,12 @@ void TestSuite::addTestCase(const rapidjson::Document& d, bool is_successed, con
         const auto& json_file = json_files[i].GetObject();
         const auto& json_lines = json_file["lines"].GetArray();
 
+        // Check if it is a valid file
+        if (json_lines.Empty())
+            continue;
+
         std::string key(json_file["file"].GetString());
-        { // Check if it is permitted extension
+        { // Check if it is a permitted extension
             auto ext(fs::path(key).extension().string());
             if (std::find(extensions.begin(), extensions.end(), ext) == extensions.end())
                 continue;
