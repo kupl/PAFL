@@ -1,306 +1,959 @@
+// ***************************************************************** -*- C++ -*-
 /*
- * Copyright 2019-2020 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright (C) 2004-2021 Exiv2 authors
+ * This program is part of the Exiv2 distribution.
  *
- * Licensed under the Apache License 2.0 (the "License").  You may not use
- * this file except in compliance with the License.  You can obtain a copy
- * in the file LICENSE in the source distribution or at
- * https://www.openssl.org/source/license.html
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, 5th Floor, Boston, MA 02110-1301 USA.
  */
+// geotag.cpp
+// Sample program to read gpx files and update images with GPS tags
+// g++ geotag.cpp -o geotag -lexiv2 -lexpat
 
+#include <exiv2/exiv2.hpp>
+#include "unused.h"
+
+#include <iostream>
+#include <iomanip>
+#include <cassert>
+#include <algorithm>
+
+#include <stdio.h>
+#include <cstdlib>
+#include <time.h>
 #include <string.h>
-#include <openssl/core_names.h>
-#include <openssl/crypto.h>
-#include <openssl/evp.h>
-#include <openssl/params.h>
-#include <openssl/err.h>
-#include "internal/sha3.h"
-#include "prov/digestcommon.h"
-#include "prov/implementations.h"
-#include "prov/providercommonerr.h"
+#include <sys/stat.h>
+#include <sys/types.h>
 
-/*
- * Forward declaration of any unique methods implemented here. This is not strictly
- * necessary for the compiler, but provides an assurance that the signatures
- * of the functions in the dispatch table are correct.
- */
-static OSSL_OP_digest_init_fn keccak_init;
-static OSSL_OP_digest_update_fn keccak_update;
-static OSSL_OP_digest_final_fn keccak_final;
-static OSSL_OP_digest_freectx_fn keccak_freectx;
-static OSSL_OP_digest_dupctx_fn keccak_dupctx;
-static OSSL_OP_digest_set_ctx_params_fn shake_set_ctx_params;
-static OSSL_OP_digest_settable_ctx_params_fn shake_settable_ctx_params;
-static sha3_absorb_fn generic_sha3_absorb;
-static sha3_final_fn generic_sha3_final;
+#include <expat.h>
 
-#if defined(OPENSSL_CPUID_OBJ) && defined(__s390__) && defined(KECCAK1600_ASM)
-/*
- * IBM S390X support
- */
-# include "s390x_arch.h"
-# define S390_SHA3 1
-# define S390_SHA3_CAPABLE(name) \
-    ((OPENSSL_s390xcap_P.kimd[0] & S390X_CAPBIT(S390X_##name)) && \
-     (OPENSSL_s390xcap_P.klmd[0] & S390X_CAPBIT(S390X_##name)))
+#include <vector>
+#include <string>
 
+#if defined(__MINGW32__) || defined(__MINGW64__)
+# ifndef  __MINGW__
+#  define __MINGW__
+# endif
 #endif
 
-static int keccak_init(void *vctx)
+using namespace std;
+
+#ifndef  lengthof
+#define  lengthof(x) (sizeof(*x)/sizeof(x))
+#endif
+
+#if defined(_MSC_VER) || defined(__MINGW__)
+#include <windows.h>
+char*    realpath(const char* file,char* path);
+#define  lstat _stat
+#define  stat  _stat
+#if      _MSC_VER < 1400
+#define strcpy_s(d,l,s) strcpy(d,s)
+#define strcat_s(d,l,s) strcat(d,s)
+#endif
+#endif
+
+#if ! defined(_MSC_VER)
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/param.h>
+#define  stricmp strcasecmp
+#endif
+
+#ifndef _MAX_PATH
+#define _MAX_PATH 1024
+#endif
+
+// prototypes
+class Options;
+int getFileType(const char* path ,Options& options);
+int getFileType(std::string& path,Options& options);
+
+string getExifTime(const time_t t);
+time_t parseTime(const char* ,bool bAdjust=false);
+int    timeZoneAdjust();
+
+// platform specific code
+#if defined(_MSC_VER) || defined(__MINGW__)
+char* realpath(const char* file,char* path)
 {
-    /* The newctx() handles most of the ctx fixed setup. */
-    sha3_reset((KECCAK1600_CTX *)vctx);
-    return 1;
+    char* result = (char*) malloc(_MAX_PATH);
+    if   (result) GetFullPathName(file,_MAX_PATH,result,NULL);
+    return result ;
+    UNUSED(path);
+}
+#endif
+
+// Command-line parser
+class Options  {
+public:
+    bool        verbose;
+    bool        help;
+    bool        version;
+    bool        dst;
+    bool        dryrun;
+    bool        ascii;
+
+    Options()
+    {
+        verbose     = false;
+        help        = false;
+        version     = false;
+        dst         = false;
+        dryrun      = false;
+        ascii       = false;
+    }
+
+    virtual ~Options() {} ;
+} ;
+
+enum
+{   resultOK=0
+,   resultSyntaxError
+,   resultSelectFailed
+};
+
+enum                        // keyword indices
+{   kwHELP = 0
+,   kwVERSION
+,   kwDST
+,   kwDRYRUN
+,   kwASCII
+,   kwVERBOSE
+,   kwADJUST
+,   kwTZ
+,   kwDELTA
+,   kwMAX                   // manages keyword array
+,   kwNEEDVALUE             // bogus keywords for error reporting
+,   kwSYNTAX                // -- ditto --
+,   kwNOVALUE = -kwVERBOSE  // keywords <= kwNOVALUE are flags (no value needed)
+};
+
+// file types supported
+enum
+{   typeUnknown   = 0
+,   typeDirectory = 1
+,   typeImage     = 2
+,   typeXML       = 3
+,   typeFile      = 4
+,   typeDoc       = 5
+,   typeCode      = 6
+,   typeMax       = 7
+};
+
+// forward declaration
+class Position;
+
+// globals
+typedef std::map<time_t,Position>           TimeDict_t;
+typedef std::map<time_t,Position>::iterator TimeDict_i;
+typedef std::vector<std::string>            strings_t;
+const char*  gDeg = NULL ; // string "°" or "deg"
+TimeDict_t   gTimeDict   ;
+strings_t    gFiles;
+
+// Position (from gpx file)
+class Position
+{
+public:
+    Position(time_t time, double lat, double lon, double ele) :
+        time_(time)
+      , lon_(lon)
+      , lat_(lat)
+      , ele_(ele)
+      , delta_(0)
+    {}
+
+    Position():
+        time_(0)
+      , lon_(0.0)
+      , lat_(0.0)
+      , ele_(0.0)
+      , delta_(0)
+    { }
+
+    virtual ~Position() {}
+//  copy constructor
+    Position(const Position& o) :
+        time_(o.time_)
+      , lon_(o.lon_)
+      , lat_(o.lat_)
+      , ele_(o.ele_)
+      , delta_(o.delta_)
+    {}
+
+//  instance methods
+    bool good()                 { return time_ || lon_ || lat_ || ele_ ; }
+    std::string getTimeString() { if ( times_.empty() ) times_ = getExifTime(time_) ;  return times_; }
+    time_t      getTime()       { return time_ ; }
+    std::string toString();
+
+//  getters/setters
+    double lat()            {return lat_   ;}
+    double lon()            {return lon_   ;}
+    double ele()            {return ele_   ;}
+    int    delta()          {return delta_ ;}
+    void   delta(int delta) {delta_=delta  ;}
+
+//  data
+private:
+    time_t      time_;
+    double      lon_ ;
+    double      lat_ ;
+    double      ele_ ;
+    std::string times_;
+    int         delta_;
+
+// public static data
+public:
+    static int    adjust_  ;
+    static int    tz_      ;
+    static int    dst_     ;
+    static time_t deltaMax_;
+
+// public static member functions
+public:
+    static int    Adjust() {return Position::adjust_ + Position::tz_ + Position::dst_ ;}
+    static int    tz()     {return tz_    ;}
+    static int    dst()    {return dst_   ;}
+    static int    adjust() {return adjust_;}
+
+    static std::string toExifString(double d,bool bRational,bool bLat);
+    static std::string toExifString(double d);
+    static std::string toExifTimeStamp(std::string& t);
+};
+
+std::string Position::toExifTimeStamp(std::string& t)
+{
+    char        result[200];
+    const char* arg = t.c_str();
+    int HH = 0 ;
+    int mm = 0 ;
+    int SS1 = 0 ;
+    if ( strstr(arg,":") || strstr(arg,"-") ) {
+        int YY=0,MM=0,DD=0;
+        char a=0,b=0,c=0,d=0,e=0;
+        sscanf(arg,"%d%c%d%c%d%c%d%c%d%c%d",&YY,&a,&MM,&b,&DD,&c,&HH,&d,&mm,&e,&SS1);
+    }
+    sprintf(result,"%d/1 %d/1 %d/1",HH,mm,SS1);
+    return std::string(result);
 }
 
-static int keccak_update(void *vctx, const unsigned char *inp, size_t len)
+std::string Position::toExifString(double d)
 {
-    KECCAK1600_CTX *ctx = vctx;
-    const size_t bsz = ctx->block_size;
-    size_t num, rem;
+    char result[200];
+    d *= 100;
+    sprintf(result,"%d/100",abs((int)d));
+    return std::string(result);
+}
 
-    if (len == 0)
-        return 1;
+std::string Position::toExifString(double d,bool bRational,bool bLat)
+{
+    const char* NS   = d>=0.0?"N":"S";
+    const char* EW   = d>=0.0?"E":"W";
+    const char* NSEW = bLat  ? NS: EW;
+    if ( d < 0 ) d = -d;
+    int deg = (int) d;
+        d  -= deg;
+        d  *= 60;
+    int min = (int) d ;
+        d  -= min;
+        d  *= 60;
+    int sec = (int)d;
+    char result[200];
+    if ( bRational )
+        sprintf(result,"%d/1 %d/1 %d/1" ,deg,min,sec);
+    else
+        sprintf(result,"%03d%s%02d'%02d\"%s" ,deg,gDeg,min,sec,NSEW);
+    return std::string(result);
+}
 
-    /* Is there anything in the buffer already ? */
-    if ((num = ctx->bufsz) != 0) {
-        /* Calculate how much space is left in the buffer */
-        rem = bsz - num;
-        /* If the new input does not fill the buffer then just add it */
-        if (len < rem) {
-            memcpy(ctx->buf + num, inp, len);
-            ctx->bufsz += len;
-            return 1;
+std::string Position::toString()
+{
+    char result[200];
+    std::string sLat = Position::toExifString(lat_,false,true );
+    std::string sLon = Position::toExifString(lon_,false,false);
+    sprintf(result,"%s %s %-8.3f",sLon.c_str(),sLat.c_str(),ele_);
+    return std::string(result);
+}
+
+// defaults
+int    Position::adjust_   = 0;
+int    Position::tz_       = timeZoneAdjust();
+int    Position::dst_      = 0;
+time_t Position::deltaMax_ = 60 ;
+
+///////////////////////////////////////////////////////////
+// UserData - used by XML Parser
+class UserData
+{
+public:
+    explicit UserData(Options& options):
+        indent(0)
+      , count(0)
+      , nTrkpt(0)
+      , bTime(false)
+      , bEle(false)
+      , ele(0.0)
+      , lat(0.0)
+      , lon(0.0)
+      , options_(options)
+    {}
+    virtual ~UserData() {}
+
+//  public data members
+    int         indent;
+    size_t      count ;
+    Position    now ;
+    Position    prev;
+    int         nTrkpt;
+    bool        bTime ;
+    bool        bEle  ;
+    double      ele;
+    double      lat;
+    double      lon;
+    std::string xmlt;
+    std::string exift;
+    time_t      time;
+    Options&    options_;
+// static public data memembers
+};
+
+// XML Parser Callbacks
+static void startElement(void* userData, const char* name, const char** atts )
+{
+    UserData* me = (UserData*) userData;
+    //for ( int i = 0 ; i < me->indent ; i++ ) printf(" ");
+    //printf("begin %s\n",name);
+    me->bTime = strcmp(name,"time")==0;
+    me->bEle  = strcmp(name,"ele")==0;
+
+    if ( strcmp(name,"trkpt")==0 ) {
+        me->nTrkpt++;
+        while ( *atts ) {
+            const char* a=atts[0];
+            const char* v=atts[1];
+            if ( !strcmp(a,"lat") ) me->lat = atof(v);
+            if ( !strcmp(a,"lon") ) me->lon = atof(v);
+            atts += 2 ;
         }
-        /* otherwise fill up the buffer and absorb the buffer */
-        memcpy(ctx->buf + num, inp, rem);
-        /* Update the input pointer */
-        inp += rem;
-        len -= rem;
-        ctx->meth.absorb(ctx, ctx->buf, bsz);
-        ctx->bufsz = 0;
     }
-    /* Absorb the input - rem = leftover part of the input < blocksize) */
-    rem = ctx->meth.absorb(ctx, inp, len);
-    /* Copy the leftover bit of the input into the buffer */
-    if (rem) {
-        memcpy(ctx->buf, inp + len - rem, rem);
-        ctx->bufsz = rem;
+    me->count++  ;
+    me->indent++ ;
+}
+
+static void endElement(void* userData, const char* name)
+{
+    UserData* me = (UserData*) userData;
+    me->indent-- ;
+    if ( strcmp(name,"trkpt")==0 ) {
+
+        me->nTrkpt--;
+        me->now = Position(me->time,me->lat,me->lon,me->ele) ;
+
+        if ( !me->prev.good() && me->options_.verbose ) {
+            printf("trkseg %s begin ",me->now.getTimeString().c_str());
+        }
+
+        // remember our location and put it in gTimeDict
+        gTimeDict[me->time] = me->now ;
+        me->prev = me->now ;
     }
-    return 1;
+    if ( strcmp(name,"trkseg")==0 && me->options_.verbose ) {
+        printf("%s end\n",me->now.getTimeString().c_str());
+    }
 }
 
-static int keccak_final(void *vctx, unsigned char *out, size_t *outl,
-                        size_t outsz)
+void charHandler(void* userData,const char* s,int len)
 {
-    int ret = 1;
-    KECCAK1600_CTX *ctx = vctx;
+    UserData* me = (UserData*) userData;
 
-    if (outsz > 0)
-        ret = ctx->meth.final(out, ctx);
+    if ( me->nTrkpt == 1 ) {
+        char buffer[100];
+        int  l_max = 98 ; // lengthof(buffer) -2 ;
 
-    *outl = ctx->md_size;
-    return ret;
+        if ( me->bTime && len > 5 ) {
+            if ( len < l_max ) {
+                memcpy(buffer,s,len);
+                buffer[len]=0;
+                char* b = buffer ;
+                while ( *b == ' ' && b < buffer+len ) b++ ;
+                me->xmlt  = b ;
+                me->time  = parseTime(me->xmlt.c_str());
+                me->exift = getExifTime(me->time);
+            }
+            me->bTime=false;
+        }
+        if ( me->bEle && len > 2 ) {
+            if ( len < l_max ) {
+                memcpy(buffer,s,len);
+                buffer[len]=0;
+                char* b = buffer ;
+                while ( *b == ' ' && b < buffer+len ) b++ ;
+                me->ele = atof(b);
+            }
+            me->bEle=false;
+        }
+    }
 }
 
-/*-
- * Generic software version of the absorb() and final().
- */
-static size_t generic_sha3_absorb(void *vctx, const void *inp, size_t len)
+///////////////////////////////////////////////////////////
+// Time Functions
+time_t parseTime(const char* arg,bool bAdjust)
 {
-    KECCAK1600_CTX *ctx = vctx;
+    time_t result = 0 ;
+    try {
+        //559 rmills@rmills-imac:~/bin $ exiv2 -pa ~/R.jpg | grep -i date
+        //Exif.Image.DateTime                          Ascii      20  2009:08:03 08:58:57
+        //Exif.Photo.DateTimeOriginal                  Ascii      20  2009:08:03 08:58:57
+        //Exif.Photo.DateTimeDigitized                 Ascii      20  2009:08:03 08:58:57
+        //Exif.GPSInfo.GPSDateStamp                    Ascii      21  2009-08-03T15:58:57Z
 
-    return SHA3_absorb(ctx->A, inp, len, ctx->block_size);
+        // <time>2012-07-14T17:33:16Z</time>
+
+        if ( strstr(arg,":") || strstr(arg,"-") ) {
+            int  YY=0,MM=0,DD=0,HH=0,mm=0,SS1=0;
+            char a=0,b=0,c=0,d=0,e=0;
+            sscanf(arg,"%d%c%d%c%d%c%d%c%d%c%d",&YY,&a,&MM,&b,&DD,&c,&HH,&d,&mm,&e,&SS1);
+
+            struct tm T;
+            memset(&T,0,sizeof(T));
+            T.tm_min  = mm  ;
+            T.tm_hour = HH  ;
+            T.tm_sec  = SS1 ;
+            if ( bAdjust ) T.tm_sec -= Position::Adjust();
+            T.tm_year = YY -1900 ;
+            T.tm_mon  = MM -1    ;
+            T.tm_mday = DD  ;
+            T.tm_isdst = -1 ; // determine value automatically (otherwise hour may shift)
+            result = mktime(&T);
+        }
+    } catch ( ... ) {};
+    return result ;
 }
 
-static int generic_sha3_final(unsigned char *md, void *vctx)
+// West of GMT is negative (PDT = Pacific Daylight = -07:00 == -25200 seconds
+int timeZoneAdjust()
 {
-    return sha3_final(md, (KECCAK1600_CTX *)vctx);
+    time_t    now   = time(NULL);
+    int       offset;
+
+#if   defined(_MSC_VER) || defined(__MINGW__)
+    TIME_ZONE_INFORMATION TimeZoneInfo;
+    GetTimeZoneInformation( &TimeZoneInfo );
+    offset = - (((int)TimeZoneInfo.Bias + (int)TimeZoneInfo.DaylightBias) * 60);
+    UNUSED(now);
+#elif defined(__CYGWIN__)
+    struct tm lcopy = *localtime(&now);
+    time_t    gmt   =  timegm(&lcopy) ; // timegm modifies lcopy
+    offset          = (int) ( ((long signed int) gmt) - ((long signed int) now) ) ;
+#elif defined(OS_SOLARIS) || defined(__sun__)
+    struct tm local = *localtime(&now) ;
+    time_t local_tt = (int) mktime(&local);
+    time_t time_gmt = (int) mktime(gmtime(&now));
+    offset          = time_gmt - local_tt;
+#else
+    struct tm local = *localtime(&now) ;
+    offset          = local.tm_gmtoff ;
+
+#if EXIV2_DEBUG_MESSAGES
+    struct tm utc = *gmtime(&now);
+    printf("utc  :  offset = %6d dst = %d time = %s", 0     ,utc  .tm_isdst, asctime(&utc  ));
+    printf("local:  offset = %6d dst = %d time = %s", offset,local.tm_isdst, asctime(&local));
+    printf("timeZoneAdjust = %6d\n",offset);
+#endif
+#endif
+    return offset ;
 }
 
-static PROV_SHA3_METHOD sha3_generic_md =
+string getExifTime(const time_t t)
 {
-    generic_sha3_absorb,
-    generic_sha3_final
-};
-
-#if defined(S390_SHA3)
-
-static sha3_absorb_fn s390x_sha3_absorb;
-static sha3_final_fn s390x_sha3_final;
-static sha3_final_fn s390x_shake_final;
-
-/*-
- * The platform specific parts of the absorb() and final() for S390X.
- */
-static size_t s390x_sha3_absorb(void *vctx, const void *inp, size_t len)
-{
-    KECCAK1600_CTX *ctx = vctx;
-    size_t rem = len % ctx->block_size;
-
-    s390x_kimd(inp, len - rem, ctx->pad, ctx->A);
-    return rem;
+    static char result[100];
+    strftime(result,sizeof(result),"%Y-%m-%d %H:%M:%S",localtime(&t));
+    return result ;
 }
 
-static int s390x_sha3_final(unsigned char *md, void *vctx)
+std::string makePath(const std::string& dir, const std::string& file)
 {
-    KECCAK1600_CTX *ctx = vctx;
-
-    s390x_klmd(ctx->buf, ctx->bufsz, NULL, 0, ctx->pad, ctx->A);
-    memcpy(md, ctx->A, ctx->md_size);
-    return 1;
+    return dir + std::string(EXV_SEPARATOR_STR) + file ;
 }
 
-static int s390x_shake_final(unsigned char *md, void *vctx)
+const char* makePath(const char* dir,const char* file)
 {
-    KECCAK1600_CTX *ctx = vctx;
-
-    s390x_klmd(ctx->buf, ctx->bufsz, md, ctx->md_size, ctx->pad, ctx->A);
-    return 1;
+    static char result[_MAX_PATH] ;
+    std::string r = makePath(std::string(dir),std::string(file));
+    strcpy(result,r.c_str());
+    return result;
 }
 
-static PROV_SHA3_METHOD sha3_s390x_md =
+// file utilities
+bool readDir(const char* path,Options& options)
 {
-    s390x_sha3_absorb,
-    s390x_sha3_final
-};
+    bool bResult = false;
 
-static PROV_SHA3_METHOD shake_s390x_md =
-{
-    s390x_sha3_absorb,
-    s390x_shake_final
-};
+#ifdef _MSC_VER
+    DWORD attrs    =  GetFileAttributes(path);
+    bool  bOKAttrs =  attrs != INVALID_FILE_ATTRIBUTES;
+    bool  bIsDir   = (attrs  & FILE_ATTRIBUTE_DIRECTORY) ? true : false ;
 
-# define SHA3_SET_MD(uname, typ)                                               \
-    if (S390_SHA3_CAPABLE(uname)) {                                            \
-        ctx->pad = S390X_##uname;                                              \
-        ctx->meth = typ##_s390x_md;                                            \
-    } else {                                                                   \
-        ctx->meth = sha3_generic_md;                                           \
+    if( bOKAttrs && bIsDir ) {
+        bResult = true ;
+
+        char     search[_MAX_PATH+10];
+        strcpy_s(search,_MAX_PATH,path);
+        strcat_s(search,_MAX_PATH,"\\*");
+
+        WIN32_FIND_DATA ffd;
+        HANDLE  hFind = FindFirstFile(search, &ffd);
+        BOOL    bGo = hFind != INVALID_HANDLE_VALUE;
+
+        if ( bGo ) {
+            while ( bGo ) {
+                if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+                {
+                    // _tprintf(TEXT("  %s   <DIR>\n"), ffd.cFileName);
+                }
+                else
+                {
+                    std::string pathName = makePath(path,std::string(ffd.cFileName));
+                    if ( getFileType(pathName,options) == typeImage ) {
+                        gFiles.push_back( pathName );
+                    }
+                }
+                bGo = FindNextFile(hFind, &ffd) != 0;
+            }
+            // CloseHandle(hFind);
+        }
     }
 #else
-# define SHA3_SET_MD(uname, typ) ctx->meth = sha3_generic_md;
-#endif /* S390_SHA3 */
+    DIR*    dir = opendir (path);
+    if (dir != NULL)
+    {
+        bResult = true;
+        struct dirent*  ent;
 
-#define SHA3_newctx(typ, uname, name, bitlen, pad)                             \
-static OSSL_OP_digest_newctx_fn name##_newctx;                                 \
-static void *name##_newctx(void *provctx)                                      \
-{                                                                              \
-    KECCAK1600_CTX *ctx = OPENSSL_zalloc(sizeof(*ctx));                        \
-                                                                               \
-    if (ctx == NULL)                                                           \
-        return NULL;                                                           \
-    sha3_init(ctx, pad, bitlen);                                               \
-    SHA3_SET_MD(uname, typ)                                                    \
-    return ctx;                                                                \
-}
+        // print all the files and directories within directory
+        while ((ent = readdir (dir)) != NULL)
+        {
+            std::string pathName = makePath(path,ent->d_name);
+            struct stat  buf     ;
+            lstat(path, &buf );
+            if ( ent->d_name[0] != '.' ) {
 
-#define KMAC_newctx(uname, bitlen, pad)                                        \
-static OSSL_OP_digest_newctx_fn uname##_newctx;                                \
-static void *uname##_newctx(void *provctx)                                     \
-{                                                                              \
-    KECCAK1600_CTX *ctx = OPENSSL_zalloc(sizeof(*ctx));                        \
-                                                                               \
-    if (ctx == NULL)                                                           \
-        return NULL;                                                           \
-    keccak_kmac_init(ctx, pad, bitlen);                                        \
-    ctx->meth = sha3_generic_md;                                               \
-    return ctx;                                                                \
-}
-
-#define PROV_FUNC_SHA3_DIGEST_COMMON(name, bitlen, blksize, dgstsize, flags)   \
-PROV_FUNC_DIGEST_GET_PARAM(name, blksize, dgstsize, flags)                     \
-const OSSL_DISPATCH name##_functions[] = {                                     \
-    { OSSL_FUNC_DIGEST_NEWCTX, (void (*)(void))name##_newctx },                \
-    { OSSL_FUNC_DIGEST_INIT, (void (*)(void))keccak_init },                    \
-    { OSSL_FUNC_DIGEST_UPDATE, (void (*)(void))keccak_update },                \
-    { OSSL_FUNC_DIGEST_FINAL, (void (*)(void))keccak_final },                  \
-    { OSSL_FUNC_DIGEST_FREECTX, (void (*)(void))keccak_freectx },              \
-    { OSSL_FUNC_DIGEST_DUPCTX, (void (*)(void))keccak_dupctx },                \
-    PROV_DISPATCH_FUNC_DIGEST_GET_PARAMS(name)
-
-#define PROV_FUNC_SHA3_DIGEST(name, bitlen, blksize, dgstsize, flags)          \
-    PROV_FUNC_SHA3_DIGEST_COMMON(name, bitlen, blksize, dgstsize, flags),      \
-    PROV_DISPATCH_FUNC_DIGEST_CONSTRUCT_END
-
-#define PROV_FUNC_SHAKE_DIGEST(name, bitlen, blksize, dgstsize, flags)         \
-    PROV_FUNC_SHA3_DIGEST_COMMON(name, bitlen, blksize, dgstsize, flags),      \
-    { OSSL_FUNC_DIGEST_SET_CTX_PARAMS, (void (*)(void))shake_set_ctx_params }, \
-    { OSSL_FUNC_DIGEST_SETTABLE_CTX_PARAMS,                                    \
-     (void (*)(void))shake_settable_ctx_params },                              \
-    PROV_DISPATCH_FUNC_DIGEST_CONSTRUCT_END
-
-static void keccak_freectx(void *vctx)
-{
-    KECCAK1600_CTX *ctx = (KECCAK1600_CTX *)vctx;
-
-    OPENSSL_clear_free(ctx,  sizeof(*ctx));
-}
-
-static void *keccak_dupctx(void *ctx)
-{
-    KECCAK1600_CTX *in = (KECCAK1600_CTX *)ctx;
-    KECCAK1600_CTX *ret = OPENSSL_malloc(sizeof(*ret));
-
-    if (ret != NULL)
-        *ret = *in;
-    return ret;
-}
-
-static const OSSL_PARAM known_shake_settable_ctx_params[] = {
-    {OSSL_DIGEST_PARAM_XOFLEN, OSSL_PARAM_UNSIGNED_INTEGER, NULL, 0, 0},
-    OSSL_PARAM_END
-};
-static const OSSL_PARAM *shake_settable_ctx_params(void)
-{
-    return known_shake_settable_ctx_params;
-}
-
-static int shake_set_ctx_params(void *vctx, const OSSL_PARAM params[])
-{
-    const OSSL_PARAM *p;
-    KECCAK1600_CTX *ctx = (KECCAK1600_CTX *)vctx;
-
-    if (ctx != NULL && params != NULL) {
-        p = OSSL_PARAM_locate_const(params, OSSL_DIGEST_PARAM_XOFLEN);
-        if (p != NULL && !OSSL_PARAM_get_size_t(p, &ctx->md_size)) {
-            ERR_raise(ERR_LIB_PROV, PROV_R_FAILED_TO_GET_PARAMETER);
-            return 0;
+                // printf("reading %s => %s\n",ent->d_name,pathName.c_str());
+                if ( getFileType(pathName,options) == typeImage ) {
+                    gFiles.push_back( pathName );
+                }
+            }
         }
-        return 1;
+        closedir (dir);
     }
-    return 0; /* Null Parameter */
+#endif
+    return bResult ;
 }
 
-#define IMPLEMENT_SHA3_functions(bitlen)                                       \
-    SHA3_newctx(sha3, SHA3_##bitlen, sha3_##bitlen, bitlen, '\x06')            \
-    PROV_FUNC_SHA3_DIGEST(sha3_##bitlen, bitlen,                               \
-                          SHA3_BLOCKSIZE(bitlen), SHA3_MDSIZE(bitlen),         \
-                          EVP_MD_FLAG_DIGALGID_ABSENT)
+inline size_t sip(FILE* f,char* buffer,size_t max_len,size_t len)
+{
+    while ( !feof(f) && len < max_len && buffer[len-1] != '>')
+        buffer[len++] = fgetc(f);
+    return len;
+}
 
-#define IMPLEMENT_SHAKE_functions(bitlen)                                      \
-    SHA3_newctx(shake, SHAKE_##bitlen, shake_##bitlen, bitlen, '\x1f')         \
-    PROV_FUNC_SHAKE_DIGEST(shake_##bitlen, bitlen,                             \
-                          SHA3_BLOCKSIZE(bitlen), SHA3_MDSIZE(bitlen),         \
-                          EVP_MD_FLAG_XOF)
-#define IMPLEMENT_KMAC_functions(bitlen)                                       \
-    KMAC_newctx(keccak_kmac_##bitlen, bitlen, '\x04')                          \
-    PROV_FUNC_SHAKE_DIGEST(keccak_kmac_##bitlen, bitlen,                       \
-                           SHA3_BLOCKSIZE(bitlen), KMAC_MDSIZE(bitlen),        \
-                           EVP_MD_FLAG_XOF)
+bool readXML(const char* path,Options& options)
+{
+    FILE*       f       = fopen(path,"r");
+    XML_Parser  parser  = XML_ParserCreate(NULL);
+    bool bResult        = f && parser ;
+    if ( bResult ) {
+        char   buffer[8*1024];
+        UserData me(options) ;
 
-/* sha3_224_functions */
-IMPLEMENT_SHA3_functions(224)
-/* sha3_256_functions */
-IMPLEMENT_SHA3_functions(256)
-/* sha3_384_functions */
-IMPLEMENT_SHA3_functions(384)
-/* sha3_512_functions */
-IMPLEMENT_SHA3_functions(512)
-/* shake_128_functions */
-IMPLEMENT_SHAKE_functions(128)
-/* shake_256_functions */
-IMPLEMENT_SHAKE_functions(256)
-/* keccak_kmac_128_functions */
-IMPLEMENT_KMAC_functions(128)
-/* keccak_kmac_256_functions */
-IMPLEMENT_KMAC_functions(256)
+        XML_SetUserData            (parser, &me);
+        XML_SetElementHandler      (parser, startElement, endElement);
+        XML_SetCharacterDataHandler(parser,charHandler);
+
+        // a little sip at the data
+        size_t len = fread(buffer,1,sizeof(buffer)-100,f);
+        const char* lead   = "<?xml" ;
+        bResult = strncmp(lead,buffer,strlen(lead))==0;
+
+        // swallow it
+        if ( bResult ) {
+            len = sip(f,buffer,sizeof buffer,len);
+            bResult = XML_Parse(parser, buffer,(int)len, len == 0 ) == XML_STATUS_OK;
+        }
+
+        // drink the rest of the file
+        while ( bResult && len != 0 ) {
+            len = fread(buffer,1,sizeof(buffer)-100,f);
+            len = sip(f,buffer,sizeof buffer,len);
+            bResult = XML_Parse(parser, buffer,(int)len, len == 0 ) == XML_STATUS_OK;
+        };
+    }
+
+    if ( f      ) fclose(f);
+    if ( parser ) XML_ParserFree(parser);
+
+    return bResult ;
+}
+
+bool readImage(const char* path,Options& /* options */)
+{
+    using namespace Exiv2;
+    bool bResult = false ;
+
+    try {
+        Image::AutoPtr image = ImageFactory::open(path);
+        if ( image.get() ) {
+            image->readMetadata();
+            ExifData &exifData = image->exifData();
+            bResult = !exifData.empty();
+        }
+    } catch ( ... ) {};
+    return bResult ;
+}
+
+time_t readImageTime(const std::string& path,std::string* pS=NULL)
+{
+    using namespace Exiv2;
+
+    time_t       result       = 0 ;
+
+    const char* dateStrings[] =
+    { "Exif.Photo.DateTimeOriginal"
+    , "Exif.Photo.DateTimeDigitized"
+    , "Exif.Image.DateTime"
+    , NULL
+    };
+    const char* dateString = dateStrings[0] ;
+
+    do {
+        try {
+            Image::AutoPtr image = ImageFactory::open(path);
+            if ( image.get() ) {
+                image->readMetadata();
+                ExifData &exifData = image->exifData();
+            //  printf("%s => %s\n",dateString, exifData[dateString].toString().c_str());
+                result = parseTime(exifData[dateString].toString().c_str(),true);
+                if ( result && pS ) *pS = exifData[dateString].toString();
+            }
+        } catch ( ... ) {};
+    } while ( !result && ++dateString );
+
+    return result ;
+}
+
+bool sina(const char* s,const char** a)
+{
+    bool bResult = false ;
+    int i = 0 ;
+    while ( *s == '-' ) s++;
+    while ( !bResult && a[i]) {
+        const char* A = a[i] ;
+        while ( *A == '-' ) A++ ;
+        bResult = stricmp(s,A)==0;
+        i++;
+    }
+    return bResult;
+}
+
+int readFile(const char* path,Options /* options */)
+{
+    FILE* f     = fopen(path,"r");
+    int nResult = f ? typeFile : typeUnknown;
+    if (  f ) {
+        const char*  ext   = strstr(path,".");
+        if  ( ext ) {
+            const char* docs[] = { ".doc",".txt", NULL };
+            const char* code[] = { ".cpp",".h"  ,".pl" ,".py" ,".pyc", NULL };
+            if ( sina(ext,docs) )
+                nResult = typeDoc;
+            if ( sina(ext,code) )
+                nResult = typeCode;
+        }
+    }
+    if ( f ) fclose(f) ;
+
+    return nResult ;
+}
+
+Position* searchTimeDict(TimeDict_t& td, const time_t& time,long long delta)
+{
+    Position* result = NULL;
+    for ( int t = 0 ; !result && t < delta ; t++ ) {
+        for ( int x = 0 ; !result && x < 2 ; x++ ) {
+            int T = t * ((x==0)?-1:1);
+            if ( td.count(time+T) ) {
+                result = &td[time+T];
+                result->delta(T);
+            }
+        }
+    }
+    return result;
+}
+
+int getFileType(std::string& path,Options& options) { return getFileType(path.c_str(),options); }
+int getFileType(const char* path,Options& options)
+{
+    return readXML  (path,options) ? typeXML
+        :  readDir  (path,options) ? typeDirectory
+        :  readImage(path,options) ? typeImage
+        :  readFile (path,options)
+        ;
+}
+
+int version(const char* program)
+{
+    printf("%s: %s %s\n",program,__DATE__,__TIME__);
+    return 0;
+}
+
+int help(const char* program,char const* words[],int nWords,bool /*bVerbose*/)
+{
+    printf("usage: %s ",program);
+    for ( int i = 0 ; i < nWords ; i++ ) {
+        if ( words[i] )
+            printf("%c-%s%s",i?'|':'{',words[i],i>(-kwNOVALUE)?" value":"");
+    }
+    printf("}+ path+\n");
+    return 0;
+}
+
+int compare(const char* a,const char* b)
+{
+    int result=*a && *b;
+    while ( result && *a && *b) {
+        char A=*a++;
+        char B=*b++;
+        result=tolower(A)==tolower(B);
+    }
+    return result;
+}
+
+int find(const char* arg,char const* words[],int nWords)
+{
+    if ( arg[0] != '-' ) return kwSYNTAX;
+
+    int result=0;
+    int count =0;
+
+    for ( int i = 0 ; i < nWords ; i++) {
+        int j = 0 ;
+        while ( arg[j] == '-' ) j++;
+        if ( ::compare(arg+j,words[i]) ) {
+            result = i ;
+            count++;
+        }
+    }
+
+    return count==1?result:kwSYNTAX;
+}
+
+int parseTZ(const char* adjust)
+{
+    int   h=0;
+    int   m=0;
+    char  c=0;
+    try {
+        sscanf(adjust,"%d%c%d",&h,&c,&m);
+    } catch ( ... ) {} ;
+
+    return (3600*h)+(60*m);
+}
+
+bool mySort(const std::string& a, const std::string& b)
+{
+    time_t A = readImageTime(a);
+    time_t B = readImageTime(b);
+    return (A<B);
+}
+
+int main(int argc,const char* argv[])
+{
+    Exiv2::XmpParser::initialize();
+    ::atexit(Exiv2::XmpParser::terminate);
+#ifdef EXV_ENABLE_BMFF
+    Exiv2::enableBMFF();
+#endif
+
+    int result=0;
+    const char* program = argv[0];
+
+    const char* types[typeMax];
+    types[typeUnknown  ] = "unknown";
+    types[typeDirectory] = "directory";
+    types[typeImage    ] = "image";
+    types[typeXML      ] = "xml";
+    types[typeDoc      ] = "doc";
+    types[typeCode     ] = "code";
+    types[typeFile     ] = "file";
+
+    char const* keywords[kwMAX];
+    memset(keywords,0,sizeof(keywords));
+    keywords[kwHELP    ] = "help";
+    keywords[kwVERSION ] = "version";
+    keywords[kwVERBOSE ] = "verbose";
+    keywords[kwDRYRUN  ] = "dryrun";
+    keywords[kwASCII   ] = "ascii";
+    keywords[kwDST     ] = "dst";
+    keywords[kwADJUST  ] = "adjust";
+    keywords[kwTZ      ] = "tz";
+    keywords[kwDELTA   ] = "delta";
+
+    map<std::string,string> shorts;
+    shorts["-?"] = "-help";
+    shorts["-h"] = "-help";
+    shorts["-v"] = "-verbose";
+    shorts["-V"] = "-version";
+    shorts["-d"] = "-dst";
+    shorts["-a"] = "-adjust";
+    shorts["-t"] = "-tz";
+    shorts["-D"] = "-delta";
+    shorts["-s"] = "-delta";
+    shorts["-X"] = "-dryrun";
+    shorts["-a"] = "-ascii";
+
+    Options options ;
+    options.help    = sina(keywords[kwHELP   ],argv) || argc < 2;
+    options.verbose = sina(keywords[kwVERBOSE],argv);
+    options.dryrun  = sina(keywords[kwDRYRUN ],argv);
+    options.version = sina(keywords[kwVERSION],argv);
+    options.dst     = sina(keywords[kwDST    ],argv);
+    options.ascii   = sina(keywords[kwASCII  ],argv);
+
+    for ( int i = 1 ; !result && i < argc ; i++ ) {
+        const char* arg   = argv[i++];
+        if ( shorts.count(arg) ) arg = shorts[arg].c_str();
+
+        const char* value = argv[i  ];
+        int        ivalue = ::atoi(value?value:"0");
+        int         key   = ::find(arg,keywords,kwMAX);
+        int         needv = key < kwMAX && key > (-kwNOVALUE);
+
+        if (!needv ) i--;
+        if ( needv && !value) key = kwNEEDVALUE;
+
+        switch ( key ) {
+            case kwDST      : options.dst         = true ; break;
+            case kwHELP     : options.help        = true ; break;
+            case kwVERSION  : options.version     = true ; break;
+            case kwDRYRUN   : options.dryrun      = true ; break;
+            case kwVERBOSE  : options.verbose     = true ; break;
+            case kwASCII    : options.ascii       = true ; break;
+            case kwTZ       : Position::tz_       = parseTZ(value);break;
+            case kwADJUST   : Position::adjust_   = ivalue;break;
+            case kwDELTA    : Position::deltaMax_ = ivalue;break;
+            case kwNEEDVALUE: fprintf(stderr,"error: %s requires a value\n",arg); result = resultSyntaxError ; break ;
+            case kwSYNTAX   : default:
+            {
+                int  type   = getFileType(arg,options) ;
+                if ( options.verbose ) printf("%s %s ",arg,types[type]) ;
+                if ( type == typeImage ) {
+                    time_t t    = readImageTime(std::string(arg)) ;
+#ifdef __APPLE__
+                    char   buffer[1024];
+#else
+                    char*  buffer = NULL;
+#endif
+                    char*  path = realpath(arg,buffer);
+                    if  ( t && path ) {
+                        if ( options.verbose) printf("%s %ld %s",path,(long int)t,asctime(localtime(&t)));
+                        gFiles.push_back(path);
+                    }
+                    if ( path && path != buffer ) ::free((void*) path);
+                }
+                if ( type == typeUnknown ) {
+                    fprintf(stderr,"error: illegal syntax %s\n",arg);
+                    result = resultSyntaxError ;
+                }
+            } break;
+        }
+    }
+
+    if ( options.help    ) ::help(program,keywords,kwMAX,options.verbose);
+    if ( options.version ) ::version(program);
+    gDeg = options.ascii ? "deg" : "°";
+
+    if ( !result ) {
+        sort(gFiles.begin(),gFiles.end(),mySort);
+        if ( options.dst ) Position::dst_ = 3600;
+        if ( options.verbose ) {
+            int t = Position::tz();
+            int d = Position::dst();
+            int a = Position::adjust();
+            int A = Position::Adjust();
+            int s = A     ;
+            int h = s/3600;
+                s-= h*3600;
+                s = abs(s);
+            int m = s/60  ;
+                s-= m*60  ;
+            printf("tz,dst,adjust = %d,%d,%d total = %dsecs (= %d:%d:%d)\n",t,d,a,A,h,m,s);
+        }
+/*
+        if ( options.verbose ) {
+            printf("Time Dictionary\n");
+            for ( TimeDict_i it = gTimeDict.begin() ;  it != gTimeDict.end() ; it++ ) {
+                std::string sTime = getExifTime(it->first);
+                Position*   pPos  = &it->second;
+                std::string sPos  = Position::toExifString(pPos->lat(),false,true)
+                                  + " "
+                                  + Position::toExifString(pPos->lon(),false,true)
+                                  ;
+                printf("%s %s\n",sTime.c_str(), sPos.c_str());
+            }
+        }
+*/
+        for ( size_t p = 0 ; p < gFiles.size() ; p++ ) {
+            std::string path  = gFiles[p] ;
+            std::string stamp ;
+            try {
+                time_t t       = readImageTime(path,&stamp) ;
+                Position* pPos = searchTimeDict(gTimeDict,t,Position::deltaMax_);
+                Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(path);
+                if ( image.get() ) {
+                    image->readMetadata();
+                    Exiv2::ExifData& exifData = image->exifData();
+                    if ( pPos ) {
+                        exifData["Exif.GPSInfo.GPSProcessingMethod" ] = "charset=Ascii HYBRID-FIX";
+                        exifData["Exif.GPSInfo.GPSVersionID"        ] = "2 2 0 0";
+                        exifData["Exif.GPSInfo.GPSMapDatum"         ] = "WGS-84";
+
+                        exifData["Exif.GPSInfo.GPSLatitude"         ] = Position::toExifString(pPos->lat(),true,true);
+                        exifData["Exif.GPSInfo.GPSLongitude"        ] = Position::toExifString(pPos->lon(),true,false);
+                        exifData["Exif.GPSInfo.GPSAltitude"         ] = Position::toExifString(pPos->ele());
+
+                        exifData["Exif.GPSInfo.GPSAltitudeRef"      ] = pPos->ele()<0.0?"1":"0";
+                        exifData["Exif.GPSInfo.GPSLatitudeRef"      ] = pPos->lat()>0?"N":"S";
+                        exifData["Exif.GPSInfo.GPSLongitudeRef"     ] = pPos->lon()>0?"E":"W";
+
+                        exifData["Exif.GPSInfo.GPSDateStamp"        ] = stamp;
+                        exifData["Exif.GPSInfo.GPSTimeStamp"        ] = Position::toExifTimeStamp(stamp);
+                        exifData["Exif.Image.GPSTag"                ] = 4908;
+
+                        printf("%s %s % 2d\n",path.c_str(),pPos->toString().c_str(),pPos->delta());
+                    } else {
+                        printf("%s *** not in time dict ***\n",path.c_str());
+                    }
+                    if ( !options.dryrun ) image->writeMetadata();
+                }
+            } catch ( ... ) {};
+        }
+    }
+
+    return result ;
+}
+
+// That's all Folks!
+////

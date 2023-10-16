@@ -49,24 +49,30 @@ CppTokenTree::CppTokenTree(const std::filesystem::path& path, std::shared_ptr<To
     // Tokenize
     CppPda pda(&*_root);
     line_t line = 0;
+    Token* buffer = nullptr;
 
-    for (auto& token : _getRawStream(path, matcher)) {
-        
-        Token* tok = &token;
-        if (token.type < Token::Type::OTHERWISE &&
-            (token.type < Token::Type::ELSE || Token::Type::AMP <= token.type)) {
+    { // From token list to token tree
+        auto raw_stream(_getRawStream(path, matcher));
+        for (auto& token : raw_stream) {
+            
+            Token* tok = &token;
+            if (token.type < Token::Type::OTHERWISE &&
+                (token.type < Token::Type::ELSE || Token::Type::AMP <= token.type)) {
 
-            if (line != token.loc) {
+                if (line != token.loc) {
 
-                _stream.emplace_back();
-                line = token.loc;
+                    _stream.emplace_back();
+                    line = token.loc;
+                }
+
+                tok = &_stream.rbegin()->emplace_back(token.type, line, token.name);
             }
-
-            tok = &_stream.rbegin()->emplace_back(token.type, line, token.name);
+            tok->root = &*_root;
+            
+            pda.trans(buffer, tok);
+            buffer = tok;
         }
-        tok->root = &*_root;
-        
-        pda.trans(tok);
+        pda.trans(buffer, nullptr);
     }
     
     _tokens_indexer.reserve(_stream.size());

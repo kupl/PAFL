@@ -12,16 +12,15 @@ class CppPda
 {
 public:
     CppPda(Token* root);
-    void trans(Token* tok);
+    void trans(Token* tok, Token* future);
     bool isTerminated(const Token* root) const;
 
 
 private:
-    enum class _State { ROOT, FUNC, STMT, COND, THEN, TRIAL };
+    enum class _State { ROOT, FUNC, STMT, COND, THEN };
     enum class _Lambda { ROOT, OPERATOR, CAPTURE, ARGS_BEGIN, ARGS, BODY_BEGIN };
     enum class _Prefix { ROOT, ID, TBD };
-
-    void _inheritLastIf(Token* tok);
+    
     void _checkLambdaConnector(Token* tok);
     void _detPrefixType(Token* tok);
 
@@ -35,12 +34,13 @@ private:
 
     void _endLine();
     void _deleteBlock();
-    void _deleteRoot();
-    void _deleteWhileBranch();
+    void _deleteRoot()
+        { _state_stack.pop(); _parent_stack.pop(); }
+    void _deleteIfBlock(Token* future);
 
     // block -> FUNC | THEN
     constexpr bool _isBlock(_State state)
-        { return state == _State::FUNC || state == _State::THEN || state == _State::TRIAL; }
+        { return state == _State::FUNC || state == _State::THEN; }
     // line -> STMT | COND
     constexpr bool _isLine(_State state)
         { return state == _State::STMT || state == _State::COND; }
@@ -51,10 +51,8 @@ private:
 
     std::stack<_State> _state_stack;
     std::stack<Token::Type> _ttype_stack;
-
     std::stack<Token*> _parent_stack;
-    Token* _last_if;
-    
+
     std::stack<std::shared_ptr<Token::string_set>> _predecessor_stack;
     std::stack<std::shared_ptr<Token::string_set>> _neighbors_stack;
     std::stack<std::shared_ptr<Token::string_set>> _successor_stack;
@@ -62,33 +60,39 @@ private:
     std::stack<_Lambda> _lambda_stack;
     _Prefix _prefix_state;
 
+    bool _skip;
+
+
     /* Action */
-    void _identifier(Token* tok);
-    void _branch(Token* tok);
+    void _identifier(Token* tok, Token* future);
+    void _branch(Token* tok, Token* future);
     // case | default
-    void _case(Token* tok)
+    void _case(Token* tok, Token* future)
         { if (_state_stack.top() == _State::THEN) _beginLine(_State::STMT, tok->type); }
-    void _trial(Token* tok)
-        { _beginLine(_State::TRIAL, tok->type); }
-    void _operator(Token* tok)
+    void _do(Token* tok, Token* future)
+        { _beginLine(_State::THEN, tok->type); }
+    void _try(Token* tok, Token* future);
+    void _operator(Token* tok, Token* future)
         { if (_lambda_stack.top() == _Lambda::ROOT) _lambda_stack.push(_Lambda::OPERATOR); }
     // enum | class
-    void _enum(Token* tok);
-    void _class(Token* tok)
-        { if (_ttype_stack.top() != Token::Type::ENUM) _enum(tok); }
-    // namespace | l_paren
-    void _left(Token* tok)
-        { _otherwise(tok); _ttype_stack.push(tok->type); }
+    void _enum(Token* tok, Token* future);
+    void _class(Token* tok, Token* future)
+        { if (_ttype_stack.top() != Token::Type::ENUM) _enum(tok, future); }
+    // namespace
+    void _namespace(Token* tok, Token* future);
+    // l_paren
+    void _l_paren(Token* tok, Token* future)
+        { _otherwise(tok, future); _ttype_stack.push(tok->type); }
     // symbol
-    void _r_paren(Token* tok);
-    void _l_brace(Token* tok);
-    void _r_brace(Token* tok);
-    void _l_square(Token* tok);
-    void _r_square(Token* tok);
-    void _semi(Token* tok);
-    void _colon(Token* tok);
+    void _r_paren(Token* tok, Token* future);
+    void _l_brace(Token* tok, Token* future);
+    void _r_brace(Token* tok, Token* future);
+    void _l_square(Token* tok, Token* future);
+    void _r_square(Token* tok, Token* future);
+    void _semi(Token* tok, Token* future);
+    void _colon(Token* tok, Token* future);
     // otherwise
-    void _otherwise(Token* tok)
+    void _otherwise(Token* tok, Token* future)
         { if (_isBlock(_state_stack.top())) _beginLine(_State::STMT, Token::Type::STMT); }
 };
 }
@@ -101,7 +105,7 @@ private:
 namespace PAFL
 {
 CppPda::CppPda(Token* root) :
-    _action{ &CppPda::_identifier, nullptr, }, _prefix_state(_Prefix::ROOT)
+    _action{ &CppPda::_identifier, nullptr, }, _prefix_state(_Prefix::ROOT), _skip(false)
 {
     _newRoot(Token::Type::ROOT, root);
     _lambda_stack.push(_Lambda::ROOT);
@@ -117,7 +121,8 @@ CppPda::CppPda(Token* root) :
         // switch
     _action[static_cast<size_t>(Token::Type::CASE)] = _action[static_cast<size_t>(Token::Type::DEFAULT)] = &CppPda::_case;
         // trial and error
-    _action[static_cast<size_t>(Token::Type::DO)] = _action[static_cast<size_t>(Token::Type::TRY)] = &CppPda::_trial;
+    _action[static_cast<size_t>(Token::Type::DO)] = &CppPda::_do;
+    _action[static_cast<size_t>(Token::Type::TRY)] = &CppPda::_try;
         // operator overriding
     _action[static_cast<size_t>(Token::Type::OPERATOR)] = &CppPda::_operator;
         // enum | class
@@ -125,7 +130,8 @@ CppPda::CppPda(Token* root) :
     _action[static_cast<size_t>(Token::Type::CLASS)] =  _action[static_cast<size_t>(Token::Type::STRUCT)]
     = _action[static_cast<size_t>(Token::Type::UNION)] = &CppPda::_class;
         // namespace | l_paren
-    _action[static_cast<size_t>(Token::Type::NAMESPACE)] = _action[static_cast<size_t>(Token::Type::L_PAREN)] = &CppPda::_left;
+    _action[static_cast<size_t>(Token::Type::NAMESPACE)] = &CppPda::_namespace;
+    _action[static_cast<size_t>(Token::Type::L_PAREN)] = &CppPda::_l_paren;
         // symbol
     _action[static_cast<size_t>(Token::Type::R_PAREN)] = &CppPda::_r_paren;
     _action[static_cast<size_t>(Token::Type::L_BRACE)] = &CppPda::_l_brace;
@@ -138,13 +144,22 @@ CppPda::CppPda(Token* root) :
     _action[static_cast<size_t>(Token::Type::OTHERWISE)] = &CppPda::_otherwise;
 }
 
-void CppPda::trans(Token* tok)
+void CppPda::trans(Token* tok, Token* future)
 {
-    _inheritLastIf(tok);
+    if (!tok)
+        return;
+    if (_skip) {
+
+        _skip = false;
+        return;
+    }
+    if (!future)
+        future = tok->root;
+
     _checkLambdaConnector(tok);
     _detPrefixType(tok);
     if (_action[static_cast<size_t>(tok->type)])
-        (this->*_action[static_cast<size_t>(tok->type)])(tok);
+        (this->*_action[static_cast<size_t>(tok->type)])(tok, future);
 }
 
 bool CppPda::isTerminated(const Token* root) const
@@ -168,17 +183,6 @@ bool CppPda::isTerminated(const Token* root) const
 
 
 
-void CppPda::_inheritLastIf(Token* tok)
-{
-    if (_last_if && tok->type == Token::Type::ELSE) {
-
-        _newBlock(_State::THEN);
-        _ttype_stack.push(tok->type);
-        _parent_stack.push(_last_if);
-    }
-    _last_if = nullptr;
-}
-
 void CppPda::_checkLambdaConnector(Token* tok)
 {
     if (_lambda_stack.top() == _Lambda::OPERATOR) {
@@ -187,8 +191,7 @@ void CppPda::_checkLambdaConnector(Token* tok)
             _lambda_stack.pop();
     }
 
-    else if (_lambda_stack.top() == _Lambda::ARGS_BEGIN) {
-
+    else if (_lambda_stack.top() == _Lambda::ARGS_BEGIN)
         if (tok->type == Token::Type::L_PAREN)
             _lambda_stack.top() = _Lambda::ARGS;
 
@@ -197,7 +200,6 @@ void CppPda::_checkLambdaConnector(Token* tok)
             _ttype_stack.pop();
             _lambda_stack.pop();
         }
-    }
 
     else if (_lambda_stack.top() == _Lambda::BODY_BEGIN && tok->type != Token::Type::L_BRACE)
         _lambda_stack.pop();
@@ -264,34 +266,49 @@ void CppPda::_endLine()
 
 void CppPda::_deleteBlock()
 {
-    _state_stack.pop();
+    _deleteRoot();
 
     _predecessor_stack.pop();
     _neighbors_stack.pop();
     _successor_stack.pop();
 }
 
-void CppPda::_deleteRoot()
+void CppPda::_deleteIfBlock(Token* future)
 {
-    _state_stack.pop();
-    _parent_stack.pop();
-}
+    // Delete FUNC
+    if (_state_stack.top() == _State::FUNC) {
+        
+        if (_ttype_stack.top() == Token::Type::FUNC) { 
 
-void CppPda::_deleteWhileBranch()
-{
-    // Delete branch
-    if (_state_stack.top() == _State::THEN && isBranch(_ttype_stack.top()))
-        while (isBranch(_ttype_stack.top())) {
-            
-            if (!_last_if && _ttype_stack.top() == Token::Type::IF)
-                _last_if = _parent_stack.top();
             _deleteBlock();
             _ttype_stack.pop();
-            _parent_stack.pop();
+        }
+        return;
+    }
+
+    // Delete branch
+    while (_state_stack.top() == _State::THEN && isBranch(_ttype_stack.top()))
+        if (future->type == Token::Type::ELSE && _ttype_stack.top() == Token::Type::IF) {
+            
+            Token* latest_if = _parent_stack.top();
+            _deleteBlock();
+            _ttype_stack.pop();
+
+            // Insert ELSE
+            _newBlock(_State::THEN);
+            _ttype_stack.push(future->type);
+            _parent_stack.push(latest_if);
+            _skip = true;
+            break;
+        }
+        else {
+
+            _deleteBlock();
+            _ttype_stack.pop();
         }
 
     // Delete DO | TRY
-    if (_state_stack.top() == _State::TRIAL && isTrialError(_ttype_stack.top())) {
+    if (_state_stack.top() == _State::THEN && isTrialError(_ttype_stack.top())) {
 
         _state_stack.pop();
         _ttype_stack.pop();
@@ -306,7 +323,7 @@ void CppPda::_deleteWhileBranch()
   ////////////
  /* Action */
 ////////////
-void CppPda::_identifier(Token* tok)
+void CppPda::_identifier(Token* tok, Token* future)
 {
     // New line
     if (_isBlock(_state_stack.top()))
@@ -337,7 +354,7 @@ void CppPda::_identifier(Token* tok)
     _setFlatRelation(tok);
 }
 
-void CppPda::_branch(Token* tok)
+void CppPda::_branch(Token* tok, Token* future)
 {
     // Set hierarchy
     tok->parent = _parent_stack.top();
@@ -354,7 +371,19 @@ void CppPda::_branch(Token* tok)
     _beginLine(_State::COND, tok->type);
 }
 
-void CppPda::_enum(Token* tok)
+void CppPda::_try(Token* tok, Token* future)
+{
+    // New function
+    if (_state_stack.top() == _State::ROOT) {
+
+        _ttype_stack.push(Token::Type::FUNC);
+        _newBlock(_State::FUNC);
+        _parent_stack.push(tok->root);
+    }
+    _beginLine(_State::THEN, tok->type);
+}
+
+void CppPda::_enum(Token* tok, Token* future)
 {
     if (_state_stack.top() == _State::ROOT) {
 
@@ -370,7 +399,18 @@ void CppPda::_enum(Token* tok)
 
 
 
-void CppPda::_r_paren(Token* tok)
+void CppPda::_namespace(Token* tok, Token* future)
+{
+    // New namespace definition
+    if (_state_stack.top() == _State::ROOT)
+        _ttype_stack.push(tok->type);
+    
+    // New line
+    else if (_isBlock(_state_stack.top()))
+        _beginLine(_State::STMT, Token::Type::STMT);
+}
+
+void CppPda::_r_paren(Token* tok, Token* future)
 {
     _ttype_stack.pop();
 
@@ -387,7 +427,9 @@ void CppPda::_r_paren(Token* tok)
     }
 }
 
-void CppPda::_l_brace(Token* tok)
+
+
+void CppPda::_l_brace(Token* tok, Token* future)
 {
     // ENUM | CLASS
     if (isEnumOrClass(_ttype_stack.top()))
@@ -411,7 +453,7 @@ void CppPda::_l_brace(Token* tok)
         _ttype_stack.push(tok->type);
 }
 
-void CppPda::_r_brace(Token* tok)
+void CppPda::_r_brace(Token* tok, Token* future)
 {
     // FUNC {  STMT  }
     if (_ttype_stack.top() != Token::Type::L_BRACE) {
@@ -421,7 +463,6 @@ void CppPda::_r_brace(Token* tok)
     }
     _ttype_stack.pop(); // TType - {
 
-
     // Delete ROOT
     if (isEnumOrClass(_ttype_stack.top()))
         _deleteRoot();
@@ -430,23 +471,24 @@ void CppPda::_r_brace(Token* tok)
     else if (_ttype_stack.top() == Token::Type::NAMESPACE)
         _ttype_stack.pop();
 
-    // Delete FUNC
-    else if (_state_stack.top() == _State::FUNC) {
-        
-        if (_ttype_stack.top() == Token::Type::FUNC) { 
+    // Delete catch
+    else if (_state_stack.top() == _State::THEN && _ttype_stack.top() == Token::Type::CATCH) {
 
-            _deleteBlock();
-            _ttype_stack.pop();
-            _parent_stack.pop(); // Pop root
-        }
+        _deleteBlock();
+        _ttype_stack.pop();
+
+        if (future->type != Token::Type::CATCH)
+            _deleteIfBlock(future);
     }
 
-    // Delete branch
+    // Delete block
     else
-        _deleteWhileBranch();
+        _deleteIfBlock(future);
 }
 
-void CppPda::_l_square(Token* tok)
+
+
+void CppPda::_l_square(Token* tok, Token* future)
 {
     // New line
     if (_isBlock(_state_stack.top()))
@@ -464,15 +506,16 @@ void CppPda::_l_square(Token* tok)
     _ttype_stack.push(tok->type);
 }
 
-void CppPda::_r_square(Token* tok)
+void CppPda::_r_square(Token* tok, Token* future)
 {
-    std::cout << _ttype_stack.size() << std::endl;
     _ttype_stack.pop();
     if (_ttype_stack.top() == Token::Type::LAMBDA)
         _lambda_stack.top() = _Lambda::ARGS_BEGIN;
 }
 
-void CppPda::_semi(Token* tok)
+
+
+void CppPda::_semi(Token* tok, Token* future)
 {
     // End line
     if (_state_stack.top() == _State::ROOT) {
@@ -487,13 +530,13 @@ void CppPda::_semi(Token* tok)
 
             _endLine();
             _ttype_stack.pop();
-        }   
+        }
     }
 
-    _deleteWhileBranch();
+    _deleteIfBlock(future);
 }
 
-void CppPda::_colon(Token* tok)
+void CppPda::_colon(Token* tok, Token* future)
 {
     if (_ttype_stack.top() == Token::Type::CASE || _ttype_stack.top() == Token::Type::DEFAULT) {
 

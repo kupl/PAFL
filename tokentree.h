@@ -26,9 +26,9 @@ public:
         IDENTIFIER,
 
         // branch
+        IF,
         CATCH,
         FOR,
-        IF,
         SWITCH,
         WHILE,
         // else
@@ -160,15 +160,26 @@ public:
     std::string name;
 };
 
-// branch -> CATCH | FOR | IF | WHILE | ELSE
+// branch -> IF | CATCH | FOR | SWITCH | WHILE | ELSE
 constexpr bool isBranch(Token::Type ttype)
-    { return Token::Type::CATCH <= ttype && ttype <= Token::Type::ELSE; }
+    { return Token::Type::IF <= ttype && ttype <= Token::Type::ELSE; }
+
+// indepednet branch -> FOR | SWITCH | WHILE | ELSE
+constexpr bool isIndependentBranch(Token::Type ttype)
+    { return Token::Type::FOR <= ttype && ttype <= Token::Type::ELSE; }
+
+// depednet branch -> IF | CATCH
+constexpr bool isDependentBranch(Token::Type ttype)
+    { return ttype == Token::Type::IF || ttype == Token::Type::CATCH; }
+
 // class -> CLASS | STRUCT | UNION
 constexpr bool isClass(Token::Type ttype)
     { return Token::Type::CLASS <= ttype && ttype <= Token::Type::UNION; }
+    
 // ENUM | class
 constexpr bool isEnumOrClass(Token::Type ttype)
      { return Token::Type::ENUM <= ttype && ttype <= Token::Type::UNION; }
+
 // DO | TRY
 constexpr bool isTrialError(Token::Type ttype)
      { return ttype == Token::Type::DO || ttype == Token::Type::TRY; }
@@ -230,9 +241,9 @@ public:
             { "identifier", Token::Type::IDENTIFIER },
 
             // branch
+            { "if", Token::Type::IF },
             { "catch", Token::Type::CATCH },
             { "for", Token::Type::FOR },
-            { "if", Token::Type::IF },
             { "switch", Token::Type::SWITCH },
             { "while", Token::Type::WHILE },
             // else
