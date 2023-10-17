@@ -8,6 +8,9 @@
 
 int main(int argc, char *argv[])
 {
+    PAFL::CppTokenTree tree(fs::path("sample/temp.cpp"), std::make_shared<PAFL::TokenTree::Matcher>());
+    tree.log("token.txt");
+    return 0;
     // Run
     const PAFL::UI ui(argc, argv);
 
