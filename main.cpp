@@ -8,9 +8,6 @@
 
 int main(int argc, char *argv[])
 {
-    PAFL::CppTokenTree tree(fs::path("sample/temp.cpp"), std::make_shared<PAFL::TokenTree::Matcher>());
-    tree.log("token.txt");
-    return 0;
     // Run
     const PAFL::UI ui(argc, argv);
 
@@ -77,7 +74,7 @@ int main(int argc, char *argv[])
                 
                 // Baseline = Ochiai
                 suite[iter].setSbflSus(PAFL::Coef::Ochiai);
-                PAFL::normalizeSbfl(suite[iter], PAFL::Normalizer::CbrtOchiai);
+                PAFL::normalizeSbfl(suite[iter], PAFL::Normalizer::BqrtOchiai);
 
                 // Set token tree
                 PAFL::TokenTree::Vector tkt_vector;

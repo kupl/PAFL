@@ -57,7 +57,7 @@ public:
 
 private:
     void _throwInvalidConfig()
-        { std::cerr << "Invalid config\n"; throw "Invalid config"; }
+        { throw std::invalid_argument("Invalid config"); }
 };
 }
 

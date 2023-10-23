@@ -224,7 +224,6 @@ index_t TestSuite::getIndexFromFile(const std::string& file) const
 {
     if (_file2index.contains(file))
         return _file2index.at(file);
-    std::cerr << file + " is out of range\n";
     throw std::out_of_range(file);
 }
 

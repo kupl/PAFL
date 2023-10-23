@@ -82,8 +82,8 @@ CppTokenTree::CppTokenTree(const std::filesystem::path& path, std::shared_ptr<To
     return;
     if (!pda.isTerminated(&*_root)) {
 
-        std::cerr << "Incomplete token tree : " << path << '\n';
-        throw path;
+        std::cerr << "Incomplete token tree\n";
+        throw std::logic_error(path);
     }
 }
 

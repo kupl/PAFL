@@ -57,7 +57,7 @@ public:
 
 private:
     void _throwInvalidInput() const
-        { std::cerr << "Invalid arguments\n"; throw "Invalid arguments"; }
+        { throw std::invalid_argument("Invalid argument"); }
 
     void _readIn(int argc, char *argv[]);
     void _setContainer();
@@ -123,8 +123,7 @@ fs::path UI::getFilePath(size_t iter, const std::string& file) const
         }
     }
 
-    std::cerr << "Invalid file path : " << file << '\n';
-    throw file;
+    throw std::domain_error(file);
 }
 
 

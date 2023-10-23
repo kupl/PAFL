@@ -3,7 +3,7 @@ COMPILER = g++
 CXXFLAGS = -std=c++20 -O2
 
 SRCDIR = .
-INCLUDE = .
+INCLUDE = ./include
 EXEDIR = .
 
 SOURCES = $(wildcard $(SRCDIR)/*$(SUFFIX))
