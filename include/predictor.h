@@ -13,6 +13,7 @@ namespace PAFL
 class Predictor
 {
 public:
+    static constexpr size_t SIZE = 64;
     using count_t = unsigned long long;
     using feature_vector = std::unordered_map<std::string, float>;
     using feature = std::pair<feature_vector, CrossWord>;
@@ -29,7 +30,7 @@ public:
         std::list<value_type> targets;
     };
     
-
+public:
     Predictor() : _passing_cnt(0) {}
 
     TargetInfo predict(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec);
@@ -37,17 +38,17 @@ public:
 
 
 private:
-    //float _getDistance(const feature_vector& target, const feature_vector& passing, const feature_vector& failing, const CrossWord& word) const;
-    float _getDistance(const feature_vector& lhs, const feature_vector& rhs) const;
-    TargetInfo _setTargetInfo(const feature_vector& failing_vec, size_t k) const;
+    static constexpr unsigned short UPPERBOUND = 16;
+
+private:
+    float _getDistance(const feature_vector& target_vec, const feature_vector& feature_vec, const CrossWord& word) const;
+    TargetInfo _setTargetInfo(const feature_vector& target_vec, size_t k) const;
 
     std::unordered_set<std::string> _dimension;
 
     std::list<feature> _features;
     feature_vector _passing_feature;
     unsigned short _passing_cnt;
-
-    const unsigned short _cnt_ub = 16;
 };
 }
 
@@ -81,12 +82,12 @@ Predictor::TargetInfo Predictor::predict(const TestSuite::test_suite& test_suite
 
 
     // Set target info
-    feature_vector failing_vec;
-    failing_vec.reserve(counter.size());
+    feature_vector target_vec;
+    target_vec.reserve(counter.size());
     for (auto& item : counter)
-        failing_vec.emplace(item.first, (item.second / (float)max_cnt));
+        target_vec.emplace(item.first, (item.second / (float)max_cnt));
 
-    TargetInfo info(_setTargetInfo(failing_vec, K));
+    TargetInfo info(_setTargetInfo(target_vec, K));
 
     return info;
 }
@@ -105,6 +106,7 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
     
     for (auto& test_case : test_suite) {
 
+        // Failing test
         if(!test_case.is_passed)
             for (auto item : test_case.lines) {
                 
@@ -121,6 +123,7 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
                         }
             }
 
+        // Passing test
         else
             for (auto item : test_case.lines) {
                 
@@ -140,16 +143,18 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
 
 
     // Set target info
-    feature_vector failing_vec;
-    failing_vec.reserve(counter.size());
+    feature_vector target_vec;
+    target_vec.reserve(counter.size());
     for (auto& item : counter)
-        failing_vec.emplace(item.first, (item.second / (float)max_cnt));
+        target_vec.emplace(item.first, (item.second / (float)max_cnt));
     
-    auto& feature = _features.emplace_back(std::move(failing_vec), CrossWord());
+    auto& feature = _features.emplace_back(std::move(target_vec), CrossWord());
     for (auto ptr : targets)
         feature.second.insertToken(*ptr);
     
     TargetInfo info(_setTargetInfo(feature.first, K+1));
+    if (_features.size() > SIZE)
+        _features.pop_front();
 
 
     // Update passing
@@ -168,7 +173,7 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
         else
             _passing_feature.emplace(item.first, new_val);
     }
-    _passing_cnt = _passing_cnt == _cnt_ub ? _cnt_ub : _passing_cnt + 1;
+    _passing_cnt = _passing_cnt == UPPERBOUND ? UPPERBOUND : _passing_cnt + 1;
 
 
     return info;
@@ -176,101 +181,76 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
 
 
 
-//float Predictor::_getDistance(const feature_vector& target, const feature_vector& passing, const feature_vector& failing, const CrossWord& word) const
-float Predictor::_getDistance(const feature_vector& lhs, const feature_vector& rhs) const
+float Predictor::_getDistance(const feature_vector& target_vec, const feature_vector& feature_vec, const CrossWord& word) const
 {
-    /*float dist = 0.0f;
-    float denom = 0.0f;
+    float dist = 0.0f;
+    for (auto& str : _dimension) {
 
+        float lhval = std::sqrt(target_vec.contains(str) ? target_vec.at(str) : 0.0f);
+        float rhval = std::sqrt(feature_vec.contains(str) ? feature_vec.at(str) : 0.0f);
+        float euclid = (lhval - rhval);
+        dist += euclid * euclid;
+        
+        /*float sub = 0.0f;
+        if (lhval < rhval)
+            sub = 1.0f - lhval / rhval;
+        else if (lhval != rhval)// lhval > rhval
+            sub = 1.0f - rhval / lhval;
+        dist += sub * sub*/
+    }
+
+    return dist;
+
+    /*float denom = 0.0f;
     auto end(word.cend());
     for (auto iter(word.cbegin()); iter != end; ++iter) {
 
         auto& str = iter->first;
-        float target_val = target.contains(str) ? target.at(str) : 0.0f;
-        float failing_val = failing.contains(str) ? failing.at(str) : 0.0f;
-        float passing_val = passing.contains(str) ? passing.at(str) : 0.0f;
+        float target_val = target_vec.contains(str) ? target_vec.at(str) : 0.0f;
+        float feature_val = feature_vec.contains(str) ? feature_vec.at(str) : 0.0f;
+        float passing_val = _passing_feature.contains(str) ? _passing_feature.at(str) : 0.0f;
 
-        dist += (target_val - failing_val) * (target_val - failing_val);
+        dist += (target_val - feature_val) * (target_val - feature_val);
         denom += (target_val - passing_val) * (target_val - passing_val);
     }
 
     return denom > 0 ? dist / denom : 0.0f;*/
-
-    float dist = 0.0f;
-    for (auto& str : _dimension) {
-
-        float lhval = (lhs.contains(str) ? lhs.at(str) : 0.0f);
-        float rhval = (rhs.contains(str) ? rhs.at(str) : 0.0f);
-        dist += (lhval - rhval) * (lhval - rhval);
-        //if (lhval > 0.0f || rhval > 0.0f)
-        //   dist += lhval < rhval ? 1.0f - lhval / rhval : 1.0f - rhval / lhval;
-    }
-
-    return dist;
 }
 
-Predictor::TargetInfo Predictor::_setTargetInfo(const feature_vector& failing_vec, size_t k) const
+Predictor::TargetInfo Predictor::_setTargetInfo(const feature_vector& target_vec, size_t k) const
 {
-    /*TargetInfo info;
-
-    // Set coefficient
-    pattern ptt = 0;
-    for (auto& feature : _features) {
-
-        float dist = _getDistance(failing_vec, _passing_feature, feature.first, feature.second);
-        if (dist <= 1.0f)
-            info.targets.emplace_back(ptt, 1.0f - dist);
-        ptt++;
-    }
-
-    // Cut low coef
-    info.targets.sort([](const auto& lhs, const auto& rhs){ return lhs.second > rhs.second; });
-    auto iter = info.targets.begin();
-    for (size_t i = 0; i != k && iter != info.targets.end(); i++, iter++);
-
-    if (iter != info.targets.end())
-        info.targets.erase(iter, info.targets.end());
-
-
-    // Normalize
-    float total = 0.0f;
-    for (auto& item : info.targets)
-        total += item.second;
-    for (auto& item : info.targets)
-        item.second /= total;
-
-    return info;*/
-
     TargetInfo info;
-    float max_dist = _getDistance(failing_vec, _passing_feature);
+    float max_dist = _getDistance(target_vec, _passing_feature, CrossWord());
     if (max_dist <= 0.0f)
         return info;
+    //float max_dist = 1.0f;
 
-    // Set coefficient
-    pattern ptt = 0;
-    for (auto& vec : _features) {
+    {// Set coefficient
+        pattern ptt = 0;
+        for (auto& vec : _features) {
 
-        float dist = _getDistance(failing_vec, vec.first);
-        if (dist < max_dist)
-            info.targets.emplace_back(ptt, max_dist - dist);
-        ptt++;
+            float dist = _getDistance(target_vec, vec.first, vec.second);
+            if (dist < max_dist)
+                info.targets.emplace_back(ptt, max_dist - dist);
+            ptt++;
+        }
     }
 
-    // Cut low coef
-    info.targets.sort([](const auto& lhs, const auto& rhs){ return lhs.second > rhs.second; });
-    auto iter = info.targets.begin();
-    for (size_t i = 0; i != k && iter != info.targets.end(); i++, iter++);
+    {// Cut low coef
+        info.targets.sort([](const auto& lhs, const auto& rhs){ return lhs.second > rhs.second; });
+        auto iter = info.targets.begin();
+        for (size_t i = 0; i != k && iter != info.targets.end(); i++, iter++);
+        if (iter != info.targets.end())
+            info.targets.erase(iter, info.targets.end());
+    }
 
-    if (iter != info.targets.end())
-        info.targets.erase(iter, info.targets.end());
-
-
-    // Normalize
-    float total = 0.0f;
-    for (auto& item : info.targets)
-        total += item.second;
-    for (auto& item : info.targets)
-        item.second /= total;
+    {// Normalize
+        float total = 0.0f;
+        for (auto& item : info.targets)
+            total += item.second;
+        for (auto& item : info.targets)
+            item.second /= total;
+    }
 
     return info;
 }

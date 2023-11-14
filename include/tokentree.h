@@ -194,7 +194,7 @@ class TokenTree
 public:
     class Matcher;
     using Vector = std::vector<TokenTree>;
-
+public:
     TokenTree(const std::filesystem::path& path_with_filename, std::shared_ptr<TokenTree::Matcher> matcher);
     TokenTree(TokenTree& rhs) = delete;
     TokenTree& operator=(TokenTree& rhs) = delete;
@@ -202,7 +202,7 @@ public:
                                 _tokens_indexer(std::move(rhs._tokens_indexer)) {}
 
     const Token* getRoot() const
-        { return &*_root; }
+        { return _root.get(); }
     decltype(auto) getTokens(line_t line) const
         { return _tokens_indexer.contains(line) ? _tokens_indexer.at(line) : nullptr; }
 

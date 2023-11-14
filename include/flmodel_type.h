@@ -9,7 +9,8 @@
 namespace PAFL
 {
 constexpr size_t K = 3;
-using pattern = size_t;
+
+using pattern = int;
 
 using target_tokens = std::list<Token*>;
 target_tokens toTokenFromFault(const TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults);
@@ -32,10 +33,10 @@ target_tokens toTokenFromFault(const TestSuite& suite, const TokenTree::Vector& 
             auto list_ptr = tkt_vec[index].getTokens(line);
             if (list_ptr)
                 for (auto& token : *list_ptr)
-                    if (!marking.contains(&*token.neighbors)) {
+                    if (!marking.contains(token.neighbors.get())) {
 
                         ret.emplace_back(&token);
-                        marking.insert(&*token.neighbors);
+                        marking.insert(token.neighbors.get());
                     }
         }
     }

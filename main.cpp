@@ -51,11 +51,11 @@ int main(int argc, char *argv[])
         std::string prefix(ui.getExePath().string() + "/coverage/" + method2string[static_cast<size_t>(method)] + '-' + ui.getProject() + '#');
 
         for (size_t iter = 0; iter != ui.numVersion(); iter++) {
-            std::cout << "ver " << iter+1 << '\n';
-
 
             // SBFL
             if (method != PAFL::UI::Method::PAFL) {
+
+                std::cout << ui.getProject() << " - " << "ver " << iter+1 << '\n';
 
                 std::cout << "Evaluating...\n";
                 suite[iter].setSbflSus(method2coef[static_cast<size_t>(method)]);
@@ -79,7 +79,6 @@ int main(int argc, char *argv[])
                 // Set token tree
                 PAFL::TokenTree::Vector tkt_vector;
                 tkt_vector.reserve(suite[iter].MaxIndex());
-                std::cout << "Tokenizing...\n";
                 for (PAFL::index_t idx = 0;  idx != suite[iter].MaxIndex(); idx++) {
                     
                     auto file = suite[iter].getFileFromIndex(idx);
@@ -92,7 +91,9 @@ int main(int argc, char *argv[])
                                             / (ui.getProject() + '#' + std::to_string(iter+1))) / (file + ".txt"));
                     }*/
                 }
-                std::cout << "Done\n";
+
+                std::cout << ui.getProject() << " - " << "iteration " << iter+1 << '\n';
+                std::cout << "Tokenizing Done\n";
             
                 // New sus of FL Model
                 std::cout << "Evaluating...\n";
@@ -103,7 +104,7 @@ int main(int argc, char *argv[])
                 std::cout << "Saving...\n";
                 suite[iter].save(prefix + std::to_string(iter+1) + ".json");
                 std::cout << "Done\n";
-                    
+                
                 // Learning
                 if (iter + 1 != ui.numVersion()) {
 

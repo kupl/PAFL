@@ -21,7 +21,7 @@ public:
     using method_set = std::set<Method>;
     using docs = std::list<std::pair<rapidjson::Document, bool>>;
 
-
+public:
     UI(int argc, char *argv[]);
 
     const std::string& getProject() const

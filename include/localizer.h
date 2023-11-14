@@ -13,6 +13,7 @@ class Localizer
 {
 public:
     Localizer() : _isFresh(true), _maturity(0) {}
+    Localizer(const Localizer& rhs) : _word(rhs._word), _isFresh(true), _maturity(0.0f) {}
     void localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef) const;
     void step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef);
 
@@ -23,7 +24,7 @@ private:
     CrossWord _word;
 
     bool _isFresh;
-    unsigned char _maturity;
+    float _maturity;
 };
 
 
@@ -42,14 +43,18 @@ constexpr float _gradientFormula(size_t base_ranking, size_t new_ranking, float 
 namespace PAFL
 {
 void Localizer::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef) const
-    { _localize(_word, suite, tkt_vec, coef * (_maturity / (float)K)); }
+{
+    _localize(_word, suite, tkt_vec, coef * (_maturity / (float)K));
+}
+
+
 
 void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef)
 {
     if (_isFresh)
         _isFresh = false;
-    else if (_maturity != K)
-        _maturity++;
+    else
+        _maturity += coef;
 
     auto base_rankingsum = _newRankingSum(_word, suite, tkt_vec, faults);
     
@@ -62,7 +67,7 @@ void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const f
     for (auto iter = _word.begin(); iter != end; ++iter) {
         
         auto& ref = iter->second;
-        ref.weight = 2.0f;
+        ref.weight = 1.0f;
         auto rankingsum = _newRankingSum(_word, suite, tkt_vec, faults);
         ref.weight = ref.future;
 
@@ -107,7 +112,7 @@ void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector&
             if (list_ptr)
                 for (auto& token : *list_ptr) {
                     
-                    auto key = &*token.neighbors;
+                    auto key = token.neighbors.get();
                     float similarity;
 
                     if (archive.contains(key))

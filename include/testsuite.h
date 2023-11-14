@@ -20,15 +20,14 @@ class TestSuite
 public:
     typedef struct { index_t index; line_t line; float sbfl_sus, sus; line_t ranking; } ranking_info;
     typedef struct { size_t Ncs, Ncf; ranking_info* ptr_ranking; } param;
-
     typedef struct { std::list<std::pair<index_t, line_t>> lines; bool is_passed; } test_case;
     using test_suite = std::list<test_case>;
 
-
+public:
     TestSuite() : _is_initialized(false), _fail(0), _highest_sbfl(0.0f) {}
     void addTestCase(const rapidjson::Document& d, bool is_successed, const std::vector<std::string>& extensions);
 
-    template<class Func>
+    template <class Func>
     void setSbflSus(Func func);
     void assignSbfl()
         { for (auto& info : _ranking) info.sus = info.sbfl_sus; }
@@ -181,7 +180,7 @@ void TestSuite::addTestCase(const rapidjson::Document& d, bool is_successed, con
     }
 }
 
-template<class Func>
+template <class Func>
 void TestSuite::setSbflSus(Func func)
 {
     for (auto& map : _line_param)

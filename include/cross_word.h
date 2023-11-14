@@ -7,6 +7,8 @@
 
 namespace PAFL
 {
+#define FOR_BLOCK(i) for(i = 0; i != 5; i++)
+
 class CrossWord
 {
 public:
@@ -21,29 +23,21 @@ public:
     class iterator
     {
     public:
-        iterator(block& target, block& parent, block& child, block& pred, block& succ) :
-            _transition{ {&target, &parent}, {&parent, &child}, {&child, &pred}, {&pred, &succ} },
-            _iter(target.begin()), _ptr(&target), _end(&succ), _block(BLOCK::TARGET) { _skip(); }
+        iterator(block* const blocks[]) :
+            _transition{ {blocks[0], blocks[1]}, {blocks[1], blocks[2]}, {blocks[2], blocks[3]}, {blocks[3], blocks[4]} },
+            _iter(blocks[0]->begin()), _ptr(blocks[0]), _end(blocks[4]), _block(BLOCK::TARGET) { _skip(); }
 
-        iterator& operator++()
-            { ++_iter; _skip(); return *this; }
-        block::value_type& operator*()
-            { return *_iter; }
-        block::iterator& operator->()
-            { return _iter; }
-        bool operator==(block::iterator iter)
-            { return _iter == iter; }
-        bool operator!=(block::iterator iter)
-            { return _iter != iter; }
+        iterator& operator++()                  { ++_iter; _skip(); return *this; }
+        block::value_type& operator*()          { return *_iter; }
+        block::iterator& operator->()           { return _iter; }
+        bool operator==(block::iterator iter)   { return _iter == iter; }
+        bool operator!=(block::iterator iter)   { return _iter != iter; }
  
         // BLOCK:: TARGET = 0x01 | PARENT = 0x02 | CHILD = 0x04 | PRED = 0x08 | SUCC = 0x10
-        unsigned char getCurrentBlock() const
-            { return _block; }
+        unsigned char getCurrentBlock() const   { return _block; }
 
     private:
-        void _skip()
-            { while (_ptr != _end && _iter == _ptr->end())
-            { _iter = (_ptr = _transition[_ptr])->begin(); _block <<= 1; }}
+        void _skip()    { while (_ptr != _end && _iter == _ptr->end()) { _iter = (_ptr = _transition[_ptr])->begin(); _block <<= 1; }}
 
         block::iterator _iter;
         block* _ptr;
@@ -55,43 +49,35 @@ public:
     class const_iterator
     {
     public:
-        const_iterator(const block& target, const block& parent, const block& child, const block& pred, const block& succ) :
-            _transition{ {&target, &parent}, {&parent, &child}, {&child, &pred}, {&pred, &succ} },
-            _iter(target.begin()), _ptr(&target), _end(&succ), _block(BLOCK::TARGET) { _skip(); }
+        const_iterator(block* const blocks[]) :
+            _transition{ {blocks[0], blocks[1]}, {blocks[1], blocks[2]}, {blocks[2], blocks[3]}, {blocks[3], blocks[4]} },
+            _iter(blocks[0]->cbegin()), _ptr(blocks[0]), _end(blocks[4]), _block(BLOCK::TARGET) { _skip(); }
 
-        const_iterator& operator++()
-            { ++_iter; _skip(); return *this; }
-        const block::value_type& operator*()
-            { return *_iter; }
-        block::const_iterator& operator->()
-            { return _iter; }
-        bool operator==(block::const_iterator iter)
-            { return _iter == iter; }
-        bool operator!=(block::const_iterator iter)
-            { return _iter != iter; }
+        const_iterator& operator++()                { ++_iter; _skip(); return *this; }
+        const block::value_type& operator*()        { return *_iter; }
+        block::const_iterator& operator->()         { return _iter; }
+        bool operator==(block::const_iterator iter) { return _iter == iter; }
+        bool operator!=(block::const_iterator iter) { return _iter != iter; }
 
         // BLOCK:: TARGET = 0x01 | PARENT = 0x02 | CHILD = 0x04 | PRED = 0x08 | SUCC = 0x10
-        unsigned char getCurrentBlock() const
-            { return _block; }
+        unsigned char getCurrentBlock() const       { return _block; }
 
     private:
-        void _skip()
-            { while (_ptr != _end && _iter == _ptr->end())
-            { _iter = (_ptr = _transition[_ptr])->begin(); _block <<= 1; }}
+        void _skip()    { while (_ptr != _end && _iter == _ptr->end()) { _iter = (_ptr = _transition[_ptr])->begin(); _block <<= 1; }}
 
         block::const_iterator _iter;
-        const block* _ptr;
-        const block* _end;
-        std::unordered_map<const block*, const block*> _transition;
+        block* _ptr;
+        block* _end;
+        std::unordered_map<block*, block*> _transition;
         unsigned char _block;
     };
 
 
 
-    CrossWord() = default;
+    CrossWord() : _blocks{&_target, &_parent, &_child, &_pred, &_succ} {}
     // BLOCK:: TARGET = 0x01 | PARENT = 0x02 | CHILD = 0x04 | PRED = 0x08 | SUCC = 0x10
     CrossWord(const std::string& tok, float weight, unsigned char flag);
-
+    CrossWord(const CrossWord& rhs) : _target(rhs._target), _parent(rhs._parent), _child(rhs._child), _pred(rhs._pred), _succ(rhs._succ), _blocks{&_target, &_parent, &_child, &_pred, &_succ} {}
 
     void insertToken(const Token& token, float base);
     void eraseIf(float threshold);
@@ -99,26 +85,22 @@ public:
     void assignFuture();
 
     float similarity(const Token& token) const;
-    bool empty() const
-        { return _target.empty() && _parent.empty() && _child.empty() && _pred.empty() && _succ.empty(); }
+    bool contains(const std::string& tok) const { int i = 0; FOR_BLOCK(i) if (_blocks[i]->contains(tok)) return true; return false; }
+    bool empty() const                          { return _target.empty() && _parent.empty() && _child.empty() && _pred.empty() && _succ.empty(); }
 
 
-    decltype(auto) begin()
-        { return iterator(_target, _parent, _child, _pred, _succ); }
-    decltype(auto) end()
-        { return _succ.end(); }
-    decltype(auto) cbegin() const
-        { return const_iterator(_target, _parent, _child, _pred, _succ); }
-    decltype(auto) cend() const
-        { return _succ.cend(); }
+    decltype(auto) begin()                      { return iterator(_blocks); }
+    decltype(auto) end()                        { return _succ.end(); }
+    decltype(auto) cbegin() const               { return const_iterator(_blocks); }
+    decltype(auto) cend() const                 { return _succ.cend(); }
     
     void log(const fs::path& path) const;
 
-    
 private:
     void _insert(decltype(Token::neighbors) set_ptr, block& blck, float base);
     float _maxWeight(decltype(Token::neighbors) set_ptr, const block& blck, size_t& denom) const;
 
+    block* const _blocks[5];
     block _target;
     block _parent;
     block _child;
@@ -134,7 +116,8 @@ private:
 
 namespace PAFL
 {
-CrossWord::CrossWord(const std::string& tok, float weight, unsigned char flag)
+CrossWord::CrossWord(const std::string& tok, float weight, unsigned char flag) :
+    _blocks{&_target, &_parent, &_child, &_pred, &_succ}
 {
     if (flag & BLOCK::TARGET)
         _target.emplace(tok, Weight{weight, weight});
@@ -165,22 +148,18 @@ void CrossWord::insertToken(const Token& token, float base = 0.0f)
 
 void CrossWord::eraseIf(float threshold)
 {
-    std::erase_if(_target, [=](const auto& item){ return item.second.weight <= threshold; });
-    std::erase_if(_parent, [=](const auto& item){ return item.second.weight <= threshold; });
-    std::erase_if(_child, [=](const auto& item){ return item.second.weight <= threshold; });
-    std::erase_if(_pred, [=](const auto& item){ return item.second.weight <= threshold; });
-    std::erase_if(_succ, [=](const auto& item){ return item.second.weight <= threshold; });
+    auto lambda = [threshold](const auto& item){ return item.second.weight <= threshold; };
+    int i = 0; FOR_BLOCK(i)
+        std::erase_if(*_blocks[i], lambda);
 }
 
 
 
 void CrossWord::assignFuture()
 {
-    for (auto& item : _target) item.second.weight = item.second.future;
-    for (auto& item : _parent) item.second.weight = item.second.future;
-    for (auto& item : _child) item.second.weight = item.second.future;
-    for (auto& item : _pred) item.second.weight = item.second.future;
-    for (auto& item : _succ) item.second.weight = item.second.future;
+    int i = 0; FOR_BLOCK(i)
+        for (auto& item : *_blocks[i])
+            item.second.weight = item.second.future;
 }
 
 
@@ -201,7 +180,7 @@ float CrossWord::similarity(const Token& token) const
     if (token.children)
         child_weight = _maxWeight(token.children, _child, denom);
 
-    return (target_weight + parent_weight + child_weight + pred_weight + succ_weight) / (float)denom;
+    return denom ? (target_weight + parent_weight + child_weight + pred_weight + succ_weight) / (float)denom : 0.0f;
 }
 
 

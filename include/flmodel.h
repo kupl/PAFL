@@ -26,7 +26,7 @@ public:
 
 private:
     Predictor _predictor;
-    std::vector<Localizer> _localizers;
+    std::vector<std::unique_ptr<Localizer>> _localizers;
 
     std::unique_ptr<BaseLogger> _logger;
     size_t _iter;
@@ -49,9 +49,8 @@ void FLModel::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec)
 
     if (info.targets.empty())
         suite.assignSbfl();
-    else
-        for (auto& item : info.targets)
-            _localizers[item.first].localize(suite, tkt_vec, item.second);
+    else for (auto& item : info.targets)
+        _localizers[item.first]->localize(suite, tkt_vec, item.second);
     suite.rank();
 
     if (_logger) {
@@ -68,15 +67,13 @@ void FLModel::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fau
     auto targets(toTokenFromFault(suite, tkt_vec, faults));
     auto info(_predictor.step(suite.getTestSuite(), tkt_vec, targets));
 
-    for (auto& item : info.targets) {
+    _localizers.emplace_back(std::make_unique<Localizer>());
+    for (auto& item : info.targets)// Update target localizers
+        _localizers[item.first]->step(suite, tkt_vec, faults, targets, item.second);
 
-        // New localizer
-        if (item.first == _localizers.size())
-            _localizers.emplace_back();
-        // Update target localizers
-        _localizers[item.first].step(suite, tkt_vec, faults, targets, item.second);
-    }
     _iter++;
+    if (_localizers.size() > Predictor::SIZE)
+        _localizers.erase(_localizers.begin());
 }
 
 
@@ -118,7 +115,7 @@ private:
         auto path(createDirRecursively(_path / ('#' + std::to_string(iter+1)) / "localizer"));
 
         for (size_t i = 0; i != model->_localizers.size(); i++)
-            model->_localizers[i].log(path / ("llz_" + std::to_string(i)));
+            model->_localizers[i]->log(path / ("llz_" + std::to_string(i)));
     }
     void _pdt_log(const Predictor::TargetInfo* info, size_t iter) const
     {

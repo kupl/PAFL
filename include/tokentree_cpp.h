@@ -47,7 +47,7 @@ CppTokenTree::CppTokenTree(const std::filesystem::path& path, std::shared_ptr<To
     TokenTree(path, matcher)
 {
     // Tokenize
-    CppPda pda(&*_root);
+    CppPda pda(_root.get());
     line_t line = 0;
     Token* buffer = nullptr;
 
@@ -67,7 +67,7 @@ CppTokenTree::CppTokenTree(const std::filesystem::path& path, std::shared_ptr<To
 
                 tok = &_stream.rbegin()->emplace_back(token.type, line, token.name);
             }
-            tok->root = &*_root;
+            tok->root = _root.get();
             
             pda.trans(buffer, tok);
             buffer = tok;
@@ -80,7 +80,7 @@ CppTokenTree::CppTokenTree(const std::filesystem::path& path, std::shared_ptr<To
         _tokens_indexer.emplace(list.begin()->loc, &list);
     
     return;
-    if (!pda.isTerminated(&*_root)) {
+    if (!pda.isTerminated(_root.get())) {
 
         std::cerr << "Incomplete token tree\n";
         throw std::logic_error(path);
