@@ -199,20 +199,24 @@ const std::list<TestSuite::ranking_info>& TestSuite::rank()
     _ranking.sort([](const ranking_info& lhs, const ranking_info& rhs){ return lhs.sus > rhs.sus; });
     
     // Rank
-    line_t ranking;
-    line_t virtual_ranking = 1;
+    line_t virtual_ranking = 0;
     float sus = std::numeric_limits<float>::infinity();
 
+    std::list<ranking_info*> tie;
     for (auto& iter : _ranking) {
 
         if (sus > iter.sus) {
 
             sus = iter.sus;
-            ranking = virtual_ranking;
+            for (auto ptr_info : tie)
+                ptr_info->ranking = virtual_ranking;
+            tie.clear();
         }
-        iter.ranking = ranking;
+        tie.push_back(&iter);
         virtual_ranking++;
     }
+    for (auto ptr_info : tie)
+        ptr_info->ranking = _ranking.size();
 
     return _ranking;
 }
