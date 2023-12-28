@@ -133,7 +133,8 @@ void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector&
                 }
 
             last = std::move(archive);
-            line_param.second.ptr_ranking->sus += 1.5f * coef * max_sim;/////////temptemp
+            if (line_param.second.ptr_ranking->sus > 0.0f)
+                line_param.second.ptr_ranking->sus += 1.0f * coef * max_sim;
         }
         idx++;
     }

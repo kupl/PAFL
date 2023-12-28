@@ -51,34 +51,34 @@ int main(int argc, char *argv[])
         std::string prefix(ui.getExePath().string() + "/coverage/" + method2string[static_cast<size_t>(method)] + '-' + ui.getProject() + '#');
 
         for (size_t iter = 0; iter != ui.numVersion(); iter++) {
+            std::cout << "ver " << iter+1 << '\n';
+
 
             // SBFL
             if (method != PAFL::UI::Method::PAFL) {
 
-                std::cout << ui.getProject() << " - " << "ver " << iter+1 << '\n';
-
                 std::cout << "Evaluating...\n";
                 suite[iter].setSbflSus(method2coef[static_cast<size_t>(method)]);
                 suite[iter].rank();
-                std::cout << "Done\n";
 
                 // Save as json
                 std::cout << "Saving...\n";
                 suite[iter].save(prefix + std::to_string(iter+1) + ".json");
-                std::cout << "Done\n";
             }
 
 
             // PAFL
             else {
                 
-                // Baseline = Ochiai
+                // Baseline = Ochiai + oversampling
+                //suite[iter].oversample(suite[iter].getNumSucc() > suite[iter].getNumFail() ? suite[iter].getNumSucc() / suite[iter].getNumFail() - 1 : 0);
                 suite[iter].setSbflSus(PAFL::Coef::Ochiai);
                 PAFL::normalizeSbfl(suite[iter], PAFL::Normalizer::BqrtOchiai);
 
                 // Set token tree
                 PAFL::TokenTree::Vector tkt_vector;
                 tkt_vector.reserve(suite[iter].MaxIndex());
+                std::cout << "Tokenizing...\n";
                 for (PAFL::index_t idx = 0;  idx != suite[iter].MaxIndex(); idx++) {
                     
                     auto file = suite[iter].getFileFromIndex(idx);
@@ -92,25 +92,21 @@ int main(int argc, char *argv[])
                     }*/
                 }
 
-                std::cout << ui.getProject() << " - " << "iteration " << iter+1 << '\n';
-                std::cout << "Tokenizing Done\n";
+                std::cout << '<' << ui.getProject() << "> : " <<  "iteration - " << iter+1 <<'\n';
             
                 // New sus of FL Model
                 std::cout << "Evaluating...\n";
                 flmodel.localize(suite[iter], tkt_vector);
-                std::cout << "Done\n";
 
                 // Save as json
                 std::cout << "Saving...\n";
                 suite[iter].save(prefix + std::to_string(iter+1) + ".json");
-                std::cout << "Done\n";
-                
+                    
                 // Learning
                 if (iter + 1 != ui.numVersion()) {
 
                     std::cout << "Learning...\n";
                     flmodel.step(suite[iter], tkt_vector, ui.getFaultLocation(iter));
-                    std::cout << "Done\n";
                 }
             }
         }

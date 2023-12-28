@@ -26,31 +26,26 @@ public:
 public:
     TestSuite() : _is_initialized(false), _fail(0), _highest_sbfl(0.0f) {}
     void addTestCase(const rapidjson::Document& d, bool is_successed, const std::vector<std::string>& extensions);
+    void oversample(size_t iter);
 
     template <class Func>
     void setSbflSus(Func func);
-    void assignSbfl()
-        { for (auto& info : _ranking) info.sus = info.sbfl_sus; }
+    void assignSbfl()                                           { for (auto& info : _ranking) info.sus = info.sbfl_sus; }
     const std::list<ranking_info>& rank();
 
 
     index_t getIndexFromFile(const std::string& file) const;
-    index_t MaxIndex() const
-        { return _index2file.size(); }
-    const std::string& getFileFromIndex(index_t idx) const
-        { return _index2file[idx]; }
-    ranking_info* getRankingInfo(index_t idx, line_t line)
-        { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking : nullptr; }
+    index_t MaxIndex() const                                    { return _index2file.size(); }
+    const std::string& getFileFromIndex(index_t idx) const      { return _index2file[idx]; }
+    ranking_info* getRankingInfo(index_t idx, line_t line)      { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking : nullptr; }
     line_t getRankingSum(const fault_loc& faults) const;
 
-    float getSbflSus(index_t idx, line_t line) const
-        { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->sbfl_sus : 0.0f; }
-    float getSus(index_t idx, line_t line) const
-        { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->sus : 0.0f; }
-    float getHighestSbflSus() const
-        { return _highest_sbfl; }
-    const test_suite& getTestSuite() const
-        { return _test_suite; }
+    float getSbflSus(index_t idx, line_t line) const            { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->sbfl_sus : 0.0f; }
+    float getSus(index_t idx, line_t line) const                { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->sus : 0.0f; }
+    float getHighestSbflSus() const                             { return _highest_sbfl; }
+    size_t getNumFail() const                                   { return _fail; }
+    size_t getNumSucc() const                                   { return _succ; }
+    const test_suite& getTestSuite() const                      { return _test_suite; }
 
 
     void save(const fs::path& path) const;
@@ -179,6 +174,18 @@ void TestSuite::addTestCase(const rapidjson::Document& d, bool is_successed, con
             }
     }
 }
+
+void TestSuite::oversample(size_t iter)
+{
+    _fail *= 1 + iter;
+
+    for (auto& tc : _test_suite)
+        if (!tc.is_passed)
+            for (auto& item : tc.lines)
+                _line_param.at(item.first).at(item.second).Ncf += iter;
+}
+
+
 
 template <class Func>
 void TestSuite::setSbflSus(Func func)
@@ -376,6 +383,7 @@ bool TestSuite::_read(const fs::path& path)
     // Test suite
     size_t suite_size = 0;
     ifs >> suite_size;
+    _succ = suite_size - _fail;
     _test_suite.clear();
     for (size_t i = 0; i != suite_size; i++) {
         
