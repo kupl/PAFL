@@ -203,7 +203,7 @@ void UI::_readIn()
         }
     }
 
-    {// --version | -v [V1],[V2],[V3]-[V4]
+    {// --version | -v [V1],[V2]-[V3]
         auto arg = _parser[{"-v", "--version"}];
         if (arg.empty())
             _throwInvalidInput();
