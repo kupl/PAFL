@@ -6,6 +6,7 @@
 #include <set>
 #include <vector>
 
+#include "argparser.h"
 #include "config.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
@@ -17,52 +18,39 @@ namespace PAFL
 class UI
 {
 public:
-    enum class Method{ PAFL, TARANTULA, OCHIAI, DSTAR, BARINEL };
+    enum class Method{ TARANTULA, OCHIAI, DSTAR, BARINEL, CNN, RNN, MLP };
     using method_set = std::set<Method>;
     using docs = std::list<std::pair<rapidjson::Document, bool>>;
 
 public:
     UI(int argc, char *argv[]);
 
-    const std::string& getProject() const
-        { return _project; }
-    PrgLang getLanguage() const
-        { return _pl; }
-    size_t numVersion() const
-        { return _version.size(); }
-    const method_set& getMethodSet() const
-        { return _method; }
+    const std::string& getProject() const                   { return _project; }
+    PrgLang getLanguage() const                             { return _pl; }
+    size_t numVersion() const                               { return _version.size(); }
+    const method_set& getMethodSet() const                  { return _method; }
     
-    const fs::path& getExePath() const
-        { return _exe_path; }
-    const fs::path& getProjectPath(size_t iter) const
-        { return _src_path[iter]; }
-    const fault_loc& getFaultLocation(size_t iter) const
-        { return _faults[iter]; }
-    size_t getVersion(size_t iter) const
-        { return _version[iter]; }
-    const std::vector<std::string>& getExtensions() const
-        { return _extensions; }
+    const fs::path& getDirectoryPath() const                { return _parser.getDirectoryPath(); }
+    const fs::path& getProjectPath(size_t iter) const       { return _src_path[iter]; }
+    const fault_loc& getFaultLocation(size_t iter) const    { return _faults[iter]; }
+    size_t getVersion(size_t iter) const                    { return _version[iter]; }
+    const std::vector<std::string>& getExtensions() const   { return _extensions; }
 
-    bool hasLogger() const
-        { return _logger; }
-    bool hasTimeLogger() const
-        { return _time_logger; }
-    bool hasCache() const
-        { return __cache; }
+    bool hasLogger() const                                  { return _logger; }
+    bool hasTimeLogger() const                              { return _time_logger; }
+    bool hasCache() const                                   { return __cache; }
 
     fs::path getFilePath(size_t iter, const std::string& file) const;
     docs getCoverageList(size_t iter) const;
 
 
 private:
-    void _throwInvalidInput() const
-        { throw std::invalid_argument("Invalid argument"); }
-
-    void _readIn(int argc, char *argv[]);
+    void _throwInvalidInput() const                         { throw std::invalid_argument("Invalid argument"); }
+    void _readIn();
     void _setContainer();
 
-
+private:
+    const ArgParser _parser;
     std::string _project;
     PrgLang _pl;
     std::vector<size_t> _version;
@@ -70,7 +58,6 @@ private:
     std::list<fs::path> _sub_dir;
     std::vector<std::string> _extensions;
 
-    fs::path _exe_path;
     fs::path _project_path;
     fs::path _testsuite_path;
     fs::path _oracle_path;
@@ -95,11 +82,11 @@ std::list<fs::path> _collectDir(const fs::path& path, std::string key);
 namespace PAFL
 {
 UI::UI(int argc, char *argv[]) :
-    _project_path(fs::current_path()), _testsuite_path(fs::current_path()), _oracle_path(fs::current_path()),
+    _parser(argc, argv), _project_path(fs::current_path()), _testsuite_path(fs::current_path()), _oracle_path(fs::current_path()),
     _logger(false), _time_logger(false), __cache(false)
 {
-    _readIn(argc, argv);
-    _config.configure(_pl, _exe_path);
+    _readIn();
+    _config.configure(_pl, _parser.getDirectoryPath());
     _setContainer();
 }
 
@@ -162,49 +149,65 @@ UI::docs UI::getCoverageList(size_t iter) const
 
 
 
-void UI::_readIn(int argc, char *argv[])
+void UI::_readIn()
 {
-    if (argc <= 3)
-        _throwInvalidInput();
-
-    {// Execution location
-        _exe_path = fs::path(argv[0]).parent_path();
+    {// --project | -p [PROJECT]
+        _project = _parser[{"-p", "--project"}];
+        if (_project.empty())
+            _throwInvalidInput();
     }
 
-    {// <PROJECT>:<METHOD>
-        std::string arg(argv[1]);
-        auto split = arg.find(':');
-        if (split == std::string::npos)
+    {// --language | -l [PL]
+        auto arg = _parser[{"-l", "--language"}];
+        if (arg.empty())
             _throwInvalidInput();
 
-        // <PROJECT>
-        _project = arg.substr(0, split);
-
-        // <METHOD>
-        std::string pl(arg.substr(split + 1));
-        std::transform(pl.begin(), pl.end(), pl.begin(),
-                        [](std::string::value_type c){ return std::tolower(c); });
-
-        if (pl == "cpp" || pl == "c++" || pl == "c") {
+        if (arg == "cpp" || arg == "c++" || arg == "c") {
 
             _pl = PrgLang::CPP;
             _extensions = { ".h", ".c", ".hpp", ".cpp", ".cc" };
         }
-        else if (pl == "python" || pl == "py") {
+        else if (arg == "python" || arg == "py") {
 
             _pl = PrgLang::PYTHON;
             _extensions = { ".py", "pyi", "pyc" };
         }
-        else if (pl == "java") {
-
+        else if (arg == "java")
             _pl = PrgLang::JAVA;
-        }
         else
             _throwInvalidInput();
     }
 
-    {// <VERSION>
-        std::string arg(argv[2]);
+    {// --method | -m [METHOD 1],[METHOD 2]
+        auto arg = _parser[{"-m", "--method"}];
+        if (arg.empty())
+            _throwInvalidInput();
+
+        for (size_t pos = 0; pos < arg.size(); ) {
+
+            auto split = arg.find(',', pos);
+
+            std::string method(arg.substr(pos, split - pos));
+            if (method == "tarantula")
+                _method.insert(Method::TARANTULA);
+            else if (method == "ochiai")
+                _method.insert(Method::OCHIAI);
+            else if (method == "dstar")
+                _method.insert(Method::DSTAR);
+            else if (method == "barinel")
+                _method.insert(Method::BARINEL);
+            else
+                _throwInvalidInput();
+
+            pos = split == std::string::npos ? std::string::npos : split + 1;
+        }
+    }
+
+    {// --version | -v [V1],[V2],[V3]-[V4]
+        auto arg = _parser[{"-v", "--version"}];
+        if (arg.empty())
+            _throwInvalidInput();
+
         for (size_t pos = 0; pos < arg.size(); ) {
 
             auto split = arg.find(',', pos);
@@ -230,80 +233,34 @@ void UI::_readIn(int argc, char *argv[])
         }
     }
 
-    {// <METHOD>
-        std::string arg(argv[3]);
+    if (_parser.contains("--sub-dir")) {// --sub-dir <DIR1>,<DIR2>
+        
+        auto arg = _parser["--sub-dir"];
         for (size_t pos = 0; pos < arg.size(); ) {
 
             auto split = arg.find(',', pos);
-
-            std::string method(arg.substr(pos, split - pos));
-            if (method == "pafl")
-                _method.insert(Method::PAFL);
-            else if (method == "tarantula")
-                _method.insert(Method::TARANTULA);
-            else if (method == "ochiai")
-                _method.insert(Method::OCHIAI);
-            else if (method == "dstar")
-                _method.insert(Method::DSTAR);
-            else if (method == "barinel")
-                _method.insert(Method::BARINEL);
-            else
-                _throwInvalidInput();
-
+            _sub_dir.emplace_back(arg.substr(pos, split - pos));
             pos = split == std::string::npos ? std::string::npos : split + 1;
         }
     }
 
-    // <OPTION>
-    for (int i = 4; i != argc; i++) {
+    if (_parser.contains({"-d", "--project-dir"}))// --project-dir | -d [PATH]
+        _project_path = _parser[{"-d", "--project-dir"}];
 
-        std::string arg(argv[i]);
-        if (!arg.starts_with('-'))
-            _throwInvalidInput();
-        arg.erase(0, 1);
-
-        if (arg.starts_with('P'))
-            _project_path = arg.substr(1);
-
-        else if (arg.starts_with('T'))
-            _testsuite_path = arg.substr(1);
-
-        else if (arg.starts_with('B'))
-            _oracle_path = arg.substr(1);
-
-        else if (arg.starts_with("-sub-dir=")) {// --sub-dir=<DIR1>,<DIR2>,...
-
-            std::string dirs(arg.substr(9));
-            for (size_t pos = 0; pos < dirs.size(); ) {
-
-                auto split = dirs.find(',', pos);
-                _sub_dir.emplace_back(dirs.substr(pos, split - pos));
-                pos = split == std::string::npos ? std::string::npos : split + 1;
-            }
-        }
-
-        else if (arg == "-log")
-            _logger = true;
-
-        else if (arg == "-timelog")
-            _time_logger = true;
-
-        else if (arg == "-dev-cache")
-            __cache = true;
-        
-        // abbreviation
-        else for(; !arg.empty(); arg.erase(0, 1)) {
-
-            if (arg.starts_with('l'))
-                _logger = true;
-            else if (arg.starts_with('t'))
-                _time_logger = true;
-            else if (arg.starts_with('c'))
-                __cache = true;
-            else
-                _throwInvalidInput();
-        }
-    }
+    if (_parser.contains({"-s", "--testsuite"}))// --testsuite | -s [PATH]
+        _testsuite_path = _parser[{"-t", "--testsuite"}];
+    
+    if (_parser.contains({"-i", "--fault-info"}))// --fault-info | -i [PATH]
+        _oracle_path = _parser[{"-d", "--project-dir"}];
+    
+    if (_parser.contains({"-g", "--debug"}))
+        _logger = true;
+    
+    if (_parser.contains({"-t", "--time-log"}))
+        _logger = true;
+    
+    if (_parser.contains({"-c", "--cache"}))
+        __cache = true;
 }
 
 
