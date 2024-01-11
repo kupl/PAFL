@@ -24,7 +24,7 @@ public:
     using test_suite = std::list<test_case>;
 
 public:
-    TestSuite() : _is_initialized(false), _fail(0), _highest_sbfl(0.0f) {}
+    TestSuite() : _is_initialized(false), _fail(0), _highest_sus(0.0f), _finite_highest_sus(0.0f) {}
     void addTestCase(const rapidjson::Document& d, bool is_successed, const std::vector<std::string>& extensions);
     void oversample(size_t iter);
 
@@ -42,16 +42,16 @@ public:
 
     float getSbflSus(index_t idx, line_t line) const            { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->sbfl_sus : 0.0f; }
     float getSus(index_t idx, line_t line) const                { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->sus : 0.0f; }
-    float getHighestSbflSus() const                             { return _highest_sbfl; }
+    float getHighestSbflSus() const                             { return _highest_sus; }
     size_t getNumFail() const                                   { return _fail; }
     size_t getNumSucc() const                                   { return _succ; }
     const test_suite& getTestSuite() const                      { return _test_suite; }
 
-
-    void save(const fs::path& path) const;
-    void _write(const fs::path& path) const;
-    bool _read(const fs::path& path);
-
+    void toJson(const fs::path& path) const;
+    void caching(const fs::path& path) const;
+    bool loadCache(const fs::path& path);
+    void toCovMatrix(const fs::path& dir, const fault_loc& faults) const;
+    bool setSbflSus(const fs::path& path);
 
     decltype(auto) begin()
         { return _line_param.begin(); }
@@ -73,7 +73,8 @@ private:
 
     std::vector<std::map<line_t, param>> _line_param;
     std::list<ranking_info> _ranking;
-    float _highest_sbfl;
+    float _highest_sus;
+    float _finite_highest_sus;
 
     test_suite _test_suite;
 };
@@ -195,8 +196,12 @@ void TestSuite::setSbflSus(Func func)
 
             item.second.ptr_ranking->sus = item.second.ptr_ranking->sbfl_sus
             = func(_succ, _fail, item.second.Ncs, item.second.Ncf);
-            if (_highest_sbfl < item.second.ptr_ranking->sbfl_sus)
-                _highest_sbfl = item.second.ptr_ranking->sbfl_sus;
+            if (_highest_sus < item.second.ptr_ranking->sbfl_sus) {
+
+                _highest_sus = item.second.ptr_ranking->sbfl_sus;
+                if (_highest_sus < std::numeric_limits<float>::infinity())
+                    _finite_highest_sus = _highest_sus;
+            }
         }
 }
 
@@ -260,7 +265,7 @@ line_t TestSuite::getRankingSum(const fault_loc& faults) const
 
 
 
-void TestSuite::save(const fs::path& path) const
+void TestSuite::toJson(const fs::path& path) const
 {
     std::ofstream ofs(path);
     char buf[10];
@@ -309,7 +314,7 @@ void TestSuite::save(const fs::path& path) const
 
 
 
-void TestSuite::_write(const fs::path& path) const
+void TestSuite::caching(const fs::path& path) const
 {
     // TestSuite
     std::ofstream ofs(path);
@@ -336,10 +341,9 @@ void TestSuite::_write(const fs::path& path) const
         for (auto& item : tc.lines)
             ofs << item.first << '\n' << item.second << '\n';
     }
-
 }
 
-bool TestSuite::_read(const fs::path& path)
+bool TestSuite::loadCache(const fs::path& path)
 {
     if (!fs::exists(path))
         return false;
@@ -402,6 +406,86 @@ bool TestSuite::_read(const fs::path& path)
     }
 
     return true;
+}
+
+
+
+void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
+{
+    // mapper
+    std::vector<std::unordered_map<line_t, line_t>> mapper;
+    line_t total_plus_one = 1;
+    {// Init mapper
+        mapper.reserve(_line_param.size());
+        for (auto& file : _line_param) {
+
+            auto& map = mapper.emplace_back();
+            map.reserve(file.size());
+            for (auto& iter : file)
+                map.emplace(iter.first, total_plus_one++);
+        }
+
+        // componentinfo
+        std::ofstream cmp_info(dir / "componentinfo.txt");
+        cmp_info << total_plus_one - 1 << '\n';
+        for (line_t l = 1; l != total_plus_one; ++l)
+            cmp_info << l << ' ';
+    }
+
+    {// faultLine
+        std::ofstream fault_line(dir / "covMatrix.txt");
+        fault_line << "fault=\"";
+        for (auto iter = faults.begin(); iter != faults.end(); ++iter) {
+
+            auto index = _file2index.at(iter->first);
+            for (auto jter = iter->second.begin(); jter != iter->second.end(); ++jter) {
+
+                fault_line << mapper[index].at(*jter);
+                auto temp = jter;
+                if (iter != faults.end() || ++temp != iter->second.end())
+                    fault_line << ',';
+            }
+        }
+        fault_line << '"';
+    }
+    
+    {// covMatrix & error
+        std::ofstream cov_matrix(dir / "covMatrix.txt");
+        std::ofstream error(dir / "error.txt");
+
+        for (auto& tc : _test_suite) {
+
+            error << tc.is_passed << '\n';
+            // Line set
+            std::unordered_set<line_t> line_set;
+            for (auto item : tc.lines)
+                line_set.insert(mapper[item.first].at(item.second));
+            for (line_t l = 1; l != total_plus_one; ++l)
+                cov_matrix.write(line_set.contains(l) ? "1 " : "0 ", 2);
+            cov_matrix.put('\n');
+        }
+    }
+}
+
+bool TestSuite::setSbflSus(const fs::path& path)
+{
+    if (!fs::exists(path))
+        return false;
+
+    // Init mapper
+    std::vector<float*> mapper(_ranking.size() + 1, nullptr);
+    {
+        line_t l = 0;
+        for (auto& file : _line_param) {
+            for (auto& iter : file)
+                mapper[l++] = &iter.second.ptr_ranking->sbfl_sus;
+        }
+    }
+
+    // Read suspicousness
+    std::ifstream ifs(path);
+    for (auto ptr : mapper)
+        ifs >> *ptr;
 }
 }
 #endif

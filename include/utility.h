@@ -7,7 +7,6 @@
 
 namespace PAFL
 {
-
 namespace Coef
 {
     float Tarantula(size_t Ns, size_t Nf, size_t Ncs, size_t Ncf)
@@ -29,6 +28,5 @@ namespace Normalizer
     float BqrtOchiai(float sus, float higest) // 4
         { return sus > 0.0f ? std::sqrt(std::sqrt(sus / higest)) : 0.0f; }
 }
-
 }
 #endif
