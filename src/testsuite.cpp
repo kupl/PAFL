@@ -234,13 +234,13 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
     std::vector<std::unordered_map<line_t, line_t>> mapper;
     line_t total_plus_one = 1;
     {// Init mapper
-        mapper.reserve(_line_param.size());
-        for (auto& file : _line_param) {
+        mapper.reserve(_index2file.size());
+        for (index_t idx = 0; idx != _index2file.size(); ++idx) {
 
             auto& map = mapper.emplace_back();
-            map.reserve(file.size());
-            for (auto& iter : file)
-                map.emplace(iter.first, total_plus_one++);
+            map.reserve(_line_param[idx].size());
+            for (auto& item : _line_param[idx])
+                map.emplace(item.first, total_plus_one++);
         }
 
         // componentinfo
