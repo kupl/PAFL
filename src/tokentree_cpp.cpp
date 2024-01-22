@@ -2,7 +2,8 @@
 
 namespace PAFL
 {
-TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_ptr<TokenTree::Matcher> matcher) : TokenTree()
+TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_ptr<TokenTree::Matcher> matcher) :
+    TokenTree()
 {
     // Tokenize
     CppPda pda(_root.get());
@@ -185,7 +186,7 @@ std::list<Token> TokenTreeCpp::_getRawStream(const std::filesystem::path& path, 
     }
 
     std::free(buf);
-    std::system(Command::CLEAR);
+    //std::system(Command::CLEAR);
     return stream;
 }
 }
