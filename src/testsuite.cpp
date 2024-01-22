@@ -267,7 +267,7 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
         }
         buf.pop_back();
         buf.push_back('"');
-        std::ofstream(dir / "covMatrix.txt").write(buf.c_str(), buf.size());
+        std::ofstream(dir / "faultLine.txt").write(buf.c_str(), buf.size());
     }
     
     {// covMatrix & error
