@@ -5,7 +5,6 @@ namespace PAFL
 void FLModel::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec)
 {
     auto info(_predictor.predict(suite.getTestSuite(), tkt_vec));
-
     if (info.targets.empty())
         suite.assignBaseSus();
     else for (auto& item : info.targets)

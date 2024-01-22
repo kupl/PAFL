@@ -131,13 +131,13 @@ void Pipeline::localizeWithBase(FLModel&, time_vector& time_vec)
 {
     _timer.restart();
 
-        std::cout << _ui.getProject() << " : " << _method_string_map.at(_method) << '\n';
+        std::cout << '\n' << _ui.getProject() << " : " << _method_string_map.at(_method) << '\n';
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing\n";
         (this->*_method_setter_map.at(_method))();
         _suite->rank();
 
         // Save as json
-        std::cout << "[ " << (_iter + 1) << " ] -> Saving\n\n";
+        std::cout << "[ " << (_iter + 1) << " ] -> Saving\n";
         fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / _method_string_map.at(_method) / _ui.getProject()));
         _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
 
@@ -159,17 +159,14 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
             (this->*_builder)(tkt_vector[idx], _ui.getFilePath(_iter, _suite->getFileFromIndex(idx)));
 
         // New sus of FL Model
-        std::cout << _ui.getProject() << " : " << _method_string_map.at(_method) << "-pafl\n";
+        std::cout << '\n' << _ui.getProject() << " : " << _method_string_map.at(_method) << "-pafl\n";
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing\n";
         model.localize(*_suite, tkt_vector);
 
         // Save as json
         std::cout << "[ " << (_iter + 1) << " ] -> Saving\n";
         fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method_string_map.at(_method)) / _ui.getProject()));
-
-        // Destroy token tree
-        for (auto ptr : tkt_vector)
-            delete ptr;
+        _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
 
     time_vec[_iter] += _timer.stop();
         
@@ -177,12 +174,16 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
     _timer.restart();
 
         // Learning
-        if (_iter + 1 == _ui.numVersion())
-            return;
-        std::cout << "Learning...\n\n";
-        model.step(*_suite, tkt_vector, _ui.getFaultLocation(_iter));
+        if (_iter + 1 != _ui.numVersion()) {
 
-    time_vec[_iter + 1]+= _timer.stop();
+            std::cout << "Learning...\n";
+            model.step(*_suite, tkt_vector, _ui.getFaultLocation(_iter));
+        }
+        // Destroy token tree
+        for (auto ptr : tkt_vector)
+            delete ptr;
+
+    time_vec[_iter + 1] += _timer.stop();
 }
 
 
