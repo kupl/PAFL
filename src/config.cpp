@@ -11,7 +11,7 @@ void Config::configure(PrgLang pl, const fs::path& path)
         config << "#begin CPP\n\n" <<
 
                 "PROJECT_LOC = \"buggy-\" VER\n" <<
-                "TESTCASE_LOC = PROJ \"-buggy-\" VER \"-\" CASE\n\n" <<
+                "TESTCASE_LOC = \"buggy-\" VER \"/\" PROJ \"-buggy-\" VER \"-\" CASE\n\n" <<
 
                 "COVERAGE_NAME = \"summary.json\"\n\n" <<
 
