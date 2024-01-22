@@ -1,23 +1,49 @@
-SUFFIX = .cpp
-COMPILER = g++
-CXXFLAGS = -std=c++20 -O2
+CXX      := -g++
+CXXFLAGS := -std=c++20
+LDFLAGS  := 
+BUILD    := ./build
+OBJ_DIR  := $(BUILD)/obj
+APP_DIR  := $(BUILD)/out
+TARGET   := main
+INCLUDE  := -Iinclude/
+SRC      :=                      \
+   $(wildcard src/*.cpp)         \
 
-SRCDIR = .
-INCLUDE = ./include
-EXEDIR = .
+OBJECTS  := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
+DEPENDENCIES \
+         := $(OBJECTS:.o=.d)
 
-SOURCES = $(wildcard $(SRCDIR)/*$(SUFFIX))
-OBJECTS = $(notdir $(SOURCES:$(SUFFIX)=.o))
-TARGETS = $(notdir $(basename $(SOURCES)))
+all: build $(APP_DIR)/$(TARGET)
 
-define MAKEALL
-$(1): $(1).o
-	$(COMPILER) -I$(INCLUDE) $(CXXFLAGS) -o $(EXEDIR)/$(1) $(1).o
-	@$(RM) $(1).o
-$(1).o:
-	$(COMPILER) -I$(INCLUDE) $(CXXFLAGS) -c $(SRCDIR)/$(1)$(SUFFIX)
-endef
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -MMD -o $@
 
-.PHONY: all
-all: $(TARGETS)
-$(foreach VAR,$(TARGETS),$(eval $(call MAKEALL,$(VAR))))
+$(APP_DIR)/$(TARGET): $(OBJECTS)
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -o $(APP_DIR)/$(TARGET) $^ $(LDFLAGS)
+
+-include $(DEPENDENCIES)
+
+.PHONY: all build clean debug release info
+
+build:
+	@mkdir -p $(APP_DIR)
+	@mkdir -p $(OBJ_DIR)
+
+debug: CXXFLAGS += -DDEBUG -g
+debug: all
+
+release: CXXFLAGS += -O2
+release: all
+
+clean:
+	-@rm -rvf $(OBJ_DIR)/*
+	-@rm -rvf $(APP_DIR)/*
+
+info:
+	@echo "[*] Application dir: ${APP_DIR}     "
+	@echo "[*] Object dir:      ${OBJ_DIR}     "
+	@echo "[*] Sources:         ${SRC}         "
+	@echo "[*] Objects:         ${OBJECTS}     "
+	@echo "[*] Dependencies:    ${DEPENDENCIES}"

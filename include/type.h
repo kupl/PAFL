@@ -6,6 +6,8 @@
 #include <list>
 #include <unordered_map>
 #include <unordered_set>
+#include <set>
+
 
 namespace fs = std::filesystem;
 
@@ -13,26 +15,12 @@ namespace PAFL
 {
 using line_t = unsigned long;
 using index_t = unsigned short;
+using time_t = std::chrono::seconds;
 using fault_loc = std::unordered_map<std::string, std::unordered_set<line_t>>;
+using string_set = std::set<std::string>;
 
 enum class PrgLang{ CPP, PYTHON, JAVA };
 
 const fs::path& createDirRecursively(const fs::path& path);
-}
-
-
-
-namespace PAFL
-{
-const fs::path& createDirRecursively(const fs::path& path)
-{
-    auto parent(path.parent_path());
-    if (!fs::exists(path) && parent != path.root_path()) {
-        
-        createDirRecursively(parent);
-        fs::create_directory(path);
-    }
-    return path;
-}
 }
 #endif
