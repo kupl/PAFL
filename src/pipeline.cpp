@@ -91,7 +91,7 @@ void Pipeline::run()
 
 
 
-void Pipeline::makeMatrix()
+void Pipeline::makeMatrix(const fs::path& manybugs)
 {
     // Load Test cases
     for (size_t iter = 0; iter != _ui.numVersion(); iter++) {
@@ -99,7 +99,7 @@ void Pipeline::makeMatrix()
         auto suite = (this->*_test_factory)();
         _updateInfo(suite, iter);
         (this->*_loader)();
-        suite->toCovMatrix(createDirRecursively(fs::path("~/manybugs") / (_ui.getProject() + "-" + std::to_string(iter + 1))), _ui.getFaultLocation(iter));
+        suite->toCovMatrix(createDirRecursively(manybugs / (_ui.getProject() + "-" + std::to_string(iter + 1))), _ui.getFaultLocation(iter));
         delete suite;
     }
 }
