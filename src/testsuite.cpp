@@ -1,5 +1,4 @@
 #include "testsuite/testsuite.h"
-#include <iostream>
 
 namespace PAFL
 {
@@ -235,18 +234,16 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
     std::vector<std::unordered_map<line_t, line_t>> mapper;
     line_t total_plus_one = 1;
 
-    std::cout << "Init mapper\n";
     {// Init mapper
-        mapper.reserve(_index2file.size());
-        for (index_t idx = 0; idx != _index2file.size(); ++idx) {
+        mapper.reserve(_line_param.size());
+        for (auto& file : _line_param) {
 
             auto& map = mapper.emplace_back();
-            map.reserve(_line_param[idx].size());
-            for (auto& item : _line_param[idx])
-                map.emplace(item.first, total_plus_one++);
+            map.reserve(file.size());
+            for (auto& iter : file)
+                map.emplace(iter.first, total_plus_one++);
         }
 
-        std::cout << "component info\n";
         // componentinfo
         std::string buf;
         buf.reserve(_MiB(64));
@@ -257,7 +254,6 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
         std::ofstream(dir / "componentinfo.txt").write(buf.c_str(), buf.size());
     }
 
-    std::cout << "faultLine\n";
     {// faultLine
         std::string buf;
         buf.reserve(1024);
@@ -266,14 +262,14 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
 
             auto index = _file2index.at(item.first);
             for (auto line : item.second)
-                _appendAnyChar(buf, mapper[index].at(line), ',');
+                if (mapper[index].contains(line))
+                    _appendAnyChar(buf, mapper[index].at(line), ',');
         }
         buf.pop_back();
         buf.push_back('"');
         std::ofstream(dir / "covMatrix.txt").write(buf.c_str(), buf.size());
     }
     
-    std::cout << "covMatrix\n";
     {// covMatrix & error
         std::string buf;
         buf.reserve(_MiB(64));
