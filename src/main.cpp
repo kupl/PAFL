@@ -2,6 +2,8 @@
 
 int main(int argc, char *argv[])
 {
+    PAFL::Pipeline(argc, argv).makeMatrix();
+    return 0;
     PAFL::Pipeline(argc, argv).run();
     /*
     // Run

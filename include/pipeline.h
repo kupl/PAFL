@@ -13,6 +13,7 @@ class Pipeline
 public:
     Pipeline(int argc, char *argv[]);
     void run();
+    void makeMatrix();
 
 private:
     using time_vector = std::vector<time_t::rep>;

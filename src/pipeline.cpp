@@ -91,6 +91,21 @@ void Pipeline::run()
 
 
 
+void Pipeline::makeMatrix()
+{
+    // Load Test cases
+    for (size_t iter = 0; iter != _ui.numVersion(); iter++) {
+
+        auto suite = (this->*_test_factory)();
+        _updateInfo(suite, iter);
+        (this->*_loader)();
+        suite->toCovMatrix(createDirRecursively(fs::path("~/manybugs") / (_ui.getProject() + "-" + std::to_string(iter + 1))), _ui.getFaultLocation(iter));
+        delete suite;
+    }
+}
+
+
+
 void Pipeline::loadTestSuite()
 {
     // Collect Coverage data
