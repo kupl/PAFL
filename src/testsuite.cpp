@@ -277,7 +277,7 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
 
         for (auto& tc : _test_suite) {
 
-            error << tc.is_passed << '\n';
+            error << !tc.is_passed << '\n';
             // Line set
             std::unordered_set<line_t> line_set;
             for (auto item : tc.lines)
