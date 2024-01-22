@@ -65,6 +65,7 @@ private:
         auto result_ptr = std::to_chars(buf, buf + 32, val).ptr;
         str.append(buf, result_ptr - buf);
     }
+    void _appendAny(std::string& str, bool val) const                           { val ? str.push_back('1') : str.push_back('0'); }
     template <class T>
     void _appendAnyChar(std::string& str, T val, char c) const                  { _appendAny(str, val); str.push_back(c); }
     void _appendStrChar(std::string& lhs, const std::string& str, char c) const { lhs.append(str); lhs.push_back(c); }
