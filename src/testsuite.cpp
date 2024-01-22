@@ -75,80 +75,89 @@ line_t TestSuite::getRankingSum(const fault_loc& faults) const
 
 void TestSuite::toJson(const fs::path& path) const
 {
-    std::ofstream ofs(path);
-    char buf[10];
+    std::string buf;
+    buf.reserve(_MiB(64));
 
     // files
-    ofs.write("{\n\t\"files\": [\n", 14);
-    for (size_t i = 0; i != _index2file.size(); ++i) {
+    buf.append("{\n\t\"files\": [\n", 14);
+    for (auto& file : _index2file) {
 
-        ofs.write("\t\t\"", 3);
-        ofs.write(_index2file[i].c_str(), _index2file[i].size());
-        i != _index2file.size() - 1 ? ofs.write("\",\n", 3) : ofs.write("\"\n", 2);
-    }      
-    ofs.write("\t],\n", 4);
+        buf.append("\t\t\"", 3);
+        buf.append(file);
+        buf.append("\",\n", 3);
+    }
+    if (buf.ends_with(",\n"))
+        buf.erase(buf.size() - 2);
+    buf.append("\t],\n", 4);
 
-    // total                                                                                                                                                                                                                                                 
-    ofs.write("\t\"total\": ", 10);
-    auto result_ptr = std::to_chars(buf, buf + 10, _ranking.size()).ptr;
-    ofs.write(buf, result_ptr - buf);
-    ofs.write(",\n\t\"lines\": [\n", 14);
+    // total
+    buf.append("\t\"total\": ", 10);
+    _appendAny(buf, _ranking.size());
+    buf.append(",\n\t\"lines\": [\n", 14);
 
     // lines
-    auto end = _ranking.end();
-    end--;
-    for (auto iter = _ranking.cbegin(); iter != _ranking.cend(); iter++) {
+    for (auto item : _ranking) {
         
         // index
-        ofs.write("\t\t{ \"index\": ", 13);
-        auto result_ptr = std::to_chars(buf, buf + 10, iter->index).ptr;
-        ofs.write(buf, result_ptr - buf);
+        buf.append("\t\t{ \"index\": ", 13);
+        _appendAny(buf, item.index);
         // line
-        ofs.write(", \"line\": ", 10);
-        result_ptr = std::to_chars(buf, buf + 10, iter->line).ptr;
-        ofs.write(buf, result_ptr - buf);
+        buf.append(", \"line\": ", 10);
+        _appendAny(buf, item.line);
         // sus
-        ofs.write(", \"sus\": ", 9);
-        ofs << iter->sus;
+        buf.append(", \"sus\": ", 9);
+        _appendAny(buf, item.sus);
         // ranking
-        ofs.write(", \"ranking\": ", 13);
-        result_ptr = std::to_chars(buf, buf + 10, iter->ranking).ptr;
-        ofs.write(buf, result_ptr - buf);
-        iter != end ? ofs.write(" },\n", 4) : ofs.write("}\n", 2);
+        buf.append(", \"ranking\": ", 13);
+        _appendAny(buf, item.ranking);
+        buf.append(" },\n", 4);
     }
-    ofs.write("\t]\n}", 4);
-    ofs.put(' ');
+    if (buf.ends_with(",\n"))
+        buf.erase(buf.size() - 2);
+    buf.append("\t]\n} ", 5);
+
+    std::ofstream(path).write(buf.c_str(), buf.size());
 }
 
 
 
 void TestSuite::caching(const fs::path& path) const
 {
-    // TestSuite
-    std::ofstream ofs(path);
-    ofs << _is_initialized << '\n' << _fail << '\n' << _index2file.size() << '\n';
+    std::string buf;
+    buf.reserve(_MiB(64));
     
-    for (auto& iter : _index2file) {
+    _appendAnyChar(buf, _is_initialized, '\n');
+    _appendAnyChar(buf, _fail, '\n');
+    _appendAnyChar(buf, _index2file.size(), '\n');
 
-        ofs.write(iter.c_str(), iter.size());
-        ofs.put('\n');
-    }
+    for (auto& file : _index2file)
+        _appendStrChar(buf, file, '\n');
 
     for (auto& file : _line_param) {
 
-        ofs << file.size() << '\n';
-        for (auto& iter : file)
-            ofs << iter.first << '\n' << iter.second.Ncs << '\n' << iter.second.Ncf << '\n';
+        _appendAnyChar(buf, file.size(), '\n');
+        for (auto& iter : file) {
+
+            _appendAnyChar(buf, iter.first, '\n');
+            _appendAnyChar(buf, iter.second.Ncs, '\n');
+            _appendAnyChar(buf, iter.second.Ncf, '\n');
+        }
     }
 
     // Test suite
-    ofs << _test_suite.size() << '\n';
+    _appendAnyChar(buf, _test_suite.size(), '\n');
     for (auto& tc : _test_suite) {
         
-        ofs << tc.is_passed << '\n' << tc.lines.size() << '\n';
-        for (auto& item : tc.lines)
-            ofs << item.first << '\n' << item.second << '\n';
+        _appendAnyChar(buf, tc.is_passed, '\n');
+        _appendAnyChar(buf, tc.lines.size(), '\n');
+        for (auto& item : tc.lines) {
+
+            _appendAnyChar(buf, item.first, '\n');
+            _appendAnyChar(buf, item.second, '\n');
+        }
     }
+
+    std::ofstream(path).write(buf.c_str(), buf.size());
 }
 
 
@@ -235,31 +244,33 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
         }
 
         // componentinfo
-        std::ofstream cmp_info(dir / "componentinfo.txt");
-        cmp_info << total_plus_one - 1 << '\n';
+        std::string buf;
+        buf.reserve(_MiB(64));
+        _appendAnyChar(buf, total_plus_one - 1, '\n');
         for (line_t l = 1; l != total_plus_one; ++l)
-            cmp_info << l << ' ';
+            _appendAnyChar(buf, l, ' ');
+        buf.pop_back();
+        std::ofstream(dir / "componentinfo.txt").write(buf.c_str(), buf.size());
     }
 
     {// faultLine
-        std::ofstream fault_line(dir / "covMatrix.txt");
-        fault_line << "fault=\"";
-        for (auto iter = faults.begin(); iter != faults.end(); ++iter) {
+        std::string buf;
+        buf.reserve(1024);
+        buf.append("fault=\"", 7);
+        for (auto& item : faults) {
 
-            auto index = _file2index.at(iter->first);
-            for (auto jter = iter->second.begin(); jter != iter->second.end(); ++jter) {
-
-                fault_line << mapper[index].at(*jter);
-                auto temp = jter;
-                if (iter != faults.end() || ++temp != iter->second.end())
-                    fault_line << ',';
-            }
+            auto index = _file2index.at(item.first);
+            for (auto line : item.second)
+                _appendAnyChar(buf, mapper[index].at(line), ',');
         }
-        fault_line << '"';
+        buf.pop_back();
+        buf.push_back('"');
+        std::ofstream(dir / "covMatrix.txt").write(buf.c_str(), buf.size());
     }
     
     {// covMatrix & error
-        std::ofstream cov_matrix(dir / "covMatrix.txt");
+        std::string buf;
+        buf.reserve(_MiB(64));
         std::ofstream error(dir / "error.txt");
 
         for (auto& tc : _test_suite) {
@@ -270,9 +281,12 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
             for (auto item : tc.lines)
                 line_set.insert(mapper[item.first].at(item.second));
             for (line_t l = 1; l != total_plus_one; ++l)
-                cov_matrix.write(line_set.contains(l) ? "1 " : "0 ", 2);
-            cov_matrix.put('\n');
+                buf.append(line_set.contains(l) ? "1 " : "0 ", 2);
+            buf.push_back('\n');
         }
+
+        buf.pop_back();
+        std::ofstream(dir / "covMatrix.txt").write(buf.c_str(), buf.size());
     }
 }
 

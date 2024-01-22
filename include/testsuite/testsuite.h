@@ -57,6 +57,19 @@ public:
     decltype(auto) cbegin() const                               { return _line_param.cbegin(); }
     decltype(auto) cend() const                                 { return _line_param.cend(); }
 
+private:
+    template <class T>
+    void _appendAny(std::string& str, T val) const
+    {
+        char buf[32];
+        auto result_ptr = std::to_chars(buf, buf + 32, val).ptr;
+        str.append(buf, result_ptr - buf);
+    }
+    template <class T>
+    void _appendAnyChar(std::string& str, T val, char c) const                  { _appendAny(str, val); str.push_back(c); }
+    void _appendStrChar(std::string& lhs, const std::string& str, char c) const { lhs.append(str); lhs.push_back(c); }
+    static constexpr size_t _MiB(size_t mib)                                    { return mib * 1024 * 1024; }
+
 
 protected:
     bool _is_initialized;
