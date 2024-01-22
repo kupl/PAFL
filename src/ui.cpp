@@ -49,7 +49,7 @@ UI::docs UI::getCoverageList(size_t iter) const
         if (!fs::exists(tc_path))
             break;
         
-        std::cout << _project << "-" << VER << "> case " << CASE << '\n';
+        std::cout << _project << "-" << VER << "-" << CASE << '\n';
 
         // Parse document
         bool pf = false;
@@ -63,7 +63,6 @@ UI::docs UI::getCoverageList(size_t iter) const
         }
         ret.emplace_back(parseDoc(tc_path / _config.COVERAGE_NAME(_project, VER, CASE)), pf);
     }
-    std::cout << '\n';
 
     return ret;
 }

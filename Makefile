@@ -3,7 +3,7 @@ CXXFLAGS := -std=c++20
 LDFLAGS  := 
 BUILD    := ./build
 OBJ_DIR  := $(BUILD)/obj
-APP_DIR  := $(BUILD)/out
+APP_DIR  := .
 TARGET   := main
 INCLUDE  := -Iinclude/
 SRC      :=                      \

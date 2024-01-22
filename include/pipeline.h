@@ -48,7 +48,7 @@ private:
 private:
     void _updateInfo(TestSuite* suite, UI::Method method, size_t iter)  { _suite = suite; _method = method; _iter = iter; }
     void _updateInfo(TestSuite* suite, size_t iter)                     { _suite = suite; _iter = iter; }
-    void _logTime(const fs::path& path, time_vector& time_vec)          { for (auto time : time_vec) std::ofstream(path) << time; }
+    void _logTime(const fs::path& path, time_t::rep time)          { std::ofstream(path) << time; }
 
 
 private:

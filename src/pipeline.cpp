@@ -9,7 +9,7 @@ Pipeline::Pipeline(int argc, char *argv[]) :
     _loader(_ui.hasCache() ? &Pipeline::loadCachedTestSuite : &Pipeline::loadTestSuite),
     _logger_factory(_ui.hasDebugger() ? &Pipeline::makeLogger : &Pipeline::makeEmptyLogger),
     _localizer(_ui.getMethodSet().contains(UI::Method::PAFL) ? &Pipeline::localizeWithPAFL : &Pipeline::localizeWithBase),
-    _time_logger(_ui.hasDebugger() ? &Pipeline::logNoneTime : 
+    _time_logger(!_ui.hasDebugger() ? &Pipeline::logNoneTime : 
                 (_ui.getMethodSet().contains(UI::Method::PAFL) ? &Pipeline::logPAFLTime : &Pipeline::logBaseTime)),
     
     _method_setter_map{ {UI::Method::TARANTULA, &Pipeline::setTarantula},
@@ -96,7 +96,7 @@ void Pipeline::loadTestSuite()
     // Collect Coverage data
     for (auto& item : _ui.getCoverageList(_iter))
         _suite->addTestCase(item.first, item.second, _ui.getExtensions());
-    std::cout << _ui.getProject() << '-' << _ui.getVersion(_iter) << " is loaded";
+    std::cout << _ui.getProject() << '-' << _ui.getVersion(_iter) << " is loaded\n\n";
 }
 
 
@@ -113,7 +113,7 @@ void Pipeline::loadCachedTestSuite()
     }
     // Caching success
     else
-        std::cout << _ui.getProject() << '-' << _ui.getVersion(_iter) << " is loaded from cache\n";
+        std::cout << _ui.getProject() << '-' << _ui.getVersion(_iter) << " is loaded from cache\n\n";
 }
 
 
@@ -131,12 +131,13 @@ void Pipeline::localizeWithBase(FLModel&, time_vector& time_vec)
 {
     _timer.restart();
 
-        std::cout << _ui.getProject() << " [ " << (_iter + 1) << " ] -> Localizing\n";
+        std::cout << _ui.getProject() << " : " << _method_string_map.at(_method) << '\n';
+        std::cout << "[ " << (_iter + 1) << " ] -> Localizing\n";
         (this->*_method_setter_map.at(_method))();
         _suite->rank();
 
         // Save as json
-        std::cout << _ui.getProject() << " [ " << (_iter + 1) << " ] -> Saving\n";
+        std::cout << "[ " << (_iter + 1) << " ] -> Saving\n\n";
         fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / _method_string_map.at(_method) / _ui.getProject()));
         _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
 
@@ -158,11 +159,12 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
             (this->*_builder)(tkt_vector[idx], _ui.getFilePath(_iter, _suite->getFileFromIndex(idx)));
 
         // New sus of FL Model
-        std::cout << _ui.getProject() << " [ " << (_iter + 1) << " ] -> Localizing\n";
+        std::cout << _ui.getProject() << " : " << _method_string_map.at(_method) << "-pafl\n";
+        std::cout << "[ " << (_iter + 1) << " ] -> Localizing\n";
         model.localize(*_suite, tkt_vector);
 
         // Save as json
-        std::cout << _ui.getProject() << " [ " << (_iter + 1) << " ] -> Saving\n";
+        std::cout << "[ " << (_iter + 1) << " ] -> Saving\n";
         fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method_string_map.at(_method)) / _ui.getProject()));
 
         // Destroy token tree
@@ -177,7 +179,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         // Learning
         if (_iter + 1 == _ui.numVersion())
             return;
-        std::cout << "Learning...\n";
+        std::cout << "Learning...\n\n";
         model.step(*_suite, tkt_vector, _ui.getFaultLocation(_iter));
 
     time_vec[_iter + 1]+= _timer.stop();
@@ -187,19 +189,19 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
 
 void Pipeline::logBaseTime(time_vector& time_vec)
 {
-    const auto path(createDirRecursively(
-        _ui.getDirectoryPath() / "log/time" / _method_string_map.at(_method) / _ui.getProject())
-        / (std::to_string(_iter + 1) + ".txt"));
-    _logTime(path, time_vec);
+    const auto dir(createDirRecursively(
+        _ui.getDirectoryPath() / "log/time" / _method_string_map.at(_method) / _ui.getProject()));
+    for (auto i = 0; i != time_vec.size(); ++i)
+        _logTime(dir / (std::to_string(i + 1) + ".txt"), time_vec[i]);
 }
 
 
 
 void Pipeline::logPAFLTime(time_vector& time_vec)
 {
-    const auto path(createDirRecursively(
-        _ui.getDirectoryPath() / "log/time" / (std::string("pafl-") + _method_string_map.at(_method)) / _ui.getProject())
-        / (std::to_string(_iter + 1) + ".txt"));
-     _logTime(path, time_vec);
+    const auto dir(createDirRecursively(
+        _ui.getDirectoryPath() / "log/time" / (std::string("pafl-") + _method_string_map.at(_method)) / _ui.getProject()));
+    for (auto i = 0; i != time_vec.size(); ++i)
+        _logTime(dir / (std::to_string(i + 1) + ".txt"), time_vec[i]);
 }
 }

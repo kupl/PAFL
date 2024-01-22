@@ -50,9 +50,12 @@ void Config::configure(PrgLang pl, const fs::path& path)
         std::istringstream iss(is);
         std::string buf;
 
+        iss >> buf;
+        if (buf.empty())
+            continue;
+
         if (state == State::ROOT) {
 
-            iss >> buf;
             _assert(buf == "#begin", "'#begin' is missing");
             iss >> buf;
             _assert(lang_map.contains(buf), "Invalid language. Valid languages are { ALL | CPP | C | PYTHON | JAVA }");
@@ -61,9 +64,6 @@ void Config::configure(PrgLang pl, const fs::path& path)
 
         else if (state == State::CONTENT) {
 
-            iss >> buf;
-            if (buf.empty())
-                continue;
             if (buf == "#end") {
 
                 state = State::ROOT;
@@ -93,12 +93,9 @@ void Config::configure(PrgLang pl, const fs::path& path)
             }
         }
 
-        else { // State::OTHERWISE
-
-            iss >> buf;
-            if (buf == "#end")
+        // State::OTHERWISE
+        else if (buf == "#end")
                 state = State::ROOT;
-        }
     }
 
     if (state != State::ROOT)
