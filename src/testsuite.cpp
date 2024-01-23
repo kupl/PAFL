@@ -240,8 +240,8 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
 
             auto& map = mapper.emplace_back();
             map.reserve(file.size());
-            for (auto& iter : file)
-                map.emplace(iter.first, total_plus_one++);
+            for (auto& item : file)
+                map.emplace(item.first, total_plus_one++);
         }
 
         // componentinfo
@@ -263,10 +263,8 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
             auto index = _file2index.at(item.first);
             for (auto line : item.second)
                 if (mapper[index].contains(line))
-                    _appendAnyChar(buf, mapper[index].at(line), ',');
+                    _appendAnyChar(buf, mapper[index].at(line), '"');
         }
-        buf.pop_back();
-        buf.push_back('"');
         std::ofstream(dir / "faultLine.txt").write(buf.c_str(), buf.size());
     }
     
