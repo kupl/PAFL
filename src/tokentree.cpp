@@ -112,7 +112,7 @@ TokenTree::Matcher::Matcher() : _table
 
 TokenTree::TokenTree() :
         _root(std::make_unique<Token>(Token::Type::ROOT, 0, ""))
-{ 
+{
     _root->root = _root->parent = nullptr;
     _root->predecessor = _root->neighbors = _root->successor = std::make_shared<Token::string_set>();
 }

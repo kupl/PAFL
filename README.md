@@ -24,5 +24,5 @@ docker run --rm -it -v $(pwd):/workspace pafl
 
 ### example cmd
 ```sh
-./main example:cpp 1-3 pafl,ochiai -P/home/minseok/PAFL/my_example/example/ -T/home/minseok/my_example/test_example/ -B/home/minseok/my_example/_bug_info/
+./main -p example -l cpp -m ochiai,dstar,barinel --pafl -d ./example/example -t ./example/test_example -i ./example/oracle -v 1-3
 ```
