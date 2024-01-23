@@ -257,13 +257,16 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
     {// faultLine
         std::string buf;
         buf.reserve(1024);
-        buf.append("fault=\"", 7);
+        buf.append("fault=", 7);
         for (auto& item : faults) {
 
             auto index = _file2index.at(item.first);
             for (auto line : item.second)
-                if (mapper[index].contains(line))
+                if (mapper[index].contains(line)) {
+
+                    buf.push_back('"');
                     _appendAnyChar(buf, mapper[index].at(line), '"');
+                }
         }
         std::ofstream(dir / "faultLine.txt").write(buf.c_str(), buf.size());
     }
@@ -282,6 +285,7 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
                 line_set.insert(mapper[item.first].at(item.second));
             for (line_t l = 1; l != total_plus_one; ++l)
                 buf.append(line_set.contains(l) ? "1 " : "0 ", 2);
+            buf.pop_back();
             buf.push_back('\n');
         }
 

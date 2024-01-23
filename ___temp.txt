@@ -6,6 +6,97 @@ Module(
         Import(
             names=[
                 alias(name='ast')]),
+        Import(
+            names=[
+                alias(name='json')]),
+        Expr(
+            value=Constant(value='\n{\n    "module" = [\n        \n        // stmt\n        {\n            "type": "branch"    // branch | func | stmt\n            "toks": [\n                ["if", "if"],   // [ type, name ]\n                ...\n            ],\n            "child": [\n                stmt1,\n                stmt2,\n                ...\n            ]\n        },\n        ...\n    ]\n}\n')),
+        ClassDef(
+            name='ASTIterator',
+            bases=[
+                Attribute(
+                    value=Name(id='ast', ctx=Load()),
+                    attr='NodeVisitor',
+                    ctx=Load())],
+            keywords=[],
+            body=[
+                FunctionDef(
+                    name='generic_visit',
+                    args=arguments(
+                        posonlyargs=[],
+                        args=[
+                            arg(arg='self'),
+                            arg(arg='node')],
+                        kwonlyargs=[],
+                        kw_defaults=[],
+                        defaults=[]),
+                    body=[
+                        Expr(
+                            value=Call(
+                                func=Name(id='print', ctx=Load()),
+                                args=[
+                                    Attribute(
+                                        value=Call(
+                                            func=Name(id='type', ctx=Load()),
+                                            args=[
+                                                Name(id='node', ctx=Load())],
+                                            keywords=[]),
+                                        attr='__name__',
+                                        ctx=Load())],
+                                keywords=[])),
+                        Expr(
+                            value=Call(
+                                func=Attribute(
+                                    value=Attribute(
+                                        value=Name(id='ast', ctx=Load()),
+                                        attr='NodeVisitor',
+                                        ctx=Load()),
+                                    attr='generic_visit',
+                                    ctx=Load()),
+                                args=[
+                                    Name(id='self', ctx=Load()),
+                                    Name(id='node', ctx=Load())],
+                                keywords=[]))],
+                    decorator_list=[])],
+            decorator_list=[]),
+        FunctionDef(
+            name='iterate_ast',
+            args=arguments(
+                posonlyargs=[],
+                args=[
+                    arg(arg='source_code')],
+                kwonlyargs=[],
+                kw_defaults=[],
+                defaults=[]),
+            body=[
+                Assign(
+                    targets=[
+                        Name(id='tree', ctx=Store())],
+                    value=Call(
+                        func=Attribute(
+                            value=Name(id='ast', ctx=Load()),
+                            attr='parse',
+                            ctx=Load()),
+                        args=[
+                            Name(id='source_code', ctx=Load())],
+                        keywords=[])),
+                Assign(
+                    targets=[
+                        Name(id='iterator', ctx=Store())],
+                    value=Call(
+                        func=Name(id='ASTIterator', ctx=Load()),
+                        args=[],
+                        keywords=[])),
+                Expr(
+                    value=Call(
+                        func=Attribute(
+                            value=Name(id='iterator', ctx=Load()),
+                            attr='visit',
+                            ctx=Load()),
+                        args=[
+                            Name(id='tree', ctx=Load())],
+                        keywords=[]))],
+            decorator_list=[]),
         FunctionDef(
             name='main',
             args=arguments(
@@ -51,7 +142,7 @@ Module(
                                 keywords=[]))]),
                 Assign(
                     targets=[
-                        Name(id='parser', ctx=Store())],
+                        Name(id='module', ctx=Store())],
                     value=Call(
                         func=Attribute(
                             value=Name(id='ast', ctx=Load()),
@@ -59,7 +150,10 @@ Module(
                             ctx=Load()),
                         args=[
                             Name(id='code', ctx=Load())],
-                        keywords=[])),
+                        keywords=[
+                            keyword(
+                                arg='mode',
+                                value=Constant(value='exec'))])),
                 With(
                     items=[
                         withitem(
@@ -90,12 +184,26 @@ Module(
                                             attr='dump',
                                             ctx=Load()),
                                         args=[
-                                            Name(id='parser', ctx=Load())],
+                                            Name(id='module', ctx=Load())],
                                         keywords=[
                                             keyword(
                                                 arg='indent',
                                                 value=Constant(value=4))])],
-                                keywords=[]))])],
+                                keywords=[]))]),
+                Assign(
+                    targets=[
+                        Name(id='tree', ctx=Store())],
+                    value=Dict(
+                        keys=[
+                            Constant(value='module')],
+                        values=[
+                            List(elts=[], ctx=Load())])),
+                Expr(
+                    value=Call(
+                        func=Name(id='iterate_ast', ctx=Load()),
+                        args=[
+                            Name(id='code', ctx=Load())],
+                        keywords=[]))],
             decorator_list=[]),
         If(
             test=Compare(
