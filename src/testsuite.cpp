@@ -257,7 +257,7 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
     {// faultLine
         std::string buf;
         buf.reserve(1024);
-        buf.append("fault=", 7);
+        buf.append("fault=", 6);
         for (auto& item : faults) {
 
             auto index = _file2index.at(item.first);
