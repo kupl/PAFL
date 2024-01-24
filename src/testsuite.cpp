@@ -21,7 +21,7 @@ const std::list<TestSuite::ranking_info>& TestSuite::rank()
     
     // Rank
     line_t virtual_ranking = 0;
-    float sus = std::numeric_limits<float>::infinity();
+    float sus = _ranking.begin()->sus;
 
     std::list<ranking_info*> tie;
     for (auto& iter : _ranking) {
