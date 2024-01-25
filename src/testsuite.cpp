@@ -106,7 +106,10 @@ void TestSuite::toJson(const fs::path& path) const
         _appendAny(buf, item.line);
         // sus
         buf.append(", \"sus\": ", 9);
-        _appendAny(buf, item.sus);
+        if (item.sus < std::numeric_limits<float>::infinity())
+            _appendAny(buf, item.sus);
+        else buf.append("\"inf\"", 5);
+
         // ranking
         buf.append(", \"ranking\": ", 13);
         _appendAny(buf, item.ranking);
