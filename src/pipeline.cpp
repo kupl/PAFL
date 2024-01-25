@@ -149,6 +149,7 @@ void Pipeline::localizeWithBase(FLModel&, time_vector& time_vec)
         std::cout << '\n' << _ui.getProject() << " : " << _method_string_map.at(_method) << '\n';
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing\n";
         (this->*_method_setter_map.at(_method))();
+        normalizeBaseSus(*_suite, Normalizer::Bqrt);
         _suite->rank();
 
         // Save as json
