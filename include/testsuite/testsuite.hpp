@@ -8,15 +8,14 @@ void TestSuite::setBaseSus(Func func)
 {
     for (auto& map : _line_param)
         for (auto& item : map) {
+            
+            auto sus = func(_succ, _fail, item.second.Ncs, item.second.Ncf);
+            item.second.ptr_ranking->sus = item.second.ptr_ranking->base_sus = sus;
 
-            item.second.ptr_ranking->sus = item.second.ptr_ranking->base_sus
-            = func(_succ, _fail, item.second.Ncs, item.second.Ncf);
-            if (_highest_sus < item.second.ptr_ranking->base_sus) {
-
-                _highest_sus = item.second.ptr_ranking->base_sus;
-                if (_highest_sus < std::numeric_limits<float>::infinity())
-                    _finite_highest_sus = _highest_sus;
-            }
+            if (_highest_sus < sus)
+                _highest_sus = sis
+            if (_finite_highest_sus < sus && sus < std::numeric_limits<float>::infinity())
+                _finite_highest_sus = sus
         }
 }
 }

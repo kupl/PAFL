@@ -23,7 +23,7 @@ public:
     using test_suite = std::list<test_case>;
 
 public:
-    TestSuite() : _is_initialized(false), _fail(0), _highest_sus(0.0f), _finite_highest_sus(0.0f) {}
+    TestSuite() : _is_initialized(false), _fail(0), _highest_sus(-std::numeric_limits<float>::infinity()), _finite_highest_sus(-std::numeric_limits<float>::infinity()) {}
     virtual void addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions) = 0;
     void oversample(size_t iter);
 
