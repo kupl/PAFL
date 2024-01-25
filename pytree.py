@@ -12,9 +12,10 @@ import json
         
         // stmt
         {
-            "type": "BRANCH"        // CLASS | FUNC | BRANCH | STMT
+            "type": "BRANCH"                // CLASS | FUNC | BRANCH | STMT
             "toks": [
-                ["if", "if", 12],   // [ type, name, line ]
+                ["if", "if", 12],           // [ type, name, line ]
+                ["identifier", "x", 12],
                 ...
             ],
             "then": [
@@ -31,13 +32,17 @@ import json
 
 """
 unique python token type =
-    | async             async
+    | identifier        async
+    | identifier        with
+    | identifier        from
+    | identifier        import
+
     | matmul            @
     | starstar          **
     | slashslash        //
     | slashslashequal   //=
-    | with              with
-    | from              from
+    | colonequal        :=
+    | tilde             ~
     | in                in
 """
 
@@ -54,7 +59,12 @@ class ASTIterator:
             self.visitStmt(stmt)
 
 
-
+    """
+    Tree: list[stmt]
+    stmt:   -toks: list[token]
+            -then: list[stmt]
+            -else: list[stmt]
+    """
     def visitStmt(self, node: ast.stmt):
         match type(node):
 
@@ -62,7 +72,7 @@ class ASTIterator:
                 self.caseDef(node, [['identifier', node.name, node.lineno]])
 
             case ast.AsyncFunctionDef:
-                self.caseDef(node, [['async', 'async', node.lineno], ['identifier', node.name, node.lineno]])
+                self.caseDef(node, [['identifier', 'async', node.lineno], ['identifier', node.name, node.lineno]])
 
             case ast.ClassDef:
                 obj = self.makeObject('CLASS', [['identifier', node.name, node.lineno]])
@@ -108,7 +118,7 @@ class ASTIterator:
                 self.caseFor(node, [['for', 'for', node.lineno]])
 
             case ast.AsyncFor:
-                self.caseFor(node, [['async', 'async', node.lineno], ['for', 'for', node.lineno]])
+                self.caseFor(node, [['identifier', 'async', node.lineno], ['for', 'for', node.lineno]])
 
             case ast.While:
                 self.caseIf(node, [['while', 'while', node.lineno]])
@@ -117,10 +127,10 @@ class ASTIterator:
                 self.caseIf(node, [['if', 'if', node.lineno]])
 
             case ast.With:
-                self.caseWith(node, [['with', 'with', node.lineno]])
+                self.caseWith(node, [['identifier', 'with', node.lineno]])
 
             case ast.AsyncWith:
-                self.caseWith(node, [['async', 'async', node.lineno], ['with', 'with', node.lineno]])
+                self.caseWith(node, [['identifier', 'async', node.lineno], ['with', 'with', node.lineno]])
 
             case ast.Match:
                 node = ast.Match()
@@ -128,34 +138,56 @@ class ASTIterator:
                 self.visitExpr(node.subject, tokens)
                 for case in node.cases:
                     pass
-
+                    
             case ast.Raise:
                 tokens = [['throw', 'raise', node.lineno]]
                 self.visitExpr(node.exc, tokens)
                 if node.cause is not None:
-                    tokens.append(['from', 'from', node.cause.lineno])
+                    tokens.append(['identifier', 'from', node.cause.lineno])
                 self.visitExpr(node.cause, tokens)
+                self.makeObject("STMT", tokens)
 
             case ast.Try:
-                node = ast.Try()
-                self.makeObject("BRANCH") [['try', 'try', node.lineno]]
+                self.resolveStmtList(node.body, self.tree_ref)
+                self.resolveHandlers(node.handlers, node.orelse)
+                self.resolveStmtList(node.finalbody, self.tree_ref)
 
             #case ast.TryStar:
             #    pass
+                
             case ast.Assert:
-                pass
+                tokens = [['identifier', 'assert', node.lineno]]
+                self.visitExpr(node.test, tokens)
+                self.visitExpr(node.msg, tokens)
+                self.makeObject("STMT", tokens)
+
             case ast.Import:
-                pass
+                self.caseImport(node, [['identifier', 'import', node.lineno]])
+
             case ast.ImportFrom:
-                pass
+                tokens = [] if node.module is None else [['identifier', 'from', node.lineno], ['identifier', node.module, node.lineno]]
+                tokens.append(['identifier', 'import', node.lineno])
+                self.caseImport(node, tokens)
+
             case ast.Global:
-                pass
+                tokens = ['identifier', 'global', node.lineno]
+                for name in node.names:
+                    tokens.append(['identifier', name, node.lineno])
+                self.makeObject("STMT", tokens)
+
             case ast.Nonlocal:
-                pass
+                tokens = ['identifier', 'nonlocal', node.lineno]
+                for name in node.names:
+                    tokens.append(['identifier', name, node.lineno])
+                self.makeObject("STMT", tokens)
+
             case ast.Expr:
-                pass
+                tokens = []
+                self.visitExpr(node, tokens)
+                self.makeObject('STMT', tokens)
+
             case ast.Pass:
-                self.makeObject('STMT', [['pass', 'pass', node.lineno]])
+                self.makeObject('STMT', [['identifier', 'pass', node.lineno]])
             case ast.Break:
                 self.makeObject('STMT', [['break', 'break', node.lineno]])
             case ast.Continue:
@@ -163,11 +195,89 @@ class ASTIterator:
 
 
 
+    """
+    visitExpr(expr) -> list[token]
+    """
     def visitExpr(self, node: ast.expr, tokens: list[list[str | int]]):
         if node is None:
             return
+        
         match node:
             case ast.BoolOp:
+                self.visitExpr(node.values[0], tokens)
+                op_type = 'ampamp' if node.op is ast.And else 'pipepipe'
+                op_name = 'and' if node.op is ast.And else 'or'
+                for value in node.values[1:]:
+                    tokens.append([op_type, op_name, value.lineno])
+                    self.visitExpr(value, tokens)
+                
+            case ast.NamedExpr:
+                self.visitExpr(node.target, tokens)
+                tokens.append(['colonequal', ':=', node.target.lineno])
+                self.visitExpr(node.value, tokens)
+
+            case ast.BinOp:
+                self.visitExpr(node.left, tokens)
+                tokens.append(self.toTokenFromOp(node.op))
+                self.visitExpr(node.right, tokens)
+
+            case ast.UnaryOp:
+                match node.op:
+                    case ast.Invert:
+                        tokens.append(['tilde', '~', node.op.lineno])
+                    case ast.Not:
+                        tokens.append(['exclaim', 'not', node.op.lineno])
+                    case ast.UAdd:
+                        tokens.append(['tilde', '~', node.op.lineno])
+                    case ast.USub:
+                        tokens.append(['tilde', '~', node.op.lineno])
+                self.visitExpr(node.operand, tokens)
+
+            case ast.Lambda:
+                pass
+            case ast.IfExp:
+                pass
+            case ast.Dict:
+                pass
+            case ast.Set:
+                pass
+            case ast.ListComp:
+                pass
+            case ast.SetComp:
+                pass
+            case ast.DictComp:
+                pass
+            case ast.GeneratorExp:
+                pass
+            case ast.Await:
+                pass
+            case ast.Yield:
+                pass
+            case ast.YieldFrom:
+                pass
+            case ast.Compare:
+                pass
+            case ast.Call:
+                pass
+            case ast.FormattedValue:
+                pass
+            case ast.JoinedStr:
+                pass
+            case ast.Constant:
+                pass
+            case ast.Attribute:
+                pass
+            case ast.Subscript:
+                pass
+            case ast.Starred:
+                pass
+            case ast.Name:
+                pass
+            case ast.List:
+                pass
+            case ast.Tuple:
+                pass
+            case ast.slice:
                 pass
 
 
@@ -206,6 +316,15 @@ class ASTIterator:
         self.resolveStmtList(node.body, self.tree_ref)
 
 
+    def caseImport(self, node: ast.stmt, tokens: list[list[str | int]]):
+        tokens = [['identifier', 'import', node.lineno]]
+        for name in node.names:
+            tokens.append(['identifier', name.name, name.lineno])
+            if name.asname is not None:
+                tokens.append(['identifier', name.asname, name.lineno])
+        self.makeObject("STMT", tokens)
+
+
     def resolveStmtList(self, stmt_list: list[ast.stmt], ref: list):
         temp = self.tree_ref
         self.tree_ref = ref
@@ -223,9 +342,29 @@ class ASTIterator:
         self.resolveThen(obj, then)
         obj['else'] = list()
         self.resolveStmtList(orelse, obj['else'])
+
+
+    def resolveHandlers(self, handlers: list[ast.excepthandler], orelse: list[ast.stmt]):
+        match handlers:
+            case []:
+                if len(orelse) > 0:
+                    self.resolveStmtList(orelse, self.tree_ref)
+
+            case [handler, *tail]:
+                tokens = [['catch', 'except', handler.lineno]]
+                self.visitExpr(handler.type, tokens)
+                if handler.name is not None:
+                    tokens.append(['identifier', handler.name, handler.lineno])
+                obj = self.makeObject("BRANCH", tokens)
+                self.resolveThen(obj, handler.body)
+
+                temp = self.tree_ref
+                self.tree_ref = obj['else'] = list()
+                self.resolveHandlers(tail, orelse)
+                self.tree_ref = temp
     
 
-    def toTokenFromOp(self, op: ast.operator):
+    def toTokenFromOp(self, op: ast.operator) -> list[str | int]:
         match op:
             case ast.Add:
                 return ['plus', '+', op.lineno]
@@ -272,13 +411,21 @@ class ASTIterator:
 #
 #
 def main():
-    code = """if True:
-    print('True')
-elif True:
-    print('True')
-def foo(a, b):
+    code = """
+try:
+    pass
+except E as e:
+    pass
+except EE:
+    pass
+else:
+    pass
+finally:
     pass
 """
+    print(ast.dump(ast.parse('x or y or z'), indent=4))
+    return 
+
     iter = ASTIterator()
     iter.visit(ast.parse(code))
     print(json.dumps(iter.tree, indent=4))
