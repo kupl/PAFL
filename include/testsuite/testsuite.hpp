@@ -15,7 +15,7 @@ void TestSuite::setBaseSus(Func func)
             if (_highest_sus < sus)
                 _highest_sus = sus;
             if (_finite_highest_sus < sus && sus < std::numeric_limits<float>::infinity())
-                _finite_highest_sus = sus
+                _finite_highest_sus = sus;
         }
 }
 }
