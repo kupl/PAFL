@@ -12,7 +12,7 @@ import json
         
         // stmt
         {
-            "type": "BRANCH"                // CLASS | FUNC | BRANCH | STMT
+            "type": 'BRANCH'                // CLASS | FUNC | BRANCH | STMT
             "toks": [
                 ["if", "if", 12],           // [ type, name, line ]
                 ["identifier", "x", 12],
@@ -136,8 +136,12 @@ class ASTIterator:
                 node = ast.Match()
                 tokens = [['match', 'match', node.lineno]]
                 self.visitExpr(node.subject, tokens)
-                for case in node.cases:
-                    pass
+                obj = self.makeObject('BRANCH', tokens)
+
+                temp = self.tree_ref
+                self.tree_ref = obj['then'] = list()
+                self.resolveCase(node.cases)
+                self.tree_ref = temp
                     
             case ast.Raise:
                 tokens = [['throw', 'raise', node.lineno]]
@@ -145,7 +149,7 @@ class ASTIterator:
                 if node.cause is not None:
                     tokens.append(['identifier', 'from', node.cause.lineno])
                 self.visitExpr(node.cause, tokens)
-                self.makeObject("STMT", tokens)
+                self.makeObject('STMT', tokens)
 
             case ast.Try:
                 self.resolveStmtList(node.body, self.tree_ref)
@@ -159,7 +163,7 @@ class ASTIterator:
                 tokens = [['identifier', 'assert', node.lineno]]
                 self.visitExpr(node.test, tokens)
                 self.visitExpr(node.msg, tokens)
-                self.makeObject("STMT", tokens)
+                self.makeObject('STMT', tokens)
 
             case ast.Import:
                 self.caseImport(node, [['identifier', 'import', node.lineno]])
@@ -173,13 +177,13 @@ class ASTIterator:
                 tokens = ['identifier', 'global', node.lineno]
                 for name in node.names:
                     tokens.append(['identifier', name, node.lineno])
-                self.makeObject("STMT", tokens)
+                self.makeObject('STMT', tokens)
 
             case ast.Nonlocal:
                 tokens = ['identifier', 'nonlocal', node.lineno]
                 for name in node.names:
                     tokens.append(['identifier', name, node.lineno])
-                self.makeObject("STMT", tokens)
+                self.makeObject('STMT', tokens)
 
             case ast.Expr:
                 tokens = []
@@ -322,7 +326,7 @@ class ASTIterator:
             tokens.append(['identifier', name.name, name.lineno])
             if name.asname is not None:
                 tokens.append(['identifier', name.asname, name.lineno])
-        self.makeObject("STMT", tokens)
+        self.makeObject('STMT', tokens)
 
 
     def resolveStmtList(self, stmt_list: list[ast.stmt], ref: list):
@@ -344,6 +348,24 @@ class ASTIterator:
         self.resolveStmtList(orelse, obj['else'])
 
 
+    def resolveCase(self, cases: list[ast.match_case]):
+        match cases:
+            case []:
+                pass
+            
+            case [match_case, *tail]:
+                tokens = [['case', 'case', match_case.lineno]]
+                self.visitPattern(match_case.pattern, tokens)
+                self.visitExpr(match_case.guard, tokens)
+                obj = self.makeObject('BRANCH', tokens)
+                self.resolveThen(obj, match_case.body)
+
+                temp = self.tree_ref
+                self.tree_ref = obj['else'] = list()
+                self.resolveCase(*tail)
+                self.tree_ref = temp
+
+
     def resolveHandlers(self, handlers: list[ast.excepthandler], orelse: list[ast.stmt]):
         match handlers:
             case []:
@@ -355,14 +377,14 @@ class ASTIterator:
                 self.visitExpr(handler.type, tokens)
                 if handler.name is not None:
                     tokens.append(['identifier', handler.name, handler.lineno])
-                obj = self.makeObject("BRANCH", tokens)
+                obj = self.makeObject('BRANCH', tokens)
                 self.resolveThen(obj, handler.body)
 
                 temp = self.tree_ref
                 self.tree_ref = obj['else'] = list()
                 self.resolveHandlers(tail, orelse)
                 self.tree_ref = temp
-    
+
 
     def toTokenFromOp(self, op: ast.operator) -> list[str | int]:
         match op:
@@ -399,9 +421,33 @@ class ASTIterator:
         token[0] += 'equal'
         token[1] += '='
         return token
+    
 
+    def visitPattern(self, pattern: ast.pattern, tokens: list[list[str | int]]):
+        match pattern:
+            case ast.MatchValue:
+                self.visitExpr(pattern.value, tokens)
+                
+            case ast.MatchSingleton:
+                pass
 
+            case ast.MatchSequence:
+                for p in pattern.patterns:
+                    self.visitPattern(p, tokens)
 
+            case ast.MatchMapping:
+                for i in range(len(pattern.keys)):
+                    self.visitExpr(pattern.keys[i], tokens)
+                    self.visitPattern(pattern.patterns[i], tokens)
+
+            case ast.MatchClass:
+                pass
+            case ast.MatchStar:
+                pass
+            case ast.MatchAs:
+                pass
+            case ast.MatchOr:
+                pass
 
 
 
