@@ -2,8 +2,8 @@
 
 int main(int argc, char *argv[])
 {
-    //PAFL::Pipeline(argc, argv).makeMatrix("/home/donguk/aeneas/manybugs");
-    //return 0;
+    PAFL::Pipeline(argc, argv).makeMatrix("/home/donguk/aeneas/manybugs");
+    return 0;
     PAFL::Pipeline(argc, argv).run();
     return 0;
 }
