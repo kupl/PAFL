@@ -472,11 +472,11 @@ class ASTIterator:
     def resolveThen(self, obj: dict, then: list[ast.stmt]):
         obj['then'] = list()
         self.resolveStmtList(then, obj['then'])
+        print(obj['then'])
 
 
     def resolveThenElse(self, obj: dict, then: list[ast.stmt], orelse: list[ast.stmt]):
         self.resolveThen(obj, then)
-        print(obj)
         obj['else'] = list()
         self.resolveStmtList(orelse, obj['else'])
 
