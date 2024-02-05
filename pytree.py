@@ -180,7 +180,7 @@ class ASTIterator:
                 self.makeObject('STMT', tokens)
 
             case ast.Expr:
-                tokens = []
+                tokens = list()
                 self.visitExpr(node, tokens)
                 self.makeObject('STMT', tokens)
 
@@ -342,6 +342,9 @@ class ASTIterator:
                 self.visitExpr(node.upper, tokens)
                 self.visitExpr(node.step, tokens)
 
+            case ast.Expr:
+                self.visitExpr(node.value, tokens)
+
 
 
     def visitPattern(self, pattern: ast.pattern, tokens: list[list[str | int]]):
@@ -421,8 +424,6 @@ class ASTIterator:
         self.visitExpr(node.target, tokens)
         self.visitExpr(node.iter, tokens)
         obj = self.makeObject('BRANCH', tokens)
-        for stmt in node.body:
-            print(stmt.lineno)
         self.resolveThenElse(obj, node.body, node.orelse)
 
 
@@ -472,7 +473,6 @@ class ASTIterator:
     def resolveThen(self, obj: dict, then: list[ast.stmt]):
         obj['then'] = list()
         self.resolveStmtList(then, obj['then'])
-        print(obj['then'])
 
 
     def resolveThenElse(self, obj: dict, then: list[ast.stmt], orelse: list[ast.stmt]):
@@ -591,7 +591,7 @@ def main():
     iter = ASTIterator()
     iter.visit(ast.parse(code))
     with open(sys.argv[2], 'w') as f:
-        f.write(json.dumps(iter.tree, indent=1))
+        f.write(json.dumps(iter.tree))
     return
 
 

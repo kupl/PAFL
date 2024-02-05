@@ -56,10 +56,10 @@ void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector&
     index_t idx = 0;
     for (auto& file : suite) {
         
-        std::unordered_map<Token::string_set*, float> last;
+        std::unordered_map<Token::List*, float> last;
         for (auto& line_param : file) {
 
-            std::unordered_map<Token::string_set*, float> archive;
+            std::unordered_map<Token::List*, float> archive;
             float max_sim = 0.0f;
 
             auto list_ptr = tkt_vec[idx]->getTokens(line_param.first);

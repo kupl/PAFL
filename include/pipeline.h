@@ -42,6 +42,7 @@ private:
     void setOchiai()                                            { _suite->setBaseSus(Coef::Ochiai); }
     void setDstar()                                             { _suite->setBaseSus(Coef::Dstar); }
     void setBarinel()                                           { _suite->setBaseSus(Coef::Barinel); }
+    void setOnes()                                              { _suite->setBaseSus(Coef::Ones); }
     void setCNN()                                               {}
     void setRNN()                                               {}
     void setMLP()                                               {}

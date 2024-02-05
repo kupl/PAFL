@@ -3,7 +3,7 @@
 
 #include <algorithm>
 #include "flmodel_type.h"
-#include "cross_word.h"
+#include "crosswords.h"
 
 
 namespace PAFL

@@ -114,7 +114,7 @@ TokenTree::TokenTree() :
         _root(std::make_unique<Token>(Token::Type::ROOT, 0, ""))
 {
     _root->root = _root->parent = nullptr;
-    _root->predecessor = _root->neighbors = _root->successor = std::make_shared<Token::string_set>();
+    _root->predecessor = _root->neighbors = _root->successor = std::make_shared<Token::Token::List>();
 }
 
 
@@ -130,35 +130,44 @@ void TokenTree::log(const fs::path& path) const
 
             // Neighbor
             ofs << "\t\t- NEIGH  = { ";
-            for (auto& str : *tok.neighbors)
-                ofs << str << " , ";
+            for (auto ptr : *tok.neighbors)
+                ofs << ptr->name << " , ";
             ofs << "}\n";
 
             // Parent
             ofs << "\t\t- PARENT = { ";
-            for (auto& str : *tok.parent->neighbors)
-                ofs << str << " , ";
+            for (auto ptr : *tok.parent->neighbors)
+                ofs << ptr->name << " , ";
             ofs << "}\n";
 
             // Children
             ofs << "\t\t- CHILD  = { ";
             if (tok.children)
-                for (auto& str : *tok.children)
-                    ofs << str << " , ";
+                for (auto ptr : *tok.children)
+                    ofs << ptr->name << " , ";
             ofs << "}\n";
 
             // Pred
             ofs << "\t\t- PRED   = { ";
-            for (auto& str : *tok.predecessor)
-                ofs << str << " , ";
+            for (auto ptr : *tok.predecessor)
+                ofs << ptr->name << " , ";
             ofs << "}\n";
             
             // Succ
             ofs << "\t\t- SUCC   = { ";
-            for (auto& str : *tok.successor)
-                ofs << str << " , ";
+            for (auto ptr : *tok.successor)
+                ofs << ptr->name << " , ";
 
             ofs << "}\n\n";
         }
+}
+
+
+
+void TokenTree::_setIndexr()
+{
+    _tokens_indexer.reserve(_stream.size());
+    for (auto& list : _stream)
+        _tokens_indexer.emplace(list.begin()->loc, &list);
 }
 }

@@ -138,7 +138,7 @@ public:
         // virtual lambda type
         LAMBDA
     };
-    using string_set = std::unordered_set<std::string>;
+    using List = std::list<Token*>;
 
 public:
     Token(Type type, line_t loc, const std::string& name) :
@@ -148,10 +148,10 @@ public:
     // Token Relation
     Token* root;
     Token* parent;
-    std::shared_ptr<string_set> neighbors;
-    std::shared_ptr<string_set> children;
-    std::shared_ptr<string_set> predecessor;
-    std::shared_ptr<string_set> successor;
+    std::shared_ptr<Token::List> neighbors;
+    std::shared_ptr<Token::List> children;
+    std::shared_ptr<Token::List> predecessor;
+    std::shared_ptr<Token::List> successor;
 
     // Token Info
     Type type;
@@ -197,6 +197,8 @@ public:
 
     void log(const fs::path& path) const;
 
+protected:
+    void _setIndexr();
 
 protected:
     std::unique_ptr<Token> _root;

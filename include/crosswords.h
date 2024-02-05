@@ -1,5 +1,5 @@
-#ifndef __CROSS_WORD_H__
-#define __CROSS_WORD_H__
+#ifndef __CROSSWORDS_H__
+#define __CROSSWORDS_H__
 
 #include "flmodel_type.h"
 
@@ -96,8 +96,8 @@ public:
     void log(const fs::path& path) const;
 
 private:
-    void _insert(decltype(Token::neighbors) set_ptr, block& blck, float base);
-    float _maxWeight(decltype(Token::neighbors) set_ptr, const block& blck, size_t& denom) const;
+    void _insert(decltype(Token::neighbors) list_ptr, block& blck, float base);
+    float _maxWeight(decltype(Token::neighbors) list_ptr, const block& blck, size_t& denom) const;
 
     block* const _blocks[5];
     block _target;

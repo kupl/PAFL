@@ -61,7 +61,7 @@ UI::docs UI::getCoverageList(size_t iter) const
             if (buf == _config.TEST_PASS(_project, VER, CASE))
                 pf = true;
         }
-        ret.emplace_back(parseDoc(tc_path / _config.COVERAGE_NAME(_project, VER, CASE)), pf);
+        ret.emplace_back(rapidjson::parseDoc(tc_path / _config.COVERAGE_NAME(_project, VER, CASE)), pf);
     }
 
     return ret;
@@ -113,6 +113,8 @@ void UI::_readIn()
                 _method.insert(Method::DSTAR);
             else if (method == "barinel")
                 _method.insert(Method::BARINEL);
+            else if (method == "ones")
+                _method.insert(Method::ONES);
             else
                 _throwInvalidInput("Invalid method");
 
@@ -201,7 +203,7 @@ void UI::_setContainer()
     }
 
     // Set fault location
-    rapidjson::Document info(parseDoc(_oracle_path / (_project + ".json")));
+    rapidjson::Document info(rapidjson::parseDoc(_oracle_path / (_project + ".json")));
     const auto& ver = info["version"].GetArray();
 
     for (size_t i = 0; i != _version.size(); i++) 
@@ -217,29 +219,7 @@ void UI::_setContainer()
 
 
 
-rapidjson::Document parseDoc(const fs::path& path)
-{
-    std::FILE* fp = std::fopen(path.c_str(), "rb");
-    std::fseek(fp, 0, SEEK_END);
-    auto size = std::ftell(fp);
-    std::rewind(fp);
-
-    char* buf = (char*)std::calloc(size + 1, sizeof(char));
-    if (!buf)
-        throw std::range_error("malloc failed");
-    std::fread(buf, size, 1, fp);
-    std::fclose(fp);
-
-    rapidjson::Document doc;
-    doc.Parse(buf);
-    std::free(buf);
-
-    return doc;
-}
-
-
-
-std::list<fs::path> _collectDir(const fs::path& path, std::string key)
+std::list<fs::path> UI::_collectDir(const fs::path& path, std::string key)
 {
     std::list<fs::path> ret;
 

@@ -5,7 +5,6 @@
 #include "tokentree/tokentree.h"
 
 
-
 namespace PAFL
 {
 class CppPda
@@ -28,9 +27,9 @@ private:
     std::stack<Token::Type> _ttype_stack;
     std::stack<Token*> _parent_stack;
 
-    std::stack<std::shared_ptr<Token::string_set>> _predecessor_stack;
-    std::stack<std::shared_ptr<Token::string_set>> _neighbors_stack;
-    std::stack<std::shared_ptr<Token::string_set>> _successor_stack;
+    std::stack<std::shared_ptr<Token::List>> _predecessor_stack;
+    std::stack<std::shared_ptr<Token::List>> _neighbors_stack;
+    std::stack<std::shared_ptr<Token::List>> _successor_stack;
 
     std::stack<_Lambda> _lambda_stack;
     _Prefix _prefix_state;

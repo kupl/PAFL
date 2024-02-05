@@ -34,11 +34,9 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
         pda.trans(buffer, nullptr);
     }
     
-    _tokens_indexer.reserve(_stream.size());
-    for (auto& list : _stream)
-        _tokens_indexer.emplace(list.begin()->loc, &list);
-    
+    _setIndexr();
     return;
+    
     if (!pda.isTerminated(_root.get())) {
 
         std::cerr << "Incomplete token tree\n";

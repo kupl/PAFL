@@ -35,6 +35,12 @@ namespace Coef
         size_t denom = Nf + Ncs;
         return denom ? Ncf / (float)denom : 0.0f;
     }
+
+    // sus = 1
+    constexpr float Ones(size_t, size_t, size_t, size_t)
+    {
+        return 1.0f;
+    }
 }
 
 

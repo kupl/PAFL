@@ -133,7 +133,7 @@ void CppPda::_setFlatRelation(Token* tok)
     tok->predecessor = _predecessor_stack.top();
     tok->neighbors = _neighbors_stack.top();
     tok->successor = _successor_stack.top();
-    _neighbors_stack.top()->insert(tok->name);
+    _neighbors_stack.top()->push_back(tok);
 }
 
 
@@ -145,9 +145,9 @@ void CppPda::_newBlock(_State state)
     _predecessor_stack.emplace();
     _neighbors_stack.emplace();
     _successor_stack.emplace();
-    _predecessor_stack.top() = std::make_shared<Token::string_set>();
-    _neighbors_stack.top() = std::make_shared<Token::string_set>();
-    _successor_stack.top() = std::make_shared<Token::string_set>();
+    _predecessor_stack.top() = std::make_shared<Token::List>();
+    _neighbors_stack.top() = std::make_shared<Token::List>();
+    _successor_stack.top() = std::make_shared<Token::List>();
 }
 
 
@@ -161,7 +161,7 @@ void CppPda::_endLine()
 
     _successor_stack.pop();
     _successor_stack.emplace();
-    _successor_stack.top() = std::make_shared<Token::string_set>();
+    _successor_stack.top() = std::make_shared<Token::List>();
 }
 
 
@@ -233,8 +233,8 @@ void CppPda::_identifier(Token* tok, Token* future)
     else if (_state_stack.top() == _State::ROOT) {
         
         tok->parent = tok->root;
-        tok->neighbors = std::make_shared<Token::string_set>();
-        tok->neighbors->insert(tok->name);
+        tok->neighbors = std::make_shared<Token::List>();
+        tok->neighbors->push_back(tok);
         tok->predecessor = tok->successor = tok->root->neighbors;
         return;
     }
@@ -249,7 +249,7 @@ void CppPda::_identifier(Token* tok, Token* future)
         tok->parent = _parent_stack.top();
 
     if (tok->parent != tok->root)
-        tok->parent->children->insert(tok->name);
+        tok->parent->children->push_back(tok);
 
     // Set Flat
     _setFlatRelation(tok);
@@ -261,9 +261,9 @@ void CppPda::_branch(Token* tok, Token* future)
 {
     // Set hierarchy
     tok->parent = _parent_stack.top();
-    tok->children = std::make_shared<Token::string_set>();
+    tok->children = std::make_shared<Token::List>();
     if (tok->parent != tok->root)
-        tok->parent->children->insert(tok->name);
+        tok->parent->children->push_back(tok);
     
     _parent_stack.push(tok);
 

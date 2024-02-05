@@ -7,8 +7,7 @@
 
 #include "argparser.h"
 #include "config.h"
-#include "rapidjson/document.h"
-#include "rapidjson/stringbuffer.h"
+#include "rapidjson.h"
 
 
 namespace PAFL
@@ -16,7 +15,7 @@ namespace PAFL
 class UI
 {
 public:
-    enum class Method{ TARANTULA, OCHIAI, DSTAR, BARINEL, CNN, RNN, MLP, PAFL };
+    enum class Method{ TARANTULA, OCHIAI, DSTAR, BARINEL, ONES, CNN, RNN, MLP, PAFL };
     using method_set = std::set<Method>;
     using docs = std::list<std::pair<rapidjson::Document, bool>>;
 
@@ -46,6 +45,7 @@ private:
     void _setContainer();
     void _throwInvalidInput(const std::string& msg) const       { throw std::invalid_argument(msg); }
     void _assert(bool condition, const std::string& msg) const  { if (!condition) _throwInvalidInput(msg); }
+    static std::list<fs::path> _collectDir(const fs::path& path, std::string key);
 
 private:
     const ArgParser _parser;
@@ -67,8 +67,5 @@ private:
     std::vector<fs::path> _src_path;
     std::vector<fault_loc> _faults;
 };
-
-rapidjson::Document parseDoc(const fs::path& path);
-std::list<fs::path> _collectDir(const fs::path& path, std::string key);
 }
 #endif

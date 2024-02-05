@@ -16,6 +16,7 @@ Pipeline::Pipeline(int argc, char *argv[]) :
                         {UI::Method::OCHIAI, &Pipeline::setOchiai},
                         {UI::Method::DSTAR, &Pipeline::setDstar},
                         {UI::Method::BARINEL, &Pipeline::setBarinel},
+                        {UI::Method::ONES, &Pipeline::setOnes},
                         {UI::Method::CNN, &Pipeline::setCNN},
                         {UI::Method::RNN, &Pipeline::setRNN},
                         {UI::Method::MLP, &Pipeline::setMLP} },
@@ -23,6 +24,7 @@ Pipeline::Pipeline(int argc, char *argv[]) :
                         {UI::Method::OCHIAI, "ochiai"},
                         {UI::Method::DSTAR, "dstar"},
                         {UI::Method::BARINEL, "barinel"},
+                        {UI::Method::ONES, "ones"},
                         {UI::Method::CNN, "cnn"},
                         {UI::Method::RNN, "rnn"},
                         {UI::Method::MLP, "mlp"} }

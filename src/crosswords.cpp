@@ -1,4 +1,4 @@
-#include "cross_word.h"
+#include "crosswords.h"
 
 namespace PAFL
 {
@@ -73,17 +73,17 @@ float CrossWord::similarity(const Token& token) const
 
 
 
-float CrossWord::_maxWeight(decltype(Token::neighbors) set_ptr, const block& blck, size_t& denom) const
+float CrossWord::_maxWeight(decltype(Token::neighbors) list_ptr, const block& blck, size_t& denom) const
 {
-    if (blck.empty() || set_ptr->empty())
+    if (blck.empty() || list_ptr->empty())
         return 0.0f;
     denom++;
     float ret = 0.0f;
 
-    for (auto& tok : *set_ptr)
-        if (blck.contains(tok)) {
+    for (auto ptr : *list_ptr)
+        if (blck.contains(ptr->name)) {
 
-            auto temp = blck.at(tok).weight;
+            auto temp = blck.at(ptr->name).weight;
             if (temp > ret)
                 ret = temp;
         }
@@ -92,11 +92,11 @@ float CrossWord::_maxWeight(decltype(Token::neighbors) set_ptr, const block& blc
 
 
 
-void CrossWord::_insert(decltype(Token::neighbors) set_ptr, block& blck, float base)
+void CrossWord::_insert(decltype(Token::neighbors) list_ptr, block& blck, float base)
 {
-    for (auto& tok : *set_ptr)
-        if (!blck.contains(tok))
-            blck.emplace(tok, Weight{base, base});
+    for (auto ptr : *list_ptr)
+        if (!blck.contains(ptr->name))
+            blck.emplace(ptr->name, Weight{base, base});
 }
 
 
