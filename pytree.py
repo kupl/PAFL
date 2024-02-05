@@ -39,14 +39,15 @@ unique python token type =
     | colonequal        :=
     | tilde             ~
     | in                in
+    | is                is
 """
 
 
 class ASTIterator:
 
     def __init__(self):
-        self.tree = list()
-        self.tree_ref = self.tree
+        self.tree = {"module": list()}
+        self.tree_ref = self.tree["module"]
 
 
     def visit(self, node: ast.Module):
@@ -136,6 +137,7 @@ class ASTIterator:
                 self.tree_ref = obj['then'] = list()
                 self.resolveCase(node.cases)
                 self.tree_ref = temp
+                obj['else'] = list()
                     
             case ast.Raise:
                 tokens = [['throw', 'raise', node.lineno]]
@@ -226,9 +228,9 @@ class ASTIterator:
                     case ast.Not:
                         tokens.append(['exclaim', 'not', node.op.lineno])
                     case ast.UAdd:
-                        tokens.append(['tilde', '~', node.op.lineno])
+                        tokens.append(['plus', '+', node.op.lineno])
                     case ast.USub:
-                        tokens.append(['tilde', '~', node.op.lineno])
+                        tokens.append(['minus', '-', node.op.lineno])
                 self.visitExpr(node.operand, tokens)
 
             case ast.Lambda:

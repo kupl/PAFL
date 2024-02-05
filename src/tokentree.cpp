@@ -53,6 +53,7 @@ TokenTree::Matcher::Matcher() : _table
     { "pipeequal", Token::Type::PIPEEQUAL },
     { "caret", Token::Type::CARET },
     { "caretequal", Token::Type::CARETEQUAL },
+    { "tilde", Token::Type::TILDE },
 
     // shift operator
     { "lessless", Token::Type::LESSLESS },
@@ -70,10 +71,13 @@ TokenTree::Matcher::Matcher() : _table
     { "greaterequal", Token::Type::GREATEREQUAL },
     { "pipepipe", Token::Type::PIPEPIPE },
     { "equalequal", Token::Type::EQUALEQUAL },
+    { "in", Token::Type::IN },
+    { "is", Token::Type::IS },
 
     // arithmetic operator
     { "star", Token::Type::STAR },
     { "starequal", Token::Type::STAREQUAL },
+    { "starstar", Token::Type::STARSTAR },
     { "plus", Token::Type::PLUS },
     { "plusplus", Token::Type::PLUSPLUS },
     { "plusequal", Token::Type::PLUSEQUAL },
@@ -82,8 +86,12 @@ TokenTree::Matcher::Matcher() : _table
     { "minusequal", Token::Type::MINUSEQUAL },
     { "slash", Token::Type::SLASH },
     { "slashequal", Token::Type::SLASHEQUAL },
+    { "slashslash", Token::Type::SLASHSLASH },
+    { "slashslashequal", Token::Type::SLASHSLASHEQUAL },
     { "percent", Token::Type::PERCENT },
     { "percentequal", Token::Type::PERCENTEQUAL },
+    { "matmul", Token::Type::MATMUL },
+    { "colonequal", Token::Type::COLONEQUAL },
 
     // jumping
     { "break", Token::Type::BREAK },
@@ -111,10 +119,10 @@ TokenTree::Matcher::Matcher() : _table
 
 
 TokenTree::TokenTree() :
-        _root(std::make_unique<Token>(Token::Type::ROOT, 0, ""))
+    _root(std::make_unique<Token>(Token::Type::ROOT, 0, ""))
 {
     _root->root = _root->parent = nullptr;
-    _root->predecessor = _root->neighbors = _root->successor = std::make_shared<Token::Token::List>();
+    _root->predecessor = _root->neighbors = _root->successor = std::make_shared<Token::List>();
 }
 
 

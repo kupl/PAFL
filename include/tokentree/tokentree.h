@@ -70,6 +70,7 @@ public:
         PIPEEQUAL,
         CARET,
         CARETEQUAL,
+        TILDE,
 
         // shift operator
         LESSLESS,
@@ -87,10 +88,13 @@ public:
         GREATEREQUAL,
         PIPEPIPE,
         EQUALEQUAL,
+        IN,
+        IS,
 
         // arithmetic operator
         STAR,           // pointer operator
         STAREQUAL,
+        STARSTAR,
         PLUS,
         PLUSPLUS,
         PLUSEQUAL,
@@ -99,8 +103,12 @@ public:
         MINUSEQUAL,
         SLASH,
         SLASHEQUAL,
+        SLASHSLASH,
+        SLASHSLASHEQUAL,
         PERCENT,
         PERCENTEQUAL,
+        MATMUL,
+        COLONEQUAL,
 
         // jumping
         BREAK,

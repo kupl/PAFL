@@ -1,7 +1,7 @@
 #ifndef __FLMODEL_TYPE_H__
 #define __FLMODEL_TYPE_H__
 
-#include "tokentree/tokentree_cpp.h"
+#include "tokentree/tokentree.h"
 #include "testsuite/index.h"
 
 

@@ -7,7 +7,7 @@ target_tokens toTokenFromFault(const TestSuite& suite, const TokenTree::Vector& 
     target_tokens ret;
     for (auto& item : faults) {
 
-        std::unordered_set<Token::string_set*> marking;
+        std::unordered_set<Token::List*> marking;
         index_t index = suite.getIndexFromFile(item.first);
 
         for (auto line : item.second) {

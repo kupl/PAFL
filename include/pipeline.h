@@ -4,6 +4,8 @@
 #include "ui.h"
 #include "flmodel.h"
 #include "utility.h"
+#include "tokentree/tokentree_cpp.h"
+#include "tokentree/tokentree_py.h"
 
 
 namespace PAFL
