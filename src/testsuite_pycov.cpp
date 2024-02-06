@@ -4,7 +4,7 @@ namespace PAFL
 {
 void TestSuitePycov::addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions)
 {
-    auto json_files = d["files"].GetObject();
+    auto json_files = d.GetObject()["files"].GetObject();
     size_t sizeof_files = json_files.MemberCount();
     
     // Reserve containers' capacity
