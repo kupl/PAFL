@@ -1,10 +1,14 @@
 #include "testsuite/testsuite_gcov.h"
-
+#include <iostream>
 namespace PAFL
 {
 void TestSuiteGcov::addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions)
 {
-    const auto& json_files = d.GetObject()["files"].GetArray();
+    for (auto& item : d.GetObject()) {
+
+        std::cout << item.name.GetString() << '\n';
+    }
+    const auto& json_files = d["files"].GetArray();
     const auto sizeof_files = json_files.Size();
     
     // Reserve containers' capacity
