@@ -4,7 +4,7 @@ namespace PAFL
 {
 void TestSuiteGcov::addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions)
 {
-    std::cout << d.IsObject() << " " << d.IsArray() << " " << d.MemberCount() << "\n";
+    std::cout << d.IsObject() << " " << d.IsArray() << " " << d.Empty() << "\n";
     const auto& json_files = d["files"].GetArray();
     const auto sizeof_files = json_files.Size();
     
