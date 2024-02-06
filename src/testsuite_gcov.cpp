@@ -1,5 +1,5 @@
 #include "testsuite/testsuite_gcov.h"
-
+#include <iostream>
 namespace PAFL
 {
 void TestSuiteGcov::addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions)
@@ -23,6 +23,7 @@ void TestSuiteGcov::addTestCase(const rapidjson::Document& d, bool is_successed,
 
     for (auto& json_file_obj : json_files) {
         
+        std::cout << "const auto& json_file = json_file_obj.GetObject();\n";
         const auto& json_file = json_file_obj.GetObject();
         const auto& json_lines = json_file["lines"].GetArray();
         std::string key(json_file["file"].GetString());
@@ -45,6 +46,7 @@ void TestSuiteGcov::addTestCase(const rapidjson::Document& d, bool is_successed,
             
             for (auto& json_line_obj : json_lines) {
 
+                std::cout << "const auto& json_line = json_line_obj.GetObject(); file not in \n";
                 const auto& json_line = json_line_obj.GetObject();
                 if (json_line["count"].GetUint64()) {
                     
@@ -61,6 +63,7 @@ void TestSuiteGcov::addTestCase(const rapidjson::Document& d, bool is_successed,
         // "file" is in filelist
         else for (auto& json_line_obj : json_lines) {
 
+            std::cout << "const auto& json_line = json_line_obj.GetObject(); file in \n";
             const auto& json_line = json_line_obj.GetObject();
             if (json_line["count"].GetUint64()) {
                 

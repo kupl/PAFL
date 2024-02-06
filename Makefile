@@ -5,9 +5,9 @@ BUILD    := ./build
 OBJ_DIR  := $(BUILD)/obj
 APP_DIR  := .
 TARGET   := main
-INCLUDE  := -Iinclude/
-SRC      :=                      \
-   $(wildcard src/*.cpp)         \
+INCLUDE  := -I./include/
+SRC      :=                     			\
+   $(wildcard ./src/*.cpp)      			\
 
 OBJECTS  := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 DEPENDENCIES \
