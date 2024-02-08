@@ -105,8 +105,7 @@ class ASTIterator:
             case ast.AnnAssign:
                 tokens = []
                 self.visitExpr(node.target, tokens)
-                self.visitExpr(node.annotation, tokens)
-                tokens.append(self.toTokenFromOpAug(node.op, node.value.lineno))
+                #self.visitExpr(node.annotation, tokens)
                 self.visitExpr(node.value, tokens)
                 self.makeObject('STMT', tokens)
 
@@ -148,6 +147,7 @@ class ASTIterator:
                 self.makeObject('STMT', tokens)
 
             case ast.Try:
+                self.makeObject('STMT', [['identifier', 'try', node.lineno]])
                 self.resolveStmtList(node.body, self.tree_ref)
                 self.resolveHandlers(node.handlers, node.orelse)
                 self.resolveStmtList(node.finalbody, self.tree_ref)
@@ -259,22 +259,22 @@ class ASTIterator:
             case ast.ListComp:
                 tokens.append(['identifier', 'list-comp', node.lineno])
                 self.visitExpr(node.elt, tokens)
-                self.caseComp(node.generators, tokens)
+                self.caseComp(node.elt.end_lineno, node.generators, tokens)
 
             case ast.SetComp:
                 tokens.append(['identifier', 'set-comp', node.lineno])
                 self.visitExpr(node.elt, tokens)
-                self.caseComp(node.generators, tokens)
+                self.caseComp(node.elt.end_lineno, node.generators, tokens)
 
             case ast.DictComp:
                 tokens.append(['identifier', 'dict-comp', node.lineno])
                 self.visitExpr(node.key, tokens)
                 self.visitExpr(node.value, tokens)
-                self.caseComp(node.generators, tokens)
+                self.caseComp(node.value.end_lineno, node.generators, tokens)
 
             case ast.GeneratorExp:
                 self.visitExpr(node.elt, tokens)
-                self.caseComp(node.generators, tokens)
+                self.caseComp(node.elt.end_lineno, node.generators, tokens)
 
             case ast.Await:
                 tokens.append(['identifier', 'await', node.lineno])
@@ -402,11 +402,11 @@ class ASTIterator:
         for arg in args.args:
             tokens.append(['identifier', arg.arg, arg.lineno])
         if args.vararg is not None:
-            tokens.append(['identifier', args.vararg, args.vararg.lineno])
+            tokens.append(['identifier', args.vararg.arg, args.vararg.lineno])
         for kwonlyarg in args.kwonlyargs:
             tokens.append(['identifier', kwonlyarg.arg, kwonlyarg.lineno])
         if args.kwarg is not None:
-            tokens.append(['identifier', args.kwarg, args.kwarg.lineno])
+            tokens.append(['identifier', args.kwarg.arg, args.kwarg.lineno])
 
 
     
@@ -417,6 +417,11 @@ class ASTIterator:
 
 
     def caseDef(self, node: ast.stmt, tokens: list[list[str | int]]):
+        for deco in node.decorator_list:
+            deco_tokens = list()
+            self.visitExpr(deco, deco_tokens)
+            self.makeObject('STMT', deco_tokens)
+
         self.visitArguments(node.args, tokens)
         obj = self.makeObject('FUNC', tokens)
         self.resolveThen(obj, node.body)
@@ -452,16 +457,18 @@ class ASTIterator:
         self.makeObject('STMT', tokens)
 
 
-    def caseComp(self, generators: list[ast.comprehension], tokens: list[list[str | int]]):
+    def caseComp(self, lineno: int, generators: list[ast.comprehension], tokens: list[list[str | int]]):
         for comp in generators:
             if comp.is_async:
-                tokens.append(['identifier', 'async', comp.lineno])
-            tokens.append(['for', 'for-comp', comp.lineno])
+                tokens.append(['identifier', 'async', lineno])
+            tokens.append(['for', 'for-comp', lineno])
             self.visitExpr(comp.target, tokens)
             self.visitExpr(comp.iter, tokens)
+            lineno = comp.iter.end_lineno
             for ifex in comp.ifs:
                 tokens.append(['if', 'if-comp', ifex.lineno])
                 self.visitExpr(ifex, tokens)
+                lineno = ifex.end_lineno
 
 
     def resolveStmtList(self, stmt_list: list[ast.stmt], ref: list):
@@ -487,7 +494,6 @@ class ASTIterator:
         match cases:
             case []:
                 pass
-            
             case [match_case, *tail]:
                 tokens = [['case', 'case', match_case.pattern.lineno]]
                 self.visitPattern(match_case.pattern, tokens)
@@ -593,7 +599,7 @@ def main():
     iter = ASTIterator()
     iter.visit(ast.parse(code))
     with open(sys.argv[2], 'w') as f:
-        f.write(json.dumps(iter.tree))
+        f.write(json.dumps(iter.tree, indent=2))
     return
 
 
