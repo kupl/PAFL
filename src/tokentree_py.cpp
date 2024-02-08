@@ -1,5 +1,5 @@
 #include "tokentree/tokentree_py.h"
-#include <iostream>
+
 namespace PAFL
 {
 TokenTreePy::TokenTreePy(const fs::path& src_file, std::shared_ptr<TokenTree::Matcher> matcher, const fs::path& pytree_exe) :
