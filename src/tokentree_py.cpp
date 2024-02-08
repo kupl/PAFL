@@ -27,9 +27,6 @@ void TokenTreePy::_switchObject(PyPda& pda, const Array& statements)
     
         const auto& stmt = stmt_obj.GetObject();
         std::string type(stmt["type"].GetString());
-        std::cout << type << '\n';
-        std::cout << stmt["toks"].IsArray() << " " << stmt["toks"].GetArray().Size() << '\n';
-
         const auto& tokens = stmt["toks"].GetArray();
 
         // case: STMT

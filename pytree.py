@@ -599,7 +599,7 @@ def main():
     iter = ASTIterator()
     iter.visit(ast.parse(code))
     with open(sys.argv[2], 'w') as f:
-        f.write(json.dumps(iter.tree, indent=4))
+        f.write(json.dumps(iter.tree))
 
 
 if __name__ == '__main__':
