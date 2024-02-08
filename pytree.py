@@ -170,13 +170,13 @@ class ASTIterator:
                 self.caseImport(node, tokens)
 
             case ast.Global:
-                tokens = ['identifier', 'global', node.lineno]
+                tokens = [['identifier', 'global', node.lineno]]
                 for name in node.names:
                     tokens.append(['identifier', name, node.lineno])
                 self.makeObject('STMT', tokens)
 
             case ast.Nonlocal:
-                tokens = ['identifier', 'nonlocal', node.lineno]
+                tokens = [['identifier', 'nonlocal', node.lineno]]
                 for name in node.names:
                     tokens.append(['identifier', name, node.lineno])
                 self.makeObject('STMT', tokens)
@@ -599,8 +599,7 @@ def main():
     iter = ASTIterator()
     iter.visit(ast.parse(code))
     with open(sys.argv[2], 'w') as f:
-        f.write(json.dumps(iter.tree, indent=2))
-    return
+        f.write(json.dumps(iter.tree, indent=4))
 
 
 if __name__ == '__main__':
