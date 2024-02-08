@@ -137,7 +137,6 @@ void UI::_readIn()
                 
                 auto left = std::stoi(interval.substr(0, connector));
                 auto right = std::stoi(interval.substr(connector + 1));
-                _assert(left <= right, "Invalid version arguments");
 
                 if (left <= right)
                     for (auto i = left; i <= right; i++)
