@@ -9,5 +9,5 @@ int testTokenTreePy(const fs::path& path)                           { PAFL::Toke
 
 int main(int argc, char *argv[])
 {
-    return testTokenTreePy("sample.py");
+    return run(argc, argv);
 }
