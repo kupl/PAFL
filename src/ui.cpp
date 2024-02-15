@@ -88,7 +88,7 @@ void UI::_readIn()
         else if (arg == "python" || arg == "py") {
 
             _pl = PrgLang::PYTHON;
-            _extensions = { ".py", "pyi", "pyc" };
+            _extensions = { ".py" };
         }
         else if (arg == "java")
             _pl = PrgLang::JAVA;
