@@ -9,6 +9,6 @@ int testTokenTreePy(const fs::path& path)   { PAFL::TokenTreePy tree(path, std::
 
 int main(int argc, char *argv[])
 {
-    return makeMatrix(argc, argv)
+    return makeMatrix(argc, argv);
     return run(argc, argv);
 }
