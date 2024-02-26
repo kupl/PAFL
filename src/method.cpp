@@ -62,10 +62,9 @@ CusmtomMethod::CusmtomMethod(const std::string& name, const fs::path& path) :
     auto pos = buf.find(name);
     _assert(pos != std::string::npos, std::string("Method \"") + name + "\" is not exist.");
     auto line = buf.substr(pos, buf.find('\n', pos) - pos);
-    std::cout << line << '\n';
     
-    // Read file
-    std::istringstream iss(buf);
+    // Read the line from file
+    std::istringstream iss(line);
     std::string token;
     iss >> token;
     iss >> token;
