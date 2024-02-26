@@ -81,7 +81,7 @@ CusmtomMethod::CusmtomMethod(const std::string& name, const fs::path& path) :
         else if (token == "ITER")
             FILE_PATH.emplace_back(Token::Type::ITER, "ITER");
         else
-            _throwInvalidMethod("Invalid token. Valid tokens are { PROJ | VER | ITER | \"string\" }");
+            _throwInvalidMethod(std::string("Invalid token. Valid tokens are { PROJ | VER | ITER | \"string\" }") + ", but " + token);
     }
 }
 
