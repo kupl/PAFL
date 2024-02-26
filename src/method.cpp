@@ -61,8 +61,7 @@ CusmtomMethod::CusmtomMethod(const std::string& name, const fs::path& path) :
     // Find the line starts with {name}
     auto pos = buf.find(name);
     _assert(pos != std::string::npos, std::string("Method \"") + name + "\" is not exist.");
-    auto line = buf.substr(pos, buf.find('\n', pos));
-    std::cout << line << '\n';
+    auto line = buf.substr(pos, buf.find('\n', pos) - pos);
     
     // Read file
     std::istringstream iss(buf);
