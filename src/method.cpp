@@ -58,6 +58,7 @@ CusmtomMethod::CusmtomMethod(const std::string& name, const fs::path& path) :
     ifs.seekg(0);
     ifs.read(&buf[0], size); 
     
+    std::cout << "debug  ememememememe\n";
     // Find the line starts with {name}
     auto pos = buf.find(name);
     _assert(pos != std::string::npos, std::string("Method \"") + name + "\" is not exist.");
