@@ -314,7 +314,7 @@ int TestSuite::loadBaseSus(const fs::path& path)
                 mapper[l++] = &iter.second.ptr_ranking->base_sus;
         }
     }
-
+    std::cout << "init done\n";
     // Read suspicousness
     std::ifstream ifs(path);
     for (auto ptr : mapper) {
