@@ -120,6 +120,7 @@ void UI::_readIn()
             else
                 _method.emplace_back(std::make_unique<CusmtomMethod>(method, getDirectoryPath()));
 
+            std::cout << "method argument\n";
             pos = split == std::string::npos ? std::string::npos : split + 1;
         }
     }
