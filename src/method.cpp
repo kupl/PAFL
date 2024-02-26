@@ -51,6 +51,8 @@ CusmtomMethod::CusmtomMethod(const std::string& name, const fs::path& path) :
     if (!fs::exists(path / "methods"))
         _throwInvalidMethod("File 'methods' is missing.");
 
+    std::cout << "debug  ememememememe\n";
+    
     std::ifstream ifs(path / "method");
     ifs.seekg(0, std::ios::end);
     auto size = ifs.tellg();
@@ -58,7 +60,6 @@ CusmtomMethod::CusmtomMethod(const std::string& name, const fs::path& path) :
     ifs.seekg(0);
     ifs.read(&buf[0], size); 
     
-    std::cout << "debug  ememememememe\n";
     // Find the line starts with {name}
     auto pos = buf.find(name);
     _assert(pos != std::string::npos, std::string("Method \"") + name + "\" is not exist.");
