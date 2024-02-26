@@ -51,9 +51,7 @@ CusmtomMethod::CusmtomMethod(const std::string& name, const fs::path& path) :
     if (!fs::exists(path / "methods"))
         _throwInvalidMethod("File 'methods' is missing.");
 
-    std::cout << "debug  ememememememe\n";
-    
-    std::ifstream ifs(path / "method");
+    std::ifstream ifs(path / "methods");
     ifs.seekg(0, std::ios::end);
     auto size = ifs.tellg();
     std::string buf(size, ' ');
