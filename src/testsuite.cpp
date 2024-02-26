@@ -1,5 +1,5 @@
 #include "testsuite/testsuite.h"
-#include <iostream>
+
 namespace PAFL
 {
 void TestSuite::oversample(size_t iter)
@@ -301,7 +301,6 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
 
 int TestSuite::loadBaseSus(const fs::path& path)
 {
-    std::cout << "path existence " << path.string() << "\n" << fs::exists(path) << '\n';
     if (!fs::exists(path))
         return 1;
 
@@ -314,15 +313,21 @@ int TestSuite::loadBaseSus(const fs::path& path)
                 mapper[l++] = &iter.second.ptr_ranking->base_sus;
         }
     }
-    std::cout << "init done\n";
+
     // Read suspicousness
     std::ifstream ifs(path);
-    for (auto ptr : mapper) {
+    while (true) {
 
-        ifs >> *ptr;
-        if (_highest_sus < *ptr) {
+        line_t line;
+        float sus;
+        if (!(ifs >> line))
+            break;
+        ifs >> sus;
+        *mapper[line] = sus;
 
-                _highest_sus = *ptr;
+        if (_highest_sus < sus) {
+
+                _highest_sus = sus;
                 if (_highest_sus < std::numeric_limits<float>::infinity())
                     _finite_highest_sus = _highest_sus;
             }
