@@ -323,7 +323,7 @@ int TestSuite::loadBaseSus(const fs::path& path)
         if (!(ifs >> line))
             break;
         ifs >> sus;
-        *mapper[line] = sus;
+        *mapper[line - 1] = sus;
 
         if (_highest_sus < sus) {
 
