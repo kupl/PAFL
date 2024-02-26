@@ -1,9 +1,9 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-#include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 #include <unordered_map>
 
 #include "type.h"
@@ -32,6 +32,8 @@ public:
         decltype(&Config::Token::operator()) _func;
     };
 
+
+public:
     class Line : public std::list<Token>
     {
         public: std::string operator()(const std::string& proj, const std::string& ver, const std::string& tc) const
@@ -44,7 +46,6 @@ public:
     };
 
 
-
 public:
     void configure(PrgLang pl, const fs::path& path);
 
@@ -53,7 +54,7 @@ public:
     Line TEST_NAME; Line TEST_PASS;
 
 private:
-    void _throwInvalidConfig(const std::string& msg) const      { throw std::invalid_argument(msg); }
+    void _throwInvalidConfig(const std::string& msg) const      { std::cerr << "Exception while read 'config'\n"; throw std::invalid_argument(msg); }
     void _assert(bool condition, const std::string& msg) const  { if (!condition) _throwInvalidConfig(msg); }
 };
 }

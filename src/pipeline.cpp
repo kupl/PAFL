@@ -8,26 +8,9 @@ Pipeline::Pipeline(int argc, char *argv[]) :
 
     _loader(_ui.hasCache() ? &Pipeline::loadCachedTestSuite : &Pipeline::loadTestSuite),
     _logger_factory(_ui.hasDebugger() ? &Pipeline::makeLogger : &Pipeline::makeEmptyLogger),
-    _localizer(_ui.getMethodSet().contains(UI::Method::PAFL) ? &Pipeline::localizeWithPAFL : &Pipeline::localizeWithBase),
+    _localizer(_ui.isProjectAware() ? &Pipeline::localizeWithPAFL : &Pipeline::localizeWithBase),
     _time_logger(!_ui.hasDebugger() ? &Pipeline::logNoneTime : 
-                (_ui.getMethodSet().contains(UI::Method::PAFL) ? &Pipeline::logPAFLTime : &Pipeline::logBaseTime)),
-    
-    _method_setter_map{ {UI::Method::TARANTULA, &Pipeline::setTarantula},
-                        {UI::Method::OCHIAI, &Pipeline::setOchiai},
-                        {UI::Method::DSTAR, &Pipeline::setDstar},
-                        {UI::Method::BARINEL, &Pipeline::setBarinel},
-                        {UI::Method::ONES, &Pipeline::setOnes},
-                        {UI::Method::CNN, &Pipeline::setCNN},
-                        {UI::Method::RNN, &Pipeline::setRNN},
-                        {UI::Method::MLP, &Pipeline::setMLP} },
-    _method_string_map{ {UI::Method::TARANTULA, "tarantula"},
-                        {UI::Method::OCHIAI, "ochiai"},
-                        {UI::Method::DSTAR, "dstar"},
-                        {UI::Method::BARINEL, "barinel"},
-                        {UI::Method::ONES, "ones"},
-                        {UI::Method::CNN, "cnn"},
-                        {UI::Method::RNN, "rnn"},
-                        {UI::Method::MLP, "mlp"} }
+                (_ui.isProjectAware() ? &Pipeline::logPAFLTime : &Pipeline::logBaseTime))
 {
     switch (_ui.getLanguage()) {
     
@@ -67,18 +50,14 @@ void Pipeline::run()
 
     // Localize
     createDirRecursively(_ui.getDirectoryPath() / "coverage");
-    for (auto method : _ui.getMethodSet()) {
-        
-        if (method == UI::Method::PAFL)
-            continue;
-        FLModel model;
-
+    for (auto& method : _ui.getMethodList()) {
 
         time_vector running_time(loading_time);
 
+            FLModel model;
             for (size_t iter = 0; iter != _ui.numVersion(); iter++) {
                 
-                _updateInfo(suite[iter], method, iter);
+                _updateInfo(suite[iter], method.get(), iter);
                 model.setLogger((this->*_logger_factory)());
                 (this->*_localizer)(model, running_time);
             }
@@ -138,7 +117,7 @@ void Pipeline::loadCachedTestSuite()
 std::unique_ptr<BaseLogger> Pipeline::makeLogger()
 {
     return std::make_unique<FLModel::Logger>(createDirRecursively(
-        _ui.getDirectoryPath() / "log/model" / (std::string("pafl-") + _method_string_map.at(_method)) / _ui.getProject())
+        _ui.getDirectoryPath() / "log/model" / (std::string("pafl-") + _method->getName()) / _ui.getProject())
         / std::to_string(_iter + 1), _timer);
 }
 
@@ -148,14 +127,14 @@ void Pipeline::localizeWithBase(FLModel&, time_vector& time_vec)
 {
     _timer.restart();
 
-        std::cout << '\n' << _ui.getProject() << " : " << _method_string_map.at(_method) << '\n';
+        std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << '\n';
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing\n";
-        (this->*_method_setter_map.at(_method))();
+        _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
         _suite->rank();
 
         // Save as json
         std::cout << "[ " << (_iter + 1) << " ] -> Saving\n";
-        fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / _method_string_map.at(_method) / _ui.getProject()));
+        fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / _method->getName() / _ui.getProject()));
         _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
 
     time_vec[_iter] += _timer.stop();
@@ -167,7 +146,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
 {
     _timer.restart();
 
-        (this->*_method_setter_map.at(_method))();
+        _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
         normalizeBaseSus(*_suite, Normalizer::Bqrt);
 
         // Make token tree
@@ -176,13 +155,13 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
             (this->*_builder)(tkt_vector[idx], _ui.getFilePath(_iter, _suite->getFileFromIndex(idx)));
 
         // New sus of FL Model
-        std::cout << '\n' << _ui.getProject() << " : " << _method_string_map.at(_method) << "-pafl\n";
+        std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << "-pafl\n";
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing\n";
         model.localize(*_suite, tkt_vector);
 
         // Save as json
         std::cout << "[ " << (_iter + 1) << " ] -> Saving\n";
-        fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method_string_map.at(_method)) / _ui.getProject()));
+        fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method->getName()) / _ui.getProject()));
         _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
 
     time_vec[_iter] += _timer.stop();
@@ -208,7 +187,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
 void Pipeline::logBaseTime(time_vector& time_vec)
 {
     const auto dir(createDirRecursively(
-        _ui.getDirectoryPath() / "log/time" / _method_string_map.at(_method) / _ui.getProject()));
+        _ui.getDirectoryPath() / "log/time" / _method->getName() / _ui.getProject()));
     for (auto i = 0; i != time_vec.size(); ++i)
         _logTime(dir / (std::to_string(i + 1) + ".txt"), time_vec[i]);
 }
@@ -218,7 +197,7 @@ void Pipeline::logBaseTime(time_vector& time_vec)
 void Pipeline::logPAFLTime(time_vector& time_vec)
 {
     const auto dir(createDirRecursively(
-        _ui.getDirectoryPath() / "log/time" / (std::string("pafl-") + _method_string_map.at(_method)) / _ui.getProject()));
+        _ui.getDirectoryPath() / "log/time" / (std::string("pafl-") + _method->getName()) / _ui.getProject()));
     for (auto i = 0; i != time_vec.size(); ++i)
         _logTime(dir / (std::to_string(i + 1) + ".txt"), time_vec[i]);
 }

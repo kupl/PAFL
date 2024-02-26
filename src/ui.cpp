@@ -4,7 +4,7 @@ namespace PAFL
 {
 UI::UI(int argc, char *argv[]) :
     _parser(argc, argv), _project_path(fs::current_path()), _testsuite_path(fs::current_path()), _oracle_path(fs::current_path()),
-    _debug(false), _cache(false)
+    _debug(false), _cache(false), _is_project_aware(false)
 {
     _readIn();
     _config.configure(_pl, _parser.getDirectoryPath());
@@ -105,18 +105,20 @@ void UI::_readIn()
             auto split = arg.find(',', pos);
 
             std::string method(arg.substr(pos, split - pos));
+            // SBFL
             if (method == "tarantula")
-                _method.insert(Method::TARANTULA);
+                _method.emplace_back(std::make_unique<Tarantula>(method));
             else if (method == "ochiai")
-                _method.insert(Method::OCHIAI);
+                _method.emplace_back(std::make_unique<Ochiai>(method));
             else if (method == "dstar")
-                _method.insert(Method::DSTAR);
+                _method.emplace_back(std::make_unique<Dstar>(method));
             else if (method == "barinel")
-                _method.insert(Method::BARINEL);
+                _method.emplace_back(std::make_unique<Barinel>(method));
             else if (method == "ones")
-                _method.insert(Method::ONES);
+                _method.emplace_back(std::make_unique<Ones>(method));
+            // DLFL
             else
-                _throwInvalidInput("Invalid method");
+                _method.emplace_back(std::make_unique<CusmtomMethod>(method, getDirectoryPath()));
 
             pos = split == std::string::npos ? std::string::npos : split + 1;
         }
@@ -155,7 +157,7 @@ void UI::_readIn()
 
     // --pafl
     if (_parser.contains("--pafl"))
-        _method.insert(Method::PAFL);
+        _is_project_aware = true;
 
     // --project-dir | -d [PATH]
     if (_parser.contains({"-d", "--project-dir"}))
