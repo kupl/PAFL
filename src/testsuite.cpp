@@ -332,6 +332,12 @@ int TestSuite::loadBaseSus(const fs::path& path)
                     _finite_highest_sus = _highest_sus;
             }
     }
+
+    // Set uncovered line to 0
+    for (auto& file : _line_param)
+        for (auto& item : file)
+            if (item.second.Ncf == 0)
+                item.second.ptr_ranking->base_sus = 0.0f;
     return 0;
 }
 }
