@@ -6,6 +6,7 @@ Pipeline::Pipeline(int argc, char *argv[]) :
     _ui(argc, argv),
     _matcher(std::make_shared<TokenTree::Matcher>()),
 
+    _normalizer(_ui.getNormalizer()),
     _loader(_ui.hasCache() ? &Pipeline::loadCachedTestSuite : &Pipeline::loadTestSuite),
     _logger_factory(_ui.hasDebugger() ? &Pipeline::makeLogger : &Pipeline::makeEmptyLogger),
     _localizer(_ui.isProjectAware() ? &Pipeline::localizeWithPAFL : &Pipeline::localizeWithBase),
@@ -147,7 +148,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
     _timer.restart();
 
         _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
-        normalizeBaseSus(*_suite, Normalizer::Bqrt);
+        _normalizer->normalize(_suite);
 
         // Make token tree
         TokenTree::Vector tkt_vector(_suite->maxIndex());

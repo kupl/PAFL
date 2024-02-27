@@ -44,12 +44,12 @@ namespace Coef
 }
 
 
-namespace Normalizer
+namespace Normalization
 {
     float Default(float sus, float highest, float finite_highest);
     float Sqrt(float sus, float highest, float finite_highest);
     float Cbrt(float sus, float highest, float finite_highest);
-    float Bqrt(float sus, float highest, float finite_highest);
+    float Qdrt(float sus, float highest, float finite_highest);
 }
 }
 #endif

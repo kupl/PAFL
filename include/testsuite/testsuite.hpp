@@ -18,5 +18,18 @@ void TestSuite::setBaseSus(Func func)
                 _finite_highest_sus = sus;
         }
 }
+
+
+
+template <class Func>
+void TestSuite::normalizeBaseSus(Func func)
+{
+    for (auto& file : _line_param)
+        for (auto& item : file) {
+
+            auto& ref = item.second.ptr_ranking->base_sus;
+            ref = func(ref, this->_highest_sus, this->_finite_highest_sus);
+        }
+}
 }
 #endif

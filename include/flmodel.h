@@ -38,9 +38,5 @@ private:
 
     std::unique_ptr<BaseLogger> _logger;
 };
-
-template <class Func>
-void normalizeBaseSus(TestSuite& suite, Func func);
 }
-#include "flmodel.hpp"
 #endif

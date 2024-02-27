@@ -2,7 +2,7 @@
 
 namespace PAFL
 {
-namespace Normalizer
+namespace Normalization
 {
     float Default(float sus, float highest, float finite_highest)
     {
@@ -23,7 +23,7 @@ namespace Normalizer
         return sus > 0.0f ? std::cbrt(sus) : 0.0f;
     }
 
-    float Bqrt(float sus, float highest, float finite_highest)
+    float Qdrt(float sus, float highest, float finite_highest)
     {
         sus = Default(sus, highest, finite_highest);
         return sus > 0.0f ? std::sqrt(std::sqrt(sus)) : 0.0f;

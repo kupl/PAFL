@@ -29,6 +29,8 @@ public:
 
     template <class Func>
     void setBaseSus(Func func);
+    template <class Func>
+    void normalizeBaseSus(Func func);
     void assignBaseSus()                                        { for (auto& info : _ranking) info.sus = info.base_sus; }
     const std::list<ranking_info>& rank();
 
