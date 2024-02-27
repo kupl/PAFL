@@ -4,7 +4,7 @@ namespace PAFL
 {
 void LinearNormalizer::normalize(TestSuite* suite) const
 {
-    suite->normalizeBaseSus(Normalization::Default);
+    suite->normalizeBaseSus(Normalization::Linear);
     suite->assignBaseSus();
 }
 

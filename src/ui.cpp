@@ -160,9 +160,11 @@ void UI::_readIn()
     if (_parser.contains("--pafl"))
         _is_project_aware = true;
 
-    // normalizer = linear | sqrt | cbrt | qdrt
-    // Default normalizer=qdrt
-/*
+    /*
+        Normalized sus is in [0.6, 1.0]
+        normalizer = linear | sqrt | cbrt | qdrt
+        Default normalizer=qdrt
+    */
     // --normalizer=linear
     if (_parser.contains({"--normalizer=linear"}))
         _normalizer = std::make_unique<LinearNormalizer>();
@@ -177,10 +179,11 @@ void UI::_readIn()
 
     // --normalizer=bqrt
     if (_parser.contains({"--normalizer=qdrt"}))
-        _normalizer = std::make_unique<QdrtNormalizer>();*/
+        _normalizer = std::make_unique<QdrtNormalizer>();
 
-    // Path options
-
+    /*
+        Path options
+    */ 
     // --project-dir | -d [PATH]
     if (_parser.contains({"-d", "--project-dir"}))
         _project_path = _parser[{"-d", "--project-dir"}];
