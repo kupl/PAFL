@@ -325,12 +325,12 @@ int TestSuite::loadBaseSus(const fs::path& path)
         ifs >> sus;
         *mapper[line - 1] = sus;
 
-        if (_highest_sus < sus) {
-
-                _highest_sus = sus;
-                if (_highest_sus < std::numeric_limits<float>::infinity())
-                    _finite_highest_sus = _highest_sus;
-            }
+        if (_highest_sus < sus)
+            _highest_sus = sus;
+        if (_finite_highest_sus < sus && sus < std::numeric_limits<float>::infinity())
+            _finite_highest_sus = sus;
+        if (sus > 0.0f && sus < _lowest_nonzero_sus)
+            _lowest_nonzero_sus = sus;
     }
 
     // Set uncovered line to 0

@@ -16,6 +16,8 @@ void TestSuite::setBaseSus(Func func)
                 _highest_sus = sus;
             if (_finite_highest_sus < sus && sus < std::numeric_limits<float>::infinity())
                 _finite_highest_sus = sus;
+            if (sus > 0.0f && sus < _lowest_nonzero_sus)
+                _lowest_nonzero_sus = sus;
         }
 }
 
@@ -28,7 +30,7 @@ void TestSuite::normalizeBaseSus(Func func)
         for (auto& item : file) {
 
             auto& ref = item.second.ptr_ranking->base_sus;
-            ref = func(ref, this->_highest_sus, this->_finite_highest_sus);
+            ref = func(ref, _highest_sus, _finite_highest_sus, _lowest_nonzero_sus);
         }
 }
 }

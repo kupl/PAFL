@@ -162,7 +162,7 @@ void UI::_readIn()
 
     // normalizer = linear | sqrt | cbrt | qdrt
     // Default normalizer=qdrt
-
+/*
     // --normalizer=linear
     if (_parser.contains({"--normalizer=linear"}))
         _normalizer = std::make_unique<LinearNormalizer>();
@@ -177,7 +177,7 @@ void UI::_readIn()
 
     // --normalizer=bqrt
     if (_parser.contains({"--normalizer=qdrt"}))
-        _normalizer = std::make_unique<QdrtNormalizer>();
+        _normalizer = std::make_unique<QdrtNormalizer>();*/
 
     // Path options
 

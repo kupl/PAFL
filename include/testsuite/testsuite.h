@@ -23,7 +23,8 @@ public:
     using test_suite = std::list<test_case>;
 
 public:
-    TestSuite() : _is_initialized(false), _fail(0), _highest_sus(-std::numeric_limits<float>::infinity()), _finite_highest_sus(-std::numeric_limits<float>::infinity()) {}
+    TestSuite() : _is_initialized(false), _fail(0),
+                _highest_sus(-std::numeric_limits<float>::infinity()), _finite_highest_sus(-std::numeric_limits<float>::infinity()), _lowest_nonzero_sus(std::numeric_limits<float>::infinity()) {}
     virtual void addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions) = 0;
     void oversample(size_t iter);
 
@@ -86,6 +87,7 @@ protected:
     std::list<ranking_info> _ranking;
     float _highest_sus;
     float _finite_highest_sus;
+    float _lowest_nonzero_sus;
 
     test_suite _test_suite;
 };
