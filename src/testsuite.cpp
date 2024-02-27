@@ -1,5 +1,5 @@
 #include "testsuite/testsuite.h"
-
+#include <iostream>
 namespace PAFL
 {
 void TestSuite::oversample(size_t iter)
@@ -324,6 +324,7 @@ int TestSuite::loadBaseSus(const fs::path& path)
             break;
         ifs >> sus;
         *mapper[line - 1] = sus;
+        std::cout << *mapper[line - 1] << " ";
 
         if (_highest_sus < sus) {
 
