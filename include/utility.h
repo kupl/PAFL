@@ -46,7 +46,7 @@ namespace Coef
 
 namespace Normalization
 {
-    float Default(float sus, float highest, float finite_highest, float lowest_nonzero);
+    float Default(float sus, float highest, float finite_highest, float lowest_nonzero, float lower_bound);
     float Sqrt(float sus, float highest, float finite_highest, float lowest_nonzero);
     float Cbrt(float sus, float highest, float finite_highest, float lowest_nonzero);
     float Qdrt(float sus, float highest, float finite_highest, float lowest_nonzero);
