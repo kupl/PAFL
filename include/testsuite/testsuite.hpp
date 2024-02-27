@@ -10,7 +10,7 @@ void TestSuite::setBaseSus(Func func)
         for (auto& item : map) {
             
             auto sus = func(_succ, _fail, item.second.Ncs, item.second.Ncf);
-            item.second.ptr_ranking->sus = item.second.ptr_ranking->base_sus = sus;
+            item.second.ptr_ranking->base_sus = sus;
 
             if (_highest_sus < sus)
                 _highest_sus = sus;

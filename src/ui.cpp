@@ -159,11 +159,11 @@ void UI::_readIn()
     if (_parser.contains("--pafl"))
         _is_project_aware = true;
 
-    // normalizer = none | sqrt | cqrt | bqrt
+    // normalizer = linear | sqrt | cqrt | bqrt
     // Default normalizer=bqrt
     
     // --normalizer=none
-    if (_parser.contains({"--normalizer=none"})) {}
+    if (_parser.contains({"--normalizer=linear"})) {}
 
     // --project-dir | -d [PATH]
     if (_parser.contains({"-d", "--project-dir"}))
