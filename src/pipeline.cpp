@@ -1,5 +1,5 @@
 #include "pipeline.h"
-#include <iostream>
+
 namespace PAFL
 {
 Pipeline::Pipeline(int argc, char *argv[]) :
@@ -147,7 +147,6 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
 {
     _timer.restart();
 
-        std::cout << "normalizing\n";
         _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
         _normalizer->normalize(_suite);
 
@@ -175,11 +174,9 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
     _timer.restart();
 
         // Learning
-        if (_iter + 1 != _ui.numVersion()) {
-
-            std::cout << "Learning...\n";
+        if (_iter + 1 != _ui.numVersion())
             model.step(*_suite, tkt_vector, _ui.getFaultLocation(_iter));
-        }
+            
         // Destroy token tree
         for (auto ptr : tkt_vector)
             delete ptr;
