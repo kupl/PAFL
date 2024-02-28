@@ -5,7 +5,7 @@ namespace PAFL
 UI::UI(int argc, char *argv[]) :
     _parser(argc, argv), _project_path(fs::current_path()), _testsuite_path(fs::current_path()), _oracle_path(fs::current_path()),
     _debug(false), _cache(false), _is_project_aware(false),
-    _normalizer(std::make_unique<QdrtNormalizer>())
+    _normalizer(std::make_unique<SqrtNormalizer>())
 {
     _readIn();
     _config.configure(_pl, _parser.getDirectoryPath());
