@@ -44,7 +44,7 @@ void Ones::setBaseSus(TestSuite* suite, const std::string& proj, const std::stri
 
 void CusmtomMethod::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
 {
-    if (suite->loadBaseSus(FILE_PATH(proj, ver, iter)));
+    if (suite->loadBaseSus(FILE_PATH(proj, ver, iter)))
         _throwInvalidMethod(std::string("File \"") + FILE_PATH(proj, ver, iter) + "\" is not exist.");
     suite->assignBaseSus();
 }
