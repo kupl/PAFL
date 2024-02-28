@@ -152,11 +152,8 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
 
         // Make token tree
         TokenTree::Vector tkt_vector(_suite->maxIndex());
-        for (index_t idx = 0; idx != _suite->maxIndex(); idx++) {
-            
-            std::cout << _ui.getFilePath(_iter, _suite->getFileFromIndex(idx)) << '\n';
+        for (index_t idx = 0; idx != _suite->maxIndex(); idx++)
             (this->*_builder)(tkt_vector[idx], _ui.getFilePath(_iter, _suite->getFileFromIndex(idx)));
-        }
 
         // New sus of FL Model
         std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << "-pafl\n";
@@ -176,7 +173,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         // Learning
         if (_iter + 1 != _ui.numVersion())
             model.step(*_suite, tkt_vector, _ui.getFaultLocation(_iter));
-            
+
         // Destroy token tree
         for (auto ptr : tkt_vector)
             delete ptr;
