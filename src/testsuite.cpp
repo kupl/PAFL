@@ -302,6 +302,7 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
 int TestSuite::loadBaseSus(const fs::path& path)
 {
     std::cout << path << '\n';
+    std::cout << fs::exists(path) << '\n';
     if (!fs::exists(path))
         return 1;
 
