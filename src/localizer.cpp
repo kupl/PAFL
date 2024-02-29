@@ -51,8 +51,10 @@ void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const f
 
 
 
-void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef)
+void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef, const fault_loc* ptr_faults)
 {
+    std::vector<std::unordered_set<PAFL::line_t>*> fault_vec(suite.maxIndex(), nullptr);
+
     index_t idx = 0;
     for (auto& file : suite) {
         
@@ -87,7 +89,7 @@ void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector&
                 }
 
             last = std::move(archive);
-            if (line_param.second.ptr_ranking->sus > 0.0f)
+            if (line_param.second.ptr_ranking->sus > 0.0f || ptr_faults && )
                 line_param.second.ptr_ranking->sus += 1.0f * coef * max_sim;
         }
         idx++;
@@ -99,7 +101,7 @@ void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector&
 line_t _newRankingSum(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
 {
     suite.assignBaseSus();
-    _localize(word, suite, tkt_vec, 1.0f);
+    _localize(word, suite, tkt_vec, 1.0f, &faults);
     suite.rank();
     return suite.getRankingSum(faults);
 }
