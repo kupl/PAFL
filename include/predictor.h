@@ -36,7 +36,7 @@ public:
 
 
 private:
-    static constexpr unsigned short UPPERBOUND = 9;
+    static constexpr unsigned short UPPERBOUND = 4;
 
 private:
     float _getDistance(const feature_vector& target_vec, const feature_vector& feature_vec, const CrossWord& word) const;

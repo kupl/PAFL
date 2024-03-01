@@ -53,6 +53,20 @@ index_t TestSuite::getIndexFromFile(const std::string& file) const
 
 
 
+TestSuite::fault_line_set TestSuite::toFaultLineSet(const fault_loc& faults) const
+{
+    fault_line_set ret;
+    for (auto& pair : faults) {
+        
+        auto& map = _line_param[_file2index.at(pair.first)];
+        for (auto line : pair.second)
+            ret.insert(&map.at(line));
+    }
+    return ret;
+}
+
+
+
 line_t TestSuite::getRankingSum(const fault_loc& faults) const
 {
 

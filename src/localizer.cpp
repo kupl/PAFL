@@ -23,12 +23,13 @@ void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const f
         _word.insertToken(*token, 0.0f);
 
     // Reserve future weight
+    const auto fault_lines(suite.toFaultLineSet(faults));
     auto end(_word.end());
     for (auto iter = _word.begin(); iter != end; ++iter) {
         
         auto& ref = iter->second;
         ref.weight = 1.0f;
-        auto rankingsum = _newRankingSum(_word, suite, tkt_vec, faults);
+        auto rankingsum = _newRankingSum(_word, suite, tkt_vec, faults, &fault_lines);
         ref.weight = ref.future;
 
         // Positive update
@@ -51,10 +52,8 @@ void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const f
 
 
 
-void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef, const fault_loc* ptr_faults)
+void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef, const TestSuite::fault_line_set* fault_lines)
 {
-    std::vector<std::unordered_set<PAFL::line_t>*> fault_vec(suite.maxIndex(), nullptr);
-
     index_t idx = 0;
     for (auto& file : suite) {
         
@@ -89,7 +88,7 @@ void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector&
                 }
 
             last = std::move(archive);
-            if (line_param.second.ptr_ranking->sus > 0.0f || ptr_faults && )
+            if (line_param.second.ptr_ranking->sus > 0.0f || fault_lines && fault_lines->contains(&line_param.second))
                 line_param.second.ptr_ranking->sus += 1.0f * coef * max_sim;
         }
         idx++;
@@ -98,10 +97,10 @@ void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector&
 
 
 
-line_t _newRankingSum(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
+line_t _newRankingSum(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const TestSuite::fault_line_set* fault_lines)
 {
     suite.assignBaseSus();
-    _localize(word, suite, tkt_vec, 1.0f, &faults);
+    _localize(word, suite, tkt_vec, 1.0f, fault_lines);
     suite.rank();
     return suite.getRankingSum(faults);
 }
