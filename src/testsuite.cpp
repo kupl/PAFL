@@ -60,7 +60,8 @@ TestSuite::fault_line_set TestSuite::toFaultLineSet(const fault_loc& faults) con
         
         auto& map = _line_param[_file2index.at(pair.first)];
         for (auto line : pair.second)
-            ret.insert(&map.at(line));
+            if (map.contains(line))
+                ret.insert(&map.at(line));
     }
     return ret;
 }
