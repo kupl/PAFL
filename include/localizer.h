@@ -11,7 +11,7 @@ namespace PAFL
 class Localizer
 {
 public:
-    Localizer() : _isFresh(false), _maturity(0) {}
+    Localizer() : _isFresh(true), _maturity(0) {}
     Localizer(const Localizer& rhs) : _word(rhs._word), _isFresh(true), _maturity(0.0f) {}
     void localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef) const;
     void step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef);
