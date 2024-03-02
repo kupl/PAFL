@@ -12,11 +12,10 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
 
     { // From token list to token tree
         auto raw_stream(_getRawStream(src_file, matcher));
-        std::cout << src_file << '\n';
+        std::cout << src_file << std::endl;
         for (auto& token : raw_stream) {
             
             Token* tok = &token;
-            std::cout << tok->name << ' ' << tok->loc << '\n';
             if (token.type < Token::Type::OTHERWISE &&
                 (token.type < Token::Type::ELSE || Token::Type::AMP <= token.type)) {
 
@@ -120,8 +119,7 @@ void TokenTreeCpp::_eraseInclude(const std::filesystem::path& path)
         }
     }
 
-
-    std::cout.write(buf, size);
+    // Write modified cpp file
     std::ofstream ofs(Command::TEMPORARY_CPP);
     ofs.write(buf, size);
     ofs.close();
