@@ -19,7 +19,9 @@ namespace Command
     constexpr auto DUMP_COMMAND = "clang++ -fsyntax-only -Xclang -dump-tokens ___temp.cpp 2>&1";
 
 #ifdef _WIN32
+    constexpr auto CLEAR = "cls";
 #else
+    constexpr auto CLEAR = "clear";
     std::string exec(const char* cmd);
 #endif
 }
