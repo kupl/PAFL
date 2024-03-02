@@ -34,7 +34,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
                 tok = &_stream.rbegin()->emplace_back(token.type, line, token.name);
             }
             tok->root = _root.get();
-            
+            matcher->toString(tok);
             pda.trans(buffer, tok);
             buffer = tok;
         }

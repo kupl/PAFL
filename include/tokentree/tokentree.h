@@ -220,6 +220,7 @@ class TokenTree::Matcher
 public:
     Matcher();
     Token::Type match(const std::string& key) const { return _table.contains(key) ? _table.at(key) : Token::Type::OTHERWISE; }
+    std::string toString(const Token* token) const  { return token ? std::string("{ name: ") + token->name + ", loc: " + std::to_string(token->loc) + " }" : "NULL token"; }
 
 private:
     const std::unordered_map<std::string, Token::Type> _table;
