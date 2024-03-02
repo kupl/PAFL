@@ -21,6 +21,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
         for (auto& token : raw_stream) {
             
             Token* tok = &token;
+            matcher->toString(tok);
             //std::cout << tok->name << ' ' << tok->loc << '\n';
             if (token.type < Token::Type::OTHERWISE &&
                 (token.type < Token::Type::ELSE || Token::Type::AMP <= token.type)) {
@@ -34,7 +35,6 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
                 tok = &_stream.rbegin()->emplace_back(token.type, line, token.name);
             }
             tok->root = _root.get();
-            matcher->toString(tok);
             pda.trans(buffer, tok);
             buffer = tok;
         }
