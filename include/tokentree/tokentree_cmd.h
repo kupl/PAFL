@@ -2,7 +2,6 @@
 #define __TOKENTREE_CMD_H__
 
 #include <string>
-#include <stdexcept>
 #ifdef _WIN32
 #else
     #include <cstdio>

@@ -172,7 +172,7 @@ void TokenTree::log(const fs::path& path) const
 
 
 
-void TokenTree::_setIndexr()
+void TokenTree::setIndexr()
 {
     _tokens_indexer.reserve(_stream.size());
     for (auto& list : _stream)
