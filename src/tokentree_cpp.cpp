@@ -164,6 +164,7 @@ std::list<Token> TokenTreeCpp::_getRawStream(const std::filesystem::path& path, 
         // Move to next line
         for (; *pos != '\n'; ++pos) {}
     }
+    std::cout << "end stream";
     return stream;
 }
 }
