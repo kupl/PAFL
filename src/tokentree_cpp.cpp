@@ -11,7 +11,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
     Token* buffer = nullptr;
 
     { // From token list to token tree
-        fs::path temp("___temp.txt");
+        fs::path temp("___temp_cleaner.txt");
         std::ofstream ofs(temp);
         _getRawStream(temp, matcher);
 
