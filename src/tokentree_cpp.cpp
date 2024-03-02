@@ -11,13 +11,10 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
     Token* buffer = nullptr;
 
     { // From token list to token tree
-        //fs::path temp("___temp_cleaner.txt");
-        //std::ofstream ofs(temp);
-        //_getRawStream(temp, matcher);
-
+        std::flush(std::cout);
         auto raw_stream(_getRawStream(src_file, matcher));
         std::cout << src_file << '\n';
-        std::cout << raw_stream.size() << std::endl;
+        std::cout << raw_stream.size() << '\n';
         for (auto& token : raw_stream) {
             
             Token* tok = &token;
