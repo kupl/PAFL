@@ -38,9 +38,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
             pda.trans(buffer, tok);
             buffer = tok;
         }
-        std::cout << "before trans";
         pda.trans(buffer, nullptr);
-        std::cout << "after trans";
     }
     _setIndexr();
     return;
