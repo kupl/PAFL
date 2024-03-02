@@ -17,7 +17,7 @@ namespace Command
         if (!buf)
             throw std::range_error("malloc failed");
         std::fread(buf, size, 1, fp);
-        std::fclose(fp);
+        pclose(fp);
 
         std::string ret(buf);
         std::free(buf);
