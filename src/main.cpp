@@ -9,5 +9,6 @@ int testTokenTreePy(const fs::path& path)   { PAFL::TokenTreePy tree(path, std::
 
 int main(int argc, char *argv[])
 {
+    return testTokenTreeCpp("/4tb/donguk/bugscpp/libchewing/buggy-5/src/chewingutil.c");
     return run(argc, argv);
 }
