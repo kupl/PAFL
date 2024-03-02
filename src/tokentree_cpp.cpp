@@ -12,7 +12,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
 
     { // From token list to token tree
         fs::path temp("___temp.txt");
-        std::ofstream(temp);
+        std::ofstream ofs(temp);
         _getRawStream(temp, matcher);
 
         auto raw_stream(_getRawStream(src_file, matcher));
