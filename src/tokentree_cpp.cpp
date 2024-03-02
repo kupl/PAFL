@@ -12,7 +12,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
 
     { // From token list to token tree
         auto raw_stream(_getRawStream(src_file, matcher));
-        std::cout << "what\n";
+        std::cout << src_file << '\n';
         for (auto& token : raw_stream) {
             
             Token* tok = &token;
@@ -34,7 +34,6 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
         }
         pda.trans(buffer, nullptr);
     }
-    std::cout << "wow\n";
     _setIndexr();
     return;
     
