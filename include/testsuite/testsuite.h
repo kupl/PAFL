@@ -21,14 +21,18 @@ public:
     typedef struct { size_t Ncs, Ncf; ranking_info* ptr_ranking; } param;
     typedef struct { std::list<std::pair<index_t, line_t>> lines; bool is_passed; } test_case;
     using test_suite = std::list<test_case>;
+    using fault_line_set = std::unordered_set<const param*>;
 
 public:
-    TestSuite() : _is_initialized(false), _fail(0), _highest_sus(-std::numeric_limits<float>::infinity()), _finite_highest_sus(-std::numeric_limits<float>::infinity()) {}
+    TestSuite() : _is_initialized(false), _fail(0),
+                _highest_sus(-std::numeric_limits<float>::infinity()), _finite_highest_sus(-std::numeric_limits<float>::infinity()), _lowest_nonzero_sus(std::numeric_limits<float>::infinity()) {}
     virtual void addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions) = 0;
     void oversample(size_t iter);
 
     template <class Func>
     void setBaseSus(Func func);
+    template <class Func>
+    void normalizeBaseSus(Func func);
     void assignBaseSus()                                        { for (auto& info : _ranking) info.sus = info.base_sus; }
     const std::list<ranking_info>& rank();
 
@@ -36,6 +40,7 @@ public:
     index_t maxIndex() const                                    { return _index2file.size(); }
     const std::string& getFileFromIndex(index_t idx) const      { return _index2file[idx]; }
     ranking_info* getRankingInfo(index_t idx, line_t line)      { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking : nullptr; }
+    fault_line_set toFaultLineSet(const fault_loc& faults) const;
     line_t getRankingSum(const fault_loc& faults) const;
 
     float getBaseSus(index_t idx, line_t line) const            { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->base_sus : 0.0f; }
@@ -84,6 +89,7 @@ protected:
     std::list<ranking_info> _ranking;
     float _highest_sus;
     float _finite_highest_sus;
+    float _lowest_nonzero_sus;
 
     test_suite _test_suite;
 };

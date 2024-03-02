@@ -8,6 +8,7 @@
 #include "argparser.h"
 #include "config.h"
 #include "method.h"
+#include "normalizer.h"
 #include "rapidjson.h"
 
 
@@ -22,14 +23,12 @@ public:
 public:
     UI(int argc, char *argv[]);
 
-    
-
     const std::string& getProject() const                   { return _project; }
     PrgLang getLanguage() const                             { return _pl; }
     size_t numVersion() const                               { return _version.size(); }
     const method_list& getMethodList() const                { return _method; }
+    const Normalizer* getNormalizer() const                 { return _normalizer.get(); }
 
-    
     const fs::path& getDirectoryPath() const                { return _parser.getDirectoryPath(); }
     const fs::path& getProjectPath(size_t iter) const       { return _src_path[iter]; }
     const fault_loc& getFaultLocation(size_t iter) const    { return _faults[iter]; }
@@ -56,9 +55,11 @@ private:
     std::string _project;
     PrgLang _pl;
     std::vector<size_t> _version;
-    method_list _method;
     std::list<fs::path> _sub_dir;
     string_set _extensions;
+
+    method_list _method;
+    std::unique_ptr<Normalizer> _normalizer;
 
     fs::path _project_path;
     fs::path _testsuite_path;

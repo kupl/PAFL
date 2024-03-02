@@ -4,7 +4,8 @@ namespace PAFL
 {
 UI::UI(int argc, char *argv[]) :
     _parser(argc, argv), _project_path(fs::current_path()), _testsuite_path(fs::current_path()), _oracle_path(fs::current_path()),
-    _debug(false), _cache(false), _is_project_aware(false)
+    _debug(false), _cache(false), _is_project_aware(false),
+    _normalizer(std::make_unique<SqrtNormalizer>())
 {
     _readIn();
     _config.configure(_pl, _parser.getDirectoryPath());
@@ -159,6 +160,30 @@ void UI::_readIn()
     if (_parser.contains("--pafl"))
         _is_project_aware = true;
 
+    /*
+        Normalized sus is in [0.6, 1.0]
+        normalizer = linear | sqrt | cbrt | qdrt
+        Default normalizer=qdrt
+    */
+    // --normalizer=linear
+    if (_parser.contains({"--normalizer=linear"}))
+        _normalizer = std::make_unique<LinearNormalizer>();
+
+    // --normalizer=sqrt
+    if (_parser.contains({"--normalizer=sqrt"}))
+        _normalizer = std::make_unique<SqrtNormalizer>();
+
+    // --normalizer=cbrt
+    if (_parser.contains({"--normalizer=cbrt"}))
+        _normalizer = std::make_unique<CbrtNormalizer>();
+
+    // --normalizer=bqrt
+    if (_parser.contains({"--normalizer=qdrt"}))
+        _normalizer = std::make_unique<QdrtNormalizer>();
+
+    /*
+        Path options
+    */ 
     // --project-dir | -d [PATH]
     if (_parser.contains({"-d", "--project-dir"}))
         _project_path = _parser[{"-d", "--project-dir"}];

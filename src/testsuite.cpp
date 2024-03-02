@@ -53,6 +53,21 @@ index_t TestSuite::getIndexFromFile(const std::string& file) const
 
 
 
+TestSuite::fault_line_set TestSuite::toFaultLineSet(const fault_loc& faults) const
+{
+    fault_line_set ret;
+    for (auto& pair : faults) {
+        
+        auto& map = _line_param[_file2index.at(pair.first)];
+        for (auto line : pair.second)
+            if (map.contains(line))
+                ret.insert(&map.at(line));
+    }
+    return ret;
+}
+
+
+
 line_t TestSuite::getRankingSum(const fault_loc& faults) const
 {
 
@@ -325,13 +340,19 @@ int TestSuite::loadBaseSus(const fs::path& path)
         ifs >> sus;
         *mapper[line - 1] = sus;
 
-        if (_highest_sus < sus) {
-
-                _highest_sus = sus;
-                if (_highest_sus < std::numeric_limits<float>::infinity())
-                    _finite_highest_sus = _highest_sus;
-            }
+        if (_highest_sus < sus)
+            _highest_sus = sus;
+        if (_finite_highest_sus < sus && sus < std::numeric_limits<float>::infinity())
+            _finite_highest_sus = sus;
+        if (sus > 0.0f && sus < _lowest_nonzero_sus)
+            _lowest_nonzero_sus = sus;
     }
+
+    // Set uncovered line to 0
+    for (auto& file : _line_param)
+        for (auto& item : file)
+            if (item.second.Ncf == 0)
+                item.second.ptr_ranking->base_sus = 0.0f;
     return 0;
 }
 }

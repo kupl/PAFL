@@ -5,6 +5,7 @@ namespace PAFL
 void Tarantula::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
 {
     suite->setBaseSus(Coef::Tarantula);
+    suite->assignBaseSus();
 }
 
 
@@ -12,6 +13,7 @@ void Tarantula::setBaseSus(TestSuite* suite, const std::string& proj, const std:
 void Ochiai::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
 {
     suite->setBaseSus(Coef::Ochiai);
+    suite->assignBaseSus();
 }
 
 
@@ -19,6 +21,7 @@ void Ochiai::setBaseSus(TestSuite* suite, const std::string& proj, const std::st
 void Dstar::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
 {
     suite->setBaseSus(Coef::Dstar);
+    suite->assignBaseSus();
 }
 
 
@@ -26,6 +29,7 @@ void Dstar::setBaseSus(TestSuite* suite, const std::string& proj, const std::str
 void Barinel::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
 {
     suite->setBaseSus(Coef::Barinel);
+    suite->assignBaseSus();
 }
 
 
@@ -33,13 +37,16 @@ void Barinel::setBaseSus(TestSuite* suite, const std::string& proj, const std::s
 void Ones::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
 {
     suite->setBaseSus(Coef::Ones);
+    suite->assignBaseSus();
 }
 
 
 
 void CusmtomMethod::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
 {
-    suite->loadBaseSus(FILE_PATH(proj, ver, iter));
+    if (suite->loadBaseSus(FILE_PATH(proj, ver, iter)))
+        _throwInvalidMethod(std::string("File \"") + FILE_PATH(proj, ver, iter) + "\" is not exist.");
+    suite->assignBaseSus();
 }
 
 

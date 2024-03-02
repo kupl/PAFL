@@ -50,7 +50,8 @@ private:
     const UI _ui;
     StopWatch<time_t> _timer;
     std::shared_ptr<PAFL::TokenTree::Matcher> _matcher;
-
+    
+    const Normalizer* _normalizer;
     decltype(&Pipeline::makeGcovTest) _test_factory;
     decltype(&Pipeline::loadTestSuite) _loader;
     decltype(&Pipeline::makeEmptyLogger) _logger_factory;
