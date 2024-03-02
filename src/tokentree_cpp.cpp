@@ -13,7 +13,8 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
     { // From token list to token tree
         auto raw_stream(_getRawStream(src_file, matcher));
         std::cout << src_file << std::endl;
-        std::cout << "Tokenizing\n";
+        std::cout << "Tokenizing" << std::endl;
+        std::cout << "" << std::endl;
         for (auto& token : raw_stream) {
             
             Token* tok = &token;
