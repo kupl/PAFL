@@ -12,6 +12,8 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
 
     { // From token list to token tree
         auto raw_stream(_getRawStream(src_file, matcher));
+        std::cout << src_file << std::endl;
+        std::cout << "Tokenizing\n";
         for (auto& token : raw_stream) {
             
             Token* tok = &token;
@@ -134,10 +136,8 @@ std::list<Token> TokenTreeCpp::_getRawStream(const std::filesystem::path& path, 
     // Erase header info
     _eraseInclude(path);
     // clang++ dump-tokens
-    std::flush(std::cout);
     std::system(Command::DUMP_COMMAND);
     std::remove(Command::TEMPORARY_CPP);
-    std::flush(std::cout);
 
     // Read .txt file
     std::ifstream ifs(Command::TEMPORARY_TXT);
