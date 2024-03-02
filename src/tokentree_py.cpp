@@ -6,17 +6,17 @@ TokenTreePy::TokenTreePy(const fs::path& src_file, std::shared_ptr<TokenTree::Ma
     TokenTree(), _matcher(matcher)
 {
     // Make python AST
-    std::string cmd = "python3 " + pytree_exe.string() + " " + src_file.string() + " " + Command::TEMPORARY_TXT;
+    std::string cmd = "python3 " + pytree_exe.string() + " " + src_file.string() + " " + Command::TEMPORARY_JSON;
     std::system(cmd.c_str());
     
     { // Make Tree
-        const auto doc(rapidjson::parseDoc(Command::TEMPORARY_TXT));
+        const auto doc(rapidjson::parseDoc(Command::TEMPORARY_JSON));
         const auto& module = doc["module"].GetArray();
         PyPda pda(_root.get());
         _switchObject(pda, module);
     }
-    std::remove(Command::TEMPORARY_TXT);
-    _setIndexr();
+    std::remove(Command::TEMPORARY_JSON);
+    setIndexr();
 }
 
 

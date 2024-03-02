@@ -36,7 +36,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
         }
         pda.trans(buffer, nullptr);
     }
-    _setIndexr();
+    setIndexr();
     return;
     
     if (!pda.isTerminated(_root.get())) {
@@ -137,30 +137,12 @@ std::list<Token> TokenTreeCpp::_getRawStream(const std::filesystem::path& path, 
     // Erase header info
     _eraseInclude(path);
     // clang++ dump-tokens
-    std::system(Command::DUMP_COMMAND);
+    std::string buffer(Command::exec(Command::DUMP_COMMAND));
     std::remove(Command::TEMPORARY_CPP);
-
-    // Read .txt file
-    std::ifstream ifs(Command::TEMPORARY_TXT);
-    ifs.seekg(0, std::ios::end);
-    auto size = ifs.tellg();
-
-    char* buf = (char*)std::malloc(size * sizeof(char));
-    if (!buf) {
-
-        std::remove(Command::TEMPORARY_TXT);
-        throw std::range_error("malloc failed");
-    }
-
-    ifs.seekg(0);
-    ifs.read(buf, size);
-    ifs.close();
-    std::remove(Command::TEMPORARY_TXT);
-
 
     // Tokenize
     std::list<Token> stream;
-    for (const char* pos = buf; ; ++pos) {
+    for (const char* pos = buffer.c_str(); ; ++pos) {
 
         // Read buf
         const char* start = pos;
@@ -184,8 +166,6 @@ std::list<Token> TokenTreeCpp::_getRawStream(const std::filesystem::path& path, 
         // Move to next line
         for (; *pos != '\n'; ++pos) {}
     }
-
-    std::free(buf);
     return stream;
 }
 }

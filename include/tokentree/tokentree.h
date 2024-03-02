@@ -206,7 +206,7 @@ public:
     void log(const fs::path& path) const;
 
 protected:
-    void _setIndexr();
+    void setIndexr();
 
 protected:
     std::unique_ptr<Token> _root;
