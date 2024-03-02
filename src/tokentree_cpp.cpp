@@ -20,7 +20,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
         std::cout << raw_stream.size() << std::endl;
         for (auto& token : raw_stream) {
             
-            matcher->toString(&token);
+            std::cout << matcher->toString(&token) << '\n';
             Token* tok = &token;
             //std::cout << tok->name << ' ' << tok->loc << '\n';
             if (token.type < Token::Type::OTHERWISE &&
