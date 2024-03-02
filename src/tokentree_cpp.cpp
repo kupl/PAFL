@@ -11,8 +11,10 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
     Token* buffer = nullptr;
 
     { // From token list to token tree
-        std::cout << src_file << std::endl;
-        std::cout << "Tokenizing" << std::endl;
+        fs::path temp("___temp.txt");
+        std::ofstream(temp);
+        _getRawStream(temp, matcher);
+
         auto raw_stream(_getRawStream(src_file, matcher));
         std::cout << src_file << std::endl;
         std::cout << "Tree Creating" << std::endl;
