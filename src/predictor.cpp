@@ -98,21 +98,21 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
     for (auto ptr : targets)
         feature.second.insertToken(*ptr);
 
-    // Update passing
+    /*// Update passing
     // Use current passing
     _passing_feature.clear();
     for (auto& item : passing_counter) {
 
         float new_val = (item.second / (float)passing_max_cnt);
         _passing_feature.emplace(item.first, new_val);
-    }
+    }*/
     
     TargetInfo info(_setTargetInfo(feature.first, K+1));
     if (_features.size() > SIZE)
         _features.pop_front();
 
 
-/*    // Update passing
+    // Update passing
     // Use past passing
     for (auto& item : passing_counter) {
 
@@ -129,7 +129,7 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
         else
             _passing_feature.emplace(item.first, new_val);
     }
-    _passing_cnt = _passing_cnt == UPPERBOUND ? UPPERBOUND : _passing_cnt + 1;*/
+    _passing_cnt = _passing_cnt == UPPERBOUND ? UPPERBOUND : _passing_cnt + 1;
 
 
     return info;
