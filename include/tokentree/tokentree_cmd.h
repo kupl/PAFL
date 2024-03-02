@@ -15,7 +15,7 @@ namespace Command
 {
     constexpr auto TEMPORARY_CPP = "___temp.cpp";
     constexpr auto TEMPORARY_JSON = "___temp.json";
-    constexpr auto DUMP_COMMAND = "clang++ -fsyntax-only -Xclang -dump-tokens ___temp.cpp";
+    constexpr auto DUMP_COMMAND = "clang++ -fsyntax-only -Xclang -dump-tokens ___temp.cpp 2>&1";
 
 #ifdef _WIN32
 #else
