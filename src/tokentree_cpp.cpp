@@ -17,7 +17,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
 
         auto raw_stream(_getRawStream(src_file, matcher));
         std::cout << src_file << std::endl;
-        std::cout << "Tree Creating" << std::endl;
+        std::cout << raw_stream.size() << std::endl;
         for (auto& token : raw_stream) {
             
             matcher->toString(&token);
