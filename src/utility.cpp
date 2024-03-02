@@ -16,27 +16,27 @@ namespace Normalization
 
     float Linear(float sus, float highest, float finite_highest, float lowest_nonzero)
     {
-        constexpr float lb = 0.5f;
+        constexpr float lb = 0.6f;
         return Default(sus, highest, finite_highest, lowest_nonzero, lb);
     }
     
     float Sqrt(float sus, float highest, float finite_highest, float lowest_nonzero)
     {
-        constexpr float lb = 0.5f * 0.5f;
+        constexpr float lb = 0.6f * 0.6f;
         sus = Default(sus, highest, finite_highest, lowest_nonzero, lb);
         return sus > 0.0f ? std::sqrt(sus) : 0.0f;
     }
 
     float Cbrt(float sus, float highest, float finite_highest, float lowest_nonzero)
     {
-        constexpr float lb = 0.5f * 0.5f * 0.5f;
+        constexpr float lb = 0.6f * 0.6f * 0.6f;
         sus = Default(sus, highest, finite_highest, lowest_nonzero, lb);
         return sus > 0.0f ? std::cbrt(sus) : 0.0f;
     }
 
     float Qdrt(float sus, float highest, float finite_highest, float lowest_nonzero)
     {
-        constexpr float lb = 0.5f * 0.5f * 0.5f * 0.5f;
+        constexpr float lb = 0.6f * 0.6f * 0.6f * 0.6f;
         sus = Default(sus, highest, finite_highest, lowest_nonzero, lb);
         return sus > 0.0f ? std::sqrt(std::sqrt(sus)) : 0.0f;
     }
