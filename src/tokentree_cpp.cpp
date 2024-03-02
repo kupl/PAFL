@@ -134,9 +134,10 @@ std::list<Token> TokenTreeCpp::_getRawStream(const std::filesystem::path& path, 
     // Erase header info
     _eraseInclude(path);
     // clang++ dump-tokens
+    std::flush(std::cout);
     std::system(Command::DUMP_COMMAND);
     std::remove(Command::TEMPORARY_CPP);
-    std::cout << std::endl;
+    std::flush(std::cout);
 
     // Read .txt file
     std::ifstream ifs(Command::TEMPORARY_TXT);
