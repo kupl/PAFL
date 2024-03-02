@@ -8,13 +8,19 @@ namespace Command
 #else
     std::string exec(const char* cmd)
     {
-        std::array<char, 16 * 1024 * 1024> buffer;
-        std::string ret;
-        std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-        if (!pipe)
-            throw std::runtime_error("popen() failed!");
-        while (fgets(buffer.data(), buffer.size(), pipe.get()))
-            ret.append(buffer.data());
+        // Execute command
+        std::FILE* fp = popen(cmd, "r");
+        std::fseek(fp, 0, SEEK_END);
+        auto size = std::ftell(fp);
+        std::rewind(fp);
+        char* buf = (char*)std::calloc(size + 1, sizeof(char));
+        if (!buf)
+            throw std::range_error("malloc failed");
+        std::fread(buf, size, 1, fp);
+        std::fclose(fp);
+
+        std::string ret(buf);
+        std::free(buf);
         return ret;
     }
 #endif

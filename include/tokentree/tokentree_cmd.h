@@ -1,8 +1,8 @@
 #ifndef __TOKENTREE_CMD_H__
 #define __TOKENTREE_CMD_H__
 
-#include <array>
 #include <string>
+#include <stdexcept>
 #ifdef _WIN32
 #else
     #include <cstdio>
