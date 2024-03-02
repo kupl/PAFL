@@ -136,6 +136,7 @@ std::list<Token> TokenTreeCpp::_getRawStream(const std::filesystem::path& path, 
     _eraseInclude(path);
     // clang++ dump-tokens
     std::string buffer(Command::exec(Command::DUMP_COMMAND));
+    std::cout << "\n\n\n" << buffer;
     std::remove(Command::TEMPORARY_CPP);
 
     // Tokenize
@@ -164,7 +165,6 @@ std::list<Token> TokenTreeCpp::_getRawStream(const std::filesystem::path& path, 
         // Move to next line
         for (; *pos != '\n'; ++pos) {}
     }
-    std::cout << "end stream";
     return stream;
 }
 }
