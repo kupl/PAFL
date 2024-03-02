@@ -20,8 +20,8 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
         std::cout << "Tree Creating" << std::endl;
         for (auto& token : raw_stream) {
             
+            matcher->toString(&token);
             Token* tok = &token;
-            matcher->toString(tok);
             //std::cout << tok->name << ' ' << tok->loc << '\n';
             if (token.type < Token::Type::OTHERWISE &&
                 (token.type < Token::Type::ELSE || Token::Type::AMP <= token.type)) {
