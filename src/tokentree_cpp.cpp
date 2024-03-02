@@ -184,7 +184,8 @@ std::list<Token> TokenTreeCpp::_getRawStream(const std::filesystem::path& path, 
     }
 
     std::free(buf);
-    std::system(Command::CLEAR);
+    std::cout << "free\n";
+    //std::system(Command::CLEAR);
     return stream;
 }
 }
