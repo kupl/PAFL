@@ -11,7 +11,8 @@ Pipeline::Pipeline(int argc, char *argv[]) :
     _logger_factory(_ui.hasDebugger() ? &Pipeline::makeLogger : &Pipeline::makeEmptyLogger),
     _localizer(_ui.isProjectAware() ? &Pipeline::localizeWithPAFL : &Pipeline::localizeWithBase),
     _time_logger(!_ui.hasDebugger() ? &Pipeline::logNoneTime : 
-                (_ui.isProjectAware() ? &Pipeline::logPAFLTime : &Pipeline::logBaseTime))
+                (_ui.isProjectAware() ? &Pipeline::logPAFLTime : &Pipeline::logBaseTime)),
+    _history(0)
 {
     switch (_ui.getLanguage()) {
     
@@ -60,6 +61,7 @@ void Pipeline::run()
                 
                 _updateInfo(suite[iter], method.get(), iter);
                 model.setLogger((this->*_logger_factory)());
+                _history++;
                 (this->*_localizer)(model, running_time);
             }
 
@@ -147,15 +149,15 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
 {
     _timer.restart();
 
-        _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
-        _normalizer->normalize(_suite);
-
         // Make token tree
         TokenTree::Vector tkt_vector(_suite->maxIndex());
         for (index_t idx = 0; idx != _suite->maxIndex(); idx++)
             (this->*_builder)(tkt_vector[idx], _ui.getFilePath(_iter, _suite->getFileFromIndex(idx)));
 
         // New sus of FL Model
+        _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
+        if (_history > 2)
+            _normalizer->normalize(_suite);
         std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << "-pafl\n";
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing\n";
         model.localize(*_suite, tkt_vector);
@@ -171,6 +173,8 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
     _timer.restart();
 
         // Learning
+        if (_history <= 2)
+            _normalizer->normalize(_suite);
         if (_iter + 1 != _ui.numVersion())
             model.step(*_suite, tkt_vector, _ui.getFaultLocation(_iter));
 

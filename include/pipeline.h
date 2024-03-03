@@ -58,6 +58,7 @@ private:
     decltype(&Pipeline::buildCppTree) _builder;
     decltype(&Pipeline::localizeWithBase) _localizer;
     decltype(&Pipeline::logNoneTime) _time_logger;
+    unsigned long long _history;
 
 private: // Info
     TestSuite* _suite;
