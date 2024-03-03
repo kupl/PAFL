@@ -10,7 +10,7 @@ namespace Normalization
             return 0.0f;
 
         if (highest >= std::numeric_limits<float>::infinity())
-            highest = finite_highest * 1.5f;
+            highest = finite_highest * 2;
         return sus >= std::numeric_limits<float>::infinity() ? 1.0f : ((sus - lowest_nonzero) / (highest - lowest_nonzero)) * (1.0f - lower_bound) + lower_bound;
     }
 
