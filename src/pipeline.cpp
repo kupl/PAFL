@@ -173,6 +173,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
     _timer.restart();
 
         // Learning
+        std::cout << "[ " << (_iter + 1) << " ] -> Learning\n";
         if (_history <= 2)
             _normalizer->normalize(_suite);
         if (_iter + 1 != _ui.numVersion())
