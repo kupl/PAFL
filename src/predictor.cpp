@@ -42,6 +42,12 @@ Predictor::TargetInfo Predictor::predict(const TestSuite::test_suite& test_suite
 
 Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec, const target_tokens& targets)
 {
+    TargetInfo info;
+    info.targets.emplace_back(0, 1.0f);
+    return info;
+
+    /**/
+
     static size_t debug = 0;
     count_t max_cnt = 1;
     count_t passing_max_cnt = 1;
@@ -97,15 +103,6 @@ Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, c
     auto& feature = _features.emplace_back(std::move(target_vec), CrossWord());
     for (auto ptr : targets)
         feature.second.insertToken(*ptr);
-
-    /*// Update passing
-    // Use current passing
-    _passing_feature.clear();
-    for (auto& item : passing_counter) {
-
-        float new_val = (item.second / (float)passing_max_cnt);
-        _passing_feature.emplace(item.first, new_val);
-    }*/
     
     TargetInfo info(_setTargetInfo(feature.first, K+1));
     if (_features.size() > SIZE)
