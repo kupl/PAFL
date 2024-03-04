@@ -182,7 +182,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         // Destroy token tree
         for (auto ptr : tkt_vector)
             delete ptr;
-        std::cout << " done\n\n";
+        std::cout << " done\n";
 
     time_vec[_iter + 1] += _timer.stop();
 }
