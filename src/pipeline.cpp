@@ -131,12 +131,11 @@ void Pipeline::localizeWithBase(FLModel&, time_vector& time_vec)
     _timer.restart();
 
         std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << '\n';
-        std::cout << "[ " << (_iter + 1) << " ] -> Localizing\n";
+        std::cout << "[ " << (_iter + 1) << " ] -> Localizing ...";
         _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
         _suite->rank();
 
         // Save as json
-        std::cout << "[ " << (_iter + 1) << " ] -> Saving\n";
         fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / _method->getName() / _ui.getProject()));
         _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
 
@@ -149,24 +148,31 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
 {
     _timer.restart();
 
+        _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
+        if (_history <= 2) {
+            
+            // Save as json
+            fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / _method->getName() / _ui.getProject()));
+            _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
+        }
+
         // Make token tree
         TokenTree::Vector tkt_vector(_suite->maxIndex());
         for (index_t idx = 0; idx != _suite->maxIndex(); idx++)
             (this->*_builder)(tkt_vector[idx], _ui.getFilePath(_iter, _suite->getFileFromIndex(idx)));     
 
         // New sus of FL Model
-        _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
-        if (_history > 2)
-            _normalizer->normalize(_suite);
+        _normalizer->normalize(_suite);
         std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << "-pafl\n";
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing ...";
         model.localize(*_suite, tkt_vector);
-        if (_history <= 2)
-            _suite->assignBaseSus();
 
-        // Save as json
-        fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method->getName()) / _ui.getProject()));
-        _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
+        if (_history > 2) {
+
+            // Save as json
+            fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method->getName()) / _ui.getProject()));
+            _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
+        }
         std::cout << " done\n";
 
     time_vec[_iter] += _timer.stop();
@@ -176,8 +182,6 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
 
         // Learning
         std::cout << "[ " << (_iter + 1) << " ] -> Learning ...";
-        if (_history <= 2)
-            _normalizer->normalize(_suite);
         if (_iter + 1 != _ui.numVersion())
             model.step(*_suite, tkt_vector, _ui.getFaultLocation(_iter));
 
