@@ -160,7 +160,9 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
             _normalizer->normalize(_suite);
         std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << "-pafl\n";
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing ...";
-        _history > 2 ? model.localize(*_suite, tkt_vector) : _suite->assignBaseSus();
+        model.localize(*_suite, tkt_vector);
+        if (_history <= 2)
+            _suite->assignBaseSus();
 
         // Save as json
         fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method->getName()) / _ui.getProject()));
