@@ -42,9 +42,9 @@ Predictor::TargetInfo Predictor::predict(const TestSuite::test_suite& test_suite
 
 Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec, const target_tokens& targets)
 {
-    TargetInfo info;
-    info.targets.emplace_back(0, 1.0f);
-    return info;
+    TargetInfo ret;
+    ret.targets.emplace_back(0, 1.0f);
+    return ret;
 
     /**/
 
