@@ -149,10 +149,13 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
 {
     _timer.restart();
 
+        std::cout << "Tokenizing ...";
         // Make token tree
         TokenTree::Vector tkt_vector(_suite->maxIndex());
         for (index_t idx = 0; idx != _suite->maxIndex(); idx++)
             (this->*_builder)(tkt_vector[idx], _ui.getFilePath(_iter, _suite->getFileFromIndex(idx)));
+        std::cout << " done";
+        
 
         // New sus of FL Model
         _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
@@ -161,10 +164,8 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << "-pafl\n";
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing ...";
         _history > 2 ? model.localize(*_suite, tkt_vector) : _suite->assignBaseSus();
-        std::cout << " done\n";
 
         // Save as json
-        std::cout << "[ " << (_iter + 1) << " ] -> Saving ...";
         fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method->getName()) / _ui.getProject()));
         _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
         std::cout << " done\n";
