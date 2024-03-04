@@ -24,7 +24,7 @@ public:
     };
 
 public:
-    FLModel() { _localizers.reserve(64); }
+    FLModel() { _localizers.reserve(64 * 2); }
 
     void localize(TestSuite& suite, const TokenTree::Vector& tkt_vec);
     void step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults);
