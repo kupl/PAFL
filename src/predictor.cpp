@@ -4,6 +4,12 @@ namespace PAFL
 {
 Predictor::TargetInfo Predictor::predict(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec)
 {
+    TargetInfo ret;
+    ret.targets.emplace_back(0, 1.0f);
+    return ret;
+
+    /**/
+
     static size_t debug = 0;
     count_t max_cnt = 1;
     std::unordered_map<std::string, count_t> counter;
