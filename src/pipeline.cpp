@@ -131,10 +131,8 @@ void Pipeline::localizeWithBase(FLModel&, time_vector& time_vec)
     _timer.restart();
 
         std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << '\n';
-        std::cout << "[ " << (_iter + 1) << " ] -> Localizing ...";
         _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
         _suite->rank();
-
         
         fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / _method->getName() / _ui.getProject()));
         _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
