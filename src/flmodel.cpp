@@ -75,7 +75,7 @@ void FLModel::Logger::_llz_log(const FLModel* model) const
     auto llz_path(createDirRecursively(path / "localizer"));
 
     for (size_t i = 0; i != model->_localizers.size(); i++)
-        model->_localizers[i]->log(llz_path / ("llz_" + std::to_string(i)));
+        model->_localizers[i]->log(llz_path / ("llz_" + std::to_string(i + 1)));
 }
 
 
@@ -86,7 +86,7 @@ void FLModel::Logger::_pdt_log(const Predictor::TargetInfo* info) const
 
     ofs << " total = " << info->targets.size() << "\n\n";
     for (auto& item : info->targets)
-        ofs << " [" << item.first << "] : " << std::to_string(item.second) << '\n';
+        ofs << " [" << item.first + 1 << "] : " << std::to_string(item.second) << '\n';
     ofs << '\n';
 }
 }
