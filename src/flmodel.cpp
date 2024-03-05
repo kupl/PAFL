@@ -4,13 +4,11 @@ namespace PAFL
 {
 void FLModel::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec)
 {
-    suite.assignBaseSus();
+    /*suite.assignBaseSus();
     if (_localizers.size())
         _localizers[0]->localize(suite, tkt_vec, 1.0f);
     suite.rank();
-    return;
-
-    /**/
+    return;*/
 
     suite.assignBaseSus();
     auto info(_predictor.predict(suite.getTestSuite(), tkt_vec));
@@ -29,11 +27,11 @@ void FLModel::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec)
 
 void FLModel::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
 {
-    auto _targets(toTokenFromFault(suite, tkt_vec, faults));
+    /*auto _targets(toTokenFromFault(suite, tkt_vec, faults));
     if (!_localizers.size())
         _localizers.emplace_back(std::make_unique<Localizer>());
     _localizers[0]->step(suite, tkt_vec, faults, _targets, 1.0f);
-    return;
+    return;*/
 
     /**/
 
