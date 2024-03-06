@@ -1,6 +1,8 @@
 #ifndef __TOKENTREE_PY_H__
 #define __TOKENTREE_PY_H__
 
+#include <iostream>
+
 #include "tokentree/pypda.h"
 #include "tokentree/tokentree_cmd.h"
 #include "rapidjson.h"

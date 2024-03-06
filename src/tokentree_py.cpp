@@ -6,6 +6,7 @@ TokenTreePy::TokenTreePy(const fs::path& src_file, std::shared_ptr<TokenTree::Ma
     TokenTree(), _matcher(matcher)
 {
     // Make python AST
+    std::cout << src_file << '\n';
     std::string cmd = "python3 " + pytree_exe.string() + " " + src_file.string() + " " + Command::TEMPORARY_JSON;
     std::system(cmd.c_str());
     
