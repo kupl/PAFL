@@ -154,6 +154,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
             _suite->rank();
             fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method->getName()) / _ui.getProject()));
             _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
+            std::cout << _history << " ijijijijijiji\n";
         }
 
         // Make token tree
