@@ -324,10 +324,12 @@ int TestSuite::loadBaseSus(const fs::path& path)
     std::vector<float*> mapper(_ranking.size() + 1, nullptr);
     {
         line_t l = 0;
-        for (auto& file : _line_param) {
-            for (auto& iter : file)
+        for (auto& file : _line_param)
+            for (auto& iter : file) {
+
+                iter.second.ptr_ranking->base_sus = 0.0f;
                 mapper[l++] = &iter.second.ptr_ranking->base_sus;
-        }
+            }
     }
 
     // Read suspicousness
