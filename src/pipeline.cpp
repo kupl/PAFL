@@ -158,7 +158,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << "-pafl\n";
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing ...";
         _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
-        if (_history <= 2) {
+        if (_history > 2) {
             
             _normalizer->normalize(_suite);
             model.localize(*_suite, tkt_vector);
