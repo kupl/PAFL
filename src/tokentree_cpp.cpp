@@ -119,7 +119,7 @@ void TokenTreeCpp::_eraseInclude(const std::filesystem::path& path)
     }
 
     // Write modified cpp file
-    std::cout.write(buf, size);
+    //std::cout.write(buf, size);
     std::ofstream ofs(Command::TEMPORARY_CPP);
     ofs.write(buf, size);
     ofs.close();
