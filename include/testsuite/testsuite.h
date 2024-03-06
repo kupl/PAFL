@@ -24,8 +24,7 @@ public:
     using fault_line_set = std::unordered_set<const param*>;
 
 public:
-    TestSuite() : _is_initialized(false), _fail(0),
-                _highest_sus(-std::numeric_limits<float>::infinity()), _finite_highest_sus(-std::numeric_limits<float>::infinity()), _lowest_nonzero_sus(std::numeric_limits<float>::infinity()) {}
+    TestSuite() : _is_initialized(false), _fail(0)              { _initBoundary(); }
     virtual void addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions) = 0;
     void oversample(size_t iter);
 
@@ -63,6 +62,7 @@ public:
     decltype(auto) cend() const                                 { return _line_param.cend(); }
 
 private:
+    void _initBoundary()                                                        { constexpr auto inf = std::numeric_limits<float>::infinity(); _highest_sus = -inf; _finite_highest_sus = -inf; _lowest_nonzero_sus = inf; }
     template <class T>
     void _appendAny(std::string& str, T val) const
     {

@@ -6,6 +6,7 @@ namespace PAFL
 template <class Func>
 void TestSuite::setBaseSus(Func func)
 {
+    _initBoundary();
     for (auto& map : _line_param)
         for (auto& item : map) {
             

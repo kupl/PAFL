@@ -318,6 +318,7 @@ int TestSuite::loadBaseSus(const fs::path& path)
 {
     if (!fs::exists(path))
         return 1;
+    _initBoundary();
 
     // Init mapper
     std::vector<float*> mapper(_ranking.size() + 1, nullptr);
