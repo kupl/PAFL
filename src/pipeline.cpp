@@ -63,6 +63,7 @@ void Pipeline::run()
                 model.setLogger((this->*_logger_factory)());
                 _history++;
                 (this->*_localizer)(model, running_time);
+                std::cout << '\n';
             }
 
         (this->*_time_logger)(running_time);
@@ -130,7 +131,7 @@ void Pipeline::localizeWithBase(FLModel&, time_vector& time_vec)
 {
     _timer.restart();
 
-        std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << " [" << _iter + 1 << "]\n";
+        std::cout << _ui.getProject() << " : " << _method->getName() << " [" << _iter + 1 << "]\n";
         _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
         _suite->rank();
         
@@ -156,11 +157,11 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         }
 
         // Make token tree
-        std::cout << "[ " << (_iter + 1) << " ] -> Tokenizing ...";
+        std::cout << "[ " << (_iter + 1) << " ] -> Tokenizing ...\n";
         TokenTree::Vector tkt_vector(_suite->maxIndex());
         for (index_t idx = 0; idx != _suite->maxIndex(); idx++)
             (this->*_builder)(tkt_vector[idx], _ui.getFilePath(_iter, _suite->getFileFromIndex(idx)));
-        std::cout << " done\n";
+        std::cout << "done\n";
 
         // New sus of FL Model
         _normalizer->normalize(_suite);
@@ -189,7 +190,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         // Destroy token tree
         for (auto ptr : tkt_vector)
             delete ptr;
-        std::cout << " done\n";
+        std::cout << " done\n\n";
 
     time_vec[_iter + 1] += _timer.stop();
 }
