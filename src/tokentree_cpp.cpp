@@ -120,9 +120,13 @@ void TokenTreeCpp::_eraseInclude(const std::filesystem::path& path)
 
     // Write modified cpp file
     //std::cout.write(buf, size);
+    std::cout << "std::ofstream ofs(Command::TEMPORARY_CPP)";
     std::ofstream ofs(Command::TEMPORARY_CPP);
+    std::cout << "ofs.write(buf, size)";
     ofs.write(buf, size);
+    std::cout << "ofs.close()";
     ofs.close();
+    std::cout << "std::free(buf)";
     std::free(buf);
 }
 
