@@ -57,6 +57,7 @@ void Pipeline::run()
         time_vector running_time(loading_time);
 
             FLModel model;
+            _history = 0;
             for (size_t iter = 0; iter != _ui.numVersion(); iter++) {
                 
                 _updateInfo(suite[iter], method.get(), iter);
@@ -165,8 +166,6 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         }
         else {
             
-            _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
-            _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
             _suite->rank();
             _normalizer->normalize(_suite);
         }
