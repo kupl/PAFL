@@ -356,7 +356,6 @@ int TestSuite::loadBaseSus(const fs::path& path)
         for (auto& item : file)
             if (item.second.Ncf == 0)
                 item.second.ptr_ranking->base_sus = 0.0f;
-    assignBaseSus();
     return 0;
 }
 }
