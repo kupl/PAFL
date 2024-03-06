@@ -11,8 +11,7 @@ Pipeline::Pipeline(int argc, char *argv[]) :
     _logger_factory(_ui.hasDebugger() ? &Pipeline::makeLogger : &Pipeline::makeEmptyLogger),
     _localizer(_ui.isProjectAware() ? &Pipeline::localizeWithPAFL : &Pipeline::localizeWithBase),
     _time_logger(!_ui.hasDebugger() ? &Pipeline::logNoneTime : 
-                (_ui.isProjectAware() ? &Pipeline::logPAFLTime : &Pipeline::logBaseTime)),
-    _history(0)
+                (_ui.isProjectAware() ? &Pipeline::logPAFLTime : &Pipeline::logBaseTime))
 {
     switch (_ui.getLanguage()) {
     
