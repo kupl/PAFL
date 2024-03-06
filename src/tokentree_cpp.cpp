@@ -9,6 +9,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
     CppPda pda(_root.get());
     line_t line = 0;
     Token* buffer = nullptr;
+    std::cout << "call _getRawStream\n";
 
     { // From token list to token tree
         auto raw_stream(_getRawStream(src_file, matcher));
@@ -30,6 +31,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
             pda.trans(buffer, tok);
             buffer = tok;
         }
+        std::cout << "pda.trans(buffer, nullptr)\n";
         pda.trans(buffer, nullptr);
     }
     setIndexr();
@@ -120,13 +122,13 @@ void TokenTreeCpp::_eraseInclude(const std::filesystem::path& path)
 
     // Write modified cpp file
     //std::cout.write(buf, size);
-    std::cout << "std::ofstream ofs(Command::TEMPORARY_CPP)";
+    std::cout << "std::ofstream ofs(Command::TEMPORARY_CPP)\n";
     std::ofstream ofs(Command::TEMPORARY_CPP);
-    std::cout << "ofs.write(buf, size)";
+    std::cout << "ofs.write(buf, size)\n";
     ofs.write(buf, size);
-    std::cout << "ofs.close()";
+    std::cout << "ofs.close()\n";
     ofs.close();
-    std::cout << "std::free(buf)";
+    std::cout << "std::free(buf)\n";
     std::free(buf);
 }
 
