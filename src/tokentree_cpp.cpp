@@ -9,7 +9,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
     CppPda pda(_root.get());
     line_t line = 0;
     Token* buffer = nullptr;
-    std::cout << "Tokenizing" << src_file << " ...";
+    std::cout << src_file << '\n';
 
     { // From token list to token tree
         auto raw_stream(_getRawStream(src_file, matcher));
