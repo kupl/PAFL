@@ -32,4 +32,3 @@ void QdrtNormalizer::normalize(TestSuite* suite) const
     suite->assignBaseSus();
 }
 }
-

@@ -147,15 +147,6 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
 {
     _timer.restart();
 
-        _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
-        // Save as json
-        if (_history <= 2) {
-
-            _suite->rank();
-            fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method->getName()) / _ui.getProject()));
-            _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
-        }
-
         // Make token tree
         std::cout << "[ " << (_iter + 1) << " ] -> Tokenizing ...\n";
         TokenTree::Vector tkt_vector(_suite->maxIndex());
@@ -164,17 +155,23 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         std::cout << "done\n";
 
         // New sus of FL Model
-        _normalizer->normalize(_suite);
         std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << "-pafl\n";
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing ...";
-        model.localize(*_suite, tkt_vector);
+        _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
+        if (_history > 2) {
+            
+            _normalizer->normalize(_suite);
+            model.localize(*_suite, tkt_vector);
+        }
+        else {
+
+            _suite->rank();
+            _normalizer->normalize(_suite);
+        }
 
         // Save as json
-        if (_history > 2) {
-
-            fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method->getName()) / _ui.getProject()));
-            _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
-        }
+        fs::path dir(createDirRecursively(_ui.getDirectoryPath() / "coverage" / (std::string("pafl-") + _method->getName()) / _ui.getProject()));
+        _suite->toJson(dir / (std::to_string(_iter + 1) + ".json"));
         std::cout << " done\n";
 
     time_vec[_iter] += _timer.stop();

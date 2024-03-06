@@ -2,7 +2,7 @@
 
 namespace PAFL
 {
-void Tarantula::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
+void Tarantula::setBaseSus(TestSuite* suite, const std::string&, const std::string&, const std::string&) const
 {
     suite->setBaseSus(Coef::Tarantula);
     suite->assignBaseSus();
@@ -10,7 +10,7 @@ void Tarantula::setBaseSus(TestSuite* suite, const std::string& proj, const std:
 
 
 
-void Ochiai::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
+void Ochiai::setBaseSus(TestSuite* suite, const std::string&, const std::string&, const std::string&) const
 {
     suite->setBaseSus(Coef::Ochiai);
     suite->assignBaseSus();
@@ -18,7 +18,7 @@ void Ochiai::setBaseSus(TestSuite* suite, const std::string& proj, const std::st
 
 
 
-void Dstar::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
+void Dstar::setBaseSus(TestSuite* suite, const std::string&, const std::string&, const std::string&) const
 {
     suite->setBaseSus(Coef::Dstar);
     suite->assignBaseSus();
@@ -26,7 +26,7 @@ void Dstar::setBaseSus(TestSuite* suite, const std::string& proj, const std::str
 
 
 
-void Barinel::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
+void Barinel::setBaseSus(TestSuite* suite, const std::string&, const std::string&, const std::string&) const
 {
     suite->setBaseSus(Coef::Barinel);
     suite->assignBaseSus();
@@ -34,7 +34,7 @@ void Barinel::setBaseSus(TestSuite* suite, const std::string& proj, const std::s
 
 
 
-void Ones::setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const
+void Ones::setBaseSus(TestSuite* suite, const std::string&, const std::string&, const std::string&) const
 {
     suite->setBaseSus(Coef::Ones);
     suite->assignBaseSus();

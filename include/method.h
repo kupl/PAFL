@@ -32,7 +32,7 @@ class Tarantula : public Method
 {
 public:
     Tarantula(const std::string& name) : Method(name) {}
-    void setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const override;
+    void setBaseSus(TestSuite* suite, const std::string&, const std::string&, const std::string&) const override;
 };
 
 
@@ -41,7 +41,7 @@ class Ochiai : public Method
 {
 public:
     Ochiai(const std::string& name) : Method(name) {}
-    void setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const override;
+    void setBaseSus(TestSuite* suite, const std::string&, const std::string&, const std::string&) const override;
 };
 
 
@@ -50,7 +50,7 @@ class Dstar : public Method
 {
 public:
     Dstar(const std::string& name) : Method(name) {}
-    void setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const override;
+    void setBaseSus(TestSuite* suite, const std::string&, const std::string&, const std::string&) const override;
 };
 
 
@@ -59,7 +59,7 @@ class Barinel : public Method
 {
 public:
     Barinel(const std::string& name) : Method(name) {}
-    void setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const override;
+    void setBaseSus(TestSuite* suite, const std::string&, const std::string&, const std::string&) const override;
 };
 
 
@@ -68,7 +68,7 @@ class Ones : public Method
 {
 public:
     Ones(const std::string& name) : Method(name) {}
-    void setBaseSus(TestSuite* suite, const std::string& proj, const std::string& ver, const std::string& iter) const override;
+    void setBaseSus(TestSuite* suite, const std::string&, const std::string&, const std::string&) const override;
 };
 
 

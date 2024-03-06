@@ -10,7 +10,6 @@ void FLModel::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec)
     suite.rank();
     return;*/
 
-    suite.assignBaseSus();
     auto info(_predictor.predict(suite.getTestSuite(), tkt_vec));
     for (auto& item : info.targets)
         _localizers[item.first]->localize(suite, tkt_vec, item.second);
