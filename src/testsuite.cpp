@@ -337,10 +337,11 @@ int TestSuite::loadBaseSus(const fs::path& path)
     while (true) {
 
         line_t line;
-        float sus;
         if (!(ifs >> line))
             break;
-        ifs >> sus;
+        std::string str_sus;
+        ifs >> str_sus;
+        float sus = std::stof(str_sus);
         *mapper[line - 1] = sus;
 
         if (_highest_sus < sus)
