@@ -19,4 +19,5 @@ COPY externals ./externals/
 
 RUN mkdir --mode=777 /workspace
 WORKDIR /workspace
+RUN make release
 CMD ["/bin/bash"]
