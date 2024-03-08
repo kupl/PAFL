@@ -5,7 +5,7 @@ BUILD    := ./build
 OBJ_DIR  := $(BUILD)/obj
 APP_DIR  := .
 TARGET   := main
-INCLUDE  := -I./include/
+INCLUDE  := -I./include -I./externals
 SRC      :=                     			\
    $(wildcard ./src/*.cpp)      			\
 
@@ -17,7 +17,7 @@ all: build $(APP_DIR)/$(TARGET)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -MMD -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(INCLUDE2) -c $< -MMD -o $@
 
 $(APP_DIR)/$(TARGET): $(OBJECTS)
 	@mkdir -p $(@D)

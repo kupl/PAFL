@@ -9,8 +9,10 @@ RUN apt-get update \
 
 WORKDIR /opt/pafl
 ENV PATH="/opt/pafl/bin:${PATH}"
-COPY *.cpp *.h *.hpp Makefile ./
-COPY rapidjson ./rapidjson/
+COPY docker/config docker/methods Makefile ./
+COPY include ./include/
+COPY src ./src/
+COPY externals ./externals/
 RUN make \
     && mkdir -p /opt/pafl/bin \
     && cp main /opt/pafl/bin/pafl
@@ -18,4 +20,3 @@ RUN make \
 RUN mkdir --mode=777 /workspace
 WORKDIR /workspace
 CMD ["/bin/bash"]
-
