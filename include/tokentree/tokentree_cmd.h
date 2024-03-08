@@ -8,8 +8,6 @@
     #include <cstdio>
 #endif
 
-#include "type.h"
-
 
 namespace PAFL
 {

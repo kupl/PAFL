@@ -5,6 +5,11 @@
 #include <unordered_set>
 #include <list>
 #include <filesystem>
+#ifdef _WIN32
+#else
+    #include <unistd.h>
+    #include <limits.h>
+#endif
 
 
 class ArgParser
@@ -20,6 +25,6 @@ public:
 private:
     std::unordered_map<std::string, std::string> _next;
     std::unordered_set<std::string> _set;
-    const std::filesystem::path _directory_path;
+    std::filesystem::path _directory_path;
 };
 #endif

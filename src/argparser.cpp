@@ -1,10 +1,15 @@
 #include "argparser.h"
 
 ArgParser::ArgParser(int argc, char *argv[]) :
-    _directory_path(std::filesystem::path(argv[0]).parent_path().parent_path())
+    _directory_path(std::filesystem::absolute(argv[0]).parent_path().parent_path())
 {
-    std::list<std::string> prev;
+    // Set directoray path
+    char buffer[PATH_MAX];
+    readlink("/proc/self/exe", buffer, PATH_MAX);
+    _directory_path = std::filesystem::path(buffer).parent_path().parent_path();
 
+    // Parse arguments
+    std::list<std::string> prev;
     for (int i = 1; i != argc; i++) {
 
         std::string arg(argv[i]);
