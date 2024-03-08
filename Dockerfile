@@ -7,17 +7,12 @@ RUN apt-get update \
         vim \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/list/*
 
-WORKDIR /opt/pafl
-ENV PATH="/opt/pafl/bin:${PATH}"
+RUN mkdir --mode=777 /workspace
+WORKDIR /workspace/pafl
+ENV PATH="/workspace/pafl/bin:${PATH}"
 COPY ./docker/config ./docker/methods Makefile ./
 COPY include ./include/
 COPY src ./src/
 COPY externals ./externals/
-#RUN make release \
-#    && mkdir -p /opt/pafl/bin \
-#    && cp main  /opt/pafl/bin/pafl
-
-RUN mkdir --mode=777 /workspace
-WORKDIR /workspace
 RUN make release
 CMD ["/bin/bash"]
