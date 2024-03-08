@@ -21,8 +21,31 @@ docker run --rm -it -v $(pwd):/workspace pafl
 | `-v $(pwd):/workspace` | mount `$(pwd)` in host machine to `/workspace` in container |
 | `pafl`                 | create a container from the `pafl` image                    |
 
-
 ### example cmd
 ```sh
 pafl -p example -l cpp -m ochiai,dstar,barinel -v 1-3 -d ./example/example -t ./example/test_example -i ./example/oracle --pafl
 ```
+
+
+
+
+
+
+## BugsCpp
+
+### BugsCpp installation
+```sh
+git clone https://github.com/Suresoft-GLaDOS/bugscpp.git data/bugscpp
+cd data/bugscpp; make install; cd ..; cd ..
+```
+
+### Project checkout
+'''sh
+sh data/test_<PROJECT>/checkout.sh
+'''
+
+### Run PAFL
+[Run docker](###docker-run)
+'''sh
+sh /workspace/pafl/data/test_<PROJECT>/run.sh
+'''

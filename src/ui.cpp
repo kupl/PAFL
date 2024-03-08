@@ -125,7 +125,7 @@ void UI::_readIn()
         }
     }
 
-    {// --version | -v [V1],[V2]-[V3]
+    {// --version | -v <V1>,<V2>-<V3>
         auto arg = _parser[{"-v", "--version"}];
         _assert(!arg.empty(), "Version is missing");
 
@@ -184,15 +184,15 @@ void UI::_readIn()
     /*
         Path options
     */ 
-    // --project-dir | -d [PATH]
+    // --project-dir | -d <PATH>
     if (_parser.contains({"-d", "--project-dir"}))
         _project_path = _parser[{"-d", "--project-dir"}];
 
-    // --testsuite | -s [PATH]
+    // --testsuite | -s <PATH>
     if (_parser.contains({"-t", "--testsuite"}))
         _testsuite_path = _parser[{"-t", "--testsuite"}];
     
-    // --fault-info | -i [PATH]
+    // --fault-info | -i <PATH>
     if (_parser.contains({"-i", "--fault-info"}))
         _oracle_path = _parser[{"-i", "--fault-info"}];
 
