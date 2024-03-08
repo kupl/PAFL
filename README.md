@@ -45,7 +45,7 @@ sh data/test_<PROJECT>/checkout.sh
 ```
 
 ### Run PAFL
-[After running Docker,](#docker-run)
+[After running Docker,](#docker)
 ```sh
 sh /workspace/pafl/data/test_<PROJECT>/run.sh
 ```
