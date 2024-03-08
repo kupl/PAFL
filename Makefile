@@ -17,7 +17,7 @@ all: build $(APP_DIR)/$(TARGET)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) $(INCLUDE2) -c $< -MMD -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -MMD -o $@
 
 $(APP_DIR)/$(TARGET): $(OBJECTS)
 	@mkdir -p $(@D)
