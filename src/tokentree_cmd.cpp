@@ -4,6 +4,13 @@ namespace PAFL
 {
 namespace Command
 {
+std::string dumpTokens(const char* file)
+{
+    return std::string("clang++ -fsyntax-only -Xclang -dump-tokens ") + file + " 2>&1";
+}
+
+
+
 #ifdef _WIN32
 #else
     std::string exec(const char* cmd)

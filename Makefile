@@ -3,8 +3,8 @@ CXXFLAGS := -std=c++20
 LDFLAGS  := 
 BUILD    := ./build
 OBJ_DIR  := $(BUILD)/obj
-APP_DIR  := .
-TARGET   := main
+APP_DIR  := bin
+TARGET   := pafl
 INCLUDE  := -I./include -I./externals
 SRC      :=                     			\
    $(wildcard ./src/*.cpp)      			\

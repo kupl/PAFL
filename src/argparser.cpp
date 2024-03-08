@@ -1,7 +1,7 @@
 #include "argparser.h"
 
 ArgParser::ArgParser(int argc, char *argv[]) :
-    _directory_path(std::filesystem::path(argv[0]).parent_path())
+    _directory_path(std::filesystem::path(argv[0]).parent_path().parent_path())
 {
     std::list<std::string> prev;
 

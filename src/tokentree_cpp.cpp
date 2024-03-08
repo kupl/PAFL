@@ -2,7 +2,7 @@
 
 namespace PAFL
 {
-TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_ptr<TokenTree::Matcher> matcher) :
+TokenTreeCpp::TokenTreeCpp(const fs::path& src_file, const fs::path& bin, std::shared_ptr<TokenTree::Matcher> matcher) :
     TokenTree()
 {
     // Tokenize
@@ -12,7 +12,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
     std::cout << src_file << '\n';
 
     { // From token list to token tree
-        auto raw_stream(_getRawStream(src_file, matcher));
+        auto raw_stream(_getRawStream(src_file, bin, matcher));
         for (auto& token : raw_stream) {
             
             Token* tok = &token;
@@ -45,7 +45,7 @@ TokenTreeCpp::TokenTreeCpp(const std::filesystem::path& src_file, std::shared_pt
 
 
 
-void TokenTreeCpp::_eraseInclude(const std::filesystem::path& path)
+void TokenTreeCpp::_eraseInclude(const fs::path& path, const fs::path& bin)
 {
     /*
     state : 0-11
@@ -120,7 +120,7 @@ void TokenTreeCpp::_eraseInclude(const std::filesystem::path& path)
     }
 
     // Write modified cpp file
-    std::ofstream ofs(Command::TEMPORARY_CPP);
+    std::ofstream ofs(bin / Command::TEMPORARY_CPP);
     ofs.write(buf, size);
     ofs.close();
     std::free(buf);
@@ -128,13 +128,14 @@ void TokenTreeCpp::_eraseInclude(const std::filesystem::path& path)
 
 
 
-std::list<Token> TokenTreeCpp::_getRawStream(const std::filesystem::path& path, std::shared_ptr<TokenTree::Matcher> matcher) const
+std::list<Token> TokenTreeCpp::_getRawStream(const fs::path& path, const fs::path& bin, std::shared_ptr<TokenTree::Matcher> matcher) const
 {
     // Erase header info
-    _eraseInclude(path);
+    _eraseInclude(path, bin);
     // clang++ dump-tokens
-    std::string buffer(Command::exec(Command::DUMP_COMMAND));
-    std::remove(Command::TEMPORARY_CPP);
+    auto cpp(bin / Command::TEMPORARY_CPP);
+    std::string buffer(Command::exec(Command::dumpTokens(cpp.c_str()).c_str()));
+    std::remove(cpp.c_str());
 
     // Tokenize
     std::list<Token> stream;

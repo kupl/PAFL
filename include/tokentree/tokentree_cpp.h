@@ -11,11 +11,11 @@ namespace PAFL
 class TokenTreeCpp : public TokenTree
 {
 public:
-    TokenTreeCpp(const std::filesystem::path& src_file, std::shared_ptr<TokenTree::Matcher> matcher);
+    TokenTreeCpp(const fs::path& src_file, const fs::path& bin, std::shared_ptr<TokenTree::Matcher> matcher);
 
 private:
-    std::list<Token> _getRawStream(const std::filesystem::path& path, std::shared_ptr<TokenTree::Matcher> matcher) const;
-    static void _eraseInclude(const std::filesystem::path& path);
+    std::list<Token> _getRawStream(const fs::path& path, const fs::path& bin, std::shared_ptr<TokenTree::Matcher> matcher) const;
+    static void _eraseInclude(const fs::path& path, const fs::path& bin);
 };
 }
 #endif
