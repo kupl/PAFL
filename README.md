@@ -40,12 +40,12 @@ cd data/bugscpp; make install; cd ..; cd ..
 ```
 
 ### Project checkout
-'''sh
+```sh
 sh data/test_<PROJECT>/checkout.sh
-'''
+```
 
 ### Run PAFL
-[Run docker](###docker-run)
-'''sh
+[After running Docker,](###docker-run)
+```sh
 sh /workspace/pafl/data/test_<PROJECT>/run.sh
-'''
+```
