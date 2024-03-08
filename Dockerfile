@@ -8,7 +8,7 @@ RUN apt-get update \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/list/*
 
 WORKDIR /opt/pafl
-ENV PATH="/workspace/pafl/bin:${PATH}"
+ENV PATH="/opt/pafl/bin:${PATH}"
 COPY ./docker/config ./docker/methods Makefile ./
 COPY include ./include/
 COPY src ./src/
