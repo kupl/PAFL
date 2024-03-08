@@ -17,7 +17,8 @@ RUN make release
 
 RUN mkdir --mode=777 /workspace
 WORKDIR /workspace
-RUN mkdir --mode=777 coverage log
+RUN mkdir --mode=777 coverage log cache
 RUN ln -s /workspace/coverage /opt/pafl/coverage
 RUN ln -s /workspace/log /opt/pafl/log
+RUN ln -s /workspace/cache /opt/pafl/cache
 CMD ["/bin/bash"]
