@@ -13,9 +13,9 @@ COPY ./docker/config ./docker/methods Makefile ./
 COPY include ./include/
 COPY src ./src/
 COPY externals ./externals/
-RUN make \
+RUN make release \
     && mkdir -p /opt/pafl/bin \
-    && cp main /opt/pafl/bin/pafl
+    && cp main  /opt/pafl/bin/pafl
 
 RUN mkdir --mode=777 /workspace
 WORKDIR /workspace
