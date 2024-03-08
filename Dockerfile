@@ -9,8 +9,7 @@ RUN apt-get update \
 
 WORKDIR /opt/pafl
 ENV PATH="/opt/pafl/bin:${PATH}"
-COPY ./docker/* ./
-COPY Makefile ./
+COPY ["docker/config", "docker/methods", "Makefile", "./"]
 COPY include ./include/
 COPY src ./src/
 COPY externals ./externals/
