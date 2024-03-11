@@ -40,7 +40,7 @@ make -c data/bugscpp install
 ```
 
 ### Coverage download
-[cpp-peglib](), [cppcheck](), [cppcheck](), [cppcheck](), [cppcheck](), [cppcheck]()
+[cpp-peglib](), [cppcheck](), [Exiv2](), [libchewing](), [libxml2](), [PROJ](), [OpenSSL](), [yaml-cpp](), [The Fuck](), [FastAPI](), [spaCy](), [youtube-dl]()
 
 ### Project checkout
 ```sh
@@ -50,5 +50,10 @@ sh data/<PROJECT>/checkout.sh
 ### Run PAFL
 [After running Docker,](#docker)
 ```sh
-sh /workspace/data/<PROJECT>/run.sh
+sh data/<PROJECT>/run.sh
+```
+
+### Evaluation
+```sh
+sh data/<PROJECT>/cov_eval.sh
 ```

@@ -23,6 +23,7 @@ version_map['spacy'] = interval(7, 1)
 version_map['youtube-dl'] = interval(35,31)+interval(10,8)+[30,7,29,28,6,27,26,5,25,24]+interval(23,18)+[3,16,2,15,1,13,12,11]
 
 directory = os.path.abspath(os.path.dirname(os.path.dirname(sys.argv[0])))
+print(directory)
 
 
 
@@ -50,14 +51,17 @@ def getTime(method: str, proj: str, index: int):
 
 def main():
     proj = sys.argv[1].strip()
+    oracle_path = sys.argv[3].strip()
+    save_dir = sys.argv[4].strip()
     for method in sys.argv[2].strip().split(','):
+
         if proj not in version_map.keys():
             print(f"{proj} not in version_map")
             continue
         version = version_map[proj]
         
         oracle = None
-        with open(os.path.join(directory, f"data/{proj}/{proj}.json")) as f:
+        with open(oracle_path) as f:
             oracle = json.load(f)
 
         workbook = Workbook()
@@ -79,10 +83,9 @@ def main():
             sheet.cell(idx + 2, 4, cov['total'])
             sheet.cell(idx + 2, 5, getTime(method, proj, idx + 1))
 
-        wb_dir = os.path.join(directory, f"data/{proj}/eval")
-        if not os.path.exists(wb_dir):
-            os.mkdir(wb_dir)
-        workbook.save(os.path.join(wb_dir, f"{method}.xlsx"))
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        workbook.save(os.path.join(save_dir, f"{method}.xlsx"))
 
 
 if __name__ == '__main__':
