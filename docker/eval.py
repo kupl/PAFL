@@ -51,7 +51,6 @@ def getTime(method: str, proj: str, index: int):
 def main():
     proj = sys.argv[1].strip()
     for method in sys.argv[2].strip().split(','):
-        method = prefix + method
         if proj not in version_map.keys():
             print(f"{proj} not in version_map")
             continue

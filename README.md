@@ -36,8 +36,11 @@ pafl -p example -l cpp -m ochiai,dstar,barinel -v 1-3 -d ./example/example -t ./
 ### BugsCpp installation
 ```sh
 git clone https://github.com/Suresoft-GLaDOS/bugscpp.git data/bugscpp
-cd data/bugscpp; make install; cd ..; cd ..
+make -c data/bugscpp install
 ```
+
+### Coverage download
+[cpp-peglib](), [cppcheck](), [cppcheck](), [cppcheck](), [cppcheck](), [cppcheck]()
 
 ### Project checkout
 ```sh
