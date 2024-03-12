@@ -45,7 +45,7 @@ git clone https://github.com/soarsmu/BugsInPy data/BugsInPy
 ```
 
 ### Coverage download
-[cpp-peglib](), [cppcheck](), [Exiv2](), [libchewing](), [libxml2](), [PROJ](), [OpenSSL](), [yaml-cpp](), [The Fuck](), [FastAPI](), [spaCy](), [youtube-dl]()
+[cpp-peglib](https://figshare.com/s/65499d050db11de99b12), [cppcheck](https://figshare.com/s/348a74c2030d400ae277), [Exiv2](https://figshare.com/s/1b3c2268ded5062b991f), [libchewing](https://figshare.com/s/feb7390e029c62fde5ea), [libxml2](https://figshare.com/s/13a02ae2827fcbc50940), [PROJ](https://figshare.com/s/37e71b9e8d759d17ea1d), [OpenSSL](https://figshare.com/s/37e71b9e8d759d17ea1d), [yaml-cpp](https://figshare.com/s/bf13602c72f75a93ed7c), [The Fuck](https://figshare.com/s/cb08995eef9a15590646), [FastAPI](https://figshare.com/s/cb08995eef9a15590646), [spaCy](https://figshare.com/s/4a05ae78a1e83ee7dbf5), [youtube-dl](https://figshare.com/s/bb836f5ed0eef11b1b8e)
 
 ### Project checkout
 ```sh
