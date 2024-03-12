@@ -31,7 +31,7 @@ private:
     std::unique_ptr<BaseLogger> makeLogger();
 
     void buildCppTree(TokenTree*& tree, const fs::path& file)       { tree = new TokenTreeCpp(file, _ui.getDirectoryPath() / "bin", _matcher); }
-    void buildPyTree(TokenTree*& tree, const fs::path& file)        { tree = new TokenTreePy(file, _matcher, _ui.getDirectoryPath() / "pytree.py"); }
+    void buildPyTree(TokenTree*& tree, const fs::path& file)        { tree = new TokenTreePy(file, _ui.getDirectoryPath() / "bin", _matcher, _ui.getDirectoryPath() / "pytree.py"); }
 
     void localizeWithBase(FLModel& model, time_vector& time_vec);
     void localizeWithPAFL(FLModel& model, time_vector& time_vec);

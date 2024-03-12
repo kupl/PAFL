@@ -11,7 +11,7 @@ RUN apt-get update \
 
 WORKDIR /opt/pafl
 ENV PATH="/opt/pafl/bin:${PATH}"
-COPY docker/* Makefile ./
+COPY docker/* Makefile pytree.py ./
 COPY include ./include/
 COPY src ./src/
 COPY externals ./externals/

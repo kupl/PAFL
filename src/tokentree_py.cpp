@@ -2,21 +2,22 @@
 
 namespace PAFL
 {
-TokenTreePy::TokenTreePy(const fs::path& src_file, std::shared_ptr<TokenTree::Matcher> matcher, const fs::path& pytree_exe) :
+TokenTreePy::TokenTreePy(const fs::path& src_file, const fs::path& bin, std::shared_ptr<TokenTree::Matcher> matcher, const fs::path& pytree_exe) :
     TokenTree(), _matcher(matcher)
 {
     // Make python AST
     std::cout << src_file << '\n';
-    std::string cmd = "python3 " + pytree_exe.string() + " " + src_file.string() + " " + Command::TEMPORARY_JSON;
+    fs::path temp_json(bin / Command::TEMPORARY_JSON);
+    std::string cmd = "python3 " + pytree_exe.string() + " " + src_file.string() + " " + temp_json.c_str();
     std::system(cmd.c_str());
     
     { // Make Tree
-        const auto doc(rapidjson::parseDoc(Command::TEMPORARY_JSON));
+        const auto doc(rapidjson::parseDoc(temp_json.c_str()));
         const auto& module = doc["module"].GetArray();
         PyPda pda(_root.get());
         _switchObject(pda, module);
     }
-    std::remove(Command::TEMPORARY_JSON);
+    std::remove(temp_json.c_str());
     setIndexr();
 }
 

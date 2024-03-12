@@ -31,12 +31,17 @@ pafl -p example -l cpp -m ochiai,dstar,barinel -v 1-3 -d ./example/example -t ./
 
 
 
-## BugsCpp
+## Benchmark
 
 ### BugsCpp installation
 ```sh
 git clone https://github.com/Suresoft-GLaDOS/bugscpp.git data/bugscpp
 make -c data/bugscpp install
+```
+
+### BugsInPy installation
+```sh
+git clone https://github.com/soarsmu/BugsInPy data/BugsInPy
 ```
 
 ### Coverage download
@@ -54,6 +59,7 @@ sh data/<PROJECT>/run.sh
 ```
 
 ### Evaluation
+[After running Docker,](#docker)
 ```sh
 sh data/<PROJECT>/cov_eval.sh
 ```

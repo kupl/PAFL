@@ -19,7 +19,7 @@ private:
     const char* TYPE_STMT = "STMT";
 
 public:
-    TokenTreePy(const fs::path& src_file, std::shared_ptr<TokenTree::Matcher> matcher, const fs::path& pytree_exe);
+    TokenTreePy(const fs::path& src_file, const fs::path& bin, std::shared_ptr<TokenTree::Matcher> matcher, const fs::path& pytree_exe);
 
 private:
     using Array = rapidjson::GenericArray<true, rapidjson::Value>;
