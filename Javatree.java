@@ -16,27 +16,28 @@ public class Javatree
             st.eolIsSignificant(true);
 
             // If whitespace is not to be discarded, make this call
-            st.ordinaryChars(0, ' ');
+            // st.ordinaryChars(0, ' ');
 
             // These calls caused comments to be discarded
             st.slashSlashComments(true);
             st.slashStarComments(true);
 
-            int token = st.nextToken();
-            while (token != StreamTokenizer.TT_EOF) {
-
-                token = st.nextToken();
+            for (int token = st.nextToken(); token != StreamTokenizer.TT_EOF; token = st.nextToken())
                 switch (token) {
                     
                 // A number was found; the value is in nval
                 case StreamTokenizer.TT_NUMBER:
                     double num = st.nval;
+                    System.out.print(st.lineno());
+                    System.out.print(' ');
                     System.out.println(num);
                     break;
                 
                 // A word was found; the value is in sval
                 case StreamTokenizer.TT_WORD:
                     String word = st.sval;
+                    System.out.print(st.lineno());
+                    System.out.print(' ');
                     System.out.println(word);
                     break;
 
@@ -60,10 +61,15 @@ public class Javatree
                 
                 // A regular character was found; the value is the token itself
                 default:
-                    char ch = (char) st.ttype;
+                    char ch = (char)st.ttype;
+                    if (ch != ' ' && ch != '\n' && ch != '\t') {
+                        
+                        System.out.print(st.lineno());
+                        System.out.print(' ');
+                        System.out.println(ch);
+                    }
                     break;
                 }
-            }
             rd.close();
         }
         catch (IOException e) {}
