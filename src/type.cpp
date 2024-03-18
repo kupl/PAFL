@@ -1,4 +1,6 @@
 #include "type.h"
+#include \
+ <iostream>
 
 namespace PAFL
 {

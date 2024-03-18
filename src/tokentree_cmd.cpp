@@ -6,7 +6,7 @@ namespace Command
 {
 std::string dumpTokens(const char* file)
 {
-    return std::string("clang++ -fsyntax-only -Xclang -dump-tokens ") + file + " 2>&1";
+    return std::string("clang++ -fsyntax-only -dump-tokens ") + file + " 2>&1";
 }
 
 

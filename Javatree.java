@@ -5,7 +5,7 @@ import java.io.StreamTokenizer;
 public class Javatree
 {
     public static void main(String[] args) throws Exception {
-        try {/*from w  ww .  jav a  2s .co m*/
+        try {
 
             FileReader rd = new FileReader("Javatree.java");
             StreamTokenizer st = new StreamTokenizer(rd);
@@ -14,9 +14,7 @@ public class Javatree
             st.parseNumbers();
             st.wordChars('_', '_');
             st.eolIsSignificant(true);
-
-            // If whitespace is not to be discarded, make this call
-            // st.ordinaryChars(0, ' ');
+            st.ordinaryChar('.');
 
             // These calls caused comments to be discarded
             st.slashSlashComments(true);
@@ -27,10 +25,6 @@ public class Javatree
                     
                 // A number was found; the value is in nval
                 case StreamTokenizer.TT_NUMBER:
-                    double num = st.nval;
-                    System.out.print(st.lineno());
-                    System.out.print(' ');
-                    System.out.println(num);
                     break;
                 
                 // A word was found; the value is in sval
@@ -62,7 +56,7 @@ public class Javatree
                 // A regular character was found; the value is the token itself
                 default:
                     char ch = (char)st.ttype;
-                    if (ch != ' ' && ch != '\n' && ch != '\t') {
+                    if (ch != '\n' && ch != '\t') {
                         
                         System.out.print(st.lineno());
                         System.out.print(' ');

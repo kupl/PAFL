@@ -149,8 +149,8 @@ public:
     using List = std::list<Token*>;
 
 public:
-    Token(Type type, line_t loc, const std::string& name) :
-        type(type), loc(loc), name(name), root(nullptr), parent(nullptr) {}
+    Token(const std::string& name, line_t loc) :
+        name(name), loc(loc), root(nullptr), parent(nullptr) {}
     
 public:
     // Token Relation
@@ -162,9 +162,8 @@ public:
     std::shared_ptr<Token::List> successor;
 
     // Token Info
-    Type type;
-    line_t loc;
-    std::string name;
+    const std::string name;
+    const line_t loc;
 };
 
 // branch -> IF | CATCH | FOR | SWITCH | WHILE | ELSE

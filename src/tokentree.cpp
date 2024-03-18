@@ -137,7 +137,7 @@ void TokenTree::log(const fs::path& path) const
             ofs << tok.loc << " :\t" << '"' << tok.name << "\"\n";
 
             // Neighbor
-            ofs << "\t\t- NEIGH  = { ";
+            ofs << "\t\t- NEIGHBOR  = { ";
             for (auto ptr : *tok.neighbors)
                 ofs << ptr->name << " , ";
             ofs << "}\n";
