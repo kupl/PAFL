@@ -13,7 +13,7 @@ public class Javatree
             // Prepare the tokenizer for Java-style tokenizing rules
             st.parseNumbers();
             st.wordChars('_', '_');
-            st.eolIsSignificant(true);
+            //st.eolIsSignificant(true);
             st.ordinaryChar('.');
 
             // These calls caused comments to be discarded
@@ -45,10 +45,6 @@ public class Javatree
                     String squoteVal = st.sval;
                     break;
 
-                // End of line character found
-                case StreamTokenizer.TT_EOL:
-                    break;
-
                 // End of file has been reached
                 case StreamTokenizer.TT_EOF:
                     break;
@@ -56,12 +52,9 @@ public class Javatree
                 // A regular character was found; the value is the token itself
                 default:
                     char ch = (char)st.ttype;
-                    if (ch != '\n' && ch != '\t') {
-                        
-                        System.out.print(st.lineno());
-                        System.out.print(' ');
-                        System.out.println(ch);
-                    }
+                    System.out.print(st.lineno());
+                    System.out.print(' ');
+                    System.out.println(ch);
                     break;
                 }
             rd.close();

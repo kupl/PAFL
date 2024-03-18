@@ -65,22 +65,22 @@ class ASTIterator:
         match type(node):
 
             case ast.FunctionDef:
-                self.caseDef(node, [['identifier', node.name, node.lineno]])
+                self.caseDef(node, [[node.name, node.lineno]])
 
             case ast.AsyncFunctionDef:
-                self.caseDef(node, [['identifier', 'async', node.lineno], ['identifier', node.name, node.lineno]])
+                self.caseDef(node, [['async', node.lineno], [node.name, node.lineno]])
 
             case ast.ClassDef:
-                obj = self.makeObject('CLASS', [['identifier', node.name, node.lineno]])
+                obj = self.makeObject('CLASS', [[node.name, node.lineno]])
                 self.resolveThen(obj, node.body)
 
             case ast.Return:
-                tokens = [['return', 'return', node.lineno]]
+                tokens = [['return', node.lineno]]
                 self.visitExpr(node.value, tokens)
                 self.makeObject('STMT', tokens)
 
             case ast.Delete:
-                tokens = [['delete', 'del', node.lineno]]
+                tokens = [['del', node.lineno]]
                 for expr in node.targets:
                     self.visitExpr(expr, tokens)
                 self.makeObject('STMT', tokens)
@@ -110,25 +110,25 @@ class ASTIterator:
                 self.makeObject('STMT', tokens)
 
             case ast.For:
-                self.caseFor(node, [['for', 'for', node.lineno]])
+                self.caseFor(node, [['for', node.lineno]])
 
             case ast.AsyncFor:
-                self.caseFor(node, [['identifier', 'async', node.lineno], ['for', 'for', node.lineno]])
+                self.caseFor(node, [['async', node.lineno], ['for', node.lineno]])
 
             case ast.While:
-                self.caseIf(node, [['while', 'while', node.lineno]])
+                self.caseIf(node, [['while', node.lineno]])
 
             case ast.If:
-                self.caseIf(node, [['if', 'if', node.lineno]])
+                self.caseIf(node, [['if', node.lineno]])
 
             case ast.With:
-                self.caseWith(node, [['identifier', 'with', node.lineno]])
+                self.caseWith(node, [['with', node.lineno]])
 
             case ast.AsyncWith:
-                self.caseWith(node, [['identifier', 'async', node.lineno], ['with', 'with', node.lineno]])
+                self.caseWith(node, [['async', node.lineno], ['with', node.lineno]])
 
             case ast.Match:
-                tokens = [['match', 'match', node.lineno]]
+                tokens = [['match', node.lineno]]
                 self.visitExpr(node.subject, tokens)
                 obj = self.makeObject('BRANCH', tokens)
 
@@ -139,15 +139,15 @@ class ASTIterator:
                 obj['else'] = list()
                     
             case ast.Raise:
-                tokens = [['throw', 'raise', node.lineno]]
+                tokens = [['raise', node.lineno]]
                 self.visitExpr(node.exc, tokens)
                 if node.cause is not None:
-                    tokens.append(['identifier', 'from', node.cause.lineno])
+                    tokens.append(['from', node.cause.lineno])
                 self.visitExpr(node.cause, tokens)
                 self.makeObject('STMT', tokens)
 
             case ast.Try:
-                self.makeObject('STMT', [['identifier', 'try', node.lineno]])
+                self.makeObject('STMT', [['try', node.lineno]])
                 self.resolveStmtList(node.body, self.tree_ref)
                 self.resolveHandlers(node.handlers, node.orelse)
                 self.resolveStmtList(node.finalbody, self.tree_ref)
@@ -156,29 +156,29 @@ class ASTIterator:
             #    pass
                 
             case ast.Assert:
-                tokens = [['identifier', 'assert', node.lineno]]
+                tokens = [['assert', node.lineno]]
                 self.visitExpr(node.test, tokens)
                 self.visitExpr(node.msg, tokens)
                 self.makeObject('STMT', tokens)
 
             case ast.Import:
-                self.caseImport(node, [['identifier', 'import', node.lineno]])
+                self.caseImport(node, [['import', node.lineno]])
 
             case ast.ImportFrom:
-                tokens = [] if node.module is None else [['identifier', 'from', node.lineno], ['identifier', node.module, node.lineno]]
-                tokens.append(['identifier', 'import', node.lineno])
+                tokens = [] if node.module is None else [['from', node.lineno], [node.module, node.lineno]]
+                tokens.append(['import', node.lineno])
                 self.caseImport(node, tokens)
 
             case ast.Global:
-                tokens = [['identifier', 'global', node.lineno]]
+                tokens = [['global', node.lineno]]
                 for name in node.names:
-                    tokens.append(['identifier', name, node.lineno])
+                    tokens.append([name, node.lineno])
                 self.makeObject('STMT', tokens)
 
             case ast.Nonlocal:
-                tokens = [['identifier', 'nonlocal', node.lineno]]
+                tokens = [['nonlocal', node.lineno]]
                 for name in node.names:
-                    tokens.append(['identifier', name, node.lineno])
+                    tokens.append([name, node.lineno])
                 self.makeObject('STMT', tokens)
 
             case ast.Expr:
@@ -187,11 +187,11 @@ class ASTIterator:
                 self.makeObject('STMT', tokens)
 
             case ast.Pass:
-                self.makeObject('STMT', [['identifier', 'pass', node.lineno]])
+                self.makeObject('STMT', [['pass', node.lineno]])
             case ast.Break:
-                self.makeObject('STMT', [['break', 'break', node.lineno]])
+                self.makeObject('STMT', [['break', node.lineno]])
             case ast.Continue:
-                self.makeObject('STMT', [['continue', 'continue', node.lineno]])
+                self.makeObject('STMT', [['continue', node.lineno]])
 
 
 
@@ -234,7 +234,7 @@ class ASTIterator:
                 self.visitExpr(node.operand, tokens)
 
             case ast.Lambda:
-                tokens.append(['identifier', 'lambda', node.lineno])
+                tokens.append(['lambda', node.lineno])
                 self.visitArguments(node.args, tokens)
                 self.visitExpr(node.body, tokens)
 
@@ -246,28 +246,28 @@ class ASTIterator:
                 self.visitExpr(node.orelse, tokens)
 
             case ast.Dict:
-                tokens.append(['identifier', 'dict', node.lineno])
+                tokens.append(['dict', node.lineno])
                 for key, value in zip(node.keys, node.values):
                     self.visitExpr(key, tokens)
                     self.visitExpr(value, tokens)
 
             case ast.Set:
-                tokens.append(['identifier', 'set', node.lineno])
+                tokens.append(['set', node.lineno])
                 for elt in node.elts:
                     self.visitExpr(elt, tokens)
 
             case ast.ListComp:
-                tokens.append(['identifier', 'list-comp', node.lineno])
+                tokens.append(['list-comp', node.lineno])
                 self.visitExpr(node.elt, tokens)
                 self.caseComp(node.elt.end_lineno, node.generators, tokens)
 
             case ast.SetComp:
-                tokens.append(['identifier', 'set-comp', node.lineno])
+                tokens.append(['set-comp', node.lineno])
                 self.visitExpr(node.elt, tokens)
                 self.caseComp(node.elt.end_lineno, node.generators, tokens)
 
             case ast.DictComp:
-                tokens.append(['identifier', 'dict-comp', node.lineno])
+                tokens.append(['dict-comp', node.lineno])
                 self.visitExpr(node.key, tokens)
                 self.visitExpr(node.value, tokens)
                 self.caseComp(node.value.end_lineno, node.generators, tokens)
@@ -277,16 +277,16 @@ class ASTIterator:
                 self.caseComp(node.elt.end_lineno, node.generators, tokens)
 
             case ast.Await:
-                tokens.append(['identifier', 'await', node.lineno])
+                tokens.append(['await', node.lineno])
                 self.visitExpr(node.value, tokens)
 
             case ast.Yield:
-                tokens.append(['identifier', 'yield', node.lineno])
+                tokens.append(['yield', node.lineno])
                 self.visitExpr(node.value, tokens)
 
             case ast.YieldFrom:
-                tokens.append(['identifier', 'yield', node.lineno])
-                tokens.append(['identifier', 'from', node.lineno])
+                tokens.append(['yield', node.lineno])
+                tokens.append(['from', node.lineno])
                 self.visitExpr(node.value, tokens)
 
             case ast.Compare:
@@ -301,7 +301,7 @@ class ASTIterator:
                     self.visitExpr(arg, tokens)
                 for keyword in node.keywords:
                     if keyword.arg is not None:
-                        tokens.append(['identifier', keyword.arg, keyword.lineno])
+                        tokens.append([keyword.arg, keyword.lineno])
                     self.visitExpr(keyword.value, tokens)
                     
             case ast.FormattedValue:
@@ -316,26 +316,26 @@ class ASTIterator:
 
             case ast.Attribute:
                 self.visitExpr(node.value, tokens)
-                tokens.append(['identifier', node.attr, node.end_lineno])
+                tokens.append([node.attr, node.end_lineno])
 
             case ast.Subscript:
                 self.visitExpr(node.value, tokens)
                 self.visitExpr(node.slice, tokens)
 
             case ast.Starred:
-                tokens.append(['identifier', 'starred', node.lineno])
+                tokens.append(['starred', node.lineno])
                 self.visitExpr(node.value, tokens)
 
             case ast.Name:
-                tokens.append(['identifier', node.id, node.lineno])
+                tokens.append([node.id, node.lineno])
 
             case ast.List:
-                tokens.append(['identifier', 'list', node.lineno])
+                tokens.append(['list', node.lineno])
                 for elt in node.elts:
                     self.visitExpr(elt, tokens)
 
             case ast.Tuple:
-                tokens.append(['identifier', 'tuple', node.lineno])
+                tokens.append(['tuple', node.lineno])
                 for elt in node.elts:
                     self.visitExpr(elt, tokens)
 
@@ -374,7 +374,7 @@ class ASTIterator:
                 for p in pattern.patterns:
                     self.visitPattern(p, tokens)
                 for attr, p in zip(pattern.kwd_attrs, pattern.kwd_patterns):
-                    tokens.append(['identifier', attr, p.lineno])
+                    tokens.append([attr, p.lineno])
                     self.visitPattern(p, tokens)
 
             case ast.MatchStar:
@@ -384,9 +384,9 @@ class ASTIterator:
                 self.visitPattern(pattern.pattern, tokens)
                 if pattern.name is None:
                     if pattern.pattern is None:
-                        tokens.append(['identifier', '_', pattern.end_lineno])
+                        tokens.append(['_', pattern.end_lineno])
                 else:
-                    tokens.append(['identifier', pattern.name, pattern.end_lineno])
+                    tokens.append([pattern.name, pattern.end_lineno])
                 
             case ast.MatchOr:
                 for p in pattern.patterns[:-1]:
@@ -398,15 +398,15 @@ class ASTIterator:
 
     def visitArguments(self, args: ast.arguments, tokens: list[list[str | int]]):
         for parg in args.posonlyargs:
-            tokens.append(['identifier', parg.arg, parg.lineno])
+            tokens.append([parg.arg, parg.lineno])
         for arg in args.args:
-            tokens.append(['identifier', arg.arg, arg.lineno])
+            tokens.append([arg.arg, arg.lineno])
         if args.vararg is not None:
-            tokens.append(['identifier', args.vararg.arg, args.vararg.lineno])
+            tokens.append([args.vararg.arg, args.vararg.lineno])
         for kwonlyarg in args.kwonlyargs:
-            tokens.append(['identifier', kwonlyarg.arg, kwonlyarg.lineno])
+            tokens.append([kwonlyarg.arg, kwonlyarg.lineno])
         if args.kwarg is not None:
-            tokens.append(['identifier', args.kwarg.arg, args.kwarg.lineno])
+            tokens.append([args.kwarg.arg, args.kwarg.lineno])
 
 
     
@@ -449,18 +449,18 @@ class ASTIterator:
 
 
     def caseImport(self, node: ast.stmt, tokens: list[list[str | int]]):
-        tokens = [['identifier', 'import', node.lineno]]
+        tokens = [['import', node.lineno]]
         for name in node.names:
-            tokens.append(['identifier', name.name, name.lineno])
+            tokens.append([name.name, name.lineno])
             if name.asname is not None:
-                tokens.append(['identifier', name.asname, name.lineno])
+                tokens.append([name.asname, name.lineno])
         self.makeObject('STMT', tokens)
 
 
     def caseComp(self, lineno: int, generators: list[ast.comprehension], tokens: list[list[str | int]]):
         for comp in generators:
             if comp.is_async:
-                tokens.append(['identifier', 'async', lineno])
+                tokens.append(['async', lineno])
             tokens.append(['for', 'for-comp', lineno])
             self.visitExpr(comp.target, tokens)
             self.visitExpr(comp.iter, tokens)
@@ -517,7 +517,7 @@ class ASTIterator:
                 tokens = [['catch', 'except', handler.lineno]]
                 self.visitExpr(handler.type, tokens)
                 if handler.name is not None:
-                    tokens.append(['identifier', handler.name, handler.lineno])
+                    tokens.append([handler.name, handler.lineno])
                 obj = self.makeObject('BRANCH', tokens)
                 self.resolveThen(obj, handler.body)
 

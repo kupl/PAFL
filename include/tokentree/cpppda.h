@@ -10,15 +10,167 @@ namespace PAFL
 class CppPda
 {
 public:
-    CppPda(Token* root);
-    void trans(Token* tok, Token* future);
-    bool isTerminated(const Token* root) const;
+    enum class Type
+    {
+        // identifier
+        IDENTIFIER,
 
+        // branch
+        IF,
+        CATCH,
+        FOR,
+        SWITCH,
+        WHILE,
+        // else
+        ELSE,
+        
+        // switch
+        CASE,
+        DEFAULT,
+        // trial & error
+        DO,
+        TRY,
+
+        // class
+        ENUM,
+        CLASS,
+        STRUCT,
+        UNION,
+
+        // outer
+        OPERATOR,
+        NAMESPACE,
+
+        // parenthesis
+        L_PAREN,    // (
+        R_PAREN,    // )
+        L_BRACE,    // {
+        R_BRACE,    // }
+        L_SQUARE,   // [
+        R_SQUARE,   // ]
+
+        // semicolon 
+        SEMI,   // ;
+        // colon
+        COLON,  // :
+
+        // bit operator
+        AMP,            // address operator
+        AMPEQUAL,
+        PIPE,
+        PIPEEQUAL,
+        CARET,
+        CARETEQUAL,
+        TILDE,
+
+        // shift operator
+        LESSLESS,
+        LESSLESSEQUAL,
+        GREATERGREATER,
+        GREATERGREATEREQUAL,
+
+        // boolean operator
+        AMPAMP,
+        EXCLAIM,
+        EXCLAIMEQUAL,
+        LESS,
+        LESSEQUAL,
+        GREATER,
+        GREATEREQUAL,
+        PIPEPIPE,
+        EQUALEQUAL,
+        IN,
+        IS,
+
+        // arithmetic operator
+        STAR,           // pointer operator
+        STAREQUAL,
+        STARSTAR,
+        PLUS,
+        PLUSPLUS,
+        PLUSEQUAL,
+        MINUS,
+        MINUSMINUS,
+        MINUSEQUAL,
+        SLASH,
+        SLASHEQUAL,
+        SLASHSLASH,
+        SLASHSLASHEQUAL,
+        PERCENT,
+        PERCENTEQUAL,
+        MATMUL,
+        COLONEQUAL,
+
+        // jumping
+        BREAK,
+        CONTINUE,
+        RETURN,
+        //GOTO,
+        THROW,
+
+        // memory allocation
+        NEW,
+        DELETE,
+
+        // this
+        THIS,
+
+        // casting
+        CONST_CAST,
+        DYNAMIC_CAST,
+        REINTERPRET_CAST,
+        STATIC_CAST,
+
+        // otherwise
+        OTHERWISE,
+
+        // End Of File
+        eof,
+
+
+        // virtual root type
+        ROOT,
+        // virtual function type
+        FUNC,
+        // virtual line statement type
+        STMT,
+        // virtual lambda type
+        LAMBDA
+    };
+
+    class Matcher
+    {
+    public:
+        Matcher();
+        Token::Type match(const std::string& key) const { return _table.contains(key) ? _table.at(key) : Token::Type::OTHERWISE; }
+        std::string toString(const Token* token) const  { return token ? std::string("{ name: ") + token->name + ", loc: " + std::to_string(token->loc) + " }" : "NULL token"; }
+
+    private:
+        const std::unordered_map<std::string, Token::Type> _table;
+    };
+
+    // branch -> IF | CATCH | FOR | SWITCH | WHILE | ELSE
+    constexpr bool isBranch(Token::Type ttype)              { return Token::Type::IF <= ttype && ttype <= Token::Type::ELSE; }
+    // indepednet branch -> FOR | SWITCH | WHILE | ELSE
+    constexpr bool isIndependentBranch(Token::Type ttype)   { return Token::Type::FOR <= ttype && ttype <= Token::Type::ELSE; }
+    // depednet branch -> IF | CATCH
+    constexpr bool isDependentBranch(Token::Type ttype)     { return ttype == Token::Type::IF || ttype == Token::Type::CATCH; }
+    // class -> CLASS | STRUCT | UNION
+    constexpr bool isClass(Token::Type ttype)               { return Token::Type::CLASS <= ttype && ttype <= Token::Type::UNION; }
+    // ENUM | class
+    constexpr bool isEnumOrClass(Token::Type ttype)         { return Token::Type::ENUM <= ttype && ttype <= Token::Type::UNION; }
+    // DO | TRY
+    constexpr bool isTrialError(Token::Type ttype)          { return ttype == Token::Type::DO || ttype == Token::Type::TRY; }
 
 private:
     enum class _State { ROOT, FUNC, STMT, COND, THEN };
     enum class _Lambda { ROOT, OPERATOR, CAPTURE, ARGS_BEGIN, ARGS, BODY_BEGIN };
     enum class _Prefix { ROOT, ID, TBD };
+
+public:
+    CppPda(Token* root);
+    void trans(Token* tok, Token* future);
+    bool isTerminated(const Token* root) const;
 
 private:
     decltype(&CppPda::trans) _action[static_cast<size_t>(Token::Type::eof)];
