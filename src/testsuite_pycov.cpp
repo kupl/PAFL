@@ -2,23 +2,14 @@
 
 namespace PAFL
 {
-void TestSuitePycov::addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions)
+void TestSuitePycov::addTestCase(const rapidjson::Document& doc, bool is_successed, const string_set& extensions)
 {
-    const auto& json_files = d["files"].GetObject();
+    const auto& json_files = doc["files"].GetObject();
     size_t sizeof_files = json_files.MemberCount();
-    
-    // Reserve containers' capacity
-    if (!_is_initialized) {
-        
-        _file2index.reserve(sizeof_files + 32);
-        _index2file.reserve(sizeof_files + 32);
-        _line_param.reserve(sizeof_files + 32);
-        _is_initialized = true;
-    }
     is_successed ? _succ++ : _fail++;
 
     // Add test case
-    auto& tc_lines = _test_suite.emplace_back(test_case{std::list<std::pair<index_t, line_t>>(), is_successed}).lines;
+    auto& tc_lines = _total_test_case.emplace_back(TestCase{std::list<std::pair<index_t, line_t>>(), is_successed}).lines;
     
 
     for (auto& json_file : json_files) {
@@ -40,16 +31,16 @@ void TestSuitePycov::addTestCase(const rapidjson::Document& d, bool is_successed
             auto index_now = static_cast<index_t>(_index2file.size());
             _file2index.emplace(key, index_now);
             _index2file.emplace_back(key);
-            _line_param.emplace_back();
+            _param_container.emplace_back();
             
             for (auto& json_line : json_lines) {
                 
                 line_t line_now = json_line.GetUint();
                 tc_lines.emplace_back(index_now, line_now);
-                _ranking.push_back(ranking_info{ index_now, line_now, 0.0f, 0.0f, 0 });
+                _ranking.push_back(Ranking{ index_now, line_now, 0.0f, 0.0f, 0 });
 
-                auto val = is_successed ? param{ 1, 0, &*_ranking.rbegin() } : param{ 0, 1, &*_ranking.rbegin() };
-                _line_param[index_now].emplace(line_now, val);
+                auto val = is_successed ? Param{ 1, 0, &*_ranking.rbegin() } : Param{ 0, 1, &*_ranking.rbegin() };
+                _param_container[index_now].emplace(line_now, val);
             }
         }
         
@@ -60,18 +51,18 @@ void TestSuitePycov::addTestCase(const rapidjson::Document& d, bool is_successed
             index_t index_now = _file2index[key];
             tc_lines.emplace_back(index_now, line_now);
 
-            // line is not in _line_param
-            if (!_line_param[index_now].contains(line_now)) {
+            // line is not in _param_container
+            if (!_param_container[index_now].contains(line_now)) {
                 
-                auto& ptr = _ranking.emplace_back(ranking_info{ index_now, line_now, 0.0f, 0.0f, 0 });
-                auto val = is_successed ? param{ 1, 0, &*_ranking.rbegin() } : param{ 0, 1, &*_ranking.rbegin() };
-                _line_param[index_now].emplace(line_now, val);
+                auto& ptr = _ranking.emplace_back(Ranking{ index_now, line_now, 0.0f, 0.0f, 0 });
+                auto val = is_successed ? Param{ 1, 0, &*_ranking.rbegin() } : Param{ 0, 1, &*_ranking.rbegin() };
+                _param_container[index_now].emplace(line_now, val);
             }
 
-            // line is in _line_param
+            // line is in _param_container
             else {
 
-                auto& line = _line_param[index_now][line_now];
+                auto& line = _param_container[index_now][line_now];
                 is_successed ? line.Ncs++ : line.Ncf++;
             }
         }

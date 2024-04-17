@@ -2,9 +2,8 @@
 
 namespace PAFL
 {
-Predictor::TargetInfo Predictor::predict(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec)
+Predictor::TargetInfo Predictor::predict(const TestSuite::TotalTestCase& test_suite, const TokenTree::Vector& tkt_vec)
 {
-    static size_t debug = 0;
     count_t max_cnt = 1;
     std::unordered_map<std::string, count_t> counter;
     counter.reserve(_dimension.size() + 64);
@@ -40,9 +39,8 @@ Predictor::TargetInfo Predictor::predict(const TestSuite::test_suite& test_suite
 
 
 
-Predictor::TargetInfo Predictor::step(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec, const target_tokens& targets)
+Predictor::TargetInfo Predictor::step(const TestSuite::TotalTestCase& test_suite, const TokenTree::Vector& tkt_vec, const target_tokens& targets)
 {
-    static size_t debug = 0;
     count_t max_cnt = 1;
     count_t passing_max_cnt = 1;
     std::unordered_map<std::string, count_t> counter;

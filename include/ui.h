@@ -21,7 +21,7 @@ public:
     using docs = std::list<std::pair<rapidjson::Document, bool>>;
 
 public:
-    UI(int argc, char *argv[]);
+    UI(int argc, const char *argv[]);
 
     const std::string& getProject() const                   { return _project; }
     PrgLang getLanguage() const                             { return _pl; }

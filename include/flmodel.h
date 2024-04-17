@@ -28,14 +28,13 @@ public:
 
     void localize(TestSuite& suite, const TokenTree::Vector& tkt_vec);
     void step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults);
+    static target_tokens toTokenFromFault(const TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults);
 
     void setLogger(std::unique_ptr<BaseLogger> logger) { _logger = std::move(logger); }
-
 
 private:
     Predictor _predictor;
     std::vector<std::unique_ptr<Localizer>> _localizers;
-
     std::unique_ptr<BaseLogger> _logger;
 };
 }

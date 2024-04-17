@@ -2,180 +2,207 @@
 
 namespace PAFL
 {
-TokenTree::Matcher::Matcher() : _table
+TokenTree::TokenTree(const fs::path& src_file, const fs::path& bin, const std::string& exe)
 {
-    // identifier
-    { "identifier", Token::Type::IDENTIFIER },
-
-    // branch
-    { "if", Token::Type::IF },
-    { "catch", Token::Type::CATCH },
-    { "for", Token::Type::FOR },
-    { "switch", Token::Type::SWITCH },
-    { "while", Token::Type::WHILE },
-    // else
-    { "else", Token::Type::ELSE },
-
-    // switch
-    { "case", Token::Type::CASE },
-    { "default", Token::Type::DEFAULT },
-    // trial & error
-    { "do", Token::Type::DO },
-    { "try", Token::Type::TRY },
-
-    // class
-    { "enum", Token::Type::ENUM },
-    { "class", Token::Type::CLASS },
-    { "struct", Token::Type::STRUCT },
-    { "union", Token::Type::UNION },
-
-    // outer
-    { "operator", Token::Type::OPERATOR },
-    { "namespace", Token::Type::NAMESPACE },
-
-    // parenthesis
-    { "l_paren", Token::Type::L_PAREN },
-    { "r_paren", Token::Type::R_PAREN },
-    { "l_brace", Token::Type::L_BRACE },
-    { "r_brace", Token::Type::R_BRACE },
-    { "l_square", Token::Type::L_SQUARE },
-    { "r_square", Token::Type::R_SQUARE },
-
-    // semicolon
-    { "semi", Token::Type::SEMI },
-    // colon
-    { "colon", Token::Type::COLON },
-
-    // bit operator
-    { "amp", Token::Type::AMP },
-    { "ampequal", Token::Type::AMPEQUAL },
-    { "pipe", Token::Type::PIPE },
-    { "pipeequal", Token::Type::PIPEEQUAL },
-    { "caret", Token::Type::CARET },
-    { "caretequal", Token::Type::CARETEQUAL },
-    { "tilde", Token::Type::TILDE },
-
-    // shift operator
-    { "lessless", Token::Type::LESSLESS },
-    { "lesslessequal", Token::Type::LESSLESSEQUAL },
-    { "greatergreater", Token::Type::GREATERGREATER },
-    { "greatergreaterequal", Token::Type::GREATERGREATEREQUAL },
-
-    // boolean operator
-    { "ampamp", Token::Type::AMPAMP },
-    { "exclaim", Token::Type::EXCLAIM },
-    { "exclaimequal", Token::Type::EXCLAIMEQUAL },
-    { "less", Token::Type::LESS },
-    { "lessequal", Token::Type::LESSEQUAL },
-    { "greater", Token::Type::GREATER },
-    { "greaterequal", Token::Type::GREATEREQUAL },
-    { "pipepipe", Token::Type::PIPEPIPE },
-    { "equalequal", Token::Type::EQUALEQUAL },
-    { "in", Token::Type::IN },
-    { "is", Token::Type::IS },
-
-    // arithmetic operator
-    { "star", Token::Type::STAR },
-    { "starequal", Token::Type::STAREQUAL },
-    { "starstar", Token::Type::STARSTAR },
-    { "plus", Token::Type::PLUS },
-    { "plusplus", Token::Type::PLUSPLUS },
-    { "plusequal", Token::Type::PLUSEQUAL },
-    { "minus", Token::Type::MINUS },
-    { "minusminus", Token::Type::MINUSMINUS },
-    { "minusequal", Token::Type::MINUSEQUAL },
-    { "slash", Token::Type::SLASH },
-    { "slashequal", Token::Type::SLASHEQUAL },
-    { "slashslash", Token::Type::SLASHSLASH },
-    { "slashslashequal", Token::Type::SLASHSLASHEQUAL },
-    { "percent", Token::Type::PERCENT },
-    { "percentequal", Token::Type::PERCENTEQUAL },
-    { "matmul", Token::Type::MATMUL },
-    { "colonequal", Token::Type::COLONEQUAL },
-
-    // jumping
-    { "break", Token::Type::BREAK },
-    { "continue", Token::Type::CONTINUE },
-    { "return", Token::Type::RETURN },
-    { "throw", Token::Type::THROW },
-
-    // memory allocation
-    { "new", Token::Type::NEW },
-    { "delete", Token::Type::DELETE },
-
-    // this
-    { "this", Token::Type::THIS },
-
-    // casting
-    { "const_cast", Token::Type::CONST_CAST },
-    { "dynamic_cast", Token::Type::DYNAMIC_CAST },
-    { "reinterpret_cast", Token::Type::REINTERPRET_CAST },
-    { "static_cast", Token::Type::STATIC_CAST },
-    
-    // End Of File
-    { "eof", Token::Type::eof }
-} {}
-
-
-
-TokenTree::TokenTree() :
-    _root(std::make_unique<Token>(Token::Type::ROOT, 0, ""))
-{
-    _root->root = _root->parent = nullptr;
-    _root->predecessor = _root->neighbors = _root->successor = std::make_shared<Token::List>();
+    fs::path temp_json(bin / (src_file.filename().string() + ".json"));
+    std::string cmd = exe + " " + src_file.string() + " " + temp_json.c_str();
+    std::system(cmd.c_str());
+    load(temp_json);
+    std::remove(temp_json.c_str());
+    setIndexer();
 }
 
 
 
-void TokenTree::log(const fs::path& path) const
+void TokenTree::save(const fs::path& path) const
 {
-    std::ofstream ofs(path);
-        
+    IdGenerator token_id;
+    IdGenerator node_id;
+    token_id[nullptr];              // token_id[0]  -> nullptr
+    node_id[nullptr];               // node_id[0]   -> nullptr
+    std::unordered_set<Token::List*> node_set;
+
     for (auto& list : _stream)
         for (auto& tok : list) {
 
-            ofs << tok.loc << " :\t" << '"' << tok.name << "\"\n";
+            token_id[&tok];
+            for (auto ptr : {tok.neighbor.get(), tok.parent.get(), tok.child.get(), tok.pred.get(), tok.succ.get()})
+                if (ptr) {
 
-            // Neighbor
-            ofs << "\t\t- NEIGHBOR  = { ";
-            for (auto ptr : *tok.neighbors)
-                ofs << ptr->name << " , ";
-            ofs << "}\n";
-
-            // Parent
-            ofs << "\t\t- PARENT = { ";
-            for (auto ptr : *tok.parent->neighbors)
-                ofs << ptr->name << " , ";
-            ofs << "}\n";
-
-            // Children
-            ofs << "\t\t- CHILD  = { ";
-            if (tok.children)
-                for (auto ptr : *tok.children)
-                    ofs << ptr->name << " , ";
-            ofs << "}\n";
-
-            // Pred
-            ofs << "\t\t- PRED   = { ";
-            for (auto ptr : *tok.predecessor)
-                ofs << ptr->name << " , ";
-            ofs << "}\n";
-            
-            // Succ
-            ofs << "\t\t- SUCC   = { ";
-            for (auto ptr : *tok.successor)
-                ofs << ptr->name << " , ";
-
-            ofs << "}\n\n";
+                    node_id[ptr];
+                    node_set.insert(ptr);
+                }
         }
+
+
+    // Initialize buffer
+    std::string buffer("{\n");
+    buffer.reserve(StringEditor::MiB(64));
+
+    // "total_tokens"
+    buffer.append("\"total_tokens\": ");
+    StringEditor::append(buffer, token_id.size() - 1).append(",\n");
+
+    // "tokens"
+    buffer.append("\"tokens\": [");
+    for (auto& list : _stream) {
+        
+        buffer.append("{\"loc\":");
+        StringEditor::append(buffer, list.begin()->loc).append(",\"tokens\":[");
+
+        // "tokens": "tokens"
+        for (auto& tok : list) {
+            
+            StringEditor::append(buffer, token_id[&tok]).push_back(',');
+            buffer.append(tok.name).push_back(',');
+            for (auto ptr : {tok.neighbor.get(), tok.parent.get(), tok.child.get(), tok.pred.get(), tok.succ.get()})
+                StringEditor::append(buffer, node_id[ptr]).push_back(',');
+            buffer.pop_back();
+            buffer.append("],");
+        }
+        
+        StringEditor::eraseEndIf(buffer, ',');
+        buffer.append("]},");
+    }
+    StringEditor::eraseEndIf(buffer, ',');
+    buffer.append("],\n");
+
+
+    // "total_nodes"
+    buffer.append("\"total_nodes\": ");
+    StringEditor::append(buffer, node_id.size() - 1).append(",\n");
+
+    // "nodes"
+    buffer.append("\"nodes\": [");
+    for (auto ptr : node_set) {
+
+        buffer.append("\"id\":");
+        StringEditor::append(buffer, node_id[ptr]).append(",\"elems\":[");
+        StringEditor::append(buffer, ptr->size()).push_back(' ');
+
+        // token id list
+        for (auto tok : *ptr)
+            StringEditor::append(buffer, token_id[tok]).push_back(',');
+
+        StringEditor::eraseEndIf(buffer, ',');
+        buffer.append("]},");
+    }
+    StringEditor::eraseEndIf(buffer, ',');
+    buffer.append("],\n");
+
+    // Write buffer to path
+    buffer.pop_back(); buffer.pop_back();
+    buffer.append("\n}");
+    std::ofstream(path).write(buffer.c_str(), buffer.size());
 }
 
 
 
-void TokenTree::setIndexr()
+void TokenTree::load(const fs::path& path)
 {
-    _tokens_indexer.reserve(_stream.size());
+    // Initialize token tree
+    _stream.clear();
+    setIndexer();
+
+    // Parse saved JSON
+    rapidjson::Document doc;
+    doc.Parse(StringEditor::read(path.c_str()).c_str());
+
+    // Initialize token
+    std::vector<Token*> token_id(doc["total_tokens"].GetUint64() + 1);
+    token_id[0] = nullptr;      // node_id[0]  -> nullptr
+
+    // Initialize tokenlist
+    std::vector<Token::Node> node_id(doc["total_nodes"].GetUint64() + 1);
+    node_id[0] = nullptr;       // node_id[0]  -> nullptr
+
+    // Load tokens to _stream
+    for (const auto& tokens_obj : doc["tokens"].GetArray()) {
+
+        const auto& tokens = tokens_obj.GetObject();
+        auto lineno = tokens["lineno"].GetUint();
+        auto& list_ref = _stream.emplace_back();
+
+        for (const auto& token_info_arr : tokens["tokens"].GetArray()) {
+            
+            // New token
+            const auto& token_info = token_info_arr.GetArray();
+            auto token = &list_ref.emplace_back(token_info[NAME].GetString(), lineno);
+            token_id[token_info[ID].GetUint64()] = token;
+
+            // Set token's context
+            token->neighbor = node_id[token_info[NEIGH].GetUint64()];
+            token->parent = node_id[token_info[PARENT].GetUint64()];
+            token->child = node_id[token_info[CHILD].GetUint64()];
+            token->pred = node_id[token_info[PRED].GetUint64()];
+            token->succ = node_id[token_info[SUCC].GetUint64()];
+        }
+    }
+    setIndexer();
+
+    // Set token list
+    for (const auto& nodes_obj : doc["nodes"].GetArray()) {
+
+        const auto& nodes = nodes_obj.GetObject();
+        auto list_ptr = node_id[nodes["id"].GetUint64()].get();
+        for (const auto& elem_uint64 : nodes["elems"].GetArray())
+            list_ptr->push_back(token_id[elem_uint64.GetUint64()]);
+    }
+}
+
+
+
+std::string TokenTree::log() const
+{
+    std::string buffer;
     for (auto& list : _stream)
-        _tokens_indexer.emplace(list.begin()->loc, &list);
+        for (auto& tok : list) {
+            
+            buffer.append("=== ");
+            StringEditor::append(buffer, tok.loc).append(", \"");
+            buffer.append(tok.name).append("\" ===\n");
+            auto appendNode = [&buffer](const Token::List* node, const std::string& name) {
+                if (node) {
+
+                    buffer.append(name).append(": [ ");
+                    for (auto tok : *node)
+                        buffer.append(tok->name).append(", ");
+                    buffer.pop_back();
+                    StringEditor::eraseEndIf(buffer, ',');
+                    buffer.append(" ]\n");
+                }
+                else
+                    StringEditor::append(buffer, name).append(": NULL\n");
+            };
+
+            appendNode(tok.neighbor.get(), "NEIGHBOR\t");
+            appendNode(tok.parent.get(), "PARENT\t\t");
+            appendNode(tok.child.get(), "CHILD\t\t");
+            appendNode(tok.pred.get(), "PRED\t\t");
+            appendNode(tok.succ.get(), "SUCC\t\t");
+        }
+    StringEditor::eraseEndIf(buffer, '\n');
+    
+    return buffer;
+}
+
+
+
+void TokenTree::setIndexer()
+{
+    _indexer.clear();
+    _indexer.reserve(_stream.size());
+    for (auto& list : _stream)
+        _indexer.emplace(list.begin()->loc, &list);
+}
+
+
+
+TokenTree::IdGenerator::id_t TokenTree::IdGenerator::operator[](const void* ptr)
+{
+    if (id_list.contains(ptr))
+        return id_list.at(ptr);
+    id_list.emplace(ptr, id++);
+    return id;
 }
 }

@@ -14,11 +14,10 @@ public:
     typedef struct { float weight; float future; } Weight;
     using block = std::unordered_map<std::string, Weight>;
     using fragment = std::pair<CrossWord, Weight*>;
-
     enum BLOCK { TARGET = 0x01, PARENT = 0x02, CHILD = 0x04, PRED = 0x08, SUCC = 0x10 };
 
 
-
+public:
     class iterator
     {
     public:
@@ -72,7 +71,7 @@ public:
     };
 
 
-
+public:
     CrossWord() : _blocks{&_target, &_parent, &_child, &_pred, &_succ} {}
     // BLOCK:: TARGET = 0x01 | PARENT = 0x02 | CHILD = 0x04 | PRED = 0x08 | SUCC = 0x10
     CrossWord(const std::string& tok, float weight, unsigned char flag);
@@ -96,8 +95,8 @@ public:
     void log(const fs::path& path) const;
 
 private:
-    void _insert(decltype(Token::neighbors) list_ptr, block& blck, float base);
-    float _maxWeight(decltype(Token::neighbors) list_ptr, const block& blck, size_t& denom) const;
+    void _insert(Token::Node node, block& blck, float base);
+    float _maxWeight(Token::Node node, const block& blck, size_t& denom) const;
 
     block* const _blocks[5];
     block _target;

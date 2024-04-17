@@ -7,9 +7,17 @@
 #include <charconv>
 #include <map>
 
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/unordered_map.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/list.hpp>
+#include <cereal/types/utility.hpp>
+#include <cereal/types/string.hpp>
+
 #include "type.h"
-#include "rapidjson/document.h"
-#include "rapidjson/stringbuffer.h"
+#include "rapidjson.h"
+#include "stringeditor.h"
 
 
 namespace PAFL
@@ -17,15 +25,33 @@ namespace PAFL
 class TestSuite
 {
 public:
-    typedef struct { index_t index; line_t line; float base_sus, sus; line_t ranking; } ranking_info;
-    typedef struct { size_t Ncs, Ncf; ranking_info* ptr_ranking; } param;
-    typedef struct { std::list<std::pair<index_t, line_t>> lines; bool is_passed; } test_case;
-    using test_suite = std::list<test_case>;
-    using fault_line_set = std::unordered_set<const param*>;
+    struct Ranking
+    {
+        index_t index; line_t line; float base_sus, sus; line_t ranking;
+        template <class Archive> void serialize(Archive& ar)    { ar(index, line, base_sus, sus, ranking); }
+    };
+
+    struct Param
+    {
+        size_t Ncs, Ncf; Ranking* ranking_ptr;
+        template <class Archive> void serialize(Archive& ar)    { ar(Ncs, Ncf); }
+    };
+
+    struct TestCase
+    {
+        std::list<std::pair<index_t, line_t>> lines; bool is_passed;
+        template <class Archive> void serialize(Archive& ar)    { ar(lines, is_passed); }
+    };
+
+    using TotalTestCase = std::list<TestCase>;
+    using FaultSet = std::unordered_set<const Param*>;
 
 public:
-    TestSuite() : _is_initialized(false), _fail(0)              { _initBoundary(); }
-    virtual void addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions) = 0;
+    TestSuite();
+    TestSuite& operator=(const TestSuite&) = delete;
+    TestSuite(const TestSuite&) = delete;
+    TestSuite(const TestSuite&& rhs) = delete;
+    virtual void addTestCase(const rapidjson::Document& doc, bool is_successed, const string_set& extensions) = 0;
     void oversample(size_t iter);
 
     template <class Func>
@@ -33,66 +59,58 @@ public:
     template <class Func>
     void normalizeBaseSus(Func func);
     void assignBaseSus()                                        { for (auto& info : _ranking) info.sus = info.base_sus; }
-    const std::list<ranking_info>& rank();
+    const std::list<Ranking>& rank();
 
     index_t getIndexFromFile(const std::string& file) const;
     index_t maxIndex() const                                    { return _index2file.size(); }
     const std::string& getFileFromIndex(index_t idx) const      { return _index2file[idx]; }
-    ranking_info* getRankingInfo(index_t idx, line_t line)      { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking : nullptr; }
-    fault_line_set toFaultLineSet(const fault_loc& faults) const;
-    line_t getRankingSum(const fault_loc& faults) const;
+    Ranking* getRankingInfo(index_t idx, line_t line)           { return _param_container[idx].contains(line) ? _param_container[idx].at(line).ranking_ptr : nullptr; }
+    FaultSet toFaultSet(const fault_loc& faults) const;
+    line_t getFirstRanking(const fault_loc& faults) const;
+    const TotalTestCase& getTotalTestCase() const               { return _total_test_case; }
 
-    float getBaseSus(index_t idx, line_t line) const            { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->base_sus : 0.0f; }
-    float getSus(index_t idx, line_t line) const                { return _line_param[idx].contains(line) ? _line_param[idx].at(line).ptr_ranking->sus : 0.0f; }
-    float getHighestBaseSus() const                             { return _highest_sus; }
-    float getFiniteHighestBaseSus() const                       { return _finite_highest_sus; }
     size_t getNumFail() const                                   { return _fail; }
     size_t getNumSucc() const                                   { return _succ; }
-    const test_suite& getTestSuite() const                      { return _test_suite; }
+    float getBaseSus(index_t idx, line_t line) const            { return _param_container[idx].contains(line) ? _param_container[idx].at(line).ranking_ptr->base_sus : 0.0f; }
+    float getSus(index_t idx, line_t line) const                { return _param_container[idx].contains(line) ? _param_container[idx].at(line).ranking_ptr->sus : 0.0f; }
+    float getHighestBaseSus() const                             { return _highest; }
+    float getFiniteHighestBaseSus() const                       { return _finite_highest; }
+    float getLowestNonzeroBaseSus() const                       { return _lowest_nonzero; }
 
-    void toJson(const fs::path& path) const;
     void caching(const fs::path& path) const;
-    int loadCache(const fs::path& path);
+    int readCache(const fs::path& path);
+    void toJson(const fs::path& path) const;
     void toCovMatrix(const fs::path& dir, const fault_loc& faults) const;
     int loadBaseSus(const fs::path& path);
 
-    decltype(auto) begin()                                      { return _line_param.begin(); }
-    decltype(auto) end()                                        { return _line_param.end(); }
-    decltype(auto) cbegin() const                               { return _line_param.cbegin(); }
-    decltype(auto) cend() const                                 { return _line_param.cend(); }
+    template <class Archive>
+    void save(Archive& ar) const;
+    template <class Archive>
+    void load(Archive& ar);
 
-private:
-    void _initBoundary()                                                        { constexpr auto inf = std::numeric_limits<float>::infinity(); _highest_sus = -inf; _finite_highest_sus = -inf; _lowest_nonzero_sus = inf; }
-    template <class T>
-    void _appendAny(std::string& str, T val) const
-    {
-        char buf[32];
-        auto result_ptr = std::to_chars(buf, buf + 32, val).ptr;
-        str.append(buf, result_ptr - buf);
-    }
-    void _appendAny(std::string& str, bool val) const                           { val ? str.push_back('1') : str.push_back('0'); }
-    template <class T>
-    void _appendAnyChar(std::string& str, T val, char c) const                  { _appendAny(str, val); str.push_back(c); }
-    void _appendStrChar(std::string& lhs, const std::string& str, char c) const { lhs.append(str); lhs.push_back(c); }
-    static constexpr size_t _MiB(size_t mib)                                    { return mib * 1024 * 1024; }
-
+    decltype(auto) begin()                                      { return _param_container.begin(); }
+    decltype(auto) end()                                        { return _param_container.end(); }
+    decltype(auto) cbegin() const                               { return _param_container.cbegin(); }
+    decltype(auto) cend() const                                 { return _param_container.cend(); }
 
 protected:
-    bool _is_initialized;
-    size_t _fail;
     size_t _succ;
+    size_t _fail;
+    float _highest;
+    float _finite_highest;
+    float _lowest_nonzero;
 
     std::vector<std::string> _index2file;
     std::unordered_map<std::string, index_t> _file2index;
 
-    std::vector<std::map<line_t, param>> _line_param;
-    std::list<ranking_info> _ranking;
-    float _highest_sus;
-    float _finite_highest_sus;
-    float _lowest_nonzero_sus;
+    // _param_container [INDEX] [LINE] = Param
+    std::vector<std::map<line_t, Param>> _param_container;
+    std::list<Ranking> _ranking;
+    TotalTestCase _total_test_case;
 
-    test_suite _test_suite;
+private:
+    void _initBoundary() { constexpr auto inf = std::numeric_limits<float>::infinity(); _highest = -inf; _finite_highest = -inf; _lowest_nonzero = inf; }
 };
 }
-#include "testsuite/testsuite.hpp"
+#include "testsuite.hpp"
 #endif

@@ -26,8 +26,8 @@ private:
 };
 
 
-void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef, const TestSuite::fault_line_set* fault_lines = nullptr);
-line_t _newRankingSum(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const TestSuite::fault_line_set* fault_lines = nullptr);
+void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef, const TestSuite::FaultSet* fault_set = nullptr);
+line_t _newFirstRanking(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const TestSuite::FaultSet* fault_set = nullptr);
 
 constexpr float _gradientFormula(size_t base_ranking, size_t new_ranking, float coef, float max = 1.0f)
     { float grad = coef * (base_ranking - new_ranking) / (float)base_ranking; return grad > max ? max : grad; }

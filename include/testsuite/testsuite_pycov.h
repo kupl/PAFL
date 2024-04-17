@@ -9,7 +9,7 @@ namespace PAFL
 class TestSuitePycov : public TestSuite
 {
 public:
-    virtual void addTestCase(const rapidjson::Document& d, bool is_successed, const string_set& extensions) override;
+    virtual void addTestCase(const rapidjson::Document& doc, bool is_successed, const string_set& extensions) override;
 };
 }
 #endif

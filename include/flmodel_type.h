@@ -8,10 +8,7 @@
 namespace PAFL
 {
 constexpr size_t K = 3;
-
 using pattern = int;
-
-using target_tokens = std::list<Token*>;
-target_tokens toTokenFromFault(const TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults);
+using target_tokens = std::list<const Token*>;
 }
 #endif

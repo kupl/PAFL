@@ -1,11 +1,12 @@
 #ifndef __PIPELINE_H__
 #define __PIPELINE_H__
 
+#include <thread_pool/BS_thread_pool.hpp>
+
 #include "ui.h"
 #include "flmodel.h"
 #include "utility.h"
-#include "tokentree/tokentree_cpp.h"
-#include "tokentree/tokentree_py.h"
+#include "tokentree/cpptokentree.h"
 
 
 namespace PAFL
@@ -13,7 +14,7 @@ namespace PAFL
 class Pipeline
 {
 public:
-    Pipeline(int argc, char *argv[]);
+    Pipeline(int argc, const char *argv[]);
     void run();
     void makeMatrix(const fs::path& manybugs);
 
@@ -30,8 +31,10 @@ private:
     std::unique_ptr<BaseLogger> makeEmptyLogger()                   { return nullptr; }
     std::unique_ptr<BaseLogger> makeLogger();
 
-    void buildCppTree(TokenTree*& tree, const fs::path& file)       { tree = new TokenTreeCpp(file, _ui.getDirectoryPath() / "bin", _matcher); }
-    void buildPyTree(TokenTree*& tree, const fs::path& file)        { tree = new TokenTreePy(file, _ui.getDirectoryPath() / "bin", _matcher, _ui.getDirectoryPath() / "pytree.py"); }
+    TokenTree* buildCppTree(const fs::path& file, index_t index)    { return new CppTokenTree(file, _ui.getDirectoryPath() / "bin", index, _macro, _macro_size); }
+    TokenTree* buildPyTree(const fs::path& file, index_t index)     { return new TokenTree(file, _ui.getDirectoryPath() / "bin", _ui.getDirectoryPath() / "pytree.py"); }
+
+    void makeTreeParallel(TokenTree::Vector& tkt_vector, size_t thread_size = 1);
 
     void localizeWithBase(FLModel& model, time_vector& time_vec);
     void localizeWithPAFL(FLModel& model, time_vector& time_vec);
@@ -49,7 +52,6 @@ private:
 private:
     const UI _ui;
     StopWatch<time_t> _timer;
-    std::shared_ptr<PAFL::TokenTree::Matcher> _matcher;
     
     const Normalizer* _normalizer;
     decltype(&Pipeline::makeGcovTest) _test_factory;
@@ -60,10 +62,15 @@ private:
     decltype(&Pipeline::logNoneTime) _time_logger;
     unsigned long long _history;
 
-private: // Info
+private:
+    // Info
     TestSuite* _suite;
     Method* _method;
     size_t _iter;
+
+    // C/C++ macro
+    std::list<std::string> _macro;
+    size_t _macro_size;
 };
 }
 #endif

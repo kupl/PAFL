@@ -2,7 +2,7 @@
 
 namespace PAFL
 {
-UI::UI(int argc, char *argv[]) :
+UI::UI(int argc, const char *argv[]) :
     _parser(argc, argv), _project_path(fs::current_path()), _testsuite_path(fs::current_path()), _oracle_path(fs::current_path()),
     _debug(false), _cache(false), _is_project_aware(false),
     _normalizer(std::make_unique<SqrtNormalizer>())
@@ -62,7 +62,8 @@ UI::docs UI::getCoverageList(size_t iter) const
             if (buf == _config.TEST_PASS(_project, VER, CASE))
                 pf = true;
         }
-        ret.emplace_back(rapidjson::parseDoc(tc_path / _config.COVERAGE_NAME(_project, VER, CASE)), pf);
+        ret.emplace_back(rapidjson::Document(), pf);
+        ret.rbegin()->first.Parse(StringEditor::read((tc_path / _config.COVERAGE_NAME(_project, VER, CASE)).c_str()).c_str());
     }
 
     return ret;
@@ -233,7 +234,8 @@ void UI::_setContainer()
     }
 
     // Set fault location
-    rapidjson::Document info(rapidjson::parseDoc(_oracle_path / (_project + ".json")));
+    rapidjson::Document info;
+    info.Parse(StringEditor::read((_oracle_path / (_project + ".json")).c_str()).c_str());
     const auto& ver = info["version"].GetArray();
 
     for (size_t i = 0; i != _version.size(); i++) 

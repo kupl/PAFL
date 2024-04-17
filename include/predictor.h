@@ -31,8 +31,8 @@ public:
 public:
     Predictor() : _passing_cnt(0) {}
 
-    TargetInfo predict(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec);
-    TargetInfo step(const TestSuite::test_suite& test_suite, const TokenTree::Vector& tkt_vec, const target_tokens& targets);
+    TargetInfo predict(const TestSuite::TotalTestCase& test_suite, const TokenTree::Vector& tkt_vec);
+    TargetInfo step(const TestSuite::TotalTestCase& test_suite, const TokenTree::Vector& tkt_vec, const target_tokens& targets);
 
 
 private:

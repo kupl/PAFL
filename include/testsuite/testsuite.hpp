@@ -1,24 +1,21 @@
-#ifndef __TESTSUITE_HPP__
-#define __TESTSUITE_HPP__
-
 namespace PAFL
 {
 template <class Func>
 void TestSuite::setBaseSus(Func func)
 {
     _initBoundary();
-    for (auto& map : _line_param)
+    for (auto& map : _param_container)
         for (auto& item : map) {
             
             auto sus = func(_succ, _fail, item.second.Ncs, item.second.Ncf);
-            item.second.ptr_ranking->base_sus = sus;
+            item.second.ranking_ptr->base_sus = sus;
 
-            if (_highest_sus < sus)
-                _highest_sus = sus;
-            if (_finite_highest_sus < sus && sus < std::numeric_limits<float>::infinity())
-                _finite_highest_sus = sus;
-            if (sus > 0.0f && sus < _lowest_nonzero_sus)
-                _lowest_nonzero_sus = sus;
+            if (_highest < sus)
+                _highest = sus;
+            if (_finite_highest < sus && sus < std::numeric_limits<float>::infinity())
+                _finite_highest = sus;
+            if (sus > 0.0f && sus < _lowest_nonzero)
+                _lowest_nonzero = sus;
         }
 }
 
@@ -27,12 +24,29 @@ void TestSuite::setBaseSus(Func func)
 template <class Func>
 void TestSuite::normalizeBaseSus(Func func)
 {
-    for (auto& file : _line_param)
+    for (auto& file : _param_container)
         for (auto& item : file) {
 
-            auto& ref = item.second.ptr_ranking->base_sus;
-            ref = func(ref, _highest_sus, _finite_highest_sus, _lowest_nonzero_sus);
+            auto& ref = item.second.ranking_ptr->base_sus;
+            ref = func(ref, _highest, _finite_highest, _lowest_nonzero);
         }
 }
+
+
+
+template <class Archive>
+void TestSuite::save(Archive& ar) const
+{
+    ar(_succ, _fail, _highest, _finite_highest, _lowest_nonzero, _index2file, _file2index, _param_container, _ranking, _total_test_case);
 }
-#endif
+
+
+
+template <class Archive>
+void TestSuite::load(Archive& ar)
+{
+    ar(_succ, _fail, _highest, _finite_highest, _lowest_nonzero, _index2file, _file2index, _param_container, _ranking, _total_test_case);
+    for (auto& ranking : _ranking)
+        _param_container.at(ranking.index).at(ranking.line).ranking_ptr = &ranking;
+}
+}

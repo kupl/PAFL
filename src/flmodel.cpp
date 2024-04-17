@@ -4,7 +4,7 @@ namespace PAFL
 {
 void FLModel::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec)
 {
-    auto info(_predictor.predict(suite.getTestSuite(), tkt_vec));
+    auto info(_predictor.predict(suite.getTotalTestCase(), tkt_vec));
     for (auto& item : info.targets)
         _localizers[item.first]->localize(suite, tkt_vec, item.second);
     suite.rank();
@@ -21,7 +21,7 @@ void FLModel::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec)
 void FLModel::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
 {
     auto targets(toTokenFromFault(suite, tkt_vec, faults));
-    auto info(_predictor.step(suite.getTestSuite(), tkt_vec, targets));
+    auto info(_predictor.step(suite.getTotalTestCase(), tkt_vec, targets));
 
     _localizers.emplace_back(std::make_unique<Localizer>());
     for (auto& item : info.targets)// Update target localizers
@@ -29,6 +29,32 @@ void FLModel::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fau
 
     if (_localizers.size() > Predictor::SIZE)
         _localizers.erase(_localizers.begin());
+}
+
+
+
+target_tokens FLModel::toTokenFromFault(const TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
+{
+    target_tokens ret;
+    for (auto& item : faults) {
+
+        std::unordered_set<Token::List*> marking;
+        index_t index = suite.getIndexFromFile(item.first);
+
+        for (auto line : item.second) {
+
+            auto list_ptr = tkt_vec[index]->getTokens(line);
+            if (list_ptr)
+                for (auto& token : *list_ptr)
+                    if (!marking.contains(token.neighbor.get())) {
+
+                        ret.emplace_back(&token);
+                        marking.insert(token.neighbor.get());
+                    }
+        }
+    }
+
+    return ret;
 }
 }
 

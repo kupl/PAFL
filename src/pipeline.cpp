@@ -2,10 +2,8 @@
 
 namespace PAFL
 {
-Pipeline::Pipeline(int argc, char *argv[]) :
+Pipeline::Pipeline(int argc, const char *argv[]) :
     _ui(argc, argv),
-    _matcher(std::make_shared<TokenTree::Matcher>()),
-
     _normalizer(_ui.getNormalizer()),
     _loader(_ui.hasCache() ? &Pipeline::loadCachedTestSuite : &Pipeline::loadTestSuite),
     _logger_factory(_ui.hasDebugger() ? &Pipeline::makeLogger : &Pipeline::makeEmptyLogger),
@@ -104,9 +102,9 @@ void Pipeline::loadTestSuite()
 void Pipeline::loadCachedTestSuite()
 {
     const auto path(createDirRecursively(_ui.getDirectoryPath() / "cache" / _ui.getProject())
-                    / (std::string("v") + std::to_string(_ui.getVersion(_iter)) + ".txt"));
+                    / (std::string("v") + std::to_string(_ui.getVersion(_iter)) + ".cereal"));
     // Caching failure
-    if (_suite->loadCache(path)) {
+    if (_suite->readCache(path)) {
 
         loadTestSuite();
         _suite->caching(path);
@@ -123,6 +121,58 @@ std::unique_ptr<BaseLogger> Pipeline::makeLogger()
     return std::make_unique<FLModel::Logger>(createDirRecursively(
         _ui.getDirectoryPath() / "log/model" / (std::string("pafl-") + _method->getName()) / _ui.getProject())
         / std::to_string(_iter + 1), _timer);
+}
+
+
+
+void Pipeline::makeTreeParallel(TokenTree::Vector& tkt_vector, size_t thread_size)
+{
+    // Single thread
+    if (thread_size <= 1) {
+
+        // Init macro info
+        _macro.clear();
+        _macro_size = 0;
+        // Collect macro
+        if (_ui.getLanguage() == PrgLang::CPP) {
+
+            auto bin_path(_ui.getDirectoryPath() / "bin");
+            size_t iter = 0;
+
+            for (auto entry_iter = fs::recursive_directory_iterator(_ui.getProjectPath(_iter)); entry_iter != fs::recursive_directory_iterator(); ++entry_iter) {
+
+                const auto& path = entry_iter->path();
+                // Exclude subdirectory {tests, test} from iteration
+                if (path.parent_path() == _ui.getProjectPath(_iter))
+                    if (path.filename() == "tests" || path.filename() == "test") {
+                        entry_iter.disable_recursion_pending();
+                        continue;
+                    }
+                
+                auto extension(path.extension().string());
+                if (extension == ".h" || extension == ".hpp")
+                    _macro_size += _macro.emplace_back(CppTokenTree::collectMacro(path, bin_path, std::to_string(iter++) + ".hpp")).size();
+            }
+        }
+
+        // Make tree
+        for (index_t idx = 0; idx != _suite->maxIndex(); idx++) {
+            tkt_vector[idx] = (this->*_builder)(_ui.getFilePath(_iter, _suite->getFileFromIndex(idx)), idx);
+            if (!tkt_vector[idx]->good())
+                throw std::range_error("Not good");
+        }
+    }
+
+    // Multi thread
+    else {
+        BS::thread_pool pool(thread_size);
+        auto future = pool.submit_sequence<size_t>(0, tkt_vector.size(),
+            [this, &tkt_vector](const size_t idx)
+            {
+                tkt_vector[idx] = (this->*_builder)(_ui.getFilePath(_iter, _suite->getFileFromIndex(idx)), idx);
+            });
+        future.get();
+    }
 }
 
 
@@ -150,14 +200,14 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         // Make token tree
         std::cout << "[ " << (_iter + 1) << " ] -> Tokenizing ...\n";
         TokenTree::Vector tkt_vector(_suite->maxIndex());
-        for (index_t idx = 0; idx != _suite->maxIndex(); idx++)
-            (this->*_builder)(tkt_vector[idx], _ui.getFilePath(_iter, _suite->getFileFromIndex(idx)));
+        makeTreeParallel(tkt_vector, 1);
         std::cout << "done" << std::endl;
 
         // New sus of FL Model
         std::cout << '\n' << _ui.getProject() << " : " << _method->getName() << "-pafl\n";
         std::cout << "[ " << (_iter + 1) << " ] -> Localizing ..." << std::flush;
         _method->setBaseSus(_suite, _ui.getProject(), std::to_string(_ui.getVersion(_iter)), std::to_string(_iter + 1));
+
         // Save as json
         if (_history <= 2) {
             
@@ -167,6 +217,7 @@ void Pipeline::localizeWithPAFL(FLModel& model, time_vector& time_vec)
         }
         _normalizer->normalize(_suite);
         model.localize(*_suite, tkt_vector);
+
         // Save as json
         if (_history > 2) {
 

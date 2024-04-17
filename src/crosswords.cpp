@@ -21,15 +21,11 @@ CrossWord::CrossWord(const std::string& tok, float weight, unsigned char flag) :
 
 void CrossWord::insertToken(const Token& token, float base)
 {
-    _insert(token.neighbors, _target, base);
-
-    if (token.parent != token.root)
-        _insert(token.parent->neighbors, _parent, base);
-    if (token.children)
-        _insert(token.children, _child, base);
-
-    _insert(token.predecessor, _pred, base);
-    _insert(token.successor, _succ, base);
+    _insert(token.neighbor, _target, base);
+    _insert(token.parent, _parent, base);
+    _insert(token.child, _child, base);
+    _insert(token.pred, _pred, base);
+    _insert(token.succ, _succ, base);
 }
 
 
@@ -56,34 +52,30 @@ float CrossWord::similarity(const Token& token) const
 {
     size_t denom = 0;
 
-    float target_weight = _maxWeight(token.neighbors, _target, denom);
-    float pred_weight = _maxWeight(token.predecessor, _pred, denom);
-    float succ_weight = _maxWeight(token.successor, _succ, denom);
-
-    float parent_weight = 0.0f;
-    if (token.parent != token.root)
-        parent_weight = _maxWeight(token.parent->neighbors, _parent, denom);
-
-    float child_weight = 0.0f;
-    if (token.children)
-        child_weight = _maxWeight(token.children, _child, denom);
+    float target_weight = _maxWeight(token.neighbor, _target, denom);
+    float pred_weight = _maxWeight(token.pred, _pred, denom);
+    float succ_weight = _maxWeight(token.succ, _succ, denom);
+    float parent_weight = _maxWeight(token.parent, _parent, denom);
+    float child_weight = _maxWeight(token.child, _child, denom);
 
     return denom ? (target_weight + parent_weight + child_weight + pred_weight + succ_weight) / (float)denom : 0.0f;
 }
 
 
 
-float CrossWord::_maxWeight(decltype(Token::neighbors) list_ptr, const block& blck, size_t& denom) const
+float CrossWord::_maxWeight(Token::Node node, const block& blck, size_t& denom) const
 {
-    if (blck.empty() || list_ptr->empty())
+    if (!node || blck.empty())
         return 0.0f;
     denom++;
+    if (node->empty())
+        return 0.0f;
+    
     float ret = 0.0f;
+    for (auto tok : *node)
+        if (blck.contains(tok->name)) {
 
-    for (auto ptr : *list_ptr)
-        if (blck.contains(ptr->name)) {
-
-            auto temp = blck.at(ptr->name).weight;
+            auto temp = blck.at(tok->name).weight;
             if (temp > ret)
                 ret = temp;
         }
@@ -92,11 +84,12 @@ float CrossWord::_maxWeight(decltype(Token::neighbors) list_ptr, const block& bl
 
 
 
-void CrossWord::_insert(decltype(Token::neighbors) list_ptr, block& blck, float base)
+void CrossWord::_insert(Token::Node node, block& blck, float base)
 {
-    for (auto ptr : *list_ptr)
-        if (!blck.contains(ptr->name))
-            blck.emplace(ptr->name, Weight{base, base});
+    if (node)
+        for (auto tok : *node)
+            if (!blck.contains(tok->name))
+                blck.emplace(tok->name, Weight{base, base});
 }
 
 
