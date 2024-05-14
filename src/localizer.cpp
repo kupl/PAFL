@@ -14,12 +14,9 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
 {
     if (_isFresh)
         _isFresh = false;
-    else  {
-
-        _maturity += coef;
-        if (_maturity > 1.0f)
-            _maturity = 1.0f;
-    }
+    _maturity += coef / 2;
+    if (_maturity > 1.0f)
+        _maturity = 1.0f;
 
     // base first ranking
     suite->setSusToBase();
