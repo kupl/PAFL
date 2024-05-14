@@ -9,7 +9,11 @@ namespace PAFL
 class TestSuiteGcov : public TestSuite
 {
 public:
-    virtual void addTestCase(const rapidjson::Document& doc, bool is_successed, const string_set& extensions) override;
+    TestSuiteGcov() : TestSuite(), _extensions{".c", ".cc", ".cpp", ".h", ".hpp"} {}
+    virtual void addTestCase(const rapidjson::Document& doc, bool is_passed) override;
+
+private:
+    const std::set<std::string> _extensions;
 };
 }
 #endif

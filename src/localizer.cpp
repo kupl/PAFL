@@ -1,107 +1,171 @@
-#include "localizer.h"
+#include "model/localizer.h"
 
 namespace PAFL
 {
-void Localizer::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef) const
+void Localizer::localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, float coef) const
 {
-    _localize(_word, suite, tkt_vec, coef * (_maturity / (float)K));
+    if (!_isFresh)
+        _localize(suite, graphs, coef * _maturity / _updater_num);
 }
 
 
 
-void Localizer::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const target_tokens& targets, float coef)
+void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults, float coef, size_t thread_num)
 {
     if (_isFresh)
         _isFresh = false;
-    else
+    else  {
+
         _maturity += coef;
+        if (_maturity > 1.0f)
+            _maturity = 1.0f;
+    }
 
-    auto base_rankingsum = _newFirstRanking(_word, suite, tkt_vec, faults);
+    // base first ranking
+    suite->setSusToBase();
+    _localize(suite, graphs, 1.0f);
+    suite->rank();
+    auto base_fr = suite->getFirstRanking(faults);
+
+    // Collect buggy nodes
+    std::vector<const stmt_graph::Node*> buggy_nodes;
+    for (auto item : faults) {
+
+        auto node_vector = graphs.at(item.first)->at(item.second);
+        if (node_vector)
+            for (auto node : *node_vector)
+                buggy_nodes.push_back(node);
+    }
+
+    // Make the future suspiciousness values
+    suite->setSusToBase();
+    auto mutants(_updater.makeMutant(buggy_nodes, 0.0f, 1.0f));
+    // Single thread
+    if (thread_num <= 1)
+        for (auto& mut : mutants)
+            _trainMutant(suite, graphs, faults, mut, base_fr, coef);
+    // Multi threads
+    else {
+
+        BS::thread_pool pool(thread_num);
+        pool.detach_loop<size_t>(0, mutants.size(),
+            [this, suite, &graphs, &faults, &mutants, base_fr, coef](size_t i)
+            {
+                _trainMutant(suite, graphs, faults, mutants[i], base_fr, coef);
+            });
+        pool.wait();
+    }
     
-    // New tokens from fault
-    for (auto token : targets)
-        _word.insertToken(*token, 0.0f);
-
-    // Reserve future weight
-    const auto fault_set(suite.toFaultSet(faults));
-    auto end(_word.end());
-    for (auto iter = _word.begin(); iter != end; ++iter) {
-        
-        auto& ref = iter->second;
-        ref.weight = 1.0f;
-        auto rankingsum = _newFirstRanking(_word, suite, tkt_vec, faults, &fault_set);
-        ref.weight = ref.future;
-
-        // Positive update
-        if (rankingsum < base_rankingsum)
-            ref.future += (1.0f - ref.future) * _gradientFormula(base_rankingsum, rankingsum, coef, (1.0f / K));
-        
-        // Negative update
-        else if (rankingsum > base_rankingsum) {
-
-            auto grad = _gradientFormula(rankingsum, base_rankingsum, coef, (1.0f / K));
-            ref.future *= (ref.future * grad + (1.0f - grad));
-            //ref.future *= 1.0f - coef * gradient;
-        }
-    }
-    // future to weight
-    _word.assignFuture();
-    // Delete weight under threshold
-    _word.eraseIf(0.1f);
+    // Assign new suspiciousness values
+    for (auto& mut : mutants)
+        mut.block->setValue(mut.token, mut.mutated_value);
+    _updater.eraseIf(0.1f);
 }
 
 
 
-void _localize(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, float coef, const TestSuite::FaultSet* fault_set)
+void Localizer::_localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, float coef) const
 {
-    index_t idx = 0;
-    for (auto& file : suite) {
+    std::vector<std::pair<TestSuite::Ranking*, float>> future;
+    future.reserve(suite->size());
+
+    for (TestSuite::index_t index = 0; index != suite->maxIndex(); ++index) {
         
-        std::unordered_map<Token::List*, float> last;
-        for (auto& line_param : file) {
+        auto& file = suite->content().at(index);
+        for (auto& node : *graphs.at(index)) {
 
-            std::unordered_map<Token::List*, float> archive;
-            float max_sim = 0.0f;
+            // If node is not coverable, continue
+            if (!node.coverable)
+                continue;
 
-            auto list_ptr = tkt_vec[idx]->getTokens(line_param.first);
-            if (list_ptr)
-                for (auto& token : *list_ptr) {
-                    
-                    auto key = token.neighbor.get();
-                    float similarity;
+            float node_value = -1.0f;
+            for (auto line = node.begin; line <= node.end; ++line)
+                if (file.contains(line)) {
 
-                    if (archive.contains(key))
-                        similarity = archive.at(key);
-                    
-                    else if (last.contains(key)) {
-
-                        similarity = last.at(key);
-                        archive.emplace(key, similarity);
+                    auto ranking_ptr = file.at(line).ranking_ptr;
+                    // If the line is covered by a failing test case
+                    if (ranking_ptr->base_sus > 0.0f) {
+                        
+                        // Init node's value
+                        if (node_value < 0.0f)
+                            node_value = _updater.max(&node);
+                        // Reservation of update of suspiciousness value with node's value
+                        future.emplace_back(ranking_ptr, ranking_ptr->sus + coef * node_value);
                     }
-                    else {
-
-                        similarity = word.similarity(token);
-                        archive.emplace(key, similarity);
-                    }
-
-                    max_sim = similarity > max_sim ? similarity : max_sim;
                 }
-
-            last = std::move(archive);
-            if (line_param.second.ranking_ptr->sus > 0.0f || fault_set && fault_set->contains(&line_param.second))
-                line_param.second.ranking_ptr->sus += 1.0f * coef * max_sim;
         }
-        idx++;
     }
+
+    // Update all suspiciousness values (maximum)
+    for (auto& item : future)
+        if (item.first->sus < item.second)
+            item.first->sus = item.second;
 }
 
 
 
-line_t _newFirstRanking(const CrossWord& word, TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults, const TestSuite::FaultSet* fault_set)
+void Localizer::_localize(TestSuite::Copy& suite_copy, const stmt_graph::Graph::vector_t& graphs, float coef, const Updater::Mutant& mutant) const
 {
-    suite.assignBaseSus();
-    _localize(word, suite, tkt_vec, 1.0f, fault_set);
-    suite.rank();
-    return suite.getFirstRanking(faults);
+    std::vector<std::pair<TestSuite::Ranking*, float>> future;
+    future.reserve(suite_copy.ranking.size());
+
+    for (TestSuite::index_t index = 0; index != suite_copy.content.size(); ++index) {
+        
+        auto& file = suite_copy.content.at(index);
+        for (auto& node : *graphs.at(index)) {
+
+            // If node is not coverable, continue
+            if (!node.coverable)
+                continue;
+                
+            float node_value = -1.0f;
+            for (auto line = node.begin; line <= node.end; ++line)
+                if (file.contains(line)) {
+
+                    auto ranking_ptr = file.at(line);
+                    // If the line is covered by a failing test case
+                    if (ranking_ptr->base_sus > 0.0f) {
+                        
+                        // Init node's value
+                        if (node_value < 0.0f)
+                            node_value = _updater.max(&node, mutant);
+                        // Reservation of update of suspiciousness value with node's value
+                        future.emplace_back(ranking_ptr, ranking_ptr->sus + coef * node_value);
+                    }
+                }
+        }
+    }
+
+    // Update all suspiciousness values (maximum)
+    for (auto& item : future)
+        if (item.first->sus < item.second)
+            item.first->sus = item.second;
+}
+
+
+
+void Localizer::_trainMutant(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults, Updater::Mutant& mutant, float base_fr, float coef) const
+{
+    // new first ranking
+    TestSuite::Copy suite_copy(*suite);
+    _localize(suite_copy, graphs, 1.0f, mutant);
+    suite_copy.rank();
+    auto new_fr = suite_copy.getFirstRanking(faults);
+
+    // Positive update
+    if (new_fr < base_fr) {
+
+        auto grad = _gradientFormula(base_fr, new_fr, coef, (1.0f / _updater_num));
+        mutant.mutated_value = mutant.original_value + (1.0f - mutant.original_value) * grad;
+    }
+
+    // Negative update
+    else if (new_fr > base_fr) {
+
+        auto grad = _gradientFormula(new_fr, base_fr, coef, (1.0f / _updater_num));
+        mutant.mutated_value = mutant.original_value * (mutant.original_value * grad + (1.0f - grad));
+    }
+    else
+        mutant.mutated_value = mutant.original_value;
 }
 }

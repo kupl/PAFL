@@ -8,33 +8,23 @@ TestSuite::TestSuite() : _fail(0)
     constexpr int size = 256;
     _file2index.reserve(size);
     _index2file.reserve(size);
-    _param_container.reserve(size);
+    _content.reserve(size);
 }
 
 
 
-void TestSuite::oversample(size_t iter)
-{
-    _fail *= 1 + iter;
-
-    for (auto& tc : _total_test_case)
-        if (!tc.is_passed)
-            for (auto& item : tc.lines)
-                _param_container.at(item.first).at(item.second).Ncf += iter;
-}
-
-
-
-const std::list<TestSuite::Ranking>& TestSuite::rank()
+void TestSuite::rank()
 {
     // Sort
+    if (_ranking.size() == 0)
+        return;
     _ranking.sort([](const Ranking& lhs, const Ranking& rhs){ return lhs.sus > rhs.sus; });
     
     // Rank
     line_t virtual_ranking = 0;
     float sus = _ranking.begin()->sus;
 
-    std::list<Ranking*> tie;
+    std::vector<Ranking*> tie;
     for (auto& iter : _ranking) {
 
         if (sus > iter.sus) {
@@ -49,160 +39,190 @@ const std::list<TestSuite::Ranking>& TestSuite::rank()
     }
     for (auto ptr_info : tie)
         ptr_info->ranking = _ranking.size();
-
-    return _ranking;
 }
 
 
 
-index_t TestSuite::getIndexFromFile(const std::string& file) const
+TestSuite::fault_set_t TestSuite::makeFalutSet(const rapidjson::Document& doc) const
 {
-    if (_file2index.contains(file))
-        return _file2index.at(file);
-    throw std::out_of_range(file);
-}
+    fault_set_t ret;
+    
+    // Read JSON document
+    const auto& files = doc["locations"].GetArray();
+    for (const auto& file_obj : files) {
 
+        // Read file path
+        const auto& file = file_obj.GetObject();
+        auto index = _file2index.at(file["file"].GetString());
+        auto& map = _content.at(index);
 
+        // Read lines
+        for (const auto& line_uint : file["lines"].GetArray()) {
 
-TestSuite::FaultSet TestSuite::toFaultSet(const fault_loc& faults) const
-{
-    FaultSet ret;
-    for (auto& pair : faults) {
-        
-        auto& map = _param_container[_file2index.at(pair.first)];
-        for (auto line : pair.second)
+            auto line = line_uint.GetUint();
             if (map.contains(line))
-                ret.insert(&map.at(line));
+                ret.emplace(index, line);
+        }
     }
+
     return ret;
 }
 
 
 
-line_t TestSuite::getFirstRanking(const fault_loc& faults) const
+TestSuite::line_t TestSuite::getFirstRanking(const fault_set_t& faults) const
 {
+    for (auto item : _ranking)
+        if (faults.contains(std::make_pair(item.index, item.line)))
+            return item.ranking;
+    return _ranking.size();
+}
 
-    for (auto iter = _ranking.cbegin(); ; iter++)
-        if (faults.contains(_index2file[iter->index])) {
-            
-            auto& line_set = faults.at(_index2file[iter->index]);
-            if (line_set.contains(iter->line)) {
 
-                auto ranking = iter->ranking;
-                for (; iter != _ranking.cend(); iter++)
-                    if (iter->ranking != ranking)
-                        break;
-                return ranking + ((iter == _ranking.cend()) ? _ranking.size() : iter->ranking - 1);
+
+void TestSuite::readSus(const rapidjson::Document& doc)
+{
+    _initBoundary();
+    for (const auto& info_obj : doc["lines"].GetArray()) {
+
+        const auto& info = info_obj.GetObject();
+        auto file(info["file"].GetString());
+        line_t line(info["lineno"].GetUint());
+        auto sus(info["sus"].GetFloat());
+
+        // Update the suspiciousness values
+        if (_file2index.contains(file)) {
+
+            auto index = _file2index.at(file);
+            if (_content.at(index).contains(line)) {
+
+                auto& param = _content.at(index).at(line);
+                // Update lines which is covered by failed test cases
+                if (param.Ncf) {
+                    
+                    param.ranking_ptr->sus = param.ranking_ptr->base_sus = sus;
+                    if (_highest < sus)
+                        _highest = sus;
+                    if (_finite_highest < sus && sus < std::numeric_limits<float>::infinity())
+                        _finite_highest = sus;
+                    if (0.0f < sus && sus < _lowest_nonzero)
+                        _lowest_nonzero = sus;
+                }
+                // Set uncovered line to 0
+                else
+                    param.ranking_ptr->sus = param.ranking_ptr->base_sus = 0.0f;
             }
         }
+    }
 }
 
 
 
-void TestSuite::caching(const fs::path& path) const
+std::string TestSuite::toJson() const
 {
-    std::ofstream ofs(path, std::ios::binary);
-    cereal::BinaryOutputArchive archive(ofs);
-    archive(*this);
-}
-
-
-
-int TestSuite::readCache(const fs::path& path)
-{
-    if (!fs::exists(path))
-        return 1;
-    std::ifstream ifs(path, std::ios::binary);
-    cereal::BinaryInputArchive archive(ifs);
-    archive(*this);
-    return 0;
-}
-
-
-
-void TestSuite::toJson(const fs::path& path) const
-{
-    std::string buffer;
-    buffer.reserve(StringEditor::MiB(16));
+    std::string bufferfer;
+    bufferfer.reserve(StringEditor::MiB(16));
 
     // total
-    StringEditor::append(buffer.append("{\n\"total\": "), _ranking.size()).append(",\n\"lines\": [\n");
+    StringEditor::append(bufferfer.append("{\n\"total\": "), _ranking.size()).append(",\n\"lines\": [\n");
 
     // lines
     for (auto item : _ranking) {
         
-        buffer.append("\t{ ");
+        bufferfer.append("\t{ ");
         // index
-        buffer.append("\"file\": \"").append(_index2file[item.index]).append("\", ");
+        bufferfer.append("\"file\": \"").append(_index2file[item.index]).append("\", ");
         // line
-        StringEditor::append(buffer.append("\"line\": "), item.line).append(", ");
+        StringEditor::append(bufferfer.append("\"line\": "), item.line).append(", ");
         // ranking
-        StringEditor::append(buffer.append("\"ranking\": "), item.ranking).append(", ");
+        StringEditor::append(bufferfer.append("\"ranking\": "), item.ranking).append(", ");
         // sus
-        buffer.append("\"sus\": ");
+        bufferfer.append("\"sus\": ");
         if (item.sus < std::numeric_limits<float>::infinity())
-            StringEditor::append(buffer, item.sus);
+            StringEditor::append(bufferfer, item.sus);
         else
-            buffer.append("\"inf\"");
-        buffer.append(" },\n");
+            bufferfer.append("\"inf\"");
+        bufferfer.append(" },\n");
     }
-    StringEditor::eraseEndIf(buffer, ",\n");
-    buffer.append("]\n} ");
-
-    std::ofstream(path).write(buffer.c_str(), buffer.size());
+    StringEditor::eraseEndIf(bufferfer, ",\n");
+    bufferfer.append("]\n} ");
+    return bufferfer;
 }
 
 
 
-void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
+void TestSuite::saveAsCovMatrix(const std::filesystem::path& dir, const fault_set_t& faults) const
 {
-    // mapper
+    /*
+        <mapper>
+        JSON format
+        {
+            "lines": [
+                { "file": "FILE_NAME", "lineno": INT },
+                ...
+            ]
+        }
+    */
     std::vector<std::unordered_map<line_t, line_t>> mapper;
     line_t total_plus_one = 1;
 
-    {// Init mapper
-        mapper.reserve(_param_container.size());
-        for (auto& file : _param_container) {
+    {   // Init mapper
+        mapper.reserve(_content.size());
+
+        // Init buffer
+        std::string buffer;
+        buffer.reserve(StringEditor::MiB(16));
+        buffer.append("{\"lines\":[");
+
+        // For all (file, line) in _content
+        for (auto& file : _content) {
 
             auto& map = mapper.emplace_back();
             map.reserve(file.size());
-            for (auto& item : file)
+            for (auto& item : file) {
+                
+                // Push new line to mapper
                 map.emplace(item.first, total_plus_one++);
+                // Save information of new line
+                StringEditor::append(buffer.append("{\"file\":\"").append(_index2file.at(item.second.ranking_ptr->index)).append("\",\"lineno\":"), item.first).append("},");
+            }
         }
 
-        // componentinfo
-        std::string buf;
-        buf.reserve(StringEditor::MiB(16));
-        StringEditor::append(buf, total_plus_one - 1).push_back('\n');
+        // Save mapper
+        StringEditor::eraseEndIf(buffer, ',');
+        buffer.append("]}");
+        std::ofstream(dir / "map.json").write(buffer.c_str(), buffer.size());
+    }
+
+
+    {// componentinfo
+        std::string buffer;
+        buffer.reserve(StringEditor::MiB(16));
+        StringEditor::append(buffer, total_plus_one - 1).push_back('\n');
         for (line_t l = 1; l != total_plus_one; ++l)
-            StringEditor::append(buf, l).push_back(' ');
-        buf.pop_back();
-        std::ofstream(dir / "componentinfo.txt").write(buf.c_str(), buf.size());
+            StringEditor::append(buffer, l).push_back(' ');
+        buffer.pop_back();
+        std::ofstream(dir / "componentinfo.txt").write(buffer.c_str(), buffer.size());
     }
 
     {// faultLine
-        std::string buf;
-        buf.reserve(1024);
-        buf.append("fault=", 6);
-        for (auto& item : faults) {
+        std::string buffer;
+        buffer.reserve(1024);
+        buffer.append("fault=", 6);
+        for (auto item : faults) {
 
-            auto index = _file2index.at(item.first);
-            for (auto line : item.second)
-                if (mapper[index].contains(line)) {
-
-                    buf.push_back('"');
-                    StringEditor::append(buf, mapper[index].at(line)).push_back('"');
-                }
+            buffer.push_back('"');
+            StringEditor::append(buffer, mapper[item.first].at(item.second)).push_back('"');
         }
-        std::ofstream(dir / "faultLine.txt").write(buf.c_str(), buf.size());
+        std::ofstream(dir / "faultLine.txt").write(buffer.c_str(), buffer.size());
     }
     
     {// covMatrix & error
-        std::string buf;
-        buf.reserve(StringEditor::MiB(64));
+        std::string buffer;
+        buffer.reserve(StringEditor::MiB(64));
         std::ofstream error(dir / "error.txt");
 
-        for (auto& tc : _total_test_case) {
+        for (auto& tc : _testcase_vec) {
 
             error << !tc.is_passed << '\n';
             // Line set
@@ -210,61 +230,69 @@ void TestSuite::toCovMatrix(const fs::path& dir, const fault_loc& faults) const
             for (auto item : tc.lines)
                 line_set.insert(mapper[item.first].at(item.second));
             for (line_t l = 1; l != total_plus_one; ++l)
-                buf.append(line_set.contains(l) ? "1 " : "0 ", 2);
-            buf.pop_back();
-            buf.push_back('\n');
+                buffer.append(line_set.contains(l) ? "1 " : "0 ", 2);
+            buffer.pop_back();
+            buffer.push_back('\n');
         }
 
-        buf.pop_back();
-        std::ofstream(dir / "covMatrix.txt").write(buf.c_str(), buf.size());
+        buffer.pop_back();
+        std::ofstream(dir / "covMatrix.txt").write(buffer.c_str(), buffer.size());
     }
+}
 }
 
 
 
-int TestSuite::loadBaseSus(const fs::path& path)
+namespace PAFL
 {
-    if (!fs::exists(path))
-        return 1;
-    _initBoundary();
+TestSuite::Copy::Copy(const TestSuite& suite) :
+    content(suite._content.size())
+{
+    for (index_t index = 0; index != content.size(); ++index)
+        for (auto item : suite._content.at(index)) {
 
-    // Init mapper
-    std::vector<float*> mapper(_ranking.size() + 1, nullptr);
-    {
-        line_t l = 0;
-        for (auto& file : _param_container)
-            for (auto& iter : file) {
+            auto& ref = ranking.emplace_back(*item.second.ranking_ptr);
+            content[index].emplace(item.first, &ref);
+        }
+}
 
-                iter.second.ranking_ptr->base_sus = 0.0f;
-                mapper[l++] = &iter.second.ranking_ptr->base_sus;
-            }
+
+
+void TestSuite::Copy::rank()
+{
+    // Sort
+    if (ranking.size() == 0)
+        return;
+    ranking.sort([](const Ranking& lhs, const Ranking& rhs){ return lhs.sus > rhs.sus; });
+    
+    // Rank
+    line_t virtual_ranking = 0;
+    float sus = ranking.begin()->sus;
+
+    std::vector<Ranking*> tie;
+    for (auto& iter : ranking) {
+
+        if (sus > iter.sus) {
+
+            sus = iter.sus;
+            for (auto ptr_info : tie)
+                ptr_info->ranking = virtual_ranking;
+            tie.clear();
+        }
+        tie.push_back(&iter);
+        virtual_ranking++;
     }
+    for (auto ptr_info : tie)
+        ptr_info->ranking = ranking.size();
+}
 
-    // Read suspicousness
-    std::ifstream ifs(path);
-    while (true) {
 
-        line_t line;
-        if (!(ifs >> line))
-            break;
-        std::string str_sus;
-        ifs >> str_sus;
-        float sus = std::stof(str_sus);
-        *mapper[line - 1] = sus;
 
-        if (_highest < sus)
-            _highest = sus;
-        if (_finite_highest < sus && sus < std::numeric_limits<float>::infinity())
-            _finite_highest = sus;
-        if (sus > 0.0f && sus < _lowest_nonzero)
-            _lowest_nonzero = sus;
-    }
-
-    // Set uncovered line to 0
-    for (auto& file : _param_container)
-        for (auto& item : file)
-            if (item.second.Ncf == 0)
-                item.second.ranking_ptr->base_sus = 0.0f;
-    return 0;
+TestSuite::line_t TestSuite::Copy::getFirstRanking(const TestSuite::fault_set_t& faults) const
+{
+    for (auto item : ranking)
+        if (faults.contains(std::make_pair(item.index, item.line)))
+            return item.ranking;
+    return ranking.size();
 }
 }

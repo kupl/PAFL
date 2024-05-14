@@ -8,10 +8,9 @@ namespace Normalization
     {
         if (sus < lowest_nonzero)
             return 0.0f;
-
-        if (highest >= std::numeric_limits<float>::infinity())
+        if (highest == std::numeric_limits<float>::infinity())
             highest = finite_highest * 2;
-        return sus >= std::numeric_limits<float>::infinity() ? 1.0f : ((sus - lowest_nonzero) / (highest - lowest_nonzero)) * (1.0f - lower_bound) + lower_bound;
+        return sus == std::numeric_limits<float>::infinity() ? 1.0f : ((sus - lowest_nonzero) / (highest - lowest_nonzero)) * (1.0f - lower_bound) + lower_bound;
     }
 
     float Linear(float sus, float highest, float finite_highest, float lowest_nonzero)

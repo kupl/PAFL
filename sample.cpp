@@ -1,22 +1,13 @@
+int main() {
 
-enum class Sign
-{
-    sign
-};
+    try {
 
-enum class Type
-{
-    type
-};
-
-class C {};
-
-/** Value type */
-class ValueType {
-public:
-    ValueType(enum Sign s, enum Type t)
-    {
-        enum Sign sign = Sign::sign;
-        class C c = C();
+        int i = 0;
     }
-};
+    catch (int e1) {
+
+        int x = 0;
+        auto lambda = [x](int y){return 1;};
+    }
+    printf();
+}

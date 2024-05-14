@@ -30,7 +30,7 @@ public:
             return std::chrono::duration_cast<T>(_accumulation).count();
     }
 
-    typename T::rep stop()
+    typename T::rep pause()
     {
         if (!_is_running)
             return std::chrono::duration_cast<T>(_accumulation).count();

@@ -1,101 +1,174 @@
-#include "flmodel.h"
+#include "model/flmodel.h"
 
 namespace PAFL
 {
-void FLModel::localize(TestSuite& suite, const TokenTree::Vector& tkt_vec)
+std::vector<std::pair<Localizer*, float>> FLModel::localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs)
 {
-    auto info(_predictor.predict(suite.getTotalTestCase(), tkt_vec));
-    for (auto& item : info.targets)
-        _localizers[item.first]->localize(suite, tkt_vec, item.second);
-    suite.rank();
+    auto embedding(_embed(suite->getTestCases(), graphs));
+    auto similar_embeddings(_chooseEmbedding(embedding, TOP_K));
+    for (auto embd : similar_embeddings)
+        embd.first->localize(suite, graphs, embd.second);
 
-    if (_logger) {
+    return similar_embeddings;
+}
 
-        const auto obj(std::make_pair<>(this, &info));
-        _logger->log(&obj);
+
+
+std::vector<std::pair<Localizer*, float>> FLModel::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults, size_t thread_num)
+{
+    // Train existed localizers
+    auto embedding(_embed(suite->getTestCases(), graphs));
+    auto similar_embeddings(_chooseEmbedding(embedding, TOP_K));
+    for (auto embd : similar_embeddings)
+        embd.first->train(suite, graphs, faults, embd.second, thread_num);
+    auto& new_embedding = _embedding_list.emplace_back(std::move(embedding));
+
+    // Train new localizer
+    new_embedding.localizer = std::make_unique<Localizer>(_depth, TOP_K, ++_id);
+    new_embedding.localizer->train(suite, graphs, faults, 1.0f, thread_num);
+    similar_embeddings.emplace_back(new_embedding.localizer.get(), 0.0f);
+    return similar_embeddings;
+}
+
+
+
+std::string FLModel::convertResultToString(const std::vector<std::pair<Localizer*, float>>& result)
+{
+    std::string buffer;
+    buffer.reserve(StringEditor::MiB(1));
+
+    for (auto item : result) {
+
+        StringEditor::append(buffer.append("---[ ID: "), item.first->getID()).append(", weight: ");
+        StringEditor::append(buffer, item.second).append(" ]---\n");
+        buffer.append(item.first->toString()).append("\n\n");
     }
+    StringEditor::eraseEndIf(buffer, "\n\n");
+    return buffer;
 }
 
 
 
-void FLModel::step(TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
+FLModel::Embedding FLModel::_embed(const std::vector<TestSuite::TestCase>& cases, const stmt_graph::Graph::vector_t& graphs)
 {
-    auto targets(toTokenFromFault(suite, tkt_vec, faults));
-    auto info(_predictor.step(suite.getTotalTestCase(), tkt_vec, targets));
+    Embedding embedding;
+    std::unordered_map<std::string, uint64_t> passing;
+    std::unordered_map<std::string, uint64_t> failing;
+    uint64_t max_passing = 0;
+    uint64_t max_failing = 0;
+    passing.reserve(_dimension.size() * 2);
+    failing.reserve(_dimension.size() * 2);
 
-    _localizers.emplace_back(std::make_unique<Localizer>());
-    for (auto& item : info.targets)// Update target localizers
-        _localizers[item.first]->step(suite, tkt_vec, faults, targets, item.second);
+    // Count every passing, failing test case
+    for (auto& testcase : cases) {
 
-    if (_localizers.size() > Predictor::SIZE)
-        _localizers.erase(_localizers.begin());
-}
+        auto& vector_ref = testcase.is_passed ? passing : failing;
+        auto& max_ref = testcase.is_passed ? max_passing : max_failing;
 
+        for (auto item : testcase.lines) {
 
+            auto node_vector = graphs.at(item.first)->at(item.second);
+            if (node_vector)
+                for (auto node : *node_vector)
+                    for (auto& tok : node->token_vector) {
 
-target_tokens FLModel::toTokenFromFault(const TestSuite& suite, const TokenTree::Vector& tkt_vec, const fault_loc& faults)
-{
-    target_tokens ret;
-    for (auto& item : faults) {
-
-        std::unordered_set<Token::List*> marking;
-        index_t index = suite.getIndexFromFile(item.first);
-
-        for (auto line : item.second) {
-
-            auto list_ptr = tkt_vec[index]->getTokens(line);
-            if (list_ptr)
-                for (auto& token : *list_ptr)
-                    if (!marking.contains(token.neighbor.get())) {
-
-                        ret.emplace_back(&token);
-                        marking.insert(token.neighbor.get());
+                        _dimension.insert(tok);
+                        uint64_t new_max = vector_ref.contains(tok) ? (vector_ref.at(tok) += 1) : (vector_ref.emplace(tok, 1).second);
+                        if (new_max > max_ref)
+                            max_ref = new_max;
                     }
         }
     }
 
-    return ret;
+    // Normalize count
+    embedding.passing.reserve(passing.size());
+    embedding.failing.reserve(failing.size());
+    for (auto& item : passing)
+        embedding.passing.emplace(item.first, item.second / float(max_passing));
+    for (auto& item : failing)
+        embedding.failing.emplace(item.first, item.second / float(max_failing));
+    return embedding;
 }
-}
 
 
 
-namespace PAFL
+float FLModel::_similarity(const Embedding& feature, const Embedding& current) const
 {
-FLModel::Logger::Logger(const fs::path& path, StopWatch<time_t>& timer) : BaseLogger(path, timer) {}
+    float between_passing = 0.0f;
+    float between_failing = 0.0f;
 
+    for (auto& tok : _dimension) {
 
-
-void FLModel::Logger::log(const void* obj) const
-{
-    beginLog();
-    {
-        auto pair = static_cast<const std::pair<const FLModel*, const Predictor::TargetInfo*>*>(obj);
-        _llz_log(pair->first);
-        _pdt_log(pair->second);
+        float feature_val = std::sqrt(feature.failing.contains(tok) ? feature.failing.at(tok) : 0.0f);
+        {// Distance between feature's failing and passing test case
+            float passing_val = std::sqrt(current.passing.contains(tok) ? current.passing.at(tok) : 0.0f);
+            float diff = feature_val - passing_val;
+            between_passing += diff * diff;
+        }
+        {// Distance between feature's failing and failing test case
+            float failing_val = std::sqrt(current.failing.contains(tok) ? current.failing.at(tok) : 0.0f);
+            float diff = feature_val - failing_val;
+            between_failing += diff * diff;
+        }
     }
-    endLog();
+
+    return between_failing > 0.0f ? between_passing / between_failing : std::numeric_limits<float>::infinity();
 }
 
 
 
-void FLModel::Logger::_llz_log(const FLModel* model) const
+std::vector<std::pair<Localizer*, float>> FLModel::_chooseEmbedding(const Embedding& current, size_t top_k) const
 {
-    auto llz_path(createDirRecursively(path / "localizer"));
+    std::vector<std::pair<Localizer*, float>> ret;
+    ret.reserve(_embedding_list.size() + 1);
+    bool inf_similarity = false;
 
-    for (size_t i = 0; i != model->_localizers.size(); i++)
-        model->_localizers[i]->log(llz_path / ("llz_" + std::to_string(i + 1)));
-}
+    // Calculate similarity
+    for (auto& embedding : _embedding_list) {
 
+        auto sim = _similarity(embedding, current) - 1.0f;
+        if (sim == std::numeric_limits<float>::infinity()) {
 
+            inf_similarity = true;
+            ret.emplace_back(embedding.localizer.get(), sim);
+        }
+        else if (sim > 0.0f)
+            ret.emplace_back(embedding.localizer.get(), sim);
+    }
+    if (ret.size() == 0)
+        return ret;
 
-void FLModel::Logger::_pdt_log(const Predictor::TargetInfo* info) const
-{
-    std::ofstream ofs(path / "predictor.txt");
+    // Sort
+    std::sort(ret.begin(), ret.end(),
+        [](decltype(ret)::value_type lhs, decltype(ret)::value_type rhs)
+        {
+            return lhs.second > rhs.second;
+        });
+ 
+    // Chose Top-K embeddings
+    if (ret.size() > top_k)
+        ret.erase(ret.begin() + top_k, ret.end());
 
-    ofs << " total = " << info->targets.size() << "\n\n";
-    for (auto& item : info->targets)
-        ofs << " [" << item.first + 1 << "] : " << std::to_string(item.second) << '\n';
-    ofs << '\n';
+    // Normalize similarity
+    if (inf_similarity) {
+
+        float uniform_sim = 0;
+        for (auto item : ret)
+            if (item.second == std::numeric_limits<float>::infinity())
+                uniform_sim += 1.0f;
+        uniform_sim = 1.0f / uniform_sim;
+        for (auto& item : ret)
+            if (item.second == std::numeric_limits<float>::infinity())
+                item.second = uniform_sim;
+    }
+    else {
+
+        float total = 0.0f;
+        for (auto item : ret)
+            total += item.second;
+        for (auto& item : ret)
+            item.second /= total;
+    }
+    return ret;
 }
 }

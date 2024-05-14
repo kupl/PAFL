@@ -1,9 +1,9 @@
 #ifndef __ARGPARSER_H__
 #define __ARGPARSER_H__
 
+#include <set>
+#include <vector>
 #include <unordered_map>
-#include <unordered_set>
-#include <list>
 #include <filesystem>
 #ifdef _WIN32
 #else
@@ -15,55 +15,53 @@
 class ArgParser
 {
 public:
-    ArgParser(int argc, const char *argv[]) :
-        _directory_path(std::filesystem::absolute(argv[0]).parent_path().parent_path())
+    ArgParser(int argc, const char *argv[])
     {
         // Set directoray path
         char buffer[PATH_MAX];
         readlink("/proc/self/exe", buffer, PATH_MAX);
-        _directory_path = std::filesystem::path(buffer).parent_path().parent_path();
+        _executable_path = std::filesystem::path(buffer);
 
         // Parse arguments
-        std::list<std::string> prev;
-        for (int i = 1; i != argc; i++) {
+        std::string prev;
+        for (int i = 0; i != argc; ++i) {
 
             std::string arg(argv[i]);
-
-            // Add to _next
-            for (auto& opt : prev)
-                _next.emplace(opt, arg);
-
-            // -<short op 1><short op 2> ...
-            if (arg.starts_with('-') && !arg.starts_with("--")) {
-
-                prev.clear();
-                arg.erase(arg.begin());
-                for (auto opt : arg) {
-
-                    prev.push_back(std::string{'-'} + std::string{opt});
-                    _set.insert(std::string{'-'} + std::string{opt});
-                }
-            }
-            else {
-
-                prev = std::list<std::string>{arg};
-                _set.insert(arg);
-            }
+            _argv.push_back(arg);
+            _set.insert(arg);
+            _next.emplace(prev, arg);
+            prev = std::move(arg);
         }
     }
 
 
-    std::string operator[](const std::string& key) const                    { return _next.contains(key) ? _next.at(key) : std::string(); }
-    std::string operator[](std::initializer_list<std::string> keys) const
+    const std::string& operator[](unsigned index) const
+    {
+        return index < _argv.size() ? _argv.at(index) : _null;
+    }
+
+
+    const std::string& operator[](const std::string& key) const
+    {
+        return _next.contains(key) ? _next.at(key) : _null;
+    }
+
+
+    const std::string& operator[](std::initializer_list<std::string> keys) const
     {
         for (auto& key : keys)
             if (_next.contains(key))
                 return _next.at(key);
-        return std::string();
+        return _null;
     }
 
 
-    bool contains(const std::string& key) const                             { return _set.contains(key); }
+    bool contains(const std::string& key) const
+    {
+        return _set.contains(key);
+    }
+
+
     bool contains(std::initializer_list<std::string> keys) const
     {
         for (auto& key : keys)
@@ -73,12 +71,23 @@ public:
     }
 
 
-    const std::filesystem::path& getDirectoryPath() const                   { return _directory_path; }
-    
+    const std::filesystem::path& getExecutablePath() const
+    {
+        return _executable_path;
+    }
+
+
+    size_t size() const
+    {
+        return _argv.size();
+    }
+
 
 private:
+    std::filesystem::path _executable_path;
     std::unordered_map<std::string, std::string> _next;
-    std::unordered_set<std::string> _set;
-    std::filesystem::path _directory_path;
+    std::set<std::string> _set;
+    std::vector<std::string> _argv;
+    const std::string _null;
 };
 #endif

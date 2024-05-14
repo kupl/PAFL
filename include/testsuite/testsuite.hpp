@@ -1,14 +1,16 @@
+#include "testsuite/testsuite.h"
+
 namespace PAFL
 {
 template <class Func>
-void TestSuite::setBaseSus(Func func)
+void TestSuite::setSus(Func func)
 {
     _initBoundary();
-    for (auto& map : _param_container)
+    for (auto& map : _content)
         for (auto& item : map) {
             
             auto sus = func(_succ, _fail, item.second.Ncs, item.second.Ncf);
-            item.second.ranking_ptr->base_sus = sus;
+            item.second.ranking_ptr->sus = item.second.ranking_ptr->base_sus = sus;
 
             if (_highest < sus)
                 _highest = sus;
@@ -22,13 +24,13 @@ void TestSuite::setBaseSus(Func func)
 
 
 template <class Func>
-void TestSuite::normalizeBaseSus(Func func)
+void TestSuite::normalizeSus(Func func)
 {
-    for (auto& file : _param_container)
+    for (auto& file : _content)
         for (auto& item : file) {
 
             auto& ref = item.second.ranking_ptr->base_sus;
-            ref = func(ref, _highest, _finite_highest, _lowest_nonzero);
+            item.second.ranking_ptr->sus = ref = func(ref, _highest, _finite_highest, _lowest_nonzero);
         }
 }
 
@@ -37,7 +39,7 @@ void TestSuite::normalizeBaseSus(Func func)
 template <class Archive>
 void TestSuite::save(Archive& ar) const
 {
-    ar(_succ, _fail, _highest, _finite_highest, _lowest_nonzero, _index2file, _file2index, _param_container, _ranking, _total_test_case);
+    ar(_succ, _fail, _highest, _finite_highest, _lowest_nonzero, _index2file, _file2index, _content, _ranking, _testcase_vec);
 }
 
 
@@ -45,8 +47,8 @@ void TestSuite::save(Archive& ar) const
 template <class Archive>
 void TestSuite::load(Archive& ar)
 {
-    ar(_succ, _fail, _highest, _finite_highest, _lowest_nonzero, _index2file, _file2index, _param_container, _ranking, _total_test_case);
+    ar(_succ, _fail, _highest, _finite_highest, _lowest_nonzero, _index2file, _file2index, _content, _ranking, _testcase_vec);
     for (auto& ranking : _ranking)
-        _param_container.at(ranking.index).at(ranking.line).ranking_ptr = &ranking;
+        _content.at(ranking.index).at(ranking.line).ranking_ptr = &ranking;
 }
 }
