@@ -100,19 +100,20 @@ float FLModel::_similarity(const Embedding& feature, const Embedding& current) c
     for (auto& tok : _dimension) {
 
         float feature_val = std::sqrt(feature.failing.contains(tok) ? feature.failing.at(tok) : 0.0f);
-        {// Distance between feature's failing and passing test case
-            float passing_val = std::sqrt(current.passing.contains(tok) ? current.passing.at(tok) : 0.0f);
+        float current_val = std::sqrt(current.failing.contains(tok) ? current.failing.at(tok) : 0.0f);
+        float passing_val = std::sqrt(feature.passing.contains(tok) ? feature.passing.at(tok) : 0.0f);
+        
+        {// Distance between feature's failing and passing
             float diff = feature_val - passing_val;
             between_passing += diff * diff;
         }
-        {// Distance between feature's failing and failing test case
-            float failing_val = std::sqrt(current.failing.contains(tok) ? current.failing.at(tok) : 0.0f);
-            float diff = feature_val - failing_val;
+        {// Distance between feature's failing and current's failing
+            float diff = feature_val - current_val;
             between_failing += diff * diff;
         }
     }
 
-    return between_failing > 0.0f ? between_passing / between_failing : std::numeric_limits<float>::infinity();
+    return between_passing - 1.5f * between_failing;
 }
 
 
@@ -121,18 +122,12 @@ std::vector<std::pair<Localizer*, float>> FLModel::_chooseEmbedding(const Embedd
 {
     std::vector<std::pair<Localizer*, float>> ret;
     ret.reserve(_embedding_list.size() + 1);
-    bool inf_similarity = false;
 
     // Calculate similarity
     for (auto& embedding : _embedding_list) {
 
-        auto sim = _similarity(embedding, current) - 1.0f;
-        if (sim == std::numeric_limits<float>::infinity()) {
-
-            inf_similarity = true;
-            ret.emplace_back(embedding.localizer.get(), sim);
-        }
-        else if (sim > 0.0f)
+        auto sim = _similarity(embedding, current);
+        if (sim > 0.0f)
             ret.emplace_back(embedding.localizer.get(), sim);
     }
     if (ret.size() == 0)
@@ -150,25 +145,11 @@ std::vector<std::pair<Localizer*, float>> FLModel::_chooseEmbedding(const Embedd
         ret.erase(ret.begin() + top_k, ret.end());
 
     // Normalize similarity
-    if (inf_similarity) {
-
-        float uniform_sim = 0;
-        for (auto item : ret)
-            if (item.second == std::numeric_limits<float>::infinity())
-                uniform_sim += 1.0f;
-        uniform_sim = 1.0f / uniform_sim;
-        for (auto& item : ret)
-            if (item.second == std::numeric_limits<float>::infinity())
-                item.second = uniform_sim;
-    }
-    else {
-
-        float total = 0.0f;
-        for (auto item : ret)
-            total += item.second;
-        for (auto& item : ret)
-            item.second /= total;
-    }
+    float total = 0.0f;
+    for (auto item : ret)
+        total += item.second;
+    for (auto& item : ret)
+        item.second /= total;
     return ret;
 }
 }

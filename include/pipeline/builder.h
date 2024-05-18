@@ -33,8 +33,7 @@ class PyBuilder : public BuilderBase
 public:
     stmt_graph::Graph* build(const std::filesystem::path& source_path) override
     {
-        // Todo
-        return nullptr;
+        return new stmt_graph::PyGraph(source_path);
     }
 };
 }

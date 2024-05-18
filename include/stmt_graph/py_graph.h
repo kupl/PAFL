@@ -10,7 +10,6 @@
 #include <tree-sitter-python.h>
 
 #include "./graph.h"
-#include <iostream>
 
 
 namespace stmt_graph

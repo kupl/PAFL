@@ -45,37 +45,35 @@ std::string CppGraph::_resolvePreproccessor(const std::filesystem::path& source_
     // Remove # line
     line_t line = 1;
     bool at_source = false;
-    for (const char* pos = buffer.c_str(); pos - buffer.c_str() < buffer.size(); ) {
+    for (const char* pos = buffer.c_str(); pos[0] != '\0'; ) {
 
         // Read a line from buffer
         const char* begin = pos;
-        for (; pos[0] != '\n' && pos[0] != '\0'; ++pos);
-        if (pos[0] == '\n')
-            ++pos;
+        pos = StringEditor::readLine(buffer.c_str(), pos);
 
-        // case: prefix #
+        // case: prefix "# "
         if (begin[0] == '#') {
             
-            // Get line number
-            const char* end = begin += 2;
-            for (; end[0] != ' '; ++end);
-            line_t temp_line;
-            std::from_chars(begin, end, temp_line);
+            if (begin[1] == ' ') {
 
-            // Get file name
-            begin = end += 2;
-            for (; end[0] != '"'; ++end);
-            if (source_name == std::string(begin, end)) {
-                
-                at_source = true;
-                for (line_t i = line; i != temp_line; ++i) {
+                // Get line number
+                const char* end = begin += 2;
+                for (; end[0] != ' '; ++end);
+                line_t temp_line;
+                std::from_chars(begin, end, temp_line);
+
+                // Get file name
+                begin = end += 2;
+                for (; end[0] != '"'; ++end);
+                if (source_name == std::string(begin, end)) {
                     
-                    ++line;
-                    source.push_back('\n');
+                    at_source = true;
+                    for (; line < temp_line; ++line)
+                        source.push_back('\n');
                 }
+                else // source_name != std::string(begin, end)
+                    at_source = false;
             }
-            else // source_name != std::string(begin, end)
-                at_source = false;
         }
         
         // case: code

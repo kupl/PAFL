@@ -67,7 +67,6 @@ PyGraph::Builder::Builder(PyGraph& graph, const std::string& source) :
     
     // Build cpp-graph from the source
     walkAST();
-    std::cout << printNode(root);
 
     // Cleanup
     ts_tree_delete(tree);

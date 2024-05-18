@@ -4,25 +4,24 @@ namespace PAFL
 {
 void Localizer::localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, float coef) const
 {
-    if (!_isFresh)
-        _localize(suite, graphs, coef * _maturity / _updater_num);
+    _localize(suite, graphs, coef * _maturity / _updater_num);
 }
 
 
 
-void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults, float coef, size_t thread_num)
+void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults,
+                      float coef, size_t thread_num)
 {
     if (_isFresh)
         _isFresh = false;
-    _maturity += coef / 2;
-    if (_maturity > 1.0f)
-        _maturity = 1.0f;
+    else if (_maturity <= 0.1f)
+        _maturity = 0.1f;
+    else {
 
-    // base first ranking
-    suite->setSusToBase();
-    _localize(suite, graphs, 1.0f);
-    suite->rank();
-    auto base_fr = suite->getFirstRanking(faults);
+        _maturity += _maturity;
+        if (_maturity > 1.0f)
+            _maturity = 1.0f;
+    }
 
     // Collect buggy nodes
     std::vector<const stmt_graph::Node*> buggy_nodes;
@@ -34,13 +33,21 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
                 buggy_nodes.push_back(node);
     }
 
+    // base first ranking
+    suite->setSusToBase();
+    _localize(suite, graphs, 1.0f);
+    suite->rank();
+    auto base_fr = suite->getFirstRanking(faults);
+
     // Make the future suspiciousness values
     suite->setSusToBase();
-    auto mutants(_updater.makeMutant(buggy_nodes, 0.0f, 1.0f));
+    auto mutants(_updater.makeMutant(buggy_nodes, 0.0f, MAX_WEIGHT));
+
     // Single thread
     if (thread_num <= 1)
         for (auto& mut : mutants)
             _trainMutant(suite, graphs, faults, mut, base_fr, coef);
+    
     // Multi threads
     else {
 
@@ -52,7 +59,7 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
             });
         pool.wait();
     }
-    
+
     // Assign new suspiciousness values
     for (auto& mut : mutants)
         mut.block->setValue(mut.token, mut.mutated_value);
@@ -152,15 +159,15 @@ void Localizer::_trainMutant(TestSuite* suite, const stmt_graph::Graph::vector_t
     // Positive update
     if (new_fr < base_fr) {
 
-        auto grad = _gradientFormula(base_fr, new_fr, coef, (1.0f / _updater_num));
-        mutant.mutated_value = mutant.original_value + (1.0f - mutant.original_value) * grad;
+        auto grad = _gradientFormula(base_fr, new_fr, coef, 1.0f / _updater_num);
+        mutant.mutated_value = mutant.original_value + (mutant.mutated_value - mutant.original_value) * grad;
     }
 
     // Negative update
     else if (new_fr > base_fr) {
 
-        auto grad = _gradientFormula(new_fr, base_fr, coef, (1.0f / _updater_num));
-        mutant.mutated_value = mutant.original_value * (mutant.original_value * grad + (1.0f - grad));
+        auto grad = _gradientFormula(new_fr, base_fr, coef, 1.0f / _updater_num);
+        mutant.mutated_value = mutant.original_value * (mutant.original_value * grad + (mutant.mutated_value - grad));
     }
     else
         mutant.mutated_value = mutant.original_value;

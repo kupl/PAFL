@@ -16,14 +16,24 @@ void TestSuiteGcov::addTestCase(const rapidjson::Document& doc, bool is_passed)
         const auto& json_file = json_file_obj.GetObject();
         const auto& json_lines = json_file["lines"].GetArray();
         std::string key(json_file["file"].GetString());
+        std::filesystem::path file_path(key);
 
         // Check if it is a permitted extension
-        if (!_extensions.contains(std::filesystem::path(key).extension().string()))
+        if (!_extensions.contains(file_path.extension().string()))
             continue;
 
         // Check if it is a valid file
         if (json_lines.Empty())
             continue;
+
+        {// Check if it is a test file
+            auto top_dir = file_path;
+            for (; !top_dir.parent_path().empty(); top_dir = top_dir.parent_path());
+            auto top_dir_string(top_dir.string());
+            std::transform(top_dir_string.begin(), top_dir_string.end(), top_dir_string.begin(), tolower);
+            if (top_dir_string == "test" || top_dir_string == "tests")
+                continue;
+        }
         
         // If "file" is not in filelist, initialize
         if (!_file2index.contains(key)) {

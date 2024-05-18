@@ -80,6 +80,21 @@ TestSuite::line_t TestSuite::getFirstRanking(const fault_set_t& faults) const
 
 
 
+float TestSuite::getAverageRanking(const fault_set_t& faults) const
+{
+    float avg = 0.0f;
+    size_t size = 0;
+    for (auto item : faults)
+        if (_content.at(item.first).contains(item.second)) {
+
+            avg += _content.at(item.first).at(item.second).ranking_ptr->ranking;
+            ++size;
+        }
+    return size ? avg / size : 0.0f;
+}
+
+
+
 void TestSuite::readSus(const rapidjson::Document& doc)
 {
     _initBoundary();

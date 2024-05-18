@@ -1,8 +1,8 @@
 #ifndef __MODEL_UPDATER_H__
 #define __MODEL_UPDATER_H__
 
+#include <stringeditor.h>
 #include "model/block.h"
-#include "stringeditor.h"
 
 
 namespace PAFL
@@ -22,8 +22,6 @@ public:
     float max(const stmt_graph::Node* node, const Mutant& mutant) const;
     float max(const stmt_graph::Node* node) const;
     std::vector<Mutant> makeMutant(std::vector<const stmt_graph::Node*> buggy_nodes, float default_original_value, float mutated_value) const;
-
-    void assignMutants(const std::vector<Mutant>& mutants);
     void eraseIf(float threshold)   { for (int i = 0; i != BLOCK_NUM; ++i) _block_map[i]->eraseIf(threshold); }
 
     std::string toString() const;

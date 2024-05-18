@@ -7,9 +7,9 @@
 #include <unordered_map>
 #include <map>
 #include <tree_sitter/api.h>
+#include <stringeditor.h>
 
 #include "./rapidjson/document.h"
-#include "./stringeditor.h"
 #include "./node.h"
 
 

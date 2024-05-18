@@ -13,9 +13,9 @@
 #include <cereal/types/list.hpp>
 #include <cereal/types/utility.hpp>
 #include <cereal/types/string.hpp>
+#include <stringeditor.h>
 
 #include "rapidjson/document.h"
-#include "stringeditor.h"
 
 
 namespace PAFL
@@ -92,6 +92,7 @@ public:
 
     void rank();
     line_t getFirstRanking(const fault_set_t& faults) const;
+    float getAverageRanking(const fault_set_t& faults) const;
 
     content_t& content()                                        { return _content; }
     const std::vector<TestCase>& getTestCases() const           { return _testcase_vec; }

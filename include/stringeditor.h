@@ -154,6 +154,18 @@ public:
 
 
 /*
+    Return the position of next line
+*/
+    static const char* readLine(const char* buffer, const char* pos)
+    {
+        if (!buffer || !pos)
+            return nullptr;
+        for (; pos[0] != '\n' && pos[0] != '\0'; ++pos);
+        return pos[0] == '\n' ? pos + 1 : pos;
+    }
+
+
+/*
     Write buffer to path
 */
     static int write(const char* path, const std::string& buffer)
