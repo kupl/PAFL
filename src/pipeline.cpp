@@ -9,7 +9,7 @@ void Pipeline::run()
     // Command run-base
     if (_args[1] == "run-base") {
 
-        _assert(!_readProfileConfig(_args[{"-P", "--profile"}]), "Invalid profile");
+        _assert(!_readProfileConfig(_args[{"-P", "--profile"}]), "Invalid profile\n");
         _source_dir = _args[{"-S", "--source-dir"}];
         _test_dir = _args[{"-T", "--test-dir"}];
 
@@ -21,7 +21,7 @@ void Pipeline::run()
     // Command run-pafl
     else if (_args[1] == "run-pafl") {
 
-        _assert(!_readProfileConfig(_args[{"-P", "--profile"}]), "Invalid profile");
+        _assert(!_readProfileConfig(_args[{"-P", "--profile"}]), "Invalid profile\n");
         _source_dir = _args[{"-S", "--source-dir"}];
         _test_dir = _args[{"-T", "--test-dir"}];
         
@@ -34,7 +34,7 @@ void Pipeline::run()
     // Command train
     else if (_args[1] == "train") {
 
-        _assert(!_readProfileConfig(_args[{"-P", "--profile"}]), "Invalid profile");
+        _assert(!_readProfileConfig(_args[{"-P", "--profile"}]), "Invalid profile\n");
         _source_dir = _args[{"-S", "--source-dir"}];
         _test_dir = _args[{"-T", "--test-dir"}];
         _oracle_path = _args[{"-O", "--oracle-path"}];
@@ -48,28 +48,28 @@ void Pipeline::run()
     // Command profile
     else if (_args[1] == "profile") {
 
-        _assert(_args.size() == 5 || _args.size() == 6, "Invalid arguments\nRun 'pafl help' for information on a command.");
+        _assert(_args.size() == 5 || _args.size() == 6, "Invalid arguments\nRun 'pafl help' for information on a command.\n");
         _cmdProfile(_args[2], _args[3], _args[4], _args.size() == 6 ? _args[5] : "11111", _directory);
     }
 
     // Command deletion of profile
     else if (_args[1] == "profile-rm") {
 
-        _assert(_args.size() == 3, "Invalid arguments\nRun 'pafl help' for information on a command.");
+        _assert(_args.size() == 3, "Invalid arguments\nRun 'pafl help' for information on a command.\n");
         _cmdProfileRemove(_args[2], _directory);
     }
 
     // Command deletion of profile's FL model
     else if (_args[1] == "profile-reset") {
 
-        _assert(_args.size() == 3, "Invalid arguments\nRun 'pafl help' for information on a command.");
+        _assert(_args.size() == 3, "Invalid arguments\nRun 'pafl help' for information on a command.\n");
         _cmdProfileReset(_args[2], _directory);
     }
 
     // Command caching
     else if (_args[1] == "caching") {
 
-        _assert(_args.size() == 4, "Invalid arguments\nRun 'pafl help' for information on a command.");
+        _assert(_args.size() == 4, "Invalid arguments\nRun 'pafl help' for information on a command.\n");
         _cmdCaching(_args[2], _args[3]);
     }
 
@@ -86,7 +86,7 @@ void Pipeline::run()
 
     // Otherwise
     else
-        _assert(false, "Command option is not avaliable.\nRun 'pafl help' for information on a command.");
+        _assert(false, "Command option is not avaliable.\nRun 'pafl help' for information on a command.\n");
 }
 
 
@@ -144,25 +144,35 @@ int Pipeline::_cmdRunPafl()
     // Run localizing phase of Project-Aware FL
     std::cout << "Localizing ...\n";
     _method->setSus(_suite.get());
-    if (model.getMaxID() > 1) {
+    _normalizer->normalize(_suite.get());
+    auto result(model.localize(_suite.get(), graphs));
 
-        _normalizer->normalize(_suite.get());
-        model.localize(_suite.get(), graphs);
-        if (_log) {// Logging result
-        
-            auto path(_createDirectory(_directory / PROFILE_DIRECTORY / _profile / LOG_DIRECTORY));
-            auto log_file = std::to_string(model.getMaxID()) + "_localize";
-            StringEditor::write((path / log_file).c_str(), FLModel::convertResultToString(model.localize(_suite.get(), graphs)));
-        }
-        else
-            model.localize(_suite.get(), graphs);
+    // Logging result
+    if (_log) {
+    
+        auto path(_createDirectory(_directory / PROFILE_DIRECTORY / _profile / LOG_DIRECTORY));
+        auto log_file = std::to_string(model.getMaxID()) + "_localize";
+        StringEditor::write((path / log_file).c_str(), FLModel::convertResultToString(result));
     }
+
+    // Reset suspiciousness if the result is trivial
+    auto check_triviality = [&result]() { 
+        for (auto item : result)
+            if (!item.first->trivial())
+                return false;
+        return true;
+    };
+    if (model.getMaxID() <= 1 || result.empty() || check_triviality())
+        _method->setSus(_suite.get());
+
+    // Save ranking
     _suite->rank();
     auto path(_createDirectory(_test_dir / _PAFL_ / (_profile + "-pafl")) / "ranking.json");
     StringEditor::write(path.c_str(), _suite->toJson());
     
     std::cout << "Done.\n";
-    if (_log) {// Logging time
+    // Logging time
+    if (_log) {
 
         auto path(_createDirectory(_directory / PROFILE_DIRECTORY / _profile / TIME_LOG_DIRECTORY));
         auto log_file = std::to_string(model.getMaxID()) + "_localize";
@@ -282,61 +292,20 @@ int Pipeline::_cmdCaching(const std::string& language, const std::filesystem::pa
 
 
 
-void Pipeline::_cmdToCovmatrix(const std::string& language, const std::filesystem::path& test_dir, const std::filesystem::path& output_dir)
+int Pipeline::_cmdToCovmatrix(const std::filesystem::path& test_dir, const std::filesystem::path& oracle_path, const std::filesystem::path& output_dir)
 {
-}
+    // Load test suite
+    TestSuite suite;
+    if (_loadCache(&suite, test_dir))
+        return 1;
 
+    // Load fault oracle
+    rapidjson::Document doc;
+    doc.Parse(StringEditor::read(oracle_path.c_str()).c_str());
 
-
-void Pipeline::_cmdHelp()
-{
-    auto message = 
-R"(help: print this help
-
-run-base: run baseline fault localization
-    -P, --profile [prf]             | select profile
-    -S, --source-dir [dir]          | program source directory
-    -T, --test-dir [dir]            | testsuite directory
-    --suspiciousness-path [path]    | path of suspiciousness data (when method is custom)
-    -c, --cache-testsuite           | load testsuite from cache. path is "{testsuite directory}/__pafl__/cache.cereal"
-
-run-pafl: run Project-Aware Fault Localization
-    -P, --profile [prf]             | select profile
-    -S, --source-dir [dir]          | program source directory
-    -T, --test-dir [dir]            | testsuite directory
-    --suspiciousness-path [path]    | path of suspiciousness data (when method is custom)
-    --thread [num]                  | set the number of thread to use. default is 1
-    -c, --cache-testsuite           | load testsuite from cache. path is "{testsuite directory}/__pafl__/cache.cereal"
-    -l, --log                       | store log in directory "{testsuite directory}/__pafl__/{prf}/log/"
-
-train: train pafl profile using fault location
-    -P, --profile [prf]             | select profile
-    -S, --source-dir [dir]          | program source directory
-    -T, --test-dir [dir]            | testsuite directory
-    -O, --oracle-path [path]        | path of fault location oracle
-    --thread [num]                  | set the number of thread to use. default is 1
-    -c, --cache-testsuite           | load testsuite from cache. path is "{testsuite directory}/__pafl__/cache.cereal"
-    -l, --log                       | store log in directory "{testsuite directory}/__pafl__/{prf}/log/"
-
-profile: create or edit profile
-    profile [prf] [lang] [method]   | configuration of profile's path is "profile/{prf}/config.json"
-        lang: cpp, python, java
-        method: tarantula, ochiai, dstar, barinel, custom
-
-profile-rm: delete profile
-    profile-rm [prf]                | profile's directory is "profile/{prf}"
-
-profile-reset: delete Project-Aware Fault Localization model
-    profile-reset [prf]             | model of profile's path is "profile/{prf}/model.cereal"
-
-caching: caching testsuite
-    caching [lang] [dir]            | cache's path is "{testsuite directory}/__pafl__/cache.cereal"
-        lang: cpp, python, java
-        
-to-covmatrix-from-cache
-    to-covmatrix-from-cache [lang] [testsuite-dir] [output-dir]
-)";
-    std::cout.write(message, std::strlen(message));
+    //  Save as coverage matrix
+    suite.saveAsCovMatrix(_createDirectory(output_dir), suite.makeFalutSet(doc));
+    return 0;
 }
 
 
@@ -371,7 +340,7 @@ Pipeline::Language Pipeline::_identifyLanguage(std::string language)
     std::transform(language.begin(), language.end(), language.begin(), tolower);
     if (language == "cpp" || language == "c" || language == "c++")
         return Language::CPP;
-    else if (language == "python")
+    else if (language == "python" || language == "py")
         return Language::PYTHON;
     else if (language == "java")
         return Language::JAVA;

@@ -24,9 +24,9 @@ public:
     std::vector<Mutant> makeMutant(std::vector<const stmt_graph::Node*> buggy_nodes, float default_original_value, float mutated_value) const;
     void eraseIf(float threshold)   { for (int i = 0; i != BLOCK_NUM; ++i) _block_map[i]->eraseIf(threshold); }
 
+    bool empty() const              { for (int i = 0; i != BLOCK_NUM; ++i) if (!_block_map[i]->empty()) return false; return true; }
     std::string toString() const;
-    template <class Archive> void serialize(Archive& ar)
-    {
+    template <class Archive> void serialize(Archive& ar) {
         ar(_target, _pred, _succ, _parent, _child, _depth_map[0], _depth_map[1], _depth_map[2], _depth_map[3], _depth_map[4]);
     }
 

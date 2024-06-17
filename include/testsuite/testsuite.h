@@ -48,7 +48,7 @@ public:
     
     struct Copy
     {
-        std::vector<std::unordered_map<line_t, Ranking*>> content;
+        std::vector<std::unordered_map<line_t, Param>> content;
         std::list<Ranking> ranking;
         Copy(const TestSuite& suite);
         void rank();
@@ -62,7 +62,7 @@ public:
     TestSuite(TestSuite&) = delete;
     TestSuite(TestSuite&& rhs) = delete;
 
-    virtual void addTestCase(const rapidjson::Document& doc, bool is_passed) = 0;
+    virtual void addTestCase(const rapidjson::Document& doc, bool is_passed) {}
 
     // Set the suspiciousness values using formula
     template <class Func>
@@ -74,7 +74,7 @@ public:
             "lines": [
                 {
                     "file": "PATH",
-                    "lineno": INT,
+                    "lineno": UINT,
                     "sus": FLOAT
                 },
 
@@ -99,6 +99,7 @@ public:
     index_t getIndexFromFile(const std::string& file) const     { return _file2index.contains(file) ? _file2index.at(file) : std::numeric_limits<index_t>::max(); }
     index_t maxIndex() const                                    { return _index2file.size(); }
     const std::string& getFileFromIndex(index_t idx) const      { return _index2file.at(idx); }
+    // Return total statements
     size_t size() const                                         { return _ranking.size(); }
 
     /*

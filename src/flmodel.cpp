@@ -84,9 +84,9 @@ FLModel::Embedding FLModel::_embed(const std::vector<TestSuite::TestCase>& cases
     embedding.passing.reserve(passing.size());
     embedding.failing.reserve(failing.size());
     for (auto& item : passing)
-        embedding.passing.emplace(item.first, item.second / float(max_passing));
+        embedding.passing.emplace(item.first, std::sqrt(item.second / float(max_passing)));
     for (auto& item : failing)
-        embedding.failing.emplace(item.first, item.second / float(max_failing));
+        embedding.failing.emplace(item.first, std::sqrt(item.second / float(max_failing)));
     return embedding;
 }
 
@@ -97,23 +97,27 @@ float FLModel::_similarity(const Embedding& feature, const Embedding& current) c
     float between_passing = 0.0f;
     float between_failing = 0.0f;
 
+    // Calculate distance
     for (auto& tok : _dimension) {
 
-        float feature_val = std::sqrt(feature.failing.contains(tok) ? feature.failing.at(tok) : 0.0f);
-        float current_val = std::sqrt(current.failing.contains(tok) ? current.failing.at(tok) : 0.0f);
-        float passing_val = std::sqrt(feature.passing.contains(tok) ? feature.passing.at(tok) : 0.0f);
+        float feature_val = feature.failing.contains(tok) ? feature.failing.at(tok) : 0.0f;
+        float failing_val = current.failing.contains(tok) ? current.failing.at(tok) : 0.0f;
+        float passing_val = current.passing.contains(tok) ? current.passing.at(tok) : 0.0f;
         
-        {// Distance between feature's failing and passing
+        {// Distance between feature's failing and current's passing
             float diff = feature_val - passing_val;
             between_passing += diff * diff;
         }
         {// Distance between feature's failing and current's failing
-            float diff = feature_val - current_val;
+            float diff = feature_val - failing_val;
             between_failing += diff * diff;
         }
     }
 
-    return between_passing - 1.5f * between_failing;
+    // Calculate similarity
+    between_passing = std::sqrt(between_passing);
+    between_failing = std::sqrt(between_failing);
+    return between_passing > 0.0f ? (between_passing - between_failing) / between_passing : -std::numeric_limits<float>::infinity();
 }
 
 
@@ -127,7 +131,7 @@ std::vector<std::pair<Localizer*, float>> FLModel::_chooseEmbedding(const Embedd
     for (auto& embedding : _embedding_list) {
 
         auto sim = _similarity(embedding, current);
-        if (sim > 0.0f)
+        if (sim > SIMILARITY_THRESHOLD)
             ret.emplace_back(embedding.localizer.get(), sim);
     }
     if (ret.size() == 0)
@@ -135,21 +139,13 @@ std::vector<std::pair<Localizer*, float>> FLModel::_chooseEmbedding(const Embedd
 
     // Sort
     std::sort(ret.begin(), ret.end(),
-        [](decltype(ret)::value_type lhs, decltype(ret)::value_type rhs)
-        {
+        [](decltype(ret)::value_type lhs, decltype(ret)::value_type rhs) {
             return lhs.second > rhs.second;
         });
  
     // Chose Top-K embeddings
     if (ret.size() > top_k)
         ret.erase(ret.begin() + top_k, ret.end());
-
-    // Normalize similarity
-    float total = 0.0f;
-    for (auto item : ret)
-        total += item.second;
-    for (auto& item : ret)
-        item.second /= total;
     return ret;
 }
 }

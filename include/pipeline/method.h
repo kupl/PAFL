@@ -74,7 +74,7 @@ public:
 class CusmtomMethod : public Method
 {
 public:
-    CusmtomMethod(const std::filesystem::path& metadata) : Method() {}
+    CusmtomMethod(const std::filesystem::path& metadata) : Method(), _metadata(metadata) {}
     void setSus(TestSuite* suite) const override
     {
         rapidjson::Document doc;

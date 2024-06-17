@@ -94,9 +94,10 @@ namespace stmt_graph
 {
 CppGraph::Builder::Builder(CppGraph& graph, const std::string& source) :
     _graph(graph), _source(source), _root(graph._root.get()), _node_ptr{nullptr, nullptr, _root},
-    _terminal_set{"'", "\"", "R\"", "LR\"", "uR\"", "UR\"", "u8R\"",
-                    "=", "[", "]", "(", ")", "{", "}", ",", ".", "...", "->", ":", ";", ".*", "->*", "::"},
-    _literal_set{"number_literal", "char_literal", "string_literal", "raw_string_literal", "character"},
+    _terminal_set{"'", "\"", "\"\"", "=", "[", "]", "(", ")", "{", "}",
+                  ",", ".", "...", "->", ":", ";", ".*", "->*", "::"},
+    _literal_set{"number_literal"},
+    _non_terminal_set{"char_literal", "string_literal", "raw_string_literal"},
     _non_terminal_map{
         /*
             Block -> enum_specifier | strcut_specifier | union_specifier | class_specifier | function_definition
@@ -169,7 +170,7 @@ void CppGraph::Builder::walkAST()
                 ts_tree_cursor_goto_parent(_cursor);
             }
         }
-        else if (ts_tree_cursor_goto_first_child(_cursor)) {
+        else if (!_non_terminal_set.contains(type) && ts_tree_cursor_goto_first_child(_cursor)) {
 
             do walkAST();
             while (ts_tree_cursor_goto_next_sibling(_cursor));

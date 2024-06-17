@@ -103,7 +103,17 @@ void TestSuite::readSus(const rapidjson::Document& doc)
         const auto& info = info_obj.GetObject();
         auto file(info["file"].GetString());
         line_t line(info["lineno"].GetUint());
-        auto sus(info["sus"].GetFloat());
+
+        float sus = 0.0f;
+        auto& sus_obj = info["sus"];
+        if (sus_obj.IsString()) {
+
+            std::string sus_str = info["sus"].GetString();
+            if (sus_str.find("inf") != std::string::npos || sus_str.find("INF") != std::string::npos || sus_str.find("Inf") != std::string::npos)
+                sus = std::numeric_limits<float>::infinity();
+        }
+        else
+            sus = sus_obj.GetFloat();
 
         // Update the suspiciousness values
         if (_file2index.contains(file)) {
@@ -173,7 +183,7 @@ void TestSuite::saveAsCovMatrix(const std::filesystem::path& dir, const fault_se
         JSON format
         {
             "lines": [
-                { "file": "FILE_NAME", "lineno": INT },
+                { "file": STRING, "lineno": UINT },
                 ...
             ]
         }
@@ -267,7 +277,7 @@ TestSuite::Copy::Copy(const TestSuite& suite) :
         for (auto item : suite._content.at(index)) {
 
             auto& ref = ranking.emplace_back(*item.second.ranking_ptr);
-            content[index].emplace(item.first, &ref);
+            content[index].emplace(item.first, Param{ item.second.Ncs, item.second.Ncf, &ref });
         }
 }
 

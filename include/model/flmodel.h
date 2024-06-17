@@ -18,6 +18,7 @@ class FLModel
 {
 public:
     static constexpr size_t TOP_K = 3;
+    static constexpr float SIMILARITY_THRESHOLD = 0.01f;
 
     using feature_vector_t = std::unordered_map<std::string, float>;
     struct Embedding

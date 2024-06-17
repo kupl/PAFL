@@ -2,13 +2,6 @@
 
 namespace PAFL
 {
-void Localizer::localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, float coef) const
-{
-    _localize(suite, graphs, coef * _maturity / _updater_num);
-}
-
-
-
 void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults,
                       float coef, size_t thread_num)
 {
@@ -18,7 +11,7 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
         _maturity = 0.1f;
     else {
 
-        _maturity += _maturity;
+        _maturity += 0.2f;
         if (_maturity > 1.0f)
             _maturity = 1.0f;
     }
@@ -33,7 +26,7 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
                 buggy_nodes.push_back(node);
     }
 
-    // base first ranking
+    // Get the base suspiciousness values
     suite->setSusToBase();
     _localize(suite, graphs, 1.0f);
     suite->rank();
@@ -48,7 +41,7 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
         for (auto& mut : mutants)
             _trainMutant(suite, graphs, faults, mut, base_fr, coef);
     
-    // Multi threads
+    // Multi thread
     else {
 
         BS::thread_pool pool(thread_num);
@@ -60,10 +53,14 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
         pool.wait();
     }
 
-    // Assign new suspiciousness values
+    // Update the suspiciousness values
     for (auto& mut : mutants)
         mut.block->setValue(mut.token, mut.mutated_value);
     _updater.eraseIf(0.1f);
+
+    // If the updater is empty, reset the maturity
+    if (_updater.empty())
+        _maturity = 0.0f;
 }
 
 
@@ -86,15 +83,15 @@ void Localizer::_localize(TestSuite* suite, const stmt_graph::Graph::vector_t& g
             for (auto line = node.begin; line <= node.end; ++line)
                 if (file.contains(line)) {
 
-                    auto ranking_ptr = file.at(line).ranking_ptr;
+                    auto param = file.at(line);
                     // If the line is covered by a failing test case
-                    if (ranking_ptr->base_sus > 0.0f) {
+                    if (param.Ncf) {
                         
                         // Init node's value
                         if (node_value < 0.0f)
                             node_value = _updater.max(&node);
                         // Reservation of update of suspiciousness value with node's value
-                        future.emplace_back(ranking_ptr, ranking_ptr->sus + coef * node_value);
+                        future.emplace_back(param.ranking_ptr, param.ranking_ptr->sus + coef * node_value);
                     }
                 }
         }
@@ -126,15 +123,15 @@ void Localizer::_localize(TestSuite::Copy& suite_copy, const stmt_graph::Graph::
             for (auto line = node.begin; line <= node.end; ++line)
                 if (file.contains(line)) {
 
-                    auto ranking_ptr = file.at(line);
+                    auto param = file.at(line);
                     // If the line is covered by a failing test case
-                    if (ranking_ptr->base_sus > 0.0f) {
+                    if (param.Ncf) {
                         
                         // Init node's value
                         if (node_value < 0.0f)
                             node_value = _updater.max(&node, mutant);
                         // Reservation of update of suspiciousness value with node's value
-                        future.emplace_back(ranking_ptr, ranking_ptr->sus + coef * node_value);
+                        future.emplace_back(param.ranking_ptr, param.ranking_ptr->sus + coef * node_value);
                     }
                 }
         }

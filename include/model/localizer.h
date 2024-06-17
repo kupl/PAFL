@@ -20,13 +20,14 @@ public:
     Localizer() : _id(0), _updater(Updater::Depth{false, 0, 0, 0, 0}), _updater_num(0), _isFresh(true), _maturity(0.0f) {}
     Localizer(Updater::Depth depth, size_t updater_num, size_t id) : _updater(depth), _updater_num(updater_num), _id(id), _isFresh(true), _maturity(0.0f) {}
 
-    void localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, float coef) const;
+    void localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, float coef) const    { _localize(suite, graphs, coef * _maturity / _updater_num); }
     void train(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults,
                float coef, size_t thread_num = 1);
 
-    size_t getID() const                                    { return _id; }
-    std::string toString() const                            { return _updater.toString(); }
-    template <class Archive> void serialize(Archive& ar)    { ar(_updater, _updater_num, _isFresh, _id, _maturity); }
+    size_t getID() const                                                                            { return _id; }
+    bool trivial() const                                                                            { return _maturity <= 0.0f || _updater.empty(); }
+    std::string toString() const                                                                    { return _updater.toString(); }
+    template <class Archive> void serialize(Archive& ar)                                            { ar(_updater, _updater_num, _isFresh, _id, _maturity); }
 
 private:
     void _localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, float coef) const;

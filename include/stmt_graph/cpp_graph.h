@@ -59,6 +59,7 @@ private:
     
     const std::unordered_map<std::string, decltype(&Builder::walkAST)> _non_terminal_map;
     const std::unordered_set<std::string> _terminal_set;
+    const std::unordered_set<std::string> _non_terminal_set;
     const std::unordered_set<std::string> _literal_set;
 
 private:
