@@ -379,8 +379,8 @@ int Pipeline::_readProfileConfig(const std::string& profile)
         _method.reset(new Ochiai());
     else if (method == "dstar")
         _method.reset(new Dstar());
-    else if (method == "barinel")
-        _method.reset(new Barinel());
+    else if (method == "jaccard")
+        _method.reset(new Jaccard());
     else if (method == "ones")
         _method.reset(new Ones());
     else if (method == "custom") {

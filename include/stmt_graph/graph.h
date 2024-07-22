@@ -8,8 +8,8 @@
 #include <map>
 #include <tree_sitter/api.h>
 #include <stringeditor.h>
+#include <rapidjson/document.h>
 
-#include "./rapidjson/document.h"
 #include "./node.h"
 
 

@@ -53,11 +53,11 @@ public:
 };
 
 
-class Barinel : public Method
+class Jaccard : public Method
 {
 public:
     void setSus(TestSuite* suite) const override {
-        suite->setSus(Coef::Barinel);
+        suite->setSus(Coef::Jaccard);
     }
 };
 

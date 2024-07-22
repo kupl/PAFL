@@ -29,8 +29,8 @@ namespace Coef
         return denom ? Ncf * Ncf / (float)denom : std::numeric_limits<float>::infinity();
     }
 
-    // Barinel | Jaccard
-    constexpr float Barinel(size_t Ns, size_t Nf, size_t Ncs, size_t Ncf)
+    // Jaccard
+    constexpr float Jaccard(size_t Ns, size_t Nf, size_t Ncs, size_t Ncf)
     {
         size_t denom = Nf + Ncs;
         return denom ? Ncf / (float)denom : 0.0f;
