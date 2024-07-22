@@ -1,2 +1,3 @@
-make -C ~/PAFL/PAFL/build/debug
-make -C ~/PAFL/PAFL/build/release
+PAFL=$(pwd)
+make -C "$PAFL/build/debug"
+make -C "$PAFL/build/release"

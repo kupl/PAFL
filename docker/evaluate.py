@@ -4,10 +4,9 @@ import json
 from openpyxl import Workbook
 import numpy as np
 
-
-
 def interval(beg: int, end: int) -> list:
     return list(range(beg, end+1)) if beg < end else list(range(beg, end-1, -1))
+
 version_map = dict()
 version_map['cppcheck'] = [7,1,27,2,15,29,14,6,23,5,17,30,24,8,16,25,3,19,9,18,12,11,21,28,13,20,22,4,26,10]
 version_map['proj'] = [24,8,13,12,11,21,22,9,18,16,1,3,17,2,4,19,10,6,20,5,27,23,14,28,15,7,26,25]
