@@ -44,7 +44,6 @@ sheet_pafl.cell(1, 1, 'version')
 sheet_pafl.cell(1, 2, 'FR')
 sheet_pafl.cell(1, 3, 'AR')
 sheet_pafl.cell(1, 4, 'LOC')
-sheet_pafl.cell(1, 5, 'time(sec)')
 
 # Print profile
 print(f"{proj}-{method}")

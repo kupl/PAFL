@@ -20,50 +20,51 @@ class Pipeline
 {
 static constexpr std::string_view HELP = 
 R"(
-help: print this help
+Commands:
+  help                             Print this help message
 
-run-base: run baseline fault localizer
-    -P, --profile [prf]             | select profile
-    -S, --source-dir [dir]          | program source directory
-    -T, --test-dir [dir]            | testsuite directory
-    --suspiciousness-path [path]    | (option) path of suspiciousness data (when method is 'custom')
-    -c, --cache-testsuite           | (option) load testsuite from cache. path is "{testsuite directory}/__pafl__/cache.cereal"
+  run-base                         Run baseline fault localizer
+    -P, --profile <prf>            Select profile
+    -S, --source-dir <dir>         Program source directory
+    -T, --test-dir <dir>           Test suite directory
+    --suspiciousness-path <path>   Path to suspiciousness data (optional, required if method is 'custom')
+    -c, --cache-testsuite          Load test suite from cache (optional). Path: "<test-dir>/__pafl__/cache.cereal"
 
-run-pafl: run Project-Aware Fault Localization
-    -P, --profile [prf]             | select profile
-    -S, --source-dir [dir]          | program source directory
-    -T, --test-dir [dir]            | testsuite directory
-    --suspiciousness-path [path]    | (option) path of suspiciousness data (when method is custom)
-    --thread [num]                  | (option) set the number of thread to use. default is 1
-    -c, --cache-testsuite           | (option) load testsuite from cache. path is "{testsuite directory}/__pafl__/cache.cereal"
-    -l, --log                       | (option) store log in directory "{testsuite directory}/__pafl__/{prf}/log/"
+  run-pafl                         Run PAFL
+    -P, --profile <prf>            Select profile
+    -S, --source-dir <dir>         Program source directory
+    -T, --test-dir <dir>           Test suite directory
+    --suspiciousness-path <path>   Path to suspiciousness data (optional, required if method is 'custom')
+    --thread <num>                 Set the number of threads to use (optional, default: 1)
+    -c, --cache-testsuite          Load test suite from cache (optional). Path: "<test-dir>/__pafl__/cache.cereal"
+    -l, --log                      Enable logging and save logs (optional). Path: "<test-dir>/__pafl__/<prf>/log/"
 
-train: train pafl profile using fault location
-    -P, --profile [prf]             | select profile
-    -S, --source-dir [dir]          | program source directory
-    -T, --test-dir [dir]            | testsuite directory
-    -O, --oracle-path [path]        | path of fault location oracle
-    --thread [num]                  | (option) set the number of thread to use. default is 1
-    -c, --cache-testsuite           | (option) load testsuite from cache. path is "{testsuite directory}/__pafl__/cache.cereal"
-    -l, --log                       | (option) store log in directory "{testsuite directory}/__pafl__/{prf}/log/"
+  train                            Train model of profile using fault location oracle
+    -P, --profile <prf>            Select profile
+    -S, --source-dir <dir>         Program source directory
+    -T, --test-dir <dir>           Test suite directory
+    -O, --oracle-path <path>       Path to fault location oracle
+    --thread <num>                 Set the number of threads to use (optional, default: 1)
+    -c, --cache-testsuite          Load test suite from cache (optional). Path: "<test-dir>/__pafl__/cache.cereal"
+    -l, --log                      Enable logging and save logs (optional). Path: "<test-dir>/__pafl__/<prf>/log/"
 
-profile: create or edit profile
-    profile [prf] [lang] [method]   | configuration of profile's path is "profile/{prf}/config.json"
-        lang:   cpp, python, java
-        method: tarantula, ochiai, dstar, barinel, jaccard, custom
+  profile                          Create or edit profile
+    profile <prf> <lang> <method>  Profile configuration. Path: "profile/<prf>/config.json"
+      lang:   cpp, python, java
+      method: tarantula, ochiai, dstar, barinel, jaccard, custom
 
-profile-rm: delete profile
-    profile-rm [prf]                | profile's directory is "profile/{prf}"
+  profile-rm                       Delete profile
+    profile-rm <prf>
 
-profile-reset: delete Project-Aware Fault Localization model
-    profile-reset [prf]             | model of profile's path is "profile/{prf}/model.cereal"
+  profile-reset                    Delete model of profile (reset model version to 0)
+    profile-reset <prf>
 
-caching: caching testsuite
-    caching [lang] [dir]            | cache's path is "{testsuite directory}/__pafl__/cache.cereal"
-        lang:   cpp, python, java
+  caching                          Cache coverage data of test suite for faster loading
+    caching <lang> <dir>           Cache path. Path: "<test-dir>/__pafl__/cache.cereal"
+      lang:   cpp, python, java
 
-to-covmatrix-from-cache
-    to-covmatrix-from-cache [lang] [testsuite-dir] [oracle-path] [output-dir]
+  to-covmatrix-from-cache          Generate coverage matrix from cached test suite
+    to-covmatrix-from-cache <lang> [testsuite-dir] [oracle-path] [output-dir]
 )";
 
 
