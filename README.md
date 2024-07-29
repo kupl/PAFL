@@ -117,7 +117,7 @@ scripts/run_sbfl.sh 32
 Cost reduction from parallelization is most effective when the project contains many source files.
 
 The ranking list of statements is stored in this path: `<path_to_testsuite>/__pafl__/<method>/ranking.json` \
-For example, `exmaple/test_example/__pafl__/example-ochiai-pafl/ranking.json`.
+For example, `exmaple/test_example/__pafl__/example-ochiai-pafl/ranking.json`. If you want to understand the detailed command for running PAFL, then please read [PAFL Command](#pafl-command).
 
 ### 3. Evaluating PAFL
 To get summarized results, you can run the following script.
@@ -151,7 +151,7 @@ You can copy this folder to workspace by running `cp -r /opt/PAFL/profile /works
 
 ### Example command
 ```sh
-# Set profile
+# Set profile (language = C++, baseline = ochiai)
 pafl profile example-ochiai cpp ochiai
 
 # For version 1 to 5
