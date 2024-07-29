@@ -39,11 +39,11 @@ Commands:
     -c, --cache-testsuite          Load test suite from cache (optional). Path: "<test-dir>/__pafl__/cache.cereal"
     -l, --log                      Enable logging and save logs (optional). Path: "<test-dir>/__pafl__/<prf>/log/"
 
-  train                            Train model of profile using fault location oracle
+  train                            Train model of profile using fault locations oracle
     -P, --profile <prf>            Select profile
     -S, --source-dir <dir>         Program source directory
     -T, --test-dir <dir>           Test suite directory
-    -O, --oracle-path <path>       Path to fault location oracle
+    -O, --oracle-path <path>       Path to fault locations oracle
     --thread <num>                 Set the number of threads to use (optional, default: 1)
     -c, --cache-testsuite          Load test suite from cache (optional). Path: "<test-dir>/__pafl__/cache.cereal"
     -l, --log                      Enable logging and save logs (optional). Path: "<test-dir>/__pafl__/<prf>/log/"

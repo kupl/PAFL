@@ -1,5 +1,5 @@
 # Benchmark
-To reproduce our experiments, you have to install [BugsCpp](https://github.com/Suresoft-GLaDOS/bugscpp.git),
+To reproduce our experiments, you need to install [BugsCpp](https://github.com/Suresoft-GLaDOS/bugscpp.git),
 [BugsInPy](https://github.com/soarsmu/BugsInPy.git), and [coverage data](#coverage-data) in your **PAFL** directory.
 
 ### BugsCpp installation
@@ -26,7 +26,7 @@ docker/scripts/checkout_bugsinpy.sh
 ### Coverage data
 We provide pre-executed coverage data to avoid running all test cases: [download link](https://figshare.com/s/1ddbc7dad6d792d1d4dc) (10 GB)\
 After downloading from the link, extract the folder `PAFL_coverage` and place it in your **PAFL** directory.
-`PAFL_coverage` includes the ground truth of fault lines, every project's execution on its test suite, and the result of CNN-FL, RNN-FL, MLP-FL, and [Aeneas](https://github.com/ICSE2022FL/ICSE2022FLCode.git)
+`PAFL_coverage` includes the fault locations oracles, every project's execution on its test suite, and the results of CNN-FL, RNN-FL, MLP-FL, and [Aeneas](https://github.com/ICSE2022FL/ICSE2022FLCode.git)
 
 
 
@@ -70,24 +70,24 @@ docker run --rm -it -v $(pwd):/workspace pafl
 
 
 # Reproducing Our Experiments
-After installing the benchmark and running the docker container, you are now ready to reproduce our experiments.
+After installing the benchmark and running the [docker container](#building-docker-container), you are now ready to reproduce our experiments.
 Initially, the current working directory is `/workspace`.
 The structure of the container is as follows:
 ```
 /workspace
 |_ BugsInPy : BugsInPy framework
-|_ PAFL_coverage : consists of coverage data, ground truth of fault lines, DLFL result, and Aeneas result 
+|_ PAFL_coverage : consists of test suites, fault locations oracles, DLFL results, and Aeneas results
 |_ bugscpp : BugsCpp framework
 |_ source : stores buggy versions of the projects
 
 /opt/PAFL
-|_ build : build scripts and executable file
+|_ build : consists of build scripts and executable file
 |_ profile : stores PAFL models and log files
 |_ scripts : consists of scripts for running and evaluating, etc
-|_ example : samll program for example
-|	|_ example : source codes
-|	|_ test_example : test result including coverage data
-|	|_ fault.json : information of fault locations
+|_ example : small program for example
+|	|_ example : repository
+|	|_ test_example : test suites
+|	|_ fault.json : fault locations oracle
 |_ ...
 ```
 
@@ -99,7 +99,7 @@ scripts/caching.sh
 ```
 
 ### 2. Running PAFL
-To run the baseline fault localizer and PAFL, you can run the following script.
+To run the baseline fault localizer and **PAFL**, you can run the following script.
 ```sh
 # Running SBFL
 scripts/run_sbfl.sh
@@ -116,11 +116,13 @@ scripts/run_sbfl.sh 32
 ```
 Cost reduction from parallelization is most effective when the project contains many source files.
 
-The ranking list of statements is stored in this path: `<path_to_testsuite>/__pafl__/<method>/ranking.json` \
-For example, `exmaple/test_example/__pafl__/example-ochiai-pafl/ranking.json`. If you want to understand the detailed command for running PAFL, then please read [PAFL Command](#pafl-command).
+The ranking list of statements is stored in this path: 
+- `<test_suite_directory>/__pafl__/<profile>/ranking.json`
+
+If you want to understand details about the commands for running **PAFL**, please read [PAFL Command](#pafl-command).
 
 ### 3. Evaluating PAFL
-To get summarized results, you can run the following script.
+To get the summarized results, you can run the following script.
 ```sh
 # Evaluating SBFL
 scripts/eval_sbfl.sh
