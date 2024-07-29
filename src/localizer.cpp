@@ -2,7 +2,7 @@
 
 namespace PAFL
 {
-void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults,
+void Localizer::train(TestSuite* suite, const aggregated_ast::Ast::vector_t& trees, const TestSuite::fault_set_t& faults,
                       float coef, size_t thread_num)
 {
     if (_isFresh)
@@ -17,10 +17,10 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
     }
 
     // Collect buggy nodes
-    std::vector<const stmt_graph::Node*> buggy_nodes;
+    std::vector<const aggregated_ast::Node*> buggy_nodes;
     for (auto item : faults) {
 
-        auto node_vector = graphs.at(item.first)->at(item.second);
+        auto node_vector = trees.at(item.first)->at(item.second);
         if (node_vector)
             for (auto node : *node_vector)
                 buggy_nodes.push_back(node);
@@ -28,7 +28,7 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
 
     // Get the base suspiciousness values
     suite->setSusToBase();
-    _localize(suite, graphs, 1.0f);
+    _localize(suite, trees, 1.0f);
     suite->rank();
     auto base_fr = suite->getFirstRanking(faults);
 
@@ -39,16 +39,16 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
     // Single thread
     if (thread_num <= 1)
         for (auto& mut : mutants)
-            _trainMutant(suite, graphs, faults, mut, base_fr, coef);
+            _trainMutant(suite, trees, faults, mut, base_fr, coef);
     
     // Multi thread
     else {
 
         BS::thread_pool pool(thread_num);
         pool.detach_loop<size_t>(0, mutants.size(),
-            [this, suite, &graphs, &faults, &mutants, base_fr, coef](size_t i)
+            [this, suite, &trees, &faults, &mutants, base_fr, coef](size_t i)
             {
-                _trainMutant(suite, graphs, faults, mutants[i], base_fr, coef);
+                _trainMutant(suite, trees, faults, mutants[i], base_fr, coef);
             });
         pool.wait();
     }
@@ -65,7 +65,7 @@ void Localizer::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graph
 
 
 
-void Localizer::_localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, float coef) const
+void Localizer::_localize(TestSuite* suite, const aggregated_ast::Ast::vector_t& trees, float coef) const
 {
     std::vector<std::pair<TestSuite::Ranking*, float>> future;
     future.reserve(suite->size());
@@ -73,7 +73,7 @@ void Localizer::_localize(TestSuite* suite, const stmt_graph::Graph::vector_t& g
     for (TestSuite::index_t index = 0; index != suite->maxIndex(); ++index) {
         
         auto& file = suite->content().at(index);
-        for (auto& node : *graphs.at(index)) {
+        for (auto& node : *trees.at(index)) {
 
             // If node is not coverable, continue
             if (!node.coverable)
@@ -105,7 +105,7 @@ void Localizer::_localize(TestSuite* suite, const stmt_graph::Graph::vector_t& g
 
 
 
-void Localizer::_localize(TestSuite::Copy& suite_copy, const stmt_graph::Graph::vector_t& graphs, float coef, const Updater::Mutant& mutant) const
+void Localizer::_localize(TestSuite::Copy& suite_copy, const aggregated_ast::Ast::vector_t& trees, float coef, const Updater::Mutant& mutant) const
 {
     std::vector<std::pair<TestSuite::Ranking*, float>> future;
     future.reserve(suite_copy.ranking.size());
@@ -113,7 +113,7 @@ void Localizer::_localize(TestSuite::Copy& suite_copy, const stmt_graph::Graph::
     for (TestSuite::index_t index = 0; index != suite_copy.content.size(); ++index) {
         
         auto& file = suite_copy.content.at(index);
-        for (auto& node : *graphs.at(index)) {
+        for (auto& node : *trees.at(index)) {
 
             // If node is not coverable, continue
             if (!node.coverable)
@@ -145,11 +145,11 @@ void Localizer::_localize(TestSuite::Copy& suite_copy, const stmt_graph::Graph::
 
 
 
-void Localizer::_trainMutant(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults, Updater::Mutant& mutant, float base_fr, float coef) const
+void Localizer::_trainMutant(TestSuite* suite, const aggregated_ast::Ast::vector_t& trees, const TestSuite::fault_set_t& faults, Updater::Mutant& mutant, float base_fr, float coef) const
 {
     // new first ranking
     TestSuite::Copy suite_copy(*suite);
-    _localize(suite_copy, graphs, 1.0f, mutant);
+    _localize(suite_copy, trees, 1.0f, mutant);
     suite_copy.rank();
     auto new_fr = suite_copy.getFirstRanking(faults);
 

@@ -2,30 +2,30 @@
 
 namespace PAFL
 {
-std::vector<std::pair<Localizer*, float>> FLModel::localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs)
+std::vector<std::pair<Localizer*, float>> FLModel::localize(TestSuite* suite, const aggregated_ast::Ast::vector_t& trees)
 {
-    auto embedding(_embed(suite->getTestCases(), graphs));
+    auto embedding(_embed(suite->getTestCases(), trees));
     auto similar_embeddings(_chooseEmbedding(embedding, TOP_K));
     for (auto embd : similar_embeddings)
-        embd.first->localize(suite, graphs, embd.second);
+        embd.first->localize(suite, trees, embd.second);
 
     return similar_embeddings;
 }
 
 
 
-std::vector<std::pair<Localizer*, float>> FLModel::train(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults, size_t thread_num)
+std::vector<std::pair<Localizer*, float>> FLModel::train(TestSuite* suite, const aggregated_ast::Ast::vector_t& trees, const TestSuite::fault_set_t& faults, size_t thread_num)
 {
     // Train existed localizers
-    auto embedding(_embed(suite->getTestCases(), graphs));
+    auto embedding(_embed(suite->getTestCases(), trees));
     auto similar_embeddings(_chooseEmbedding(embedding, TOP_K));
     for (auto embd : similar_embeddings)
-        embd.first->train(suite, graphs, faults, embd.second, thread_num);
+        embd.first->train(suite, trees, faults, embd.second, thread_num);
     auto& new_embedding = _embedding_list.emplace_back(std::move(embedding));
 
     // Train new localizer
     new_embedding.localizer = std::make_unique<Localizer>(_depth, TOP_K, ++_id);
-    new_embedding.localizer->train(suite, graphs, faults, 1.0f, thread_num);
+    new_embedding.localizer->train(suite, trees, faults, 1.0f, thread_num);
     similar_embeddings.emplace_back(new_embedding.localizer.get(), 0.0f);
     return similar_embeddings;
 }
@@ -49,7 +49,7 @@ std::string FLModel::convertResultToString(const std::vector<std::pair<Localizer
 
 
 
-FLModel::Embedding FLModel::_embed(const std::vector<TestSuite::TestCase>& cases, const stmt_graph::Graph::vector_t& graphs)
+FLModel::Embedding FLModel::_embed(const std::vector<TestSuite::TestCase>& cases, const aggregated_ast::Ast::vector_t& trees)
 {
     Embedding embedding;
     std::unordered_map<std::string, uint64_t> passing;
@@ -67,7 +67,7 @@ FLModel::Embedding FLModel::_embed(const std::vector<TestSuite::TestCase>& cases
 
         for (auto item : testcase.lines) {
 
-            auto node_vector = graphs.at(item.first)->at(item.second);
+            auto node_vector = trees.at(item.first)->at(item.second);
             if (node_vector)
                 for (auto node : *node_vector)
                     for (auto& tok : node->token_vector) {

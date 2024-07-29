@@ -1,9 +1,9 @@
-#include "./cpp_graph.h"
+#include "./cpp_ast.h"
 
-namespace stmt_graph
+namespace aggregated_ast
 {
-CppGraph::CppGraph(const std::filesystem::path& source_path, const std::string& include_dir) :
-    Graph()
+CppAst::CppAst(const std::filesystem::path& source_path, const std::string& include_dir) :
+    Ast()
 {
     Builder(*this, _resolvePreproccessor(source_path, include_dir));
     setIndexer();
@@ -11,7 +11,7 @@ CppGraph::CppGraph(const std::filesystem::path& source_path, const std::string& 
 
 
 
-std::string CppGraph::collectIncludeDir(const std::filesystem::path dir)
+std::string CppAst::collectIncludeDir(const std::filesystem::path dir)
 {
     std::string ret;
     ret.reserve(StringEditor::KiB(256));
@@ -23,7 +23,7 @@ std::string CppGraph::collectIncludeDir(const std::filesystem::path dir)
 
 
 
-std::string CppGraph::_resolvePreproccessor(const std::filesystem::path& source_path, const std::string& include)
+std::string CppAst::_resolvePreproccessor(const std::filesystem::path& source_path, const std::string& include)
 {
     // Execute clang -E
     const std::string source_name(source_path.string());
@@ -90,10 +90,10 @@ std::string CppGraph::_resolvePreproccessor(const std::filesystem::path& source_
 
 
 
-namespace stmt_graph
+namespace aggregated_ast
 {
-CppGraph::Builder::Builder(CppGraph& graph, const std::string& source) :
-    _graph(graph), _source(source), _root(graph._root.get()), _node_ptr{nullptr, nullptr, _root},
+CppAst::Builder::Builder(CppAst& ast, const std::string& source) :
+    _ast(ast), _source(source), _root(ast._root.get()), _node_ptr{nullptr, nullptr, _root},
     _terminal_set{"'", "\"", "\"\"", "=", "[", "]", "(", ")", "{", "}",
                   ",", ".", "...", "->", ":", ";", ".*", "->*", "::"},
     _literal_set{"number_literal"},
@@ -154,7 +154,7 @@ CppGraph::Builder::Builder(CppGraph& graph, const std::string& source) :
 
 
 
-void CppGraph::Builder::walkAST()
+void CppAst::Builder::walkAST()
 {
     auto node = ts_tree_cursor_current_node(_cursor);
     const std::string type = ts_node_grammar_type(node);
@@ -185,7 +185,7 @@ void CppGraph::Builder::walkAST()
 
 
 
-void CppGraph::Builder::walkTrivial()
+void CppAst::Builder::walkTrivial()
 {
     auto node = ts_tree_cursor_current_node(_cursor);
     const std::string type = ts_node_grammar_type(node);
@@ -208,7 +208,7 @@ void CppGraph::Builder::walkTrivial()
 
 
 
-void CppGraph::Builder::walkChildren()
+void CppAst::Builder::walkChildren()
 {
     auto temp = updateNodePtr();
     walkAST();
@@ -217,9 +217,9 @@ void CppGraph::Builder::walkChildren()
 
 
 
-void CppGraph::Builder::beginNode()
+void CppAst::Builder::beginNode()
 {
-    _node_ptr.current = &_graph._node_list.emplace_back(_graph._node_list.size() + Graph::ROOT_ID + 1);
+    _node_ptr.current = &_ast._node_list.emplace_back(_ast._node_list.size() + Ast::ROOT_ID + 1);
     // Set parent-child relation
     _node_ptr.current->parent = _node_ptr.parent;
     _node_ptr.parent->children.push_back(_node_ptr.current);
@@ -232,7 +232,7 @@ void CppGraph::Builder::beginNode()
 
 
 
-void CppGraph::Builder::addTerminalNode(const TSNode& node, const std::string& type)
+void CppAst::Builder::addTerminalNode(const TSNode& node, const std::string& type)
 {
     if (!_node_ptr.current || _terminal_set.contains(type))
         return;
@@ -262,7 +262,7 @@ void CppGraph::Builder::addTerminalNode(const TSNode& node, const std::string& t
 
 
 
-std::string CppGraph::Builder::queryName(TSNode node)
+std::string CppAst::Builder::queryName(TSNode node)
 {
     auto start = ts_node_start_byte(node);
     auto end = ts_node_end_byte(node);
@@ -271,7 +271,7 @@ std::string CppGraph::Builder::queryName(TSNode node)
 
 
 
-CppGraph::Builder::NodePtr CppGraph::Builder::updateNodePtr()
+CppAst::Builder::NodePtr CppAst::Builder::updateNodePtr()
 {
     auto temp = _node_ptr;
     _node_ptr = {nullptr, nullptr, _node_ptr.current};
@@ -280,7 +280,7 @@ CppGraph::Builder::NodePtr CppGraph::Builder::updateNodePtr()
 
 
 
-CppGraph::Builder::NodePtr CppGraph::Builder::updateNodePtr(NodePtr update)
+CppAst::Builder::NodePtr CppAst::Builder::updateNodePtr(NodePtr update)
 {
     auto temp = _node_ptr;
     _node_ptr = update;
@@ -289,7 +289,7 @@ CppGraph::Builder::NodePtr CppGraph::Builder::updateNodePtr(NodePtr update)
 
 
 
-void CppGraph::Builder::block()
+void CppAst::Builder::block()
 {
     beginNode();
     _node_ptr.current->coverable = false;
@@ -307,7 +307,7 @@ void CppGraph::Builder::block()
 
 
 
-void CppGraph::Builder::statement()
+void CppAst::Builder::statement()
 {
     beginNode();
     do walkAST();
@@ -317,7 +317,7 @@ void CppGraph::Builder::statement()
 
 
 
-void CppGraph::Builder::branch()
+void CppAst::Builder::branch()
 {
     // keyword
     beginNode();
@@ -345,7 +345,7 @@ void CppGraph::Builder::branch()
 
 
 
-void CppGraph::Builder::case_statement()
+void CppAst::Builder::case_statement()
 {
     // 'case' | 'default'
     beginNode();
@@ -368,7 +368,7 @@ void CppGraph::Builder::case_statement()
 
 
 
-void CppGraph::Builder::do_statement()
+void CppAst::Builder::do_statement()
 {
     // 'do'
     // body
@@ -388,7 +388,7 @@ void CppGraph::Builder::do_statement()
 
 
 
-void CppGraph::Builder::for_family()
+void CppAst::Builder::for_family()
 {
     // 'for'
     beginNode();
@@ -418,7 +418,7 @@ void CppGraph::Builder::for_family()
 
 
 
-void CppGraph::Builder::try_statement()
+void CppAst::Builder::try_statement()
 {
     // 'try'
     beginNode();
@@ -436,7 +436,7 @@ void CppGraph::Builder::try_statement()
 
 
 
-void CppGraph::Builder::catch_clause()
+void CppAst::Builder::catch_clause()
 {
     // 'catch'
     beginNode();
@@ -454,7 +454,7 @@ void CppGraph::Builder::catch_clause()
 
 
 
-void CppGraph::Builder::lambda_expression()
+void CppAst::Builder::lambda_expression()
 {
     auto temp = updateNodePtr({nullptr, nullptr, _root}); {
         
@@ -476,7 +476,7 @@ void CppGraph::Builder::lambda_expression()
 
 
 
-void CppGraph::Builder::declaration()
+void CppAst::Builder::declaration()
 {
     auto node = ts_tree_cursor_current_node(_cursor);
     // for (declaration; ...; ...)
@@ -509,7 +509,7 @@ void CppGraph::Builder::declaration()
 
 
 
-void CppGraph::Builder::field_initializer_list()
+void CppAst::Builder::field_initializer_list()
 {
     auto temp = updateNodePtr(); {
 

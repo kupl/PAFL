@@ -1,5 +1,5 @@
-#ifndef __STATEMENT_GRAPH_CPPGRAPH_H__
-#define __STATEMENT_GRAPH_CPPGRAPH_H__
+#ifndef __AGGREGATED_AST_CPPAST_H__
+#define __AGGREGATED_AST_CPPAST_H__
 
 #include <filesystem>
 #include <charconv>
@@ -9,15 +9,15 @@
 #include <tree_sitter/api.h>
 #include <tree-sitter-cpp.h>
 
-#include "./graph.h"
+#include "./ast.h"
 
 
-namespace stmt_graph
+namespace aggregated_ast
 {
-class CppGraph : public Graph
+class CppAst : public Ast
 {
 public:
-    CppGraph(const std::filesystem::path& source_path, const std::string& include_dir);
+    CppAst(const std::filesystem::path& source_path, const std::string& include_dir);
     static std::string collectIncludeDir(const std::filesystem::path dir);
 
 private:
@@ -28,11 +28,11 @@ private:
 };
 
 
-// Build graph of the AST
-class CppGraph::Builder
+// Build aggregated AST from complete AST
+class CppAst::Builder
 {
 public:
-    Builder(CppGraph& graph, const std::string& source);
+    Builder(CppAst& ast, const std::string& source);
 
 private:
     struct NodePtr { Node* current, *predecessor, *parent; };
@@ -51,7 +51,7 @@ private:
     NodePtr updateNodePtr(NodePtr update);
 
 private:
-    CppGraph& _graph;
+    CppAst& _ast;
     const std::string& _source;
     TSTreeCursor* _cursor;
     Node* _root;

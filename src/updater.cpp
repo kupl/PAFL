@@ -9,7 +9,7 @@ Updater::Updater(Depth depth) :
 
 
 
-float Updater::max(const stmt_graph::Node* node, const Mutant& mutant) const
+float Updater::max(const aggregated_ast::Node* node, const Mutant& mutant) const
 {
     float max = 0.0f;
     float denom = 0.0f;
@@ -19,7 +19,7 @@ float Updater::max(const stmt_graph::Node* node, const Mutant& mutant) const
             if (!_block_map[i]->empty() || _block_map[i] == mutant.block) {
                 
                 denom += _block_map[i]->getWeight();
-                std::vector<const stmt_graph::Node*> node_vector;
+                std::vector<const aggregated_ast::Node*> node_vector;
                 (this->*_direction_map[i])(node_vector, node, _depth_map[i]);
                 max += _block_map[i] == mutant.block ? _block_map[i]->max(node_vector, std::make_pair(mutant.token, mutant.mutated_value)) : _block_map[i]->max(node_vector);
             }
@@ -31,7 +31,7 @@ float Updater::max(const stmt_graph::Node* node, const Mutant& mutant) const
 
 
 
-float Updater::max(const stmt_graph::Node* node) const
+float Updater::max(const aggregated_ast::Node* node) const
 {
     float max = 0.0f;
     float denom = 0.0f;
@@ -41,7 +41,7 @@ float Updater::max(const stmt_graph::Node* node) const
             if (!_block_map[i]->empty()) {
                 
                 denom += _block_map[i]->getWeight();
-                std::vector<const stmt_graph::Node*> node_vector;
+                std::vector<const aggregated_ast::Node*> node_vector;
                 (this->*_direction_map[i])(node_vector, node, _depth_map[i]);
                 max += _block_map[i]->max(node_vector);
             }
@@ -53,12 +53,12 @@ float Updater::max(const stmt_graph::Node* node) const
 
 
 
-std::vector<Updater::Mutant> Updater::makeMutant(std::vector<const stmt_graph::Node*> buggy_nodes, float default_original_value, float mutated_value) const
+std::vector<Updater::Mutant> Updater::makeMutant(std::vector<const aggregated_ast::Node*> buggy_nodes, float default_original_value, float mutated_value) const
 {
     std::vector<Mutant> ret;
     for (int i = 0; i != BLOCK_NUM; ++i) {
 
-        std::vector<const stmt_graph::Node*> node_vector;
+        std::vector<const aggregated_ast::Node*> node_vector;
         for (auto buggy_node : buggy_nodes)
             (this->*_direction_map[i])(node_vector, buggy_node, _depth_map[i]);
         for (auto& item : _block_map[i]->makeMutants(node_vector, default_original_value))
@@ -69,7 +69,7 @@ std::vector<Updater::Mutant> Updater::makeMutant(std::vector<const stmt_graph::N
 
 
 
-void Updater::_stay(std::vector<const stmt_graph::Node*>& node_vector, const stmt_graph::Node* cursor, size_t iter) const
+void Updater::_stay(std::vector<const aggregated_ast::Node*>& node_vector, const aggregated_ast::Node* cursor, size_t iter) const
 {
     if (iter && cursor)
         node_vector.push_back(cursor);
@@ -77,7 +77,7 @@ void Updater::_stay(std::vector<const stmt_graph::Node*>& node_vector, const stm
 
 
 
-void Updater::_left(std::vector<const stmt_graph::Node*>& node_vector, const stmt_graph::Node* cursor, size_t iter) const
+void Updater::_left(std::vector<const aggregated_ast::Node*>& node_vector, const aggregated_ast::Node* cursor, size_t iter) const
 {
     if (cursor)
         for (cursor = cursor->predecessor; iter && cursor; cursor = cursor->predecessor, --iter)
@@ -86,7 +86,7 @@ void Updater::_left(std::vector<const stmt_graph::Node*>& node_vector, const stm
 
 
 
-void Updater::_right(std::vector<const stmt_graph::Node*>& node_vector, const stmt_graph::Node* cursor, size_t iter) const
+void Updater::_right(std::vector<const aggregated_ast::Node*>& node_vector, const aggregated_ast::Node* cursor, size_t iter) const
 {
     if (cursor)
         for (cursor = cursor->successor; iter && cursor; cursor = cursor->successor, --iter)
@@ -95,7 +95,7 @@ void Updater::_right(std::vector<const stmt_graph::Node*>& node_vector, const st
 
 
 
-void Updater::_up(std::vector<const stmt_graph::Node*>& node_vector, const stmt_graph::Node* cursor, size_t iter) const
+void Updater::_up(std::vector<const aggregated_ast::Node*>& node_vector, const aggregated_ast::Node* cursor, size_t iter) const
 {
     if (cursor)
         for (cursor = cursor->parent; iter && cursor; cursor = cursor->parent, --iter)
@@ -104,9 +104,9 @@ void Updater::_up(std::vector<const stmt_graph::Node*>& node_vector, const stmt_
 
 
 
-void Updater::_down(std::vector<const stmt_graph::Node*>& node_vector, const stmt_graph::Node* cursor, size_t iter) const
+void Updater::_down(std::vector<const aggregated_ast::Node*>& node_vector, const aggregated_ast::Node* cursor, size_t iter) const
 {
-    std::vector<const stmt_graph::Node*> queue{cursor};
+    std::vector<const aggregated_ast::Node*> queue{cursor};
     while(iter && !queue.empty()) {
 
         decltype(queue) new_queue;

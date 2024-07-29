@@ -2,7 +2,7 @@
 
 namespace PAFL
 {
-float Block::max(const std::vector<const stmt_graph::Node*>& nodes, const map_value_t& mutant) const
+float Block::max(const std::vector<const aggregated_ast::Node*>& nodes, const map_value_t& mutant) const
 {
     float max = 0.0f;
     for (auto node : nodes)
@@ -23,7 +23,7 @@ float Block::max(const std::vector<const stmt_graph::Node*>& nodes, const map_va
 
 
 
-float Block::max(const std::vector<const stmt_graph::Node*>& nodes) const
+float Block::max(const std::vector<const aggregated_ast::Node*>& nodes) const
 {
     float max = 0.0f;
     for (auto node : nodes)
@@ -41,7 +41,7 @@ float Block::max(const std::vector<const stmt_graph::Node*>& nodes) const
 
 
 
-Block::T Block::makeMutants(const std::vector<const stmt_graph::Node*>& buggy_nodes, float default_value) const
+Block::T Block::makeMutants(const std::vector<const aggregated_ast::Node*>& buggy_nodes, float default_value) const
 {
     auto ret = _map;
     ret.reserve(_map.size() * 2);

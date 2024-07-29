@@ -1,9 +1,9 @@
-#include "./graph.h"
+#include "./ast.h"
 
 
-namespace stmt_graph
+namespace aggregated_ast
 {
-void Graph::fromJSON(const rapidjson::Document& doc)
+void Ast::fromJSON(const rapidjson::Document& doc)
 {
     _node_list.clear();
     _indexer.clear();
@@ -62,7 +62,7 @@ void Graph::fromJSON(const rapidjson::Document& doc)
 
 
 
-std::string Graph::toJSON(const std::string& name) const
+std::string Ast::toJSON(const std::string& name) const
 {
     std::string buffer;
     buffer.reserve(StringEditor::MiB(16));
@@ -107,7 +107,7 @@ std::string Graph::toJSON(const std::string& name) const
 
 
 
-void Graph::setIndexer()
+void Ast::setIndexer()
 {
     _indexer.clear();
     _indexer.reserve(_node_list.size() * 2);
@@ -118,7 +118,7 @@ void Graph::setIndexer()
 
 
 
-std::string Graph::printNode(TSNode node, const std::string& indent)
+std::string Ast::printNode(TSNode node, const std::string& indent)
 {
     std::string ret;
     std::string type = ts_node_type(node);

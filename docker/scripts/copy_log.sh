@@ -1,0 +1,1 @@
+cp -r /opt/PAFL/profile /workspace

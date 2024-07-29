@@ -1,9 +1,9 @@
-#include "./py_graph.h"
+#include "./py_ast.h"
 
-namespace stmt_graph
+namespace aggregated_ast
 {
-PyGraph::PyGraph(const std::filesystem::path& source_path) :
-    Graph()
+PyAst::PyAst(const std::filesystem::path& source_path) :
+    Ast()
 {
     Builder(*this, StringEditor::read(source_path.c_str()));
     setIndexer();
@@ -11,8 +11,8 @@ PyGraph::PyGraph(const std::filesystem::path& source_path) :
 
 
 
-PyGraph::Builder::Builder(PyGraph& graph, const std::string& source) :
-    _graph(graph), _source(source), _root(graph._root.get()), _node_ptr{nullptr, nullptr, _root},
+PyAst::Builder::Builder(PyAst& ast, const std::string& source) :
+    _ast(ast), _source(source), _root(ast._root.get()), _node_ptr{nullptr, nullptr, _root},
     _terminal_set{":=", "'", "\"", "=", "[", "]", "(", ")", "{", "}", ",", ".", ":", "->", "ellipsis", "else", "comment"},
     _literal_set{"integer", "float", "true", "false", "none"},
     _non_terminal_set{"string", "concatenated_string"},
@@ -75,7 +75,7 @@ PyGraph::Builder::Builder(PyGraph& graph, const std::string& source) :
 
 
 
-void PyGraph::Builder::walkAST()
+void PyAst::Builder::walkAST()
 {
     auto node = ts_tree_cursor_current_node(_cursor);
     const std::string type = ts_node_type(node);
@@ -109,7 +109,7 @@ void PyGraph::Builder::walkAST()
 
 
 
-void PyGraph::Builder::walkChildren()
+void PyAst::Builder::walkChildren()
 {
     auto temp = updateNodePtr();
     walkAST();
@@ -118,7 +118,7 @@ void PyGraph::Builder::walkChildren()
 
 
 
-void PyGraph::Builder::walkElif()
+void PyAst::Builder::walkElif()
 {
     auto node = ts_tree_cursor_current_node(_cursor);
     
@@ -161,9 +161,9 @@ void PyGraph::Builder::walkElif()
 
 
 
-void PyGraph::Builder::beginNode()
+void PyAst::Builder::beginNode()
 {
-    _node_ptr.current = &_graph._node_list.emplace_back(_graph._node_list.size() + Graph::ROOT_ID + 1);
+    _node_ptr.current = &_ast._node_list.emplace_back(_ast._node_list.size() + Ast::ROOT_ID + 1);
     // Set parent-child relation
     _node_ptr.current->parent = _node_ptr.parent;
     _node_ptr.parent->children.push_back(_node_ptr.current);
@@ -176,7 +176,7 @@ void PyGraph::Builder::beginNode()
 
 
 
-void PyGraph::Builder::addTerminalNode(const TSNode& node, const std::string& type)
+void PyAst::Builder::addTerminalNode(const TSNode& node, const std::string& type)
 {
     if (!_node_ptr.current || _terminal_set.contains(type))
         return;
@@ -197,7 +197,7 @@ void PyGraph::Builder::addTerminalNode(const TSNode& node, const std::string& ty
 
 
 
-std::string PyGraph::Builder::queryName(TSNode node)
+std::string PyAst::Builder::queryName(TSNode node)
 {
     auto start = ts_node_start_byte(node);
     auto end = ts_node_end_byte(node);
@@ -206,7 +206,7 @@ std::string PyGraph::Builder::queryName(TSNode node)
 
 
 
-PyGraph::Builder::NodePtr PyGraph::Builder::updateNodePtr()
+PyAst::Builder::NodePtr PyAst::Builder::updateNodePtr()
 {
     auto temp = _node_ptr;
     _node_ptr = {nullptr, nullptr, _node_ptr.current};
@@ -215,7 +215,7 @@ PyGraph::Builder::NodePtr PyGraph::Builder::updateNodePtr()
 
 
 
-void PyGraph::Builder::block()
+void PyAst::Builder::block()
 {
     beginNode();
     _node_ptr.current->coverable = false;
@@ -236,7 +236,7 @@ void PyGraph::Builder::block()
 
 
 
-void PyGraph::Builder::statement()
+void PyAst::Builder::statement()
 {
     beginNode();
     do walkAST();
@@ -246,7 +246,7 @@ void PyGraph::Builder::statement()
 
 
 
-void PyGraph::Builder::for_statement()
+void PyAst::Builder::for_statement()
 {
     {// 'async' (optional)
         beginNode();
@@ -287,7 +287,7 @@ void PyGraph::Builder::for_statement()
 
 
 
-void PyGraph::Builder::while_match_statement()
+void PyAst::Builder::while_match_statement()
 {
     // condition & body
     beginNode();
@@ -311,7 +311,7 @@ void PyGraph::Builder::while_match_statement()
 
 
 
-void PyGraph::Builder::if_statement()
+void PyAst::Builder::if_statement()
 {
     // 'if'
     beginNode();
@@ -336,7 +336,7 @@ void PyGraph::Builder::if_statement()
 
 
 
-void PyGraph::Builder::try_statement()
+void PyAst::Builder::try_statement()
 {
     // 'try'
     beginNode();
@@ -357,7 +357,7 @@ void PyGraph::Builder::try_statement()
 
 
 
-void PyGraph::Builder::with_statement()
+void PyAst::Builder::with_statement()
 {
     // with_clause
     beginNode();
@@ -377,7 +377,7 @@ void PyGraph::Builder::with_statement()
 
 
 
-void  PyGraph::Builder::if_clause()
+void  PyAst::Builder::if_clause()
 {
     // 'if'
     addTerminalNode(ts_tree_cursor_current_node(_cursor), "if-clause");
@@ -389,7 +389,7 @@ void  PyGraph::Builder::if_clause()
 
 
 
-void PyGraph::Builder::else_clause()
+void PyAst::Builder::else_clause()
 {
     // 'else' | 'finally'
     // ':'
@@ -402,7 +402,7 @@ void PyGraph::Builder::else_clause()
 
 
 
-void PyGraph::Builder::except_clause()
+void PyAst::Builder::except_clause()
 {
     // 'except' | 'except*'
     beginNode();
@@ -424,7 +424,7 @@ void PyGraph::Builder::except_clause()
 
 
 
-void PyGraph::Builder::case_clause()
+void PyAst::Builder::case_clause()
 {
     // 'case'
     beginNode();
@@ -444,7 +444,7 @@ void PyGraph::Builder::case_clause()
 
 
 
-void PyGraph::Builder::conditional_expression()
+void PyAst::Builder::conditional_expression()
 {
     // expression
     walkAST();
@@ -468,7 +468,7 @@ void PyGraph::Builder::conditional_expression()
 
 
 
-void PyGraph::Builder::for_in_clause()
+void PyAst::Builder::for_in_clause()
 {
     {// 'async' (optional)
         auto node = ts_tree_cursor_current_node(_cursor);

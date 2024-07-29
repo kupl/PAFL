@@ -50,7 +50,7 @@ train: train pafl profile using fault location
 profile: create or edit profile
     profile [prf] [lang] [method]   | configuration of profile's path is "profile/{prf}/config.json"
         lang:   cpp, python, java
-        method: tarantula, ochiai, dstar, jaccard, custom
+        method: tarantula, ochiai, dstar, barinel, jaccard, custom
 
 profile-rm: delete profile
     profile-rm [prf]                | profile's directory is "profile/{prf}"
@@ -85,7 +85,7 @@ private:
     static constexpr std::string_view MODEL_BIN = "model.cereal";
     static constexpr std::string_view TESTSUITE_BIN = "cache.cereal";
     static constexpr std::string_view PROFILE_DIRECTORY = "profile";
-    static constexpr std::string_view GRAPH_DIRECTORY = "graphs";
+    static constexpr std::string_view TREE_DIRECTORY = "trees";
     static constexpr std::string_view LOG_DIRECTORY = "logs";
     static constexpr std::string_view TIME_LOG_DIRECTORY = "time";
 
@@ -112,8 +112,8 @@ private:
     static Language _identifyLanguage(std::string language);
 
     int _readProfileConfig(const std::string& profile);
-    stmt_graph::Graph::vector_t _makeGraphs() const;
-    stmt_graph::Graph::vector_t _loadGraphs() const;
+    aggregated_ast::Ast::vector_t _makeTrees() const;
+    aggregated_ast::Ast::vector_t _loadTrees() const;
     static std::unique_ptr<TestSuite> _makeTestSuite(Language lang);
     static int _load(TestSuite* suite, const std::filesystem::path& test_dir);
     static int _loadCache(TestSuite* suite, const std::filesystem::path& test_dir);

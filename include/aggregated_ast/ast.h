@@ -1,5 +1,5 @@
-#ifndef __STATEMENT_GRAPH_GRAPH_H__
-#define __STATEMENT_GRAPH_GRAPH_H__
+#ifndef __AGGREGATED_AST_AST_H__
+#define __AGGREGATED_AST_AST_H__
 
 #include <list>
 #include <memory>
@@ -13,7 +13,7 @@
 #include "./node.h"
 
 
-namespace stmt_graph
+namespace aggregated_ast
 {
 /*
     * id (0) = NULL
@@ -38,24 +38,24 @@ namespace stmt_graph
         ]
     }
 */
-class Graph
+class Ast
 {
 public:
     using line_t = Node::line_t;
-    using vector_t = std::vector<std::unique_ptr<Graph>>;
+    using vector_t = std::vector<std::unique_ptr<Ast>>;
     static constexpr Node::id_t ROOT_ID = 1;
 
 public:
-    Graph() : _root(std::make_unique<Node>(ROOT_ID)) {}
-    Graph(Graph&) = delete;
-    Graph& operator=(const Graph&) = delete;
-    Graph(Graph&& rhs) : _root(std::move(rhs._root)), _node_list(std::move(rhs._node_list)) { setIndexer(); }
+    Ast() : _root(std::make_unique<Node>(ROOT_ID)) {}
+    Ast(Ast&) = delete;
+    Ast& operator=(const Ast&) = delete;
+    Ast(Ast&& rhs) : _root(std::move(rhs._root)), _node_list(std::move(rhs._node_list)) { setIndexer(); }
 
     // ROOT = Node with line number 0
     const Node* getRoot() const                             { return _root.get(); }
     const std::vector<const Node*>* at(line_t line) const   { return _indexer.contains(line) ? &_indexer.at(line) : nullptr; }
 
-    // Convert JSON format to StmtGraph
+    // Convert JSON format to Aggregated AST
     void fromJSON(const rapidjson::Document& doc);
     // Convert this to JSON format
     std::string toJSON(const std::string& name) const;

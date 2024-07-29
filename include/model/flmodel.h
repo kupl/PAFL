@@ -30,8 +30,8 @@ public:
 public:
     FLModel() : _depth{true, 1, 1, 1, 1} { _dimension.reserve(1024); }
 
-    std::vector<std::pair<Localizer*, float>> localize(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs);
-    std::vector<std::pair<Localizer*, float>> train(TestSuite* suite, const stmt_graph::Graph::vector_t& graphs, const TestSuite::fault_set_t& faults, size_t thread_num = 1);
+    std::vector<std::pair<Localizer*, float>> localize(TestSuite* suite, const aggregated_ast::Ast::vector_t& trees);
+    std::vector<std::pair<Localizer*, float>> train(TestSuite* suite, const aggregated_ast::Ast::vector_t& trees, const TestSuite::fault_set_t& faults, size_t thread_num = 1);
 
     size_t getMaxID() const { return _id; }
     void setUpdaterDepth(Updater::Depth depth)              { _depth = depth; }
@@ -40,7 +40,7 @@ public:
     static std::string convertResultToString(const std::vector<std::pair<Localizer*, float>>& result);
 
 private:
-    Embedding _embed(const std::vector<TestSuite::TestCase>& cases, const stmt_graph::Graph::vector_t& graphs);
+    Embedding _embed(const std::vector<TestSuite::TestCase>& cases, const aggregated_ast::Ast::vector_t& trees);
     float _similarity(const Embedding& feature, const Embedding& current) const;
     std::vector<std::pair<Localizer*, float>> _chooseEmbedding(const Embedding& current, size_t top_k) const;
 

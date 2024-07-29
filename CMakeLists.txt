@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Source
 file(GLOB_RECURSE SOURCES
     src/*.cpp
-    include/stmt_graph/*.cpp
+    include/aggregated_ast/*.cpp
     )
 message(src)
 

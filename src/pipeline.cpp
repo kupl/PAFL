@@ -138,14 +138,14 @@ int Pipeline::_cmdRunPafl()
     else if (_load(_suite.get(), _test_dir))
         return 1;
 
-    // Make statement graphs
-    auto graphs(_makeGraphs());
+    // Make statement trees
+    auto trees(_makeTrees());
 
     // Run localizing phase of Project-Aware FL
     std::cout << "Localizing ...\n";
     _method->setSus(_suite.get());
     _normalizer->normalize(_suite.get());
-    auto result(model.localize(_suite.get(), graphs));
+    auto result(model.localize(_suite.get(), trees));
 
     // Logging result
     if (_log) {
@@ -210,8 +210,8 @@ int Pipeline::_cmdTrain()
     doc.Parse(StringEditor::read(_oracle_path.c_str()).c_str());
     auto fault(_suite->makeFalutSet(doc));
 
-    // Make or Load statement graphs
-    auto graphs(_loadGraphs());
+    // Make or Load statement trees
+    auto trees(_loadTrees());
 
     // Run training phase of Project-Aware FL
     std::cout << "Training ...\n";
@@ -221,10 +221,10 @@ int Pipeline::_cmdTrain()
         
         auto path(_createDirectory(_directory / PROFILE_DIRECTORY / _profile / LOG_DIRECTORY));
         auto log_file = std::to_string(model.getMaxID()) + "_train";
-        StringEditor::write((path / log_file).c_str(), FLModel::convertResultToString(model.train(_suite.get(), graphs, fault, _thread_num)));
+        StringEditor::write((path / log_file).c_str(), FLModel::convertResultToString(model.train(_suite.get(), trees, fault, _thread_num)));
     }
     else
-        model.train(_suite.get(), graphs, fault, _thread_num);
+        model.train(_suite.get(), trees, fault, _thread_num);
 
     // Save FL model
     writeCereal(model, _directory / PROFILE_DIRECTORY / _profile / MODEL_BIN);
@@ -355,7 +355,7 @@ int Pipeline::_readProfileConfig(const std::string& profile)
     rapidjson::Document doc;
     doc.Parse(StringEditor::read((_directory / PROFILE_DIRECTORY / profile / PROFILE_CONFIG).c_str()).c_str());
 
-    // Set test suite & graphs builder
+    // Set test suite & trees builder
     switch (_identifyLanguage(doc["language"].GetString())) {
 
     case Language::CPP:
@@ -379,6 +379,8 @@ int Pipeline::_readProfileConfig(const std::string& profile)
         _method.reset(new Ochiai());
     else if (method == "dstar")
         _method.reset(new Dstar());
+    else if (method == "barinel")
+        _method.reset(new Barinel());
     else if (method == "jaccard")
         _method.reset(new Jaccard());
     else if (method == "ones")
@@ -404,17 +406,17 @@ int Pipeline::_readProfileConfig(const std::string& profile)
 
 
 
-stmt_graph::Graph::vector_t Pipeline::_makeGraphs() const
+aggregated_ast::Ast::vector_t Pipeline::_makeTrees() const
 {
-    std::cout << "Creating statement graphs ...\n";
-    stmt_graph::Graph::vector_t graphs(_suite->maxIndex());
+    std::cout << "Creating aggregated AST ...\n";
+    aggregated_ast::Ast::vector_t trees(_suite->maxIndex());
 
     // single thread
     if (_thread_num <= 1)
         for (TestSuite::index_t index = 0; index != _suite->maxIndex(); ++index) {
             
             std::cout << "  " << _suite->getFileFromIndex(index) << std::endl;
-            graphs[index].reset(_builder->build(_source_dir / _suite->getFileFromIndex(index)));
+            trees[index].reset(_builder->build(_source_dir / _suite->getFileFromIndex(index)));
         }
     
     // multi thread
@@ -422,52 +424,52 @@ stmt_graph::Graph::vector_t Pipeline::_makeGraphs() const
 
         BS::thread_pool pool(_thread_num);
         pool.detach_loop<TestSuite::index_t>(0, _suite->maxIndex(),
-            [this, &graphs](TestSuite::index_t index)
+            [this, &trees](TestSuite::index_t index)
             {
-                graphs[index].reset(_builder->build(_source_dir / _suite->getFileFromIndex(index)));
+                trees[index].reset(_builder->build(_source_dir / _suite->getFileFromIndex(index)));
             });
         pool.wait();
     }
     
-    // Saving statements graphs
-    std::cout << "Saving statement graphs ...\n";
-    auto graphs_dir(_createDirectory(_test_dir / _PAFL_ / GRAPH_DIRECTORY));
+    // Saving aggregated AST
+    std::cout << "Saving aggregated AST ...\n";
+    auto trees_dir(_createDirectory(_test_dir / _PAFL_ / TREE_DIRECTORY));
     for (TestSuite::index_t index = 0; index != _suite->maxIndex(); ++index)
-        StringEditor::write((graphs_dir / (std::to_string(index) + ".json")).c_str(),
-            graphs.at(index)->toJSON(_suite->getFileFromIndex(index)));
-    return graphs;
+        StringEditor::write((trees_dir / (std::to_string(index) + ".json")).c_str(),
+            trees.at(index)->toJSON(_suite->getFileFromIndex(index)));
+    return trees;
 }
 
 
 
-stmt_graph::Graph::vector_t Pipeline::_loadGraphs() const
+aggregated_ast::Ast::vector_t Pipeline::_loadTrees() const
 {
-    std::cout << "Loading statement graphs ...";
-    auto graphs_dir(_test_dir / _PAFL_ / GRAPH_DIRECTORY);
-    if (!std::filesystem::exists(graphs_dir)) {
+    std::cout << "Loading aggregated AST ...";
+    auto trees_dir(_test_dir / _PAFL_ / TREE_DIRECTORY);
+    if (!std::filesystem::exists(trees_dir)) {
 
         std::cout << " is failed\n";
-        return _makeGraphs();
+        return _makeTrees();
     }
     
     // Load cache
-    stmt_graph::Graph::vector_t graphs(_suite->maxIndex());
+    aggregated_ast::Ast::vector_t trees(_suite->maxIndex());
     for (TestSuite::index_t index = 0; index != _suite->maxIndex(); ++index) {
 
-        auto path(graphs_dir / (std::to_string(index) + ".json"));
+        auto path(trees_dir / (std::to_string(index) + ".json"));
         if (!std::filesystem::exists(path)) {
 
             std::cout << " is failed\n";
-            return _makeGraphs();
+            return _makeTrees();
         }
-        graphs[index].reset(new stmt_graph::Graph());
+        trees[index].reset(new aggregated_ast::Ast());
         rapidjson::Document doc;
         doc.Parse(StringEditor::read(path.c_str()).c_str());
-        graphs[index]->fromJSON(doc);
+        trees[index]->fromJSON(doc);
     }
 
     std::cout.put('\n');
-    return graphs;
+    return trees;
 }
 
 
@@ -493,11 +495,19 @@ int Pipeline::_load(TestSuite* suite, const std::filesystem::path& test_dir)
     std::filesystem::path path;
     
     for (int i = 1; std::filesystem::exists(path = test_dir / std::to_string(i)); ++i) {
+    
+        std::cout << "  tc " << i;
+        auto file_test = path / (std::to_string(i) + ".test");
+        auto file_summary = path / "summary.json";
+        if (!std::filesystem::exists(file_test) || !std::filesystem::exists(file_summary)) {
+
+            std::cout << " broken" << std::endl;
+            continue;
+        }
         
-        std::cout << "  case " << i << std::endl;
-        auto buffer(StringEditor::read((path / (std::to_string(i) + ".test")).c_str()));
+        auto buffer(StringEditor::read(file_test.c_str()));
         rapidjson::Document doc;
-        doc.Parse(StringEditor::read((path / "summary.json").c_str()).c_str());
+        doc.Parse(StringEditor::read(file_summary.c_str()).c_str());
 
         // failing test case
         if (buffer.starts_with("fail"))
@@ -506,7 +516,9 @@ int Pipeline::_load(TestSuite* suite, const std::filesystem::path& test_dir)
         else if (buffer.starts_with("pass"))
             suite->addTestCase(doc, true);
         else
-            return 1;
+            std::cout << " broken";
+        
+        std::cout << std::endl;
     }
     return 0;
 }

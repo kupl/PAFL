@@ -1,6 +1,6 @@
 #include "./node.h"
 
-namespace stmt_graph
+namespace aggregated_ast
 {
 std::string Node::toString(const Node* node, const std::string& tab, const std::string& child_marker, const std::string& non_child_marker,
                         const std::string& succ_marker, const std::string& indentation)

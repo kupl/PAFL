@@ -9,7 +9,7 @@
 #include <cereal/types/utility.hpp>
 #include <cereal/types/string.hpp>
 
-#include "stmt_graph/node.h"
+#include "aggregated_ast/node.h"
 
 
 namespace PAFL
@@ -28,9 +28,9 @@ public:
     Block& operator=(Block&& rhs)                                           { _map = std::move(rhs._map); _weight = rhs._weight; return *this;}
     Block& operator=(T&& map)                                               { _map = std::move(map); return *this; }
 
-    float max(const std::vector<const stmt_graph::Node*>& nodes, const map_value_t& mutant) const;
-    float max(const std::vector<const stmt_graph::Node*>& nodes) const;
-    T makeMutants(const std::vector<const stmt_graph::Node*>& buggy_nodes, float default_value) const;
+    float max(const std::vector<const aggregated_ast::Node*>& nodes, const map_value_t& mutant) const;
+    float max(const std::vector<const aggregated_ast::Node*>& nodes) const;
+    T makeMutants(const std::vector<const aggregated_ast::Node*>& buggy_nodes, float default_value) const;
     T& data() { return _map; }
 
     void setValue(const std::string& token, float value)    { _map[token] = value; }

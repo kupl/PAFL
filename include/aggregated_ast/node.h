@@ -1,11 +1,11 @@
-#ifndef __STATEMENT_GRAPH_NODE_H__
-#define __STATEMENT_GRAPH_NODE_H__
+#ifndef __AGGREGATED_AST_NODE_H__
+#define __AGGREGATED_AST_NODE_H__
 
 #include <string>
 #include <vector>
 
 
-namespace stmt_graph
+namespace aggregated_ast
 {
 class Node
 {

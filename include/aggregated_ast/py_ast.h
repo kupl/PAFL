@@ -1,5 +1,5 @@
-#ifndef __STATEMENT_GRAPH_PYGRAPH_H__
-#define __STATEMENT_GRAPH_PTGRAPH_H__
+#ifndef __AGGREGATED_AST_PYAST_H__
+#define __AGGREGATED_AST_PYAST_H__
 
 #include <filesystem>
 #include <charconv>
@@ -9,26 +9,26 @@
 #include <tree_sitter/api.h>
 #include <tree-sitter-python.h>
 
-#include "./graph.h"
+#include "./ast.h"
 
 
-namespace stmt_graph
+namespace aggregated_ast
 {
-class PyGraph : public Graph
+class PyAst : public Ast
 {
 public:
-    PyGraph(const std::filesystem::path& source_path);
+    PyAst(const std::filesystem::path& source_path);
     
 private:
     class Builder;
 };
 
 
-// Build graph of the AST
-class PyGraph::Builder
+// Build aggregated AST from complete AST
+class PyAst::Builder
 {
 public:
-    Builder(PyGraph& graph, const std::string& source);
+    Builder(PyAst& ast, const std::string& source);
 
 private:
     struct NodePtr { Node* current, *predecessor, *parent; };
@@ -46,7 +46,7 @@ private:
     NodePtr updateNodePtr();
 
 private:
-    PyGraph& _graph;
+    PyAst& _ast;
     const std::string& _source;
     TSTreeCursor* _cursor;
     Node* _root;

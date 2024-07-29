@@ -19,9 +19,9 @@ public:
     Updater& operator=(Updater& rhs) = delete;
     Updater(Updater&& rhs) = delete;
 
-    float max(const stmt_graph::Node* node, const Mutant& mutant) const;
-    float max(const stmt_graph::Node* node) const;
-    std::vector<Mutant> makeMutant(std::vector<const stmt_graph::Node*> buggy_nodes, float default_original_value, float mutated_value) const;
+    float max(const aggregated_ast::Node* node, const Mutant& mutant) const;
+    float max(const aggregated_ast::Node* node) const;
+    std::vector<Mutant> makeMutant(std::vector<const aggregated_ast::Node*> buggy_nodes, float default_original_value, float mutated_value) const;
     void eraseIf(float threshold)   { for (int i = 0; i != BLOCK_NUM; ++i) _block_map[i]->eraseIf(threshold); }
 
     bool empty() const              { for (int i = 0; i != BLOCK_NUM; ++i) if (!_block_map[i]->empty()) return false; return true; }
@@ -34,11 +34,11 @@ private:
     static constexpr int BLOCK_NUM = 5;
 
 private:
-    void _stay(std::vector<const stmt_graph::Node*>& node_vector, const stmt_graph::Node* cursor, size_t iter) const;
-    void _left(std::vector<const stmt_graph::Node*>& node_vector, const stmt_graph::Node* cursor, size_t iter) const;
-    void _right(std::vector<const stmt_graph::Node*>& node_vector, const stmt_graph::Node* cursor, size_t iter) const;
-    void _up(std::vector<const stmt_graph::Node*>& node_vector, const stmt_graph::Node* cursor, size_t iter) const;
-    void _down(std::vector<const stmt_graph::Node*>& node_vector, const stmt_graph::Node* cursor, size_t iter) const;
+    void _stay(std::vector<const aggregated_ast::Node*>& node_vector, const aggregated_ast::Node* cursor, size_t iter) const;
+    void _left(std::vector<const aggregated_ast::Node*>& node_vector, const aggregated_ast::Node* cursor, size_t iter) const;
+    void _right(std::vector<const aggregated_ast::Node*>& node_vector, const aggregated_ast::Node* cursor, size_t iter) const;
+    void _up(std::vector<const aggregated_ast::Node*>& node_vector, const aggregated_ast::Node* cursor, size_t iter) const;
+    void _down(std::vector<const aggregated_ast::Node*>& node_vector, const aggregated_ast::Node* cursor, size_t iter) const;
 
 private:
     Block _target;
