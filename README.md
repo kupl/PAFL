@@ -156,8 +156,8 @@ pafl profile example-ochiai cpp ochiai
 
 # For version 1 to 5
 for i in {1..4}; do
-	pafl run-pafl -P example-ochiai -S example/example -T example/test_example/buggy-$i
-	pafl train -P example-ochiai -S example/example -T example/test_example/buggy-$i -O example/fault.json
+  pafl run-pafl -P example-ochiai -S example/example -T example/test_example/buggy-$i
+  pafl train -P example-ochiai -S example/example -T example/test_example/buggy-$i -O example/fault.json
 done
 pafl run-pafl -P example-ochiai -S example/example -T example/test_example/buggy-5
 ```
