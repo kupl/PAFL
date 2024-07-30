@@ -95,24 +95,24 @@ The structure of the container is as follows:
 To reduce the cost of parsing JSON format coverage data every time, you can run the following script.
 However, `PAFL_coverage` already has cached coverage data so that you can skip this part.
 ```sh
-scripts/caching.sh
+caching.sh
 ```
 
 ### 2. Running PAFL
 To run the baseline fault localizer and **PAFL**, you can run the following script.
 ```sh
 # Running SBFL
-scripts/run_sbfl.sh
+run_sbfl.sh
 # Running DLFL
-scripts/run_dlfl.sh
+run_dlfl.sh
 # Running Aeneas
-scripts/run_aeneas.sh
+run_aeneas.sh
 ```
 We support parallelization using a fixed number of thread pools.
 You can specify the number of threads by giving the desired number to the script (default is 1).
 ```sh
 # Running SBFL with 32 threads
-scripts/run_sbfl.sh 32
+run_sbfl.sh 32
 ```
 Cost reduction from parallelization is most effective when the project contains many source files.
 
@@ -125,13 +125,13 @@ If you want to understand details about the commands for running **PAFL**, pleas
 To get the summarized results, you can run the following script.
 ```sh
 # Evaluating SBFL
-scripts/eval_sbfl.sh
+eval_sbfl.sh
 # Evaluating DLFL
-scripts/eval_dlfl.sh
+eval_dlfl.sh
 # Evaluating Aeneas
-scripts/eval_aeneas.sh
+eval_aeneas.sh
 ```
-The summarized results will be stored in `/workspace/evaluation`
+The summarized results will be stored in `/workspace/evaluation` as XLSX format files.
 
 ### 4. Checking log files (optional)
 Log files are stored in `/opt/pafl/profile`.

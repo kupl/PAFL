@@ -91,8 +91,8 @@ for idx, ver in enumerate(version_map[proj], 1):
                 fr = int(line["ranking"])
             ar += int(line["ranking"])
             ar_size += 1
-    sheet_base.cell(1 + idx, 2, fr)
-    sheet_base.cell(1 + idx, 3, ar / ar_size if ar_size != 0 else -1)
+    sheet_base.cell(1 + idx, 2, fr if fr != -1 else base_json["total"])
+    sheet_base.cell(1 + idx, 3, ar / ar_size if ar_size != 0 else base_json["total"])
 
     # FR, AR of pafl
     fr, ar, ar_size = -1, 0.0, 0
@@ -102,8 +102,8 @@ for idx, ver in enumerate(version_map[proj], 1):
                 fr = int(line["ranking"])
             ar += int(line["ranking"])
             ar_size += 1
-    sheet_pafl.cell(1 + idx, 2, fr)
-    sheet_pafl.cell(1 + idx, 3, ar / ar_size if ar_size != 0 else -1)
+    sheet_pafl.cell(1 + idx, 2, fr if fr != -1 else pafl_json["total"])
+    sheet_pafl.cell(1 + idx, 3, ar / ar_size if ar_size != 0 else pafl_json["total"])
 
 # Save workbook
 save_dir = '/workspace/evaluation'
