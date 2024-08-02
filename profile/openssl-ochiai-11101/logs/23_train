@@ -1,0 +1,260 @@
+---[ ID: 17, weight: 0.4365567 ]---
+ target:
+  return, 0.33333334
+  policies, 0.33333334
+  hosts, 0.3333264
+  to_overwrite, 0.33330557
+  to_default, 0.33329862
+  src, 0.3328839
+  dest, 0.33280137
+  ||, 0.32347295
+  &&, 0.3234617
+  !=, 0.31952292
+  ==, 0.3154875
+  void, 0.3087728
+  *, 0.30415815
+  if, 0.29975277
+ predecessor:
+  TLS_ST_OK, 0.33333334
+  TLS_ST_BEFORE, 0.33333334
+  TLS_ST_CR_CERT_VRFY, 0.33333334
+  case, 0.33333334
+  to_default, 0.3333264
+  to_overwrite, 0.3333264
+  policies, 0.3333264
+  src, 0.33304244
+  dest, 0.33295965
+  |=, 0.33285636
+  flags, 0.33207852
+  ||, 0.32879725
+  &&, 0.3277673
+  !=, 0.3235796
+  ==, 0.31940556
+  void, 0.3127541
+  *, 0.307595
+  if, 0.30541402
+ successor:
+  TLS_ST_SW_CERT_VRFY, 0.33333334
+  hosts, 0.33333334
+  to_default, 0.33333334
+  to_overwrite, 0.33333334
+  TLS_ST_OK, 0.33333334
+  TLS_ST_CW_CLNT_HELLO, 0.33333334
+  case, 0.33333334
+  email, 0.3333264
+  src, 0.33310464
+  dest, 0.33300105
+  ||, 0.32919666
+  &&, 0.32768714
+  !=, 0.32379934
+  ==, 0.3205995
+  void, 0.31473604
+  *, 0.3121127
+  if, 0.30707386
+ parent:
+ child:
+  policies, 0.33333334
+  X509_VERIFY_PARAM_set1_policies, 0.33333334
+  hosts, 0.33333334
+  ossl_check_OPENSSL_STRING_freefunc_type, 0.33333334
+  str_free, 0.33333334
+  OPENSSL_sk_pop_free, 0.33331946
+  ossl_check_OPENSSL_STRING_sk_type, 0.33331946
+  dest, 0.33330557
+  src, 0.33327085
+  !, 0.32889205
+  if, 0.32244796
+  void, 0.31948206
+  *, 0.3184287
+
+---[ ID: 14, weight: 0.36767617 ]---
+ target:
+  &&, 0.5494592
+  ||, 0.54915833
+  ==, 0.5435598
+  return, 0.48549396
+  if, 0.43353847
+  EXT_RETURN_FAIL, 0.33332685
+  hosts, 0.33332685
+  to_overwrite, 0.33331382
+  to_default, 0.33331382
+  tls13added, 0.33331138
+  added, 0.33314088
+  max_version, 0.33289462
+  src, 0.33284825
+  dest, 0.33277762
+  !=, 0.32471925
+  void, 0.31662574
+  *, 0.29272628
+ predecessor:
+  ||, 0.5529164
+  &&, 0.5521329
+  ==, 0.5468143
+  if, 0.48590755
+  TLS_ST_OK, 0.33333334
+  TLS_ST_CR_CERT_VRFY, 0.33333334
+  tls13added, 0.33333334
+  TLS_ST_BEFORE, 0.33333334
+  policies, 0.33332685
+  to_overwrite, 0.33332032
+  to_default, 0.33332032
+  added, 0.33322853
+  src, 0.33302224
+  max_version, 0.33297485
+  dest, 0.3329062
+  |=, 0.33289975
+  flags, 0.3324516
+  case, 0.32879466
+  !=, 0.3273852
+  void, 0.31966424
+  *, 0.28211167
+ successor:
+  TLS_ST_OK, 0.33333334
+  TLS_ST_SW_CERT_VRFY, 0.33333334
+  TLS_ST_CW_CLNT_HELLO, 0.33333334
+  to_overwrite, 0.33333334
+  EXT_RETURN_FAIL, 0.33333334
+  to_default, 0.33333334
+  email, 0.33333334
+  hosts, 0.33332032
+  src, 0.33302867
+  dest, 0.33295125
+  ||, 0.3304462
+  case, 0.3302293
+  &&, 0.32907784
+  !=, 0.32659918
+  ==, 0.3239975
+  void, 0.31961015
+  *, 0.31625727
+  if, 0.31351677
+  return, 0.29221666
+ parent:
+ child:
+  void, 0.54699177
+  *, 0.54634464
+  hosts, 0.33333334
+  str_free, 0.33333334
+  X509_VERIFY_PARAM_set1_policies, 0.33333334
+  ossl_check_OPENSSL_STRING_freefunc_type, 0.33333334
+  policies, 0.33333334
+  ossl_check_OPENSSL_STRING_sk_type, 0.33332685
+  OPENSSL_sk_pop_free, 0.33332032
+  dest, 0.33331382
+  src, 0.33327484
+  if, 0.32586148
+  ossl_statem_fatal, 0.32068095
+  <<, 0.31118265
+  |, 0.31050387
+  s, 0.307743
+  !, 0.30494395
+  ERR_set_debug, 0.29845297
+  __func__, 0.29845297
+  ERR_new, 0.29845297
+
+---[ ID: 13, weight: 0.24925014 ]---
+ target:
+  &&, 0.5062499
+  ||, 0.49165168
+  return, 0.4354898
+  ==, 0.37247106
+  hosts, 0.3333277
+  to_default, 0.33331642
+  to_overwrite, 0.33331642
+  tls13added, 0.3333038
+  X509_STORE_CTX_new_ex, 0.3332492
+  added, 0.3332054
+  real_ctx, 0.3331925
+  EXT_RETURN_FAIL, 0.33318034
+  xs_ctx, 0.33311188
+  max_version, 0.33302578
+  src, 0.3329022
+  dest, 0.33281898
+  propq, 0.3231556
+  libctx, 0.3161582
+  policies, 0.26018834
+  ctx, 0.25153312
+  !=, 0.24952145
+  void, 0.165675
+  *, 0.14376208
+ predecessor:
+  ||, 0.5308755
+  &&, 0.52830285
+  if, 0.4866074
+  flags, 0.47714576
+  ==, 0.44256878
+  tls13added, 0.33333334
+  max_version, 0.33321366
+  added, 0.333211
+  policies, 0.3242393
+  to_default, 0.32423374
+  to_overwrite, 0.32423374
+  dest, 0.32291758
+  src, 0.322867
+  &, 0.2722653
+  !=, 0.27169967
+  |=, 0.23395012
+  TLS_ST_CR_CERT_VRFY, 0.23375931
+  TLS_ST_BEFORE, 0.23375931
+  TLS_ST_OK, 0.23365773
+  case, 0.22997546
+  void, 0.1798447
+  *, 0.1336827
+ successor:
+  ==, 0.48046425
+  void, 0.4589912
+  *, 0.4480229
+  if, 0.37943867
+  email, 0.33333334
+  to_overwrite, 0.3333277
+  to_default, 0.3333277
+  EXT_RETURN_FAIL, 0.3332154
+  xs_ctx, 0.3331641
+  src, 0.33306378
+  dest, 0.3329745
+  ||, 0.31911635
+  &&, 0.31222948
+  !=, 0.29814678
+  return, 0.28111175
+  hosts, 0.26297405
+  TLS_ST_CW_CLNT_HELLO, 0.23375931
+  TLS_ST_SW_CERT_VRFY, 0.23375931
+  TLS_ST_OK, 0.23373392
+  case, 0.23063573
+ parent:
+ child:
+  void, 0.43537512
+  *, 0.42297244
+  hosts, 0.33333334
+  str_free, 0.33333334
+  X509_VERIFY_PARAM_set1_policies, 0.33333334
+  ossl_check_OPENSSL_STRING_freefunc_type, 0.33333334
+  policies, 0.33333334
+  ossl_check_OPENSSL_STRING_sk_type, 0.3333277
+  OPENSSL_sk_pop_free, 0.33331078
+  dest, 0.33331078
+  src, 0.333277
+  ossl_statem_fatal, 0.3196091
+  <<, 0.3119957
+  |, 0.31050774
+  s, 0.30801636
+  !, 0.29928035
+  ERR_set_debug, 0.29833767
+  __func__, 0.29833767
+  ERR_new, 0.29833767
+  if, 0.2572944
+
+---[ ID: 24, weight: 0 ]---
+ target:
+  return, 0.33333334
+ predecessor:
+  TLS_ST_CR_CERT_VRFY, 0.33333334
+  case, 0.33333334
+  TLS_ST_BEFORE, 0.33333334
+  TLS_ST_OK, 0.33333334
+ successor:
+  TLS_ST_SW_CERT_VRFY, 0.33333334
+  case, 0.33333334
+  TLS_ST_CW_CLNT_HELLO, 0.33333334
+  TLS_ST_OK, 0.33333334
+ parent:
+ child:
