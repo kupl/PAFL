@@ -1,5 +1,4 @@
 #!/bin/bash
-git clone https://github.com/soarsmu/BugsInPy.git
 WORKSPACE=$(pwd)
 export PATH=$PATH:"$WORKSPACE"/BugsInPy/framework/bin
 

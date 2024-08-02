@@ -1,5 +1,4 @@
 #!/bin/bash
-git clone https://github.com/Suresoft-GLaDOS/bugscpp.git
 
 # cpp_peglib
 for i in {1..10}; do
