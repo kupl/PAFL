@@ -40,6 +40,7 @@ RUN rm evaluate.spec train_and_run.spec robustness.spec evalDLFL.spec makeXLSX.s
     evaluate.py train_and_run.py robustness.py evalDLFL.py makeXLSX.py
 RUN rm -rf dist && chmod +x \
     evaluate train_and_run robustness evalDLFL makeXLSX
+ENV PATH="/opt/PAFL:${PATH}"
 
 RUN mkdir --mode=777 /workspace
 WORKDIR /workspace
